@@ -1,0 +1,12 @@
+version: "3.8"
+
+services:
+  chess_trainer:
+    build:
+      context: .
+    ports:
+      - "8501:8501"
+      - "5678:5678"  # puerto para debug
+    volumes:
+      - .:/app
+    container_name: chess_trainer_dev
