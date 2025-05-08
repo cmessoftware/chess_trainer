@@ -1,0 +1,9 @@
+python-chess
+pandas==2.2.3
+numpy==1.26.4
+scikit-learn==1.5.2
+matplotlib==3.9.2
+seaborn==0.13.2
+streamlit==1.39.0
+sqlalchemy==2.0.35
+psycopg2-binary==2.9.9
