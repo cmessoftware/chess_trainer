@@ -1,0 +1,16 @@
+[flake8]
+max-line-length = 120
+exclude = .git,__pycache__,env,venv,.venv,build,dist
+
+# Podés agregar errores específicos a ignorar separados por coma, por ejemplo:
+# ignore = E203, W503
+
+# Excluir carpetas del análisis (útil para entornos virtuales, migraciones, etc.)
+exclude = 
+    .git,
+    __pycache__,
+    env/,
+    venv/,
+    .venv/,
+    build/,
+    dist/
