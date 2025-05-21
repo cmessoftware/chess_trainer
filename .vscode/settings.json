@@ -1,0 +1,13 @@
+{
+    "python.analysis.extraPaths": [
+        "./src"
+    ],
+    "python.linting.enabled": true,
+    "python.linting.flake8Enabled": true,
+    "python.linting.flake8Args": [
+        "--max-line-length=120",
+        "--exclude=.git,__pycache__,env,venv,.venv,build,dist"
+    ],
+    "python.formatting.provider": "black",
+    "editor.formatOnSave": true
+}

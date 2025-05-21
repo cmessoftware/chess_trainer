@@ -1,61 +1,120 @@
 import os
-import chess.pgn
+import chess
 import pandas as pd
+from tqdm import tqdm
 from stockfish_engine import StockfishEngine
-from sqlalchemy import create_engine
 
-def analyze_game(pgn_file, player_name):
-    engine = StockfishEngine()
-    game = chess.pgn.read_game(open(pgn_file))
-    board = game.board()
-    moves_data = []
 
-    for move in game.mainline_moves():
-        board.push(move)
-        score = engine.evaluate_position(board)
-        best_move = engine.get_best_move(board)
-        is_blunder = abs(score) > 300  # Umbral para considerar un error grave
-        moves_data.append({
-            "move": move.uci(),
-            "score": score,
-            "best_move": best_move.uci(),
-            "is_blunder": is_blunder,
-            "player": player_name
-        })
+class GamesAnalyzer:
+    def __init__(self):
+        self.engine = StockfishEngine(
+            stockfish_path="/usr/local/bin/stockfish",
+            depth=10
+        )  # Adjust path
 
-    engine.close()
-    return pd.DataFrame(moves_data)
-
-def generate_report(df):
-    """Genera un informe con métricas."""
-    blunder_rate = df["is_blunder"].mean() * 100
-    avg_score = df["score"].mean()
-    report = {
-        "blunder_rate": blunder_rate,
-        "avg_score": avg_score,
-        "total_moves": len(df)
-    }
-    return report
-
-def analyze_multiple_games(game_files, platform):
-    results = []
-    for player_name, pgn_file in game_files:
-        if os.path.exists(pgn_file):
-            df = analyze_game(pgn_file, player_name)
-            report = generate_report(df)
-            save_report(report, player_name, pgn_file, platform)
-            results.append((player_name, report))
+    def load_games(self, games_path):
+        if isinstance(games_path, str):
+            if not os.path.exists(games_path):
+                print(f"Error: El archivo {games_path} no existe")
+                return []
+            with open(games_path, encoding="utf-8") as f:
+                games = []
+                while game := chess.pgn.read_game(f):
+                    games.append(game)
+                return games
+        elif isinstance(games_path, list):
+            result = []
+            for path in games_path:
+                if not os.path.exists(path):
+                    print(f"Error: El archivo {path} no existe")
+                    continue
+                with open(path, encoding="utf-8") as f:
+                    while game := chess.pgn.read_game(f):
+                        result.append(game)
+            return result
         else:
-            print(f"Archivo no encontrado: {pgn_file}")
-    return results
+            raise ValueError("games_path must be a string (single path) or a list of paths")
 
-def save_report(report, player_name, pgn_file, platform):
-    engine = create_engine("sqlite:///data/games.db")
-    pd.DataFrame([{
-        "player_name": player_name,
-        "pgn_file": pgn_file,
-        "blunder_rate": report["blunder_rate"],
-        "avg_score": report["avg_score"],
-        "platform": platform,
-        "date_analyzed": pd.Timestamp.now()
-    }]).to_sql("games", engine, if_exists="append", index=False)
+    def analyze_game(self, game, player_name):
+        board = game.board()  # Start from the initial position
+        moves = []
+        previous_score = None
+        for node in game.mainline():
+            move = node.move
+            if not board.is_pseudo_legal(move):  # Optional: Add validation
+                print(f"Invalid move {move.uci()} in position {board.fen()}")
+                break
+            board.push(move)
+            score = self.engine.evaluate_position(board)
+            is_blunder = False
+            is_critical = False
+            is_inaccurate = False
+            is_mistake = False
+            is_best_move = False
+            if previous_score is not None:
+                match abs(score - previous_score):
+                    case diff if diff > 300:
+                        is_blunder = True
+                    case diff if diff > 100:
+                        is_critical = True
+                    case diff if diff > 50:
+                        is_inaccurate = True
+                    case diff if diff > 20:
+                        is_mistake = True
+                    case diff if diff < 20:
+                        is_best_move = True
+                
+            moves.append({"fen": board.fen(),
+                          "move": move.uci(), 
+                          "score": score, 
+                          "is_blunder": is_blunder,
+                          "is_critical": is_critical,
+                          "is_inaccurate": is_inaccurate,
+                          "is_mistake": is_mistake,
+                          "is_best_move": is_best_move
+                        })
+            previous_score = score
+        df = pd.DataFrame(moves)
+        summary = {
+            "player": player_name,
+            "total_moves": len(moves),
+            "blunders": len(df[df["is_blunder"]])
+        }
+        return df, summary
+    
+    def generate_report(self, df):
+        report = f"Reporte para {df['move'].count()} movimientos:\n"
+        report += f"Blunders detectados: {len(df[df['is_blunder']])}\n"
+        return report
+
+    def save_report(self, game_path, report, player_name, platform):
+        os.makedirs("data/reports", exist_ok=True)
+        report_path = f"data/reports/{player_name}_{platform}_report.txt"
+        with open(report_path, "w", encoding="utf-8") as f:
+            f.write(report)
+        print(f"Reporte guardado en {report_path}")
+
+    def analyze_multiple_games(self, games, platform="chesscom"):
+        player_name = "chess_trainer_user"
+        all_dfs = []
+        total_blunders = 0
+        total_moves = 0
+        for game in tqdm(games, desc="Analyzing games"):
+            print(f"Analizando partida: {game}")
+            df, summary = self.analyze_game(game, player_name)
+            total_blunders += summary["blunders"]
+            total_moves += summary["total_moves"]
+            all_dfs.append(df)
+            report = self.generate_report(df)
+            self.save_report(game, report, player_name, platform)
+            combined_df = pd.concat(all_dfs, ignore_index=True)
+            summary = {
+                "total_games": len(games),
+                "total_blunders": total_blunders,
+                "total_moves": total_moves
+            }
+            return combined_df, summary
+
+    def close(self):
+        self.engine.close()
+

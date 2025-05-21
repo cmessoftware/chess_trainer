@@ -1,5 +1,8 @@
 import chess
 import chess.engine
+import chess.pgn
+import io
+
 
 class StockfishEngine:
     def __init__(self, stockfish_path="/usr/local/bin/stockfish", depth=15):
@@ -20,3 +23,80 @@ class StockfishEngine:
     def close(self):
         """Cierra el motor."""
         self.engine.quit()
+
+    @staticmethod
+    def analyze_game(pgn_text, stockfish_path, time_limit=0.1):
+        # Parse the PGN file to extract moves and game information
+        pgn = io.StringIO(pgn_text)
+        game = chess.pgn.read_game(pgn)
+        board = game.board()
+
+        # Initialize Stockfish engine
+        engine = chess.engine.SimpleEngine.popen_uci(stockfish_path)
+
+        critical_moments = []
+        move_number = 0
+       
+        for move in game.mainline_moves():
+            move_number += 1
+            # Evaluate position before the move
+            info = engine.analyse(board, chess.engine.Limit(time=time_limit))
+            curr_eval = info["score"].relative.score(mate_score=10000) / 100.0  # Convert to centipawns
+
+            # Push the move to the board
+            board.push(move)
+
+            # Evaluate position after the move
+            info_after = engine.analyse(board, chess.engine.Limit(time=time_limit))
+            best_move = info_after["pv"][0] if "pv" in info_after else None
+            eval_after = info_after["score"].relative.score(mate_score=10000) / 100.0
+
+            # Adjust evaluations for side to move (White: positive is good; Black: negative is good)
+            if board.turn == chess.BLACK:  # Black's turn before move
+                curr_eval = -curr_eval
+                eval_after = -eval_after
+
+            # Detect errors based on evaluation difference
+            eval_diff = curr_eval - eval_after
+            error_type = None
+            if eval_diff >= 2.0:
+                error_type = "Blunder"
+            elif eval_diff >= 1.0:
+                error_type = "Mistake"
+            elif eval_diff >= 0.5:
+                error_type = "Inaccuracy"
+
+            # Flag critical moves (large evaluation swings or errors)
+            if error_type or abs(curr_eval - eval_after) > 2.0:
+                description = f"{error_type or 'Critical move'}: Evaluation changed from {curr_eval:.2f} to {eval_after:.2f}."
+                suggestion = f"Best move: {best_move.uci() if best_move else 'N/A'} (Eval: {curr_eval:.2f})."
+
+                # Check for pawn structure changes (basic heuristic)
+                if board.is_capture(move) or board.is_zeroing(move):
+                    description += " Move affects pawn structure."
+                    suggestion += " Consider pawn structure implications."
+
+                critical_moments.append({
+                    "move": move_number // 2 + (1 if move_number % 2 else 0),
+                    "description": description,
+                    "suggestion": suggestion
+                })
+
+        # Close the engine
+        engine.quit()
+        return critical_moments
+
+    @staticmethod
+    def generate_training_plan(critical_moments):
+        # Generate a training plan based on identified weaknesses
+        plan = []
+        for moment in critical_moments:
+            if "Blunder" in moment["description"]:
+                plan.append("Solve 20 tactical puzzles focusing on checks, captures, and threats.")
+            if "Mistake" in moment["description"]:
+                plan.append("Practice piece coordination in middlegame positions.")
+            if "Inaccuracy" in moment["description"]:
+                plan.append("Study best-move evaluations in similar positions.")
+            if "pawn structure" in moment["description"].lower():
+                plan.append("Study pawn structures in 'Pawn Structure Chess' by Andrew Soltis.")
+        return list(set(plan))  # Remove duplicates

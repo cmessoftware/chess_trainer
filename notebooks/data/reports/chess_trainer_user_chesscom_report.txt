@@ -1,0 +1,2 @@
+Reporte para 232 movimientos:
+Blunders detectados: 150
