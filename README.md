@@ -1,3 +1,36 @@
+# Chess Trainer (versión base estable)
+
+Este proyecto permite analizar y entrenar tácticamente partidas de ajedrez usando ciencia de datos y visualización interactiva.
+
+## Funcionalidades
+
+- Generación de dataset desde archivos PGN
+- Enriquecimiento táctico con Stockfish
+- Clasificación de errores con etiquetas automáticas (`error_label`)
+- Exploración y visualización con Streamlit y notebooks
+- Entrenamiento de modelos supervisados para predicción de errores
+- Registro e historial de predicciones
+
+## Requisitos
+
+- Python 3.8+
+- streamlit
+- pandas, seaborn, matplotlib
+- python-chess
+- scikit-learn
+- Stockfish (colocar en `/engines/stockfish`)
+
+## Estructura
+
+Ver archivo `VERSIÓN_BASE.md` para estructura completa del proyecto.
+
+## Uso rápido
+
+```bash
+# Ejecutar interfaz principal
+streamlit run app.py
+```
+
 # chess_trainer
 Chess trainer software using data scientes tools , stockfish chess motor implemented in docker environment
 
@@ -148,3 +181,7 @@ Una vez que el modelo esté entrenado, puedes usarlo para hacer recomendaciones 
 - Implementar el modelo en tu API Django y generar recomendaciones personalizadas para los usuarios.
 
 Este enfoque te proporcionará una base sólida para integrar Machine Learning e IA en tu proyecto de ajedrez, mejorando tanto el análisis de partidas como la experiencia del usuario.
+
+## Créditos
+
+Desarrollado por Sergio como parte de su trabajo práctico para la Diplomatura en Ciencia de Datos.

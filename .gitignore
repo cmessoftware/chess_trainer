@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+#pgn games
+*.pgn
+
 # C extensions
 *.so
 
