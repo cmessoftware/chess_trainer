@@ -1,6 +1,8 @@
 {
     "python.analysis.extraPaths": [
-        "./src"
+        "./src",
+        "./src/scripts",
+        "./src/modules"
     ],
     "python.linting.enabled": true,
     "python.linting.flake8Enabled": true,
@@ -9,5 +11,6 @@
         "--exclude=.git,__pycache__,env,venv,.venv,build,dist"
     ],
     "python.formatting.provider": "black",
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "sqltools.useNodeRuntime": true
 }
