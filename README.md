@@ -1,3 +1,5 @@
+# CHESS TRAINER - Versión: a09349e-dirty
+
 # Chess Trainer (versión base estable)
 
 Este proyecto permite analizar y entrenar tácticamente partidas de ajedrez usando ciencia de datos y visualización interactiva.
