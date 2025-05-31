@@ -1,0 +1,11 @@
+{
+  "id": "elite_42",
+  "fen": "r3r1k1/pb1q2b1/1p1pp1pp/3n1pN1/3P4/1QPB2PP/PP3R1B/4R1K1 w - - 0 25",
+  "move": "Nf3",
+  "uci": "g5f3",
+  "tags": [
+    "sacrifice",
+    "undeveloped"
+  ],
+  "source_game_id": 20
+}

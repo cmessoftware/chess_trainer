@@ -1,8 +1,10 @@
 {
     "python.analysis.extraPaths": [
-        "./src",
         "./src/scripts",
-        "./src/modules"
+        "./src/modules",
+        "./src/modules/validations",
+        "./src",
+        "./src"
     ],
     "python.linting.enabled": true,
     "python.linting.flake8Enabled": true,

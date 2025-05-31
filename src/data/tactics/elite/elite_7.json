@@ -1,0 +1,12 @@
+{
+  "id": "elite_7",
+  "fen": "r7/4b1k1/8/5Bp1/P2P1Nn1/4P1p1/5P2/1RR1B1K1 w - - 1 43",
+  "move": "Bxg4",
+  "uci": "f5g4",
+  "tags": [
+    "sacrifice",
+    "endgame",
+    "attack_king"
+  ],
+  "source_game_id": 6
+}

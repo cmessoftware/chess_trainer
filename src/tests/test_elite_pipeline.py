@@ -4,7 +4,7 @@ import os
 import json
 from pathlib import Path
 
-DB_PATH = os.environ.get("CHESS_TRAINER_DB", "chess_trainer.db")
+DB_PATH = os.environ.get("CHESS_TRAINER_DB")
 TACTICS_PATH = Path("data/tactics/elite")
 
 def test_db_exists():

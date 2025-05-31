@@ -1,0 +1,11 @@
+{
+  "id": "elite_48",
+  "fen": "1r6/4p1kp/p3p1p1/q1n1n3/2r1B3/pP2Q3/N1P3PP/1K1RR3 w - - 1 25",
+  "move": "Bb7",
+  "uci": "e4b7",
+  "tags": [
+    "sacrifice",
+    "attack_king"
+  ],
+  "source_game_id": 22
+}

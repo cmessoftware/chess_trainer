@@ -1,5 +1,4 @@
-import pytest
-from analyze_errors_from_db import analyze_game_errors
+from ..scripts.analyze_errors_from_games import analyze_game_errors
 
 simple_blunder_pgn = """[Event "Blunder"]
 [Site "?"]

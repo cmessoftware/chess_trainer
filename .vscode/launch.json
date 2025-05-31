@@ -1,21 +1,37 @@
 {
-    "version": "0.2.0",
-    "configurations": [
-      {
-        "name": "Attach to Streamlit in Docker",
-        "type": "debugpy",
-        "request": "attach",
-        "connect": {
-          "host": "localhost",
-          "port": 5678
-        },
-        "pathMappings": [
-          {
-            "localRoot": "${workspaceFolder}",
-            "remoteRoot": "/app"
-          }
-        ]
-      }
-    ]
-  }
-  
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Python Debugger: Current File",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${file}",
+      "args": [
+        "--server",
+        "chess.com",
+        "--user",
+        "cmess4401 cmess1315",
+        "--since",
+        "2023-01-01",
+        "--until",
+        "2025-12-31"
+      ],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Attach to Streamlit in Docker",
+      "type": "debugpy",
+      "request": "attach",
+      "connect": {
+        "host": "localhost",
+        "port": 5678
+      },
+      "pathMappings": [
+        {
+          "localRoot": "${workspaceFolder}",
+          "remoteRoot": "/app"
+        }
+      ]
+    }
+  ]
+}

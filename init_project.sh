@@ -51,7 +51,7 @@ cat <<EOL > run_pipeline.sh
 
 # Ejecutar el pipeline completo
 python tag_games.py
-python analyze_errors_from_db.py
+python analyze_errors_from_games.py
 python generate_exercises_from_elite.py
 pytest tests/
 EOL

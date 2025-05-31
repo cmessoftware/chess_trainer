@@ -19,14 +19,14 @@ if not DB_PATH or not os.path.exists(DB_PATH):
 def apply_tags_to_all_games():
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
-    cursor.execute("SELECT id, pgn FROM games WHERE tags IS NULL")
+    cursor.execute("SELECT game_id, pgn FROM games WHERE tags IS NULL")
     rows = cursor.fetchall()
 
     for gid, pgn in rows:
         try:
             tags = detect_tags_from_game(pgn)
             tag_str = json.dumps(tags)
-            cursor.execute("UPDATE games SET tags = ? WHERE id = ?", (tag_str, gid))
+            cursor.execute("UPDATE games SET tags = ? WHERE game_id = ?", (tag_str, gid))
         except Exception as e:
             print(f"⚠️ Error tagging game {gid}: {e}")
     conn.commit()

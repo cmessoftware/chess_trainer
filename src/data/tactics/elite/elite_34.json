@@ -1,0 +1,13 @@
+{
+  "id": "elite_34",
+  "fen": "rnbqkbnr/2pppppp/p7/1p6/2B1P3/8/PPPP1PPP/RNBQK1NR w KQkq - 0 3",
+  "move": "Bb3",
+  "uci": "c4b3",
+  "tags": [
+    "sacrifice",
+    "blunder",
+    "attack_king",
+    "impulsive_mistake"
+  ],
+  "source_game_id": 17
+}

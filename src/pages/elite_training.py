@@ -42,7 +42,7 @@ fen = exercise["fen"]
 board = chess.Board(fen)
 
 st.subheader("🔲 Position")
-st.image(chess.svg.board(board=board), use_column_width=True)
+st.image(chess.svg.board(board=board, width=400), use_column_width=True)
 
 with st.expander("💡 Hint"):
     st.write(f"Suggested move: {exercise['move']}")
