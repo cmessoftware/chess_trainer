@@ -1,9 +1,9 @@
 #!/bin/bash
-# Usage: run_pipeline.sh {all | from <step> | auto_tag | analyze_errors | generate_exercises | generate_dataset [args]}
+# Usage: run_pipeline.sh {all | from <step> | auto_tag | analyze_game_tactics | generate_exercises | generate_dataset [args]}
 # Examples:
 # ./run_pipeline.sh all
 # ./run_pipeline.sh generate_exercises
-# ./run_pipeline.sh from analyze_errors
+# ./run_pipeline.sh from analyze_game_tactics
 # ./run_pipeline.sh generate_dataset --max-games 5
 
 set -e
@@ -89,8 +89,8 @@ auto_tag() {
   python scripts/auto_tag_games.py
 }
 
-analyze_errors() {
-  python scripts/analyze_errors_from_games.py
+analyze_game_tactics() {
+  python scripts/analyze_game_tactics.py
 }
 
 generate_exercises() {
@@ -112,13 +112,29 @@ export_dataset() {
   python scripts/export_dataset_to_csv.py
 }
 
+init_db() {
+  echo -e "${CYAN}🛠️ Initializing database schema...${NC}"
+  python scripts/init_db.py
+  echo -e "${GREEN}✔ Database schema initialized.${NC}"
+}
+
+clear_cache() {
+  echo -e "${CYAN}🧹 Clearing Python cache...${NC}"
+  cd /app || exit 1
+  find . -type d -name "__pycache__" -exec rm -rf {} +
+  find . -type f -name "*.pyc" -delete
+  echo -e "${GREEN}✔ Cache cleared.${NC}"
+  cd /app/src/pipeline || exit 1
+}
+
 # Full pipeline
 run_all() {
-  run_step import_games import_new_games  
+  run_step init_db init_db
+  run_step import_new_games import_new_games  
   run_step auto_tag auto_tag
-  run_step analyze_errors analyze_errors
-  run_step generate_exercises generate_exercises
   run_step generate_dataset generate_dataset
+  run_step analyze_game_tactics analyze_game_tactics
+  run_step generate_exercises generate_exercises
   run_step export_dataset export_dataset 
   echo -e "${GREEN}🎉 Pipeline executed successfully.${NC}"
 }
@@ -126,7 +142,7 @@ run_all() {
 # From a specific step
 run_from_step() {
   local found=0
-  for step in auto_tag analyze_errors generate_exercises generate_dataset export_dataset clean_db import_new_games; do
+  for step in auto_tag analyze_game_tactics generate_exercises generate_dataset export_dataset clean_db import_new_games init_db clear_cache;  do
     if [ "$found" -eq 1 ]; then run_step "$step" "$step"; fi
     if [ "$step" = "$1" ]; then found=1; run_step "$step" "$step"; fi
   done
@@ -141,13 +157,14 @@ case "$1" in
     shift
     run_from_step "$1"
     ;;
-  auto_tag|analyze_errors|generate_exercises|generate_dataset|clean_db|export_dataset|import_new_games)
+  auto_tag|analyze_game_tactics|generate_exercises|generate_dataset|clean_db|export_dataset|import_new_games|init_db|clear_cache)
     STEP="$1"
     shift
     run_step "$STEP" "$STEP" "$@"
     ;;
   *)
-    echo -e "${YELLOW}Usage:${NC} $0 {all | from <step> | auto_tag | analyze_errors | generate_exercises | generate_dataset [args] | clean_db | export_dataset | import_new_games}"
+    echo -e "${YELLOW}Usage:${NC} $0 {all | from <step> | auto_tag | analyze_game_tactics | generate_exercises | generate_dataset [args] | \
+clean_db | export_dataset | import_new_games | init_db | clear_cache}"
     exit 1
     ;;
 esac

@@ -9,6 +9,11 @@ stockfish
 
 #log files
 *.log
+logs/
+log/
+
+#datasets
+*.csv
 
 # C extensions
 *.so

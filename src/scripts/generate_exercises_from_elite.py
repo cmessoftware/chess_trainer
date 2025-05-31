@@ -5,6 +5,7 @@ import json
 import io
 import os
 from modules.utils import get_valid_paths_from_env
+from modules.tactical_db import save_tactic_to_db
 
 
 valid_paths = get_valid_paths_from_env(["STOCKFISH_PATH","CHESS_TRAINER_DB"])
@@ -57,15 +58,14 @@ for gid, pgn_text, tag_json in rows:
                 solution = move.uci()
 
                 exercise = {
-                    "exercise_id": f"elite_{exercise_id}",
+                    "id": f"elite_{exercise_id}",
                     "fen": fen,
                     "move": san,
                     "uci": solution,
                     "tags": tags,
                     "source_game_id": gid
                 }
-                with open(f"{OUTPUT_DIR}/elite_{exercise_id}.json", "w") as f:
-                    json.dump(exercise, f, indent=2)
+                save_tactic_to_db(exercise)
                 exercise_id += 1
                 if exercise_id >= MAX_EXERCISES:
                     break
@@ -74,4 +74,4 @@ for gid, pgn_text, tag_json in rows:
 
 conn.close()
 engine.quit()
-print(f"✅ {exercise_id} exercise(s) saved to {OUTPUT_DIR}/")
+print(f"✅ {exercise_id} exercise(s) saved to table tactical_exercises in {DB_PATH}")

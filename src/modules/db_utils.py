@@ -40,28 +40,6 @@ def init_db():
         """)
         conn.commit()
  
-def insert_tactical_tags_to_db(game_id: str, tags: List[Dict]):
-    try:
-        if not tags:
-            return
-
-        with sqlite3.connect(DB_PATH) as conn:
-            cursor = conn.cursor()
-            for tag in tags:
-                cursor.execute("""
-                    UPDATE features
-                    SET tactical_tags = ?, score_diff = ?
-                    WHERE game_id = ? AND move_number = ?
-                """, (
-                    tag.get("tag"),
-                    tag.get("score_diff"),
-                    game_id,
-                    tag.get("move_number")
-                ))
-            conn.commit()
-    except sqlite3.Error as e:
-        print(f"Error al insertar etiquetas tácticas en la base de datos: {e}")
-        raise
             
         
 def ensure_features_schema():
@@ -116,16 +94,27 @@ def is_game_in_db(game_id, db_path=DB_PATH):
 def compute_game_id(game):
     return hashlib.md5(str(game).encode('utf-8')).hexdigest()
 
-def load_analyzed_hashes():
+def load_analyzed_errors_hashes():
     """Devuelve los game_hash ya analizados en el módulo de errores."""
     with sqlite3.connect(DB_PATH) as conn:
         rows = conn.execute("SELECT game_id FROM analyzed_errors").fetchall()
         return set(row[0] for row in rows)
-
-def save_analyzed_hash(game_hash):
+    
+def load_analyzed_tacticals_hashes():
+    """Devuelve los game_hash ya analizados en el módulo de errores."""
+    with sqlite3.connect(DB_PATH) as conn:
+        rows = conn.execute("SELECT game_id FROM analyzed_tacticals").fetchall()
+        return set(row[0] for row in rows)
+    
+def save_analyzed_errors_hash(game_hash):
     with sqlite3.connect(DB_PATH) as conn:
         conn.execute("CREATE TABLE IF NOT EXISTS analyzed_errors (game_id TEXT PRIMARY KEY, date_analyzed TEXT DEFAULT CURRENT_TIMESTAMP)")
         conn.execute("INSERT OR IGNORE INTO analyzed_errors (game_id) VALUES (?)", (game_hash,))
+        
+def save_analyzed_tacticals_hash(game_hash):
+    with sqlite3.connect(DB_PATH) as conn:
+        conn.execute("CREATE TABLE IF NOT EXISTS analyzed_tacticals (game_id TEXT PRIMARY KEY, date_analyzed TEXT DEFAULT CURRENT_TIMESTAMP)")
+        conn.execute("INSERT OR IGNORE INTO analyzed_tacticals (game_id) VALUES (?)", (game_hash,))
 
 
 def load_processed_hashes():
