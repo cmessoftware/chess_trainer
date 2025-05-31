@@ -61,4 +61,4 @@ chmod +x run_pipeline.sh
 echo "✅ Estructura base creada. Ejecutá './run_pipeline.sh' para correr todo el flujo."
 echo "✅ Ejecutá 'pip install -r requirements.txt' si no lo hiciste aún."
 echo "✅ Agregá tus tests en la carpeta 'tests/'."
-echo "✅ Agregá tus tácticas en la carpeta 'data/tactics/elite/'."
+echo "✅ Agregá tus partidas en pgn en la carpeta 'data/games'."

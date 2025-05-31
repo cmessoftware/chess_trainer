@@ -21,6 +21,7 @@ def init_tactical_exercises_table(db_path=DB_PATH):
         """)
 
 def save_tactic_to_db(tactic, db_path=DB_PATH):
+    print(f"📝 Guardando táctica: {tactic['id']}")
     with sqlite3.connect(db_path) as conn:
         conn.execute("""
         INSERT OR REPLACE INTO tactical_exercises (id, fen, move, uci, tags, source_game_id)
@@ -33,6 +34,8 @@ def save_tactic_to_db(tactic, db_path=DB_PATH):
             json.dumps(tactic["tags"]),
             tactic.get("source_game_id")
         ))
+        
+        
 
 def bulk_import_tactics_from_json(folder_path="data/tactics", db_path=DB_PATH):
     files = [f for f in os.listdir(folder_path) if f.endswith(".json")]

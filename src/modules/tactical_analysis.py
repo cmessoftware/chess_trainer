@@ -152,7 +152,7 @@ def is_fork(board, move):
     if not piece or piece.piece_type != chess.KNIGHT:
         return False
 
-    print(f"Evaluando fork para el movimiento: {move.uci()} desde {move.from_square} a {move.to_square}")
+    print(f"Evaluando fork para el movimiento: {move.uci()} desde {chess.square_name(move.from_square)} a {chess.square_name(move.to_square)}")
     board.push(move)
     attacked = list(board.attacks(move.to_square))
     valuable_targets = [
@@ -166,7 +166,7 @@ def is_pin(board, move):
     """
     Detecta si la jugada genera una clavada (pin).
     """
-    print(f"Evaluando pin para el movimiento: {move.uci()} desde {move.from_square} a {move.to_square}")
+    print(f"Evaluando pin para el movimiento: {move.uci()} desde {chess.square_name(move.from_square)} a {chess.square_name(move.to_square)}")
     board.push(move)
     result = False
     for sq in chess.SQUARES:

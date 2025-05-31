@@ -59,6 +59,10 @@ def load_all_games_from_db():
         if game:
             all_games.append(game)
     
+    if not all_games:
+        print("❌ No se encontraron partidas en la base de datos.")
+        return []
+    # Verificar si se cargaron partidas
     print(f"🔍 Cargadas {len(all_games)} partidas desde la base de datos.")
     return all_games
 

@@ -1,4 +1,4 @@
-# CHESS TRAINER - Versión: a09349e-dirty
+# CHESS TRAINER - Versión: v0.1.1-ed2c9b1
 
 # Chess Trainer (versión base estable)
 
