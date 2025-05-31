@@ -1,3 +1,5 @@
+# CHESS TRAINER - Versión: a09349e-dirty
+
 # ♟ chess_trainer – Análisis y entrenamiento con partidas de élite
 
 Este proyecto automatiza la importación, análisis, etiquetado y entrenamiento a partir de miles de partidas de jugadores de élite (ELO >2300), combinando análisis táctico con exploración visual y generación de ejercicios.
