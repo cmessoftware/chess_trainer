@@ -1,0 +1,12 @@
+{
+  "id": "elite_28",
+  "fen": "8/8/6PK/8/8/2k5/q7/8 b - - 2 54",
+  "move": "Qg8",
+  "uci": "a2g8",
+  "tags": [
+    "sacrifice",
+    "endgame",
+    "attack_king"
+  ],
+  "source_game_id": 13
+}

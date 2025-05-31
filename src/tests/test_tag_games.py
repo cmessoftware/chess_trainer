@@ -1,5 +1,5 @@
 import pytest
-from auto_tag_games import detect_tags_from_game
+from ..modules.tagging import detect_tags_from_game
 
 simple_pgn = """[Event "Test"]
 [Site "?"]

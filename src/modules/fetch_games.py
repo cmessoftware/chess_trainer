@@ -1,75 +1,67 @@
+
+import json
 import requests
-import time
-import os
+from datetime import datetime
+from auto_logger import auto_log_module_functions
 
-class GameFetcher:
-    def __init__(self, data_dir="data/games"):
-        self.data_dir = data_dir
-        os.makedirs(data_dir, exist_ok=True)
+HEADERS = {
+    "User-Agent": "chess_trainer/1.0 (+https://github.com/cmessoftware/chess_trainer)"
+}
 
-    def fetch_chesscom_games(self, username, year, month) -> str:
-        """
-        Fetches games from Chess.com for a specific user, year, and month.
-        """
-        if not username or not year or not month:
-            raise ValueError("Username, year, and month are required.")
-        
-        # Validar el formato del año y mes
-        if not (isinstance(year, int) and isinstance(month, int)):
-            raise ValueError("Year and month must be integers.")
-        
-        if month < 1 or month > 12:
-            raise ValueError("Month must be between 1 and 12.")
-        
-        # Construir la URL para obtener las partidas
-        url = f"https://api.chess.com/pub/player/{username}/games/{year}/{month:02d}/pgn"
-        headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
-            "Accept": "application/x-chess-pgn",
-            "Accept-Language": "en-US,en;q=0.9",
-            "Referer": "https://www.chess.com/"
-        }
-        session = requests.Session()
-        session.get("https://www.chess.com", headers=headers)  # Obtener cookies
-        try:
-            response = session.get(url, headers=headers)
-            response.raise_for_status()
-            pgn_data = response.text
-            filename = f"{self.data_dir}/{username}_chesscom_{year}{month:02d}.pgn"
-            with open(filename, "w", encoding="utf-8") as f:
-                f.write(pgn_data)
-            return filename
-            
-        except requests.RequestException as e:
-            print(f"Error al obtener partidas de Chess.com para {username}: {e}")
-            return None
+def fetch_chesscom_games(username, since, until):
+    games = []
+    since_dt = datetime.strptime(since, "%Y-%m-%d")
+    until_dt = datetime.strptime(until, "%Y-%m-%d")
+    # Chess.com API provides games by month
+    months = set()
+    current = since_dt
+    while current <= until_dt:
+        months.add((current.year, current.month))
+        if current.month == 12:
+            current = current.replace(year=current.year+1, month=1)
+        else:
+            current = current.replace(month=current.month+1)
+    for year, month in months:
+        print(f"Fetching Chess.com games for {username} from {year}-{month:02d}")
+        url = f"https://api.chess.com/pub/player/{username}/games/{year}/{month:02d}"
+        resp = requests.get(url, headers=HEADERS)
+        print(f"Response status: {resp.status_code}")
+        if resp.status_code != 200:
+            continue
+        data = resp.json()
+        for game in data.get("games", []):
+            end_time = datetime.utcfromtimestamp(game["end_time"])
+            if since_dt <= end_time <= until_dt:
+                if "pgn" in game:
+                    games.append(game["pgn"])
+    return games
 
-    def fetch_lichess_games(self, username, perf_type):
-        url = f"https://lichess.org/api/games/user/{username}?max=10&rated=true&perfType={perf_type}"
-        headers = {"Accept": "application/x-chess-pgn"}
-        try:
-            response = requests.get(url, headers=headers)
-            response.raise_for_status()
-            return response.text
-        except requests.RequestException as e:
-            raise Exception(f"Error al obtener partidas de Lichess para {username}: {e}")
+def fetch_lichess_games(username, since, until):
+    # Lichess API allows filtering by date (timestamp in ms)
+    since_ts = int(datetime.strptime(since, "%Y-%m-%d").timestamp())
+    until_ts = int(datetime.strptime(until, "%Y-%m-%d").timestamp())
+    url = f"https://lichess.org/api/games/user/{username}"
+    params = {
+        "since": since_ts * 1000,
+        "until": until_ts * 1000,
+        "max": 300,  # max per request
+        "pgnInJson": True,
+        "clocks": False,
+        "evals": False,
+        "opening": False,
+    }
+    headers = {"Accept": "application/x-ndjson"}
+    resp = requests.get(url, params=params, headers=headers, stream=True)
+    games = []
+    if resp.status_code == 200:
+        for line in resp.iter_lines():
+            if line:
+                try:
+                    game = json.loads(line)
+                    if "pgn" in game:
+                        games.append(game["pgn"])
+                except Exception:
+                    continue
+    return games
 
-    def fetch_multiple_users(self, users, platform="lichess", perf_type="blitz", year=None, month=None):
-        results = []
-        for username in users:
-            if platform == "lichess":
-                pgn_data = self.fetch_lichess_games(username, perf_type)
-                if pgn_data:
-                    filename = f"{self.data_dir}/{username}_lichess_{perf_type}.pgn"
-                    with open(filename, "w", encoding="utf-8") as f:
-                        f.write(pgn_data)
-                    results.append((username, filename))
-            elif platform == "chesscom":
-                if year and month:
-                    filename = self.fetch_chesscom_games(username, year, month)
-                    if filename:
-                        results.append((username, filename))
-                else:
-                    print("Se requieren año y mes para Chess.com")
-            time.sleep(1)  # Respetar límites de tasa
-        return results
+auto_log_module_functions(locals())

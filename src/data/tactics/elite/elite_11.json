@@ -1,0 +1,10 @@
+{
+  "id": "elite_11",
+  "fen": "8/4n1p1/4p1k1/p1Pq1p1p/1p2pP2/1P2P3/P1Q2NPP/6K1 w - - 0 41",
+  "move": "g4",
+  "uci": "g2g4",
+  "tags": [
+    "sacrifice"
+  ],
+  "source_game_id": 7
+}

@@ -4,9 +4,19 @@ import chess.engine
 import json
 import io
 import os
+from modules.utils import get_valid_paths_from_env
 
-STOCKFISH_PATH = "/usr/bin/stockfish"
-DB_PATH = os.environ.get("CHESS_TRAINER_DB", "chess_trainer.db")
+
+valid_paths = get_valid_paths_from_env(["STOCKFISH_PATH","CHESS_TRAINER_DB"])
+
+print(f"Using paths: {valid_paths}")
+
+if len(valid_paths) < 2:
+    raise ValueError("Please set both STOCKFISH_PATH and DB_PATH environment variables.")
+
+STOCKFISH_PATH = valid_paths[0]
+DB_PATH = valid_paths[1]
+
 OUTPUT_DIR = "data/tactics/elite"
 TAGS = ["sacrifice", "blunder", "tactical"]
 MAX_EXERCISES = 50
@@ -17,7 +27,7 @@ engine = chess.engine.SimpleEngine.popen_uci(STOCKFISH_PATH)
 
 conn = sqlite3.connect(DB_PATH)
 cursor = conn.cursor()
-cursor.execute("SELECT id, pgn, tags FROM games")
+cursor.execute("SELECT game_id, pgn, tags FROM games")
 rows = cursor.fetchall()
 
 exercise_id = 0
@@ -47,7 +57,7 @@ for gid, pgn_text, tag_json in rows:
                 solution = move.uci()
 
                 exercise = {
-                    "id": f"elite_{exercise_id}",
+                    "exercise_id": f"elite_{exercise_id}",
                     "fen": fen,
                     "move": san,
                     "uci": solution,

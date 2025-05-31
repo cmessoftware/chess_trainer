@@ -9,9 +9,6 @@ import sqlite3
 
 DB_PATH = os.environ.get("CHESS_TRAINER_DB")
 
-if os.path.exists(DB_PATH):
-     raise FileExistsError(f"❌ Database already exists at: {DB_PATH}")
-    
 
 conn = sqlite3.connect(DB_PATH)
 
@@ -19,7 +16,7 @@ cursor = conn.cursor()
 
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS games (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    game_id TEXT PRIMARY KEY,
     white_player TEXT,
     black_player TEXT,
     white_elo INTEGER,
@@ -36,15 +33,38 @@ CREATE TABLE IF NOT EXISTS games (
 """)
 
 cursor.execute("""
-CREATE TABLE IF NOT EXISTS moves (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    game_id INTEGER,
-    move_number INTEGER,
-    san TEXT,
-    fen TEXT,
-    eval_cp INTEGER,
-    FOREIGN KEY (game_id) REFERENCES games(id)
-)
+        CREATE TABLE IF NOT EXISTS features (
+            game_id TEXT,
+            move_number INTEGER,
+            fen TEXT,
+            move_san TEXT,
+            move_uci TEXT,
+            material_balance REAL,
+            material_total REAL,
+            num_pieces INTEGER,
+            branching_factor INTEGER,
+            self_mobility INTEGER,
+            opponent_mobility INTEGER,
+            phase TEXT,
+            player_color TEXT,
+            has_castling_rights INTEGER,
+            move_number_global INTEGER,
+            is_repetition INTEGER,
+            is_low_mobility INTEGER
+        );
+    """)
+
+cursor.execute("""
+    CREATE TABLE IF NOT EXISTS analyzed_errors (
+        game_id TEXT PRIMARY KEY,
+        date_analyzed TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+""")
+
+cursor.execute("""
+    CREATE TABLE IF NOT EXISTS processed_games (
+        game_id TEXT PRIMARY KEY
+    );
 """)
 
 conn.commit()

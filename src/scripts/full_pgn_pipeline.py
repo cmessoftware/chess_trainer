@@ -1,9 +1,26 @@
 
 import os
+
+import chess
 from modules.generate_dataset_from_pgn import generate_dataset_from_pgn
-from tactical_evaluator import process_csv
+from tactical_analysis import process_csv
 from extract_move_times import extract_move_times
+from modules.db_utils import is_game_in_db, compute_game_id
 import argparse
+
+
+def run_import_if_needed(pgn_path):
+    with open(pgn_path, encoding="utf-8") as f:
+        while True:
+            game = chess.pgn.read_game(f)
+            if game is None:
+                break
+            game_id = compute_game_id(game)
+            if not is_game_in_db(game_id):
+                print(f"🆕 Importando partidas desde: {pgn_path}")
+                os.system(f"python scripts/import_games.py --input {pgn_path}")
+                return
+    print("✅ Todas las partidas ya fueron importadas.")
 
 def full_pipeline(pgn_path, output_prefix, limit_games=None):
     base_csv = f"{output_prefix}_base.csv"

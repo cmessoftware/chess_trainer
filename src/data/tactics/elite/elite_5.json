@@ -1,0 +1,11 @@
+{
+  "id": "elite_5",
+  "fen": "3q4/4Rrk1/5Npp/8/3Q1P2/P5PP/1P4K1/8 w - - 7 48",
+  "move": "Rxf7+",
+  "uci": "e7f7",
+  "tags": [
+    "sacrifice",
+    "attack_king"
+  ],
+  "source_game_id": 3
+}

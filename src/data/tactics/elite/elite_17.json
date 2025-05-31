@@ -1,0 +1,11 @@
+{
+  "id": "elite_17",
+  "fen": "8/1Pkr3p/7R/b3p2P/4B3/5P2/4K3/8 w - - 1 47",
+  "move": "Rxh7",
+  "uci": "h6h7",
+  "tags": [
+    "sacrifice",
+    "endgame"
+  ],
+  "source_game_id": 9
+}

@@ -5,6 +5,10 @@ __pycache__/
 
 #pgn games
 *.pgn
+stockfish
+
+#log files
+*.log
 
 # C extensions
 *.so
