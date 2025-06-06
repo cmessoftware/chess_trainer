@@ -1,37 +1,48 @@
+from dotenv import load_dotenv
+from db.models.games import Games
+from modules.tagging import detect_tags_from_game
 import os
-import sqlite3
 import json
-import io
 import sys
 
-# Permitir importar modules.* desde un script en src/scripts
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from sqlalchemy import create_engine, Column, Integer, Text
+from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy.exc import SQLAlchemyError
 
-from modules.tagging import detect_tags_from_game
-from dotenv import load_dotenv
+# Permitir importar modules.* desde un script en src/scripts
+sys.path.insert(0, os.path.abspath(
+    os.path.join(os.path.dirname(__file__), '..')))
+
 
 load_dotenv()
 
-DB_PATH = os.environ.get("CHESS_TRAINER_DB")
-if not DB_PATH or not os.path.exists(DB_PATH):
-    raise FileNotFoundError(f"❌ Database not found or CHESS_TRAINER_DB unset: {DB_PATH}")
+DB_URL = os.environ.get("CHESS_TRAINER_DB_URL")
+if not DB_URL:
+    raise FileNotFoundError("❌ Database URL not set in CHESS_TRAINER_DB_URL")
+
+engine = create_engine(DB_URL)
+Session = sessionmaker(bind=engine)
+Base = declarative_base()
+
 
 def apply_tags_to_all_games():
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-    cursor.execute("SELECT game_id, pgn FROM games WHERE tags IS NULL")
-    rows = cursor.fetchall()
+    session = Session()
+    try:
+        games = session.query(Games).filter(Games.tags == None).all()
+        for game in games:
+            try:
+                tags = detect_tags_from_game(game.pgn)
+                game.tags = json.dumps(tags)
+            except Exception as e:
+                print(f"⚠️ Error tagging game {game.game_id}: {e}")
+        session.commit()
+        print(f"✅ Tagged {len(games)} game(s).")
+    except SQLAlchemyError as e:
+        print(f"❌ Database error: {e}")
+        session.rollback()
+    finally:
+        session.close()
 
-    for gid, pgn in rows:
-        try:
-            tags = detect_tags_from_game(pgn)
-            tag_str = json.dumps(tags)
-            cursor.execute("UPDATE games SET tags = ? WHERE game_id = ?", (tag_str, gid))
-        except Exception as e:
-            print(f"⚠️ Error tagging game {gid}: {e}")
-    conn.commit()
-    conn.close()
-    print(f"✅ Tagged {len(rows)} game(s).")
 
 if __name__ == "__main__":
     apply_tags_to_all_games()

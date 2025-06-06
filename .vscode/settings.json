@@ -10,7 +10,10 @@
         "./src",
         "./src",
         "./src",
-        "./src/modules"
+        "./src/modules",
+        "./src",
+        "./src/db/models",
+        "./src/db"
     ],
     "python.linting.enabled": true,
     "python.linting.flake8Enabled": true,

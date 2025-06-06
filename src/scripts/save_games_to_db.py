@@ -1,3 +1,5 @@
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine, Column, String, Integer, Text, MetaData, Table, select
 import os
 import sys
 import traceback
@@ -13,15 +15,18 @@ import shutil
 
 from dotenv import load_dotenv
 
-from db.db_utils import compute_game_id
+from db.db_utils import DBUtils
 from modules.utils import show_spinner_message
 load_dotenv()  # Carga las variables del archivo .env
 
 DB_PATH = os.environ.get("CHESS_TRAINER_DB")
 PATH_PGN = os.environ.get("PATH_PGN")
+db_utils = DBUtils()
 
 if not DB_PATH or not os.path.exists(DB_PATH):
-    raise FileNotFoundError(f"❌ Database not found or CHESS_TRAINER_DB unset: {DB_PATH}")
+    raise FileNotFoundError(
+        f"❌ Database not found or CHESS_TRAINER_DB unset: {DB_PATH}")
+
 
 def extract_pgn_files(input_path):
     def is_pgn_file(name):
@@ -78,19 +83,43 @@ def extract_pgn_files(input_path):
         print(f"❌ Unsupported file or format: {input_path}")
 
 
-def parse_and_save_pgn(pgn_path, db_path=DB_PATH, max_games=None):
+def parse_and_save_pgn(pgn_path, db_url=os.environ.get("CHESS_TRAINER_DB_URL"), max_games=None):
     try:
         if not os.path.exists(pgn_path):
             print(f"❌ La ruta no existe: {pgn_path}")
             return
 
-        conn = sqlite3.connect(db_path)
-        cursor = conn.cursor()
+        # db_url example: postgresql+psycopg2://user:password@host:port/dbname
+        if not db_url:
+            print("❌ CHESS_TRAINER_DB_URL environment variable not set")
+            return
+
+        engine = create_engine(db_url)
+        metadata = MetaData()
+
+        games = Table(
+            "games", metadata,
+            Column("game_id", String, primary_key=True),
+            Column("white_player", String),
+            Column("black_player", String),
+            Column("white_elo", Integer),
+            Column("black_elo", Integer),
+            Column("result", String),
+            Column("event", String),
+            Column("site", String),
+            Column("date", String),
+            Column("eco", String),
+            Column("opening", String),
+            Column("pgn", Text),
+            extend_existing=True
+        )
+
+        Session = sessionmaker(bind=engine)
+        session = Session()
         count = 0
 
         for filename, fileobj in extract_pgn_files(pgn_path):
             print(f"📂 Procesando archivo: {filename}")
-            # fileobj may be binary or text, ensure text mode
             if hasattr(fileobj, "mode") and "b" in getattr(fileobj, "mode", ""):
                 import io
                 fileobj = io.TextIOWrapper(fileobj, encoding="utf-8")
@@ -101,66 +130,64 @@ def parse_and_save_pgn(pgn_path, db_path=DB_PATH, max_games=None):
                         break
                     headers = game.headers
                     pgn_string = str(game)
-                    game_id = compute_game_id(game)
+                    game_id = db_utils.compute_game_id(game)
 
-                    cursor.execute("SELECT 1 FROM games WHERE game_id = ?", (game_id,))
-                    if cursor.fetchone() is not None:
+                    # Check if game already exists
+                    stmt = select(games.c.game_id).where(
+                        games.c.game_id == game_id)
+                    exists = session.execute(stmt).first()
+                    if exists:
                         show_spinner_message(f"⏭️ Processing...")
                         continue
 
-                    cursor.execute("""
-                        INSERT OR IGNORE INTO  games (
-                            game_id,      
-                            white_player, 
-                            black_player, 
-                            white_elo, 
-                            black_elo, 
-                            result,
-                            event,
-                            site,
-                            date,
-                            eco,
-                            opening,
-                            pgn
-                        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                    """, (
-                        game_id,
-                        headers.get("White",      ""),
-                        headers.get("Black",      ""),
-                        int(headers.get("WhiteElo", 0)) if headers.get("WhiteElo", "").isdigit() else None,
-                        int(headers.get("BlackElo", "0")) if headers.get("BlackElo", "").isdigit() else None,
-                        headers.get("Result",     "0-0"),
-                        headers.get("Event",      ""),
-                        headers.get("Site",       ""),
-                        headers.get("Date",       ""),
-                        headers.get("ECO",        ""),
-                        headers.get("Opening",    ""),
-                        pgn_string
-                    ))
+                    ins = games.insert().values(
+                        game_id=game_id,
+                        white_player=headers.get("White", ""),
+                        black_player=headers.get("Black", ""),
+                        white_elo=int(headers.get("WhiteElo", 0)) if headers.get(
+                            "WhiteElo", "").isdigit() else None,
+                        black_elo=int(headers.get("BlackElo", "0")) if headers.get(
+                            "BlackElo", "").isdigit() else None,
+                        result=headers.get("Result", "0-0"),
+                        event=headers.get("Event", ""),
+                        site=headers.get("Site", ""),
+                        date=headers.get("Date", ""),
+                        eco=headers.get("ECO", ""),
+                        opening=headers.get("Opening", ""),
+                        pgn=pgn_string
+                    )
+                    session.execute(ins)
 
                     count += 1
-                    print(f"Importing game #{count}: {headers.get('White', 'Unknown')} vs {headers.get('Black', 'Unknown')}")
+                    print(
+                        f"Importing game #{count}: {headers.get('White', 'Unknown')} vs {headers.get('Black', 'Unknown')}")
 
                     if max_games and count >= max_games:
                         print(f"⏹ Límite de partidas alcanzado: {max_games}")
-                        conn.commit()
-                        conn.close()
+                        session.commit()
+                        session.close()
                         sys.exit(0)
-        conn.commit()
-        conn.close()
+        session.commit()
+        session.close()
         print(f"✅ {count} game(s) imported successfully.")
     except Exception as e:
-        print(f"❌ Error al procesar el archivo PGN: {e} - {traceback.format_exc()}")
+        print(
+            f"❌ Error al procesar el archivo PGN: {e} - {traceback.format_exc()}")
         if e.__cause__:
-            print("Original casue (inner exception):", e.__cause__)
+            print("Original cause (inner exception):", e.__cause__)
         sys.exit(1)
+
 
 if __name__ == "__main__":
     try:
-        parser = argparse.ArgumentParser(description="Import or list PGN games from files.")
-        parser.add_argument("--input", "-i", required=True, help="Path to PGN file, directory or compressed file (.zip, .tar, .gz, .bz2)")
-        parser.add_argument("--max", "-m", type=int, help="Maximum number of games to import")
-        parser.add_argument("--list", "-l", action="store_true", help="List PGN files inside the input without importing")
+        parser = argparse.ArgumentParser(
+            description="Import or list PGN games from files.")
+        parser.add_argument("--input", "-i", required=True,
+                            help="Path to PGN file, directory or compressed file (.zip, .tar, .gz, .bz2)")
+        parser.add_argument("--max", "-m", type=int,
+                            help="Maximum number of games to import")
+        parser.add_argument("--list", "-l", action="store_true",
+                            help="List PGN files inside the input without importing")
 
         args = parser.parse_args()
 
@@ -175,5 +202,3 @@ if __name__ == "__main__":
         print(f"❌ Error al ejecutar el script: {e}")
         print(traceback.format_exc())
         sys.exit(1)
-
-
