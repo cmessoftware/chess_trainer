@@ -1,4 +1,4 @@
-# CHESS TRAINER - Versión: v0.1.2-fa54f41
+# CHESS TRAINER - Versión: v0.1.3-495bf6f
 
 # Chess Trainer (versión base estable)
 

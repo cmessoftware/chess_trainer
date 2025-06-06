@@ -1,47 +1,33 @@
-version: "3.8"
+version: '3.8'
 
 services:
   chess_trainer:
     build:
       context: .
-    ports:
-      - "8501:8501"
-      - "5678:5678" # puerto para debug
+    container_name: chess_trainer
     volumes:
       - .:/app
-    container_name: chess_trainer_dev
+    ports:
+      - "8501:8501"  # Streamlit, o ajustá si usás otra cosa
     depends_on:
       - postgres
     environment:
-      - DATABASE_URL=postgresql://user:userpass@postgres:5432/appdb # para acceder desde dentro del contenedor
+      DATABASE_URL: postgresql://chess:chess_pass@postgres:5432/chess_trainer_db
+    env_file:
+      - .env
 
   postgres:
-    image: postgres:16
-    container_name: my_postgres
-    restart: always
+    image: postgres:13
+    container_name: chess_trainer_postgres
+    restart: unless-stopped
     environment:
-      POSTGRES_DB: appdb
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: userpass
+      POSTGRES_USER: chess
+      POSTGRES_PASSWORD: chess_pass
+      POSTGRES_DB: chess_trainer_db
     ports:
       - "5432:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
-
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: my_pgadmin
-    restart: always
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: adminpass
-    ports:
-      - "8080:80"
-    depends_on:
-      - postgres
-    volumes:
-      - pgadmin_data:/var/lib/pgadmin
+      - chess_pgdata:/var/lib/postgresql/data
 
 volumes:
-  pgdata:
-  pgadmin_data:
+  chess_pgdata:

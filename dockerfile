@@ -1,14 +1,15 @@
 # Usar una imagen base de Python
 FROM python:3.11-bookworm
 
-# Copiamos el entrypoint antes para que tenga permisos
-COPY entrypoint.sh /app/entrypoint.sh
+# Upgrade all system packages to reduce vulnerabilities
+RUN apt-get update && apt-get upgrade -y && rm -rf /var/lib/apt/lists/*
+
 
 # Instalar dependencias del sistema
 RUN apt-get update && apt-get install -y wget tar && apt-get install -y git && rm -rf /var/lib/apt/lists/*
 
 # Damos permisos de ejecución al entrypoint
-RUN chmod +x /app/entrypoint.sh
+#RUN chmod +x /app/entrypoint.sh
 
 # Establecer directorio de trabajo
 WORKDIR /app
@@ -41,4 +42,4 @@ RUN pip install debugpy
 # Exponer puerto para la interfaz web
 EXPOSE 8501
 
-    
+CMD ["streamlit", "run", "src/app.py", "--server.port=8501", "--server.address=0.0.0.0"]

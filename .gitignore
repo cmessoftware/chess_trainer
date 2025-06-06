@@ -9,6 +9,9 @@ stockfish
 games/
 data/
 
+#db files
+*.db
+
 #log files
 *.log
 logs/
