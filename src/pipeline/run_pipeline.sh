@@ -108,7 +108,7 @@ generate_dataset() {
 }
 
 clean_db() {
-  python db/clean_db.py
+  python db/truncate_postgres_tables.py
 }
 
 #TODO: No migra tags y score_diff a CSV.
