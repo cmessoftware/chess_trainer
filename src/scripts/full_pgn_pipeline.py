@@ -2,10 +2,9 @@
 import os
 
 import chess
-from modules.generate_dataset_from_pgn import generate_dataset_from_pgn
 from tactical_analysis import process_csv
 from extract_move_times import extract_move_times
-from modules.db_utils import is_game_in_db, compute_game_id
+from db.db_utils import is_game_in_db, compute_game_id
 import argparse
 
 

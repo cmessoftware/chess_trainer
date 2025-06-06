@@ -6,7 +6,7 @@ graph TD
   DB --> C[auto_tag_games.py]
   DB --> D[analyze_errors_from_games.py]
   DB --> E[generate_exercises_from_elite.py]
-  DB --> F[generate_full_report.py]
+  DB --> F[generate_dataset.py]
 
   C --> M1[[modules/tagging.py]]
   D --> M2[[modules/stockfish_engine.py]]

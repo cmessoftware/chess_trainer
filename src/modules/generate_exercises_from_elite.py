@@ -5,7 +5,7 @@ import sqlite3
 import chess.pgn
 from modules.exercise_utils import generate_exercise_from_game
 from modules.pgn_utils import hash_game
-from modules.db_utils import init_db, load_processed_hashes, save_processed_hash
+from db.db_utils import init_db, load_processed_exercises_hashes, save_processed_exercises_hash
 from modules.config_utils import get_valid_paths_from_env
 
 DB_PATH = get_valid_paths_from_env(["CHESS_TRAINER_DB"])[0] 
@@ -24,7 +24,7 @@ def init_db():
 
 def main():
     init_db()
-    processed = load_processed_hashes()
+    processed = load_processed_exercises_hashes()
     for fname in os.listdir(PGN_DIR):
         if not fname.endswith(".pgn"):
             continue
@@ -34,7 +34,7 @@ def main():
             if h in processed:
                 continue
             generate_exercise_from_game(game)
-            save_processed_hash(h)
+            save_processed_exercises_hash(h)
 
 if __name__ == "__main__":
     main()

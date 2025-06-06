@@ -36,18 +36,6 @@ if [ ! -f "$CHESS_TRAINER_DB" ]; then
   echo -e "${GREEN}✔ Database created at $CHESS_TRAINER_DB${NC}"
 fi
 
-# Ensure schema
-echo -e "${CYAN}🛠 Checking database schema...${NC}"
-python /app/src/scripts/init_db.py
-
-# Check for 'games' table
-TABLE_EXISTS=$(sqlite3 "$CHESS_TRAINER_DB" "SELECT name FROM sqlite_master WHERE type='table' AND name='games';")
-[ "$TABLE_EXISTS" != "games" ] && {
-  echo -e "${RED}❌ 'games' table is missing.${NC}"
-  sqlite3 "$CHESS_TRAINER_DB" ".tables"
-  exit 1
-}
-
 cd /app/src || exit 1
 
 # Step runner
@@ -73,7 +61,22 @@ run_step() {
 
 # Step implementations
 
-import_new_games() {
+
+check_db() {
+  echo -e "${CYAN}🔍 Checking database connection...${NC}"
+  # Ensure schema
+  echo -e "${CYAN}🛠 Checking database schema...${NC}"
+  python /app/src/scripts/init_db.py
+  if [ $? -eq 0 ]; then
+    echo -e "${GREEN}✔ Database connection is OK.${NC}"
+  else
+    echo -e "${RED}❌ Database connection failed.${NC}"
+    exit 1
+  fi
+}
+
+
+import_games() {
   echo -e "${CYAN}🔍 Verificando si hay partidas nuevas para importar...${NC}"
   python scripts/save_games_to_db.py --input "$PGN_PATH"
   if [ $? -eq 0 ]; then
@@ -90,7 +93,7 @@ auto_tag() {
 }
 
 analyze_game_tactics() {
-  python scripts/analyze_game_tactics.py
+  python scripts/analyze_game_tactics_parallel.py
 }
 
 generate_exercises() {
@@ -98,18 +101,56 @@ generate_exercises() {
 }
 
 generate_dataset() {
-  python scripts/generate_full_report.py \
+  python scripts/generate_dataset.py \
     --input-dir "$PGN_PATH" \
     --output /app/src/data/training_dataset.csv \
     "$@"
 }
 
 clean_db() {
-  python scripts/clean_db.py
+  python db/clean_db.py
 }
 
+#TODO: No migra tags y score_diff a CSV.
 export_dataset() {
   python scripts/export_dataset_to_csv.py
+}
+
+get_games() {
+  echo -e "${CYAN}📥 Importing new games from remotes servers...${NC}"
+  # python scripts/generate_pgn_from_chess_servers.py "$@"
+  # Example usage:
+  python scripts/generate_pgn_from_chess_servers.py --server lichess.org --users cmess4401 cmess1315 --since 2025-01-01
+  # Validate required parameters for generate_pgn_from_chees_servers.py
+  if [ $# -lt 2 ]; then
+    echo -e "${YELLOW}Usage:${NC} $0 get_games <server> <username> [options]"
+    echo -e "${YELLOW}Example:${NC} $0 get_games lichess myuser --max-games 10"
+    exit 1
+  fi
+  echo -e "${GREEN}✔ Games imported successfully.${NC}"
+}
+
+inspect_pgn() {
+  echo -e "${CYAN}🔍 Inspecting PGN files...${NC}"
+  python scripts/inspect_pgn.py --output "$PGN_PATH" 
+  echo -e "${GREEN}✔ PGN inspection completed.${NC}"
+}
+
+inspect_pgn_zip() {
+  echo -e "${CYAN}🔍 Inspecting PGN files...${NC}"
+  python scripts/inspect_pgn_cli.py "$@"
+  echo -e "${GREEN}✔ PGN inspection completed.${NC}"
+}
+
+clean_games() {
+  echo -e "${CYAN}🧹 Cleaning PGN files...${NC}"
+  read -p "$(echo -e "${YELLOW}❓ Do you want clean ALL pgn files? If yes do you must import games again (get_games command) (y/n): ${NC}")" confirm
+  if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
+    echo -e "${RED}⏹ Pipeline execution stopped by user.${NC}"
+    exit 0
+  fi
+  rm -r "$PGN_PATH"
+  echo -e "${GREEN}✔ PGN files cleaned.${NC}"
 }
 
 init_db() {
@@ -118,7 +159,7 @@ init_db() {
   echo -e "${GREEN}✔ Database schema initialized.${NC}"
 }
 
-clear_cache() {
+clean_cache() {
   echo -e "${CYAN}🧹 Clearing Python cache...${NC}"
   cd /app || exit 1
   find . -type d -name "__pycache__" -exec rm -rf {} +
@@ -127,22 +168,58 @@ clear_cache() {
   cd /app/src/pipeline || exit 1
 }
 
+run_sqlite_web() {
+  echo -e "${CYAN}🌐 Starting SQLite Web...${NC}"
+  python -m sqlite_web /app/src/data/chess_trainer.db -H 0.0.0.0 -p 8081
+}
+
 # Full pipeline
-run_all() {
+run_all() { 
   run_step init_db init_db
-  run_step import_new_games import_new_games  
+  [ $? -ne 0 ] && { echo -e "${RED}❌ Step 'init_db' failed. Stopping pipeline.${NC}"; exit 1; }
+
+  run_step clean_cache clean_cache
+  [ $? -ne 0 ] && { echo -e "${RED}❌ Step 'clean_cache' failed. Stopping pipeline.${NC}"; exit 1; }
+
+  run_step get_games get_games
+  [ $? -ne 0 ] && { echo -e "${RED}❌ Step 'get_games' failed. Stopping pipeline.${NC}"; exit 1; }
+
+  run_step import_games import_games  
+  [ $? -ne 0 ] && { echo -e "${RED}❌ Step 'import_games' failed. Stopping pipeline.${NC}"; exit 1; }
+
+  run_step inspect_pgn inspect_pgn
+  [ $? -ne 0 ] && { echo -e "${RED}❌ Step 'inspect_pgn' failed. Stopping pipeline.${NC}"; exit 1; }
+
   run_step auto_tag auto_tag
+  [ $? -ne 0 ] && { echo -e "${RED}❌ Step 'auto_tag' failed. Stopping pipeline.${NC}"; exit 1; }
+
   run_step generate_dataset generate_dataset
+  [ $? -ne 0 ] && { echo -e "${RED}❌ Step 'generate_dataset' failed. Stopping pipeline.${NC}"; exit 1; }
+
   run_step analyze_game_tactics analyze_game_tactics
+  [ $? -ne 0 ] && { echo -e "${RED}❌ Step 'analyze_game_tactics' failed. Stopping pipeline.${NC}"; exit 1; }
+
   run_step generate_exercises generate_exercises
+  [ $? -ne 0 ] && { echo -e "${RED}❌ Step 'generate_exercises' failed. Stopping pipeline.${NC}"; exit 1; }
+
   run_step export_dataset export_dataset 
+  [ $? -ne 0 ] && { echo -e "${RED}❌ Step 'export_dataset' failed. Stopping pipeline.${NC}"; exit 1; }
+
+  read -p "$(echo -e "${YELLOW}❓ run sqlite_web? (y/n): ${NC}")" confirm
+  if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
+    echo -e "${RED}⏹ Pipeline execution stopped by user.${NC}"
+    exit 0
+  fi
+  run_step run_sqlite_web run_sqlite_web
+  [ $? -ne 0 ] && { echo -e "${RED}❌ Step 'run_sqlite_web' failed. Stopping pipeline.${NC}"; exit 1; }
+
   echo -e "${GREEN}🎉 Pipeline executed successfully.${NC}"
 }
 
 # From a specific step
 run_from_step() {
   local found=0
-  for step in auto_tag analyze_game_tactics generate_exercises generate_dataset export_dataset clean_db import_new_games init_db clear_cache;  do
+  for step in auto_tag analyze_game_tactics generate_exercises generate_dataset export_dataset clean_db import_games init_db clean_cache run_sqlite_web clean_games inspect_pgn_zip check_db;  do
     if [ "$found" -eq 1 ]; then run_step "$step" "$step"; fi
     if [ "$step" = "$1" ]; then found=1; run_step "$step" "$step"; fi
   done
@@ -157,14 +234,14 @@ case "$1" in
     shift
     run_from_step "$1"
     ;;
-  auto_tag|analyze_game_tactics|generate_exercises|generate_dataset|clean_db|export_dataset|import_new_games|init_db|clear_cache)
+  auto_tag|analyze_game_tactics|generate_exercises|generate_dataset|clean_db|export_dataset|import_games|init_db|clean_cache|get_games|inspect_pgn|run_sqlite_web|clean_games|inspect_pgn_zip|check_db)
     STEP="$1"
     shift
     run_step "$STEP" "$STEP" "$@"
     ;;
   *)
     echo -e "${YELLOW}Usage:${NC} $0 {all | from <step> | auto_tag | analyze_game_tactics | generate_exercises | generate_dataset [args] | \
-clean_db | export_dataset | import_new_games | init_db | clear_cache}"
+clean_db | export_dataset | import_games | init_db | clean_cache | get_games | inspect_pgn | run_sqlite_web|clean_games| inspect_pgn_zip| check_db}"
     exit 1
     ;;
 esac

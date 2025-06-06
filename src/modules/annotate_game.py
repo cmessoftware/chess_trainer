@@ -1,6 +1,6 @@
 # annotate_game.py
 import chess
-from modules.stockfish_utils import get_engine, evaluate, best_move
+from modules.stockfish_analysis import get_engine, evaluate, best_move
 from modules.commentator import comment_move  # si usás commentator como complemento
 
 def annotate_game(game, use_stockfish=True, use_commentator=False, stockfish_depth=15):

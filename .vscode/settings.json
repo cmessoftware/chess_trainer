@@ -4,7 +4,13 @@
         "./src/modules",
         "./src/modules/validations",
         "./src",
-        "./src"
+        "./src",
+        "./src",
+        "./src/config",
+        "./src",
+        "./src",
+        "./src",
+        "./src/modules"
     ],
     "python.linting.enabled": true,
     "python.linting.flake8Enabled": true,

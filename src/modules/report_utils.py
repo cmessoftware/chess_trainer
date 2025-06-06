@@ -1,5 +1,6 @@
 import os
 import chess
+from modules.feature_engineering import is_center_controlled, is_pawn_endgame
 
 
 def extract_features_from_position(board, move):
@@ -40,7 +41,7 @@ def extract_features_from_position(board, move):
         "endgame"
     )
     is_low_mobility = int(self_mobility <= 5)
-
+       
     return {
         "fen": fen,
         "move_san": move_san,
@@ -56,8 +57,12 @@ def extract_features_from_position(board, move):
         "has_castling_rights": has_castling_rights,
         "move_number": move_number,
         "is_repetition": is_repetition,
-        "is_low_mobility": is_low_mobility
+        "is_low_mobility": is_low_mobility,
+        "is_center_controlled": int(is_center_controlled(board, player_color)),
+        "is_pawn_endgame": is_pawn_endgame(board)
     }
+
+
 
 def generate_features_from_game(game):
     rows = []
@@ -92,12 +97,12 @@ def generate_features_from_game(game):
 
 
 
-def check_pgn_headers(directorio):
-    resultados = []
-    for archivo in os.listdir(directorio):
-        if archivo.endswith(".pgn"):
-            ruta = os.path.join(directorio, archivo)
-            with open(ruta, "r", encoding="utf-8") as f:
+def check_pgn_headers(directory):
+    results = []
+    for filename in os.listdir(directory):
+        if filename.endswith(".pgn"):
+            path = os.path.join(directory, filename)
+            with open(path, "r", encoding="utf-8") as f:
                 while True:
                     game = chess.pgn.read_game(f)
                     if game is None:
@@ -105,8 +110,8 @@ def check_pgn_headers(directorio):
                     setup = game.headers.get("SetUp", "0")
                     fen = game.headers.get("FEN", None)
                     if setup == "1" and fen:
-                        resultados.append((archivo, game.headers.get("Event", ""), fen))
-    return resultados
+                        results.append((filename, game.headers.get("Event", ""), fen))
+    return results
 
 # Usalo así:
 # resultados = check_pgn_headers("data/games")

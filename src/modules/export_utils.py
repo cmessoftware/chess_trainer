@@ -1,4 +1,3 @@
-
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
@@ -37,3 +36,8 @@ def export_summary_to_pdf(df, filename="eda_summary.pdf"):
         plt.ylabel("Cantidad de Jugadas")
         pdf.savefig()
         plt.close()
+
+if __name__ == "__main__":
+    # Example usage: replace 'your_data.csv' with your actual CSV file
+    df = pd.read_csv("your_data.csv")
+    export_summary_to_pdf(df)

@@ -5,9 +5,9 @@ import streamlit.components.v1 as components
 from chess.svg import Arrow
 import chess.engine
 
-def evaluate_position_with_stockfish(board, engine_path="engines/stockfish", depth=15):
+def evaluate_position_with_stockfish(board, engine_path="engines/stockfish", depth=15,multipv=1):
     with chess.engine.SimpleEngine.popen_uci(engine_path) as engine:
-        info = engine.analyse(board, chess.engine.Limit(depth=depth))
+        info = engine.analyse(board, chess.engine.Limit(depth=depth),multipv=multipv)
         score = info["score"].white() if board.turn == chess.WHITE else info["score"].black()
         best_move = info.get("pv", [None])[0]
         return score, best_move

@@ -4,16 +4,16 @@ def assign_tactical_label(row):
     forced = row.get("is_forced_move", False)
 
     if mate_threat and diff >= 100 and not forced:
-        return "Brillante"
+        return "Brilliant"
     elif forced:
-        return "Forzada"
+        return "Forced"
     elif diff <= -200:
         return "Blunder"
     elif diff <= -80:
-        return "Error"
+        return "Mistake"
     elif diff <= -20:
-        return "Imprecisa"
+        return "Inaccuracy"
     elif diff >= 20:
-        return "Excelente"
+        return "Excellent"
     else:
-        return "Aceptable"
+        return "Acceptable"

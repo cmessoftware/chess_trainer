@@ -2,7 +2,7 @@
 import json
 import requests
 from datetime import datetime
-from auto_logger import auto_log_module_functions
+from decorators.auto_logger import auto_log_module_functions
 
 HEADERS = {
     "User-Agent": "chess_trainer/1.0 (+https://github.com/cmessoftware/chess_trainer)"

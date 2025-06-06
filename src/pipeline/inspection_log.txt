@@ -1,0 +1,85 @@
+2025-06-05 17:52:20,202 - INFO - Archivo: 5dc0ba190ebc5904493b0110.zip
+  🧾 PGNs encontrados: 143
+  ♟️ Total de partidas: 33786
+  ⏱️ Estimado de importación: 1689.3 s
+  ⏱️ Estimado de análisis táctico: 5067.9 s
+  ✅ Completado en 196.0 s
+2025-06-05 17:52:57,376 - INFO - Archivo: 5dc408e20ebc5902de59148b.zip
+  🧾 PGNs encontrados: 78
+  ♟️ Total de partidas: 7671
+  ⏱️ Estimado de importación: 383.6 s
+  ⏱️ Estimado de análisis táctico: 1150.7 s
+  ✅ Completado en 37.2 s
+2025-06-05 17:54:02,394 - INFO - Archivo: 5dc53b140ebc5902562bb68d.zip
+  🧾 PGNs encontrados: 53
+  ♟️ Total de partidas: 13250
+  ⏱️ Estimado de importación: 662.5 s
+  ⏱️ Estimado de análisis táctico: 1987.5 s
+  ✅ Completado en 65.0 s
+2025-06-05 17:56:56,316 - INFO - Archivo: 5dc56fba0ebc5902562bba71.zip
+  🧾 PGNs encontrados: 178
+  ♟️ Total de partidas: 35187
+  ⏱️ Estimado de importación: 1759.3 s
+  ⏱️ Estimado de análisis táctico: 5278.1 s
+  ✅ Completado en 173.9 s
+2025-06-05 17:59:39,877 - INFO - Archivo: 5dc636e00ebc5902562bccba.zip
+  🧾 PGNs encontrados: 209
+  ♟️ Total de partidas: 33219
+  ⏱️ Estimado de importación: 1661.0 s
+  ⏱️ Estimado de análisis táctico: 4982.9 s
+  ✅ Completado en 163.6 s
+2025-06-05 18:00:03,331 - INFO - Archivo: 5dc683cc0ebc5902562bd1ee.zip
+  🧾 PGNs encontrados: 19
+  ♟️ Total de partidas: 4671
+  ⏱️ Estimado de importación: 233.6 s
+  ⏱️ Estimado de análisis táctico: 700.6 s
+  ✅ Completado en 23.5 s
+2025-06-05 18:00:08,486 - INFO - Archivo: 5dc6eabb0ebc5902562bd5fb.zip
+  🧾 PGNs encontrados: 5
+  ♟️ Total de partidas: 1003
+  ⏱️ Estimado de importación: 50.1 s
+  ⏱️ Estimado de análisis táctico: 150.4 s
+  ✅ Completado en 5.2 s
+2025-06-05 18:06:29,313 - INFO - Archivo: 5dc8050d0ebc5902ea57f491.zip
+  🧾 PGNs encontrados: 360
+  ♟️ Total de partidas: 77327
+  ⏱️ Estimado de importación: 3866.3 s
+  ⏱️ Estimado de análisis táctico: 11599.0 s
+  ✅ Completado en 380.8 s
+2025-06-05 18:08:14,682 - INFO - Archivo: 5dc813070ebc5902ea57f493.zip
+  🧾 PGNs encontrados: 80
+  ♟️ Total de partidas: 20000
+  ⏱️ Estimado de importación: 1000.0 s
+  ⏱️ Estimado de análisis táctico: 3000.0 s
+  ✅ Completado en 105.4 s
+2025-06-05 18:09:53,669 - INFO - Archivo: 5dc8131e0ebc5902ea57f495.zip
+  🧾 PGNs encontrados: 80
+  ♟️ Total de partidas: 20000
+  ⏱️ Estimado de importación: 1000.0 s
+  ⏱️ Estimado de análisis táctico: 3000.0 s
+  ✅ Completado en 99.0 s
+2025-06-05 18:10:13,674 - INFO - Archivo: 5dc85f370ebc5902ea57f8ff.zip
+  🧾 PGNs encontrados: 27
+  ♟️ Total de partidas: 3846
+  ⏱️ Estimado de importación: 192.3 s
+  ⏱️ Estimado de análisis táctico: 576.9 s
+  ✅ Completado en 20.0 s
+2025-06-05 18:11:06,429 - INFO - Archivo: 5dc8b6330ebc5902ea57ff23.zip
+  🧾 PGNs encontrados: 139
+  ♟️ Total de partidas: 9700
+  ⏱️ Estimado de importación: 485.0 s
+  ⏱️ Estimado de análisis táctico: 1455.0 s
+  ✅ Completado en 52.8 s
+2025-06-05 18:14:14,024 - INFO - Archivo: 5de4adca5e868d334be516c1.zip
+  🧾 PGNs encontrados: 174
+  ♟️ Total de partidas: 34027
+  ⏱️ Estimado de importación: 1701.3 s
+  ⏱️ Estimado de análisis táctico: 5104.1 s
+  ✅ Completado en 187.6 s
+2025-06-05 18:14:14,024 - INFO - 
+📊 RESUMEN FINAL
+  Archivos ZIP procesados: 13
+  Archivos PGN totales: 1545
+  Partidas totales: 293687
+  ⏱️ Tiempo estimado total de importación: 14684.3 s
+  ⏱️ Tiempo estimado total de análisis táctico: 44053.1 s

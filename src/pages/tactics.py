@@ -1,5 +1,5 @@
 import streamlit as st
-from modules.tactics_loader import load_all_tactics
+from modules.tactical_analysis import load_all_tactics
 from pages.tactics_viewer import show_interactive_line_viewer
 
 st.title("Entrenamiento táctico")

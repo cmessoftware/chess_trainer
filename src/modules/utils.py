@@ -1,9 +1,11 @@
 # utils.py - Funciones auxiliares
 
+import base64
+from io import BytesIO
 import os
 import itertools
 import sys
-import time
+import streamlit as st
 
 
 def get_valid_paths_from_env(var_names):
@@ -43,3 +45,9 @@ def normalize_score_cp(score_cp, cap=300):
     """
     score_cp = max(min(score_cp, cap), -cap)
     return (score_cp / cap) * 100
+
+def render_svg_board(svg: str):
+    """Renderiza un string SVG como tablero en Streamlit usando HTML embebido."""
+    b64 = base64.b64encode(svg.encode("utf-8")).decode("utf-8")
+    html = f'<img src="data:image/svg+xml;base64,{b64}" style="max-width: 400px; width: 100%;" />'
+    st.markdown(html, unsafe_allow_html=True)

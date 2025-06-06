@@ -3,6 +3,7 @@
 # Crear carpetas necesarias
 mkdir -p .github/workflows
 mkdir -p data/tactics/elite
+mkdir -p data/studies
 mkdir -p tests
 
 # Crear requirements.txt básico

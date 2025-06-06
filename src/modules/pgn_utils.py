@@ -1,3 +1,4 @@
+from typing import Dict, List
 import chess.pgn
 import io
 from pathlib import Path
@@ -83,6 +84,40 @@ def load_all_games_from_dir(directory):
 def parse_pgn_file(path):
     return load_multiple_games_from_file(path)
 
+
+def pgn_to_position_sequence(pgn_text: str, critical_fens: List[str] = None) -> List[Dict]:
+    """
+    Convierte un PGN en una secuencia de posiciones con FENs y marca las críticas.
+
+    :param pgn_text: Contenido completo del PGN como string
+    :param critical_fens: Lista opcional de FENs consideradas críticas
+    :return: Lista de diccionarios con 'fen', 'comment' y 'is_critical'
+    """
+    critical_fens = set(critical_fens or [])
+    game = chess.pgn.read_game(io.StringIO(pgn_text))
+    board = game.board()
+    position_sequence = []
+
+    for move in game.mainline_moves():
+        fen_before_move = board.fen()
+        is_critical = fen_before_move in critical_fens
+        position_sequence.append({
+            "fen": fen_before_move,
+            "comment": "",
+            "is_critical": is_critical
+        })
+        board.push(move)
+
+    # Agregar la posición final si se desea
+    position_sequence.append({
+        "fen": board.fen(),
+        "comment": "",
+        "is_critical": board.fen() in critical_fens
+    })
+
+    return position_sequence
+
+
 # 📝 Extraer posiciones (FENs) de todas las jugadas
 def load_pgn_positions(path):
     positions = []
@@ -107,3 +142,45 @@ def game_to_string(game):
 def save_game_to_file(game, path):
     with open(path, "w", encoding="utf-8") as f:
         print(game, file=f)
+
+def count_mainline_moves(game):
+    return len(list(game.mainline_moves()))
+
+def count_all_moves_with_variants(game):
+    def recursive_count(node):
+        count = len(node.variations)
+        for variation in node.variations:
+            count += recursive_count(variation)
+        return count
+
+    return recursive_count(game)
+
+import chess.pgn
+
+def extract_all_moves_with_variants(game):
+    moves = []
+
+    def recurse(node, move_number=1, variant_depth=0, board=None):
+        if board is None:
+            board = node.board()
+
+        for var in node.variations:
+            new_board = board.copy()
+            new_board.push(var.move)
+            moves.append({
+                "move_number": move_number,
+                "variant_depth": variant_depth,
+                "san": board.san(var.move),
+                "uci": var.move.uci(),
+                "fen": board.fen()
+            })
+            recurse(var, move_number + 1, variant_depth + 1, new_board)
+
+    recurse(game)
+    return moves
+
+def get_game_headers(game):
+    headers = {}
+    for key, value in game.headers.items():
+        headers[key] = value
+    return headers
