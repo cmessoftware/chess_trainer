@@ -51,8 +51,19 @@ run_step() {
   {
     echo "🕒 $(date) - Starting step: $STEP_NAME"
     $STEP_FUNC "$@"
-    echo "✅ Finished successfully"
+    STATUS=$?
+    if [ $STATUS -eq 0 ]; then
+      echo "✅ Finished successfully"
+    else
+      echo "❌ Step failed with exit code $STATUS"
+    fi
+    exit $STATUS
   } 2>&1 | tee "$LOG_FILE"
+  STATUS=${PIPESTATUS[0]}
+  if [ $STATUS -ne 0 ]; then
+    echo -e "${RED}❌ $STEP_NAME failed. Check log: $LOG_FILE${NC}"
+    exit $STATUS
+  fi
 
   END=$(date +%s)
   DURATION=$((END - START))
@@ -78,7 +89,7 @@ check_db() {
 
 import_games() {
   echo -e "${CYAN}🔍 Verificando si hay partidas nuevas para importar...${NC}"
-  python scripts/import_games.py --input "$PGN_PATH"
+  python scripts/import_games_parallel.py --input "$PGN_PATH"
   if [ $? -eq 0 ]; then
     echo -e "${GREEN}✔ Nuevas partidas importadas correctamente.${NC}"
   else
