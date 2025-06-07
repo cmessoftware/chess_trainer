@@ -1,6 +1,6 @@
 ```mermaid
 graph TD
-  A[PGN Files<br>src/data/games/*.pgn] --> B[save_games_to_db.py]
+  A[PGN Files<br>src/data/games/*.pgn] --> B[import_games.py]
   B --> DB[(SQLite DB<br>chess_trainer.db)]
 
   DB --> C[auto_tag_games.py]

@@ -1,13 +1,15 @@
-from sqlalchemy import Column, Integer, String, Float, DateTime, LargeBinary
-from sqlalchemy.orm import declarative_base
+# db/models/games.py
 
-Base = declarative_base()
+from sqlalchemy import Column, String, Integer
+from db.database import Base
+from db.session import get_schema
 
 
 class Games(Base):
     __tablename__ = 'games'
+    __table_args__ = {"schema": get_schema()}
 
-    game_id = Column(String, primary_key=True)
+    game_id = Column(String, primary_key=True)  # ⬆️ Clave primaria obligatoria
     white_player = Column(String)
     black_player = Column(String)
     white_elo = Column(Integer)
@@ -19,4 +21,3 @@ class Games(Base):
     eco = Column(String)
     opening = Column(String)
     pgn = Column(String)
-    tags = Column(String)

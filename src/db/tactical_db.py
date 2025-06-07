@@ -9,17 +9,17 @@ from sqlalchemy import create_engine, Column, String, Integer, Text, JSON, updat
 from sqlalchemy.orm import sessionmaker, declarative_base
 from sqlalchemy.exc import SQLAlchemyError
 from db.db_utils import DBUtils
-from pages.export_exercises import TacticalExercise
+from db.models.tactical_exercises import Tactical_exercises
 dotenv.load_dotenv()
 
 # Debe ser una URL de conexión de PostgreSQL
-DB_URL = os.environ.get("CHESS_TRAINER_DB")
+DB_URL = os.environ.get("CHESS_TRAINER_DB_URL")
 
 engine = create_engine(DB_URL)
 Session = sessionmaker(bind=engine)
 Base = declarative_base()
 
-db_utils = DBUtils(DB_URL)
+db_utils = DBUtils()
 
 
 def update_features_tags_and_score_diff(game_id: str, tags: List[Dict]):
