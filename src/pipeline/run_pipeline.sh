@@ -78,7 +78,7 @@ check_db() {
 
 import_games() {
   echo -e "${CYAN}🔍 Verificando si hay partidas nuevas para importar...${NC}"
-  python scripts/save_games_to_db.py --input "$PGN_PATH"
+  python scripts/import_games.py --input "$PGN_PATH"
   if [ $? -eq 0 ]; then
     echo -e "${GREEN}✔ Nuevas partidas importadas correctamente.${NC}"
   else
