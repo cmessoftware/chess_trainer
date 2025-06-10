@@ -1,10 +1,10 @@
 #!/bin/bash
-# Usage: run_pipeline.sh {all | from <step> | auto_tag | analyze_game_tactics | generate_exercises | generate_dataset [args]}
+# Usage: run_pipeline.sh {all | from <step> | auto_tag | analyze_game_tactics | generate_exercises | generate_features [args]}
 # Examples:
 # ./run_pipeline.sh all
 # ./run_pipeline.sh generate_exercises
 # ./run_pipeline.sh from analyze_game_tactics
-# ./run_pipeline.sh generate_dataset --max-games 5
+# ./run_pipeline.sh generate_features --max-games 5
 
 set -e
 
@@ -111,10 +111,8 @@ generate_exercises() {
   python scripts/generate_exercises_from_elite.py
 }
 
-generate_dataset() {
-  python scripts/generate_dataset.py \
-    --input-dir "$PGN_PATH" \
-    --output /app/src/data/training_dataset.csv \
+generate_features() {
+  python scripts/generate_features_parallel.py \
     "$@"
 }
 
@@ -201,11 +199,8 @@ run_all() {
   run_step inspect_pgn inspect_pgn
   [ $? -ne 0 ] && { echo -e "${RED}❌ Step 'inspect_pgn' failed. Stopping pipeline.${NC}"; exit 1; }
 
-  run_step auto_tag auto_tag
-  [ $? -ne 0 ] && { echo -e "${RED}❌ Step 'auto_tag' failed. Stopping pipeline.${NC}"; exit 1; }
-
-  run_step generate_dataset generate_dataset
-  [ $? -ne 0 ] && { echo -e "${RED}❌ Step 'generate_dataset' failed. Stopping pipeline.${NC}"; exit 1; }
+  run_step generate_features generate_features
+  [ $? -ne 0 ] && { echo -e "${RED}❌ Step 'generate_features' failed. Stopping pipeline.${NC}"; exit 1; }
 
   run_step analyze_game_tactics analyze_game_tactics
   [ $? -ne 0 ] && { echo -e "${RED}❌ Step 'analyze_game_tactics' failed. Stopping pipeline.${NC}"; exit 1; }
@@ -230,7 +225,7 @@ run_all() {
 # From a specific step
 run_from_step() {
   local found=0
-  for step in auto_tag analyze_game_tactics generate_exercises generate_dataset export_dataset clean_db import_games init_db clean_cache run_sqlite_web clean_games inspect_pgn_zip check_db;  do
+  for step in auto_tag analyze_game_tactics generate_exercises generate_features export_dataset clean_db import_games init_db clean_cache run_sqlite_web clean_games inspect_pgn_zip check_db;  do
     if [ "$found" -eq 1 ]; then run_step "$step" "$step"; fi
     if [ "$step" = "$1" ]; then found=1; run_step "$step" "$step"; fi
   done
@@ -245,13 +240,13 @@ case "$1" in
     shift
     run_from_step "$1"
     ;;
-  auto_tag|analyze_game_tactics|generate_exercises|generate_dataset|clean_db|export_dataset|import_games|init_db|clean_cache|get_games|inspect_pgn|run_sqlite_web|clean_games|inspect_pgn_zip|check_db)
+  auto_tag|analyze_game_tactics|generate_exercises|generate_features|clean_db|export_dataset|import_games|init_db|clean_cache|get_games|inspect_pgn|run_sqlite_web|clean_games|inspect_pgn_zip|check_db)
     STEP="$1"
     shift
     run_step "$STEP" "$STEP" "$@"
     ;;
   *)
-    echo -e "${YELLOW}Usage:${NC} $0 {all | from <step> | auto_tag | analyze_game_tactics | generate_exercises | generate_dataset [args] | \
+    echo -e "${YELLOW}Usage:${NC} $0 {all | from <step> | auto_tag | analyze_game_tactics | generate_exercises | generate_features [args] | \
 clean_db | export_dataset | import_games | init_db | clean_cache | get_games | inspect_pgn | run_sqlite_web|clean_games| inspect_pgn_zip| check_db}"
     exit 1
     ;;
