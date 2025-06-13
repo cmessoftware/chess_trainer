@@ -4,6 +4,7 @@ import chess
 import pandas as pd
 from sklearn.preprocessing import MultiLabelBinarizer
 
+
 def is_center_controlled(board, color):
     central_squares = [chess.D4, chess.D5, chess.E4, chess.E5]
     control = 0
@@ -12,8 +13,9 @@ def is_center_controlled(board, color):
             control += 1
     return control >= 2  # Se considera control si al menos 2 están bajo ataque
 
+
 def is_pawn_endgame(board):
-    return all(piece.piece_type in [chess.KING, chess.PAWN] for piece in board.piece_map().values())
+    return int(all(piece.piece_type in [chess.KING, chess.PAWN] for piece in board.piece_map().values()))
 
 
 def binarize_tags(df: pd.DataFrame) -> pd.DataFrame:
@@ -29,9 +31,12 @@ def binarize_tags(df: pd.DataFrame) -> pd.DataFrame:
 
 def add_error_flags(df: pd.DataFrame) -> pd.DataFrame:
     """Agrega columnas binarias: is_blunder, is_mistake, is_inaccuracy basadas en tags."""
-    df['is_blunder'] = df['tags'].apply(lambda x: 'blunder' in x if isinstance(x, list) else False)
-    df['is_mistake'] = df['tags'].apply(lambda x: 'mistake' in x if isinstance(x, list) else False)
-    df['is_inaccuracy'] = df['tags'].apply(lambda x: 'inaccuracy' in x if isinstance(x, list) else False)
+    df['is_blunder'] = df['tags'].apply(
+        lambda x: 'blunder' in x if isinstance(x, list) else False)
+    df['is_mistake'] = df['tags'].apply(
+        lambda x: 'mistake' in x if isinstance(x, list) else False)
+    df['is_inaccuracy'] = df['tags'].apply(
+        lambda x: 'inaccuracy' in x if isinstance(x, list) else False)
     return df
 
 
@@ -55,7 +60,8 @@ def add_score_labels(df: pd.DataFrame) -> pd.DataFrame:
 
 def encode_categoricals(df: pd.DataFrame) -> pd.DataFrame:
     """Codifica columnas categóricas para ML: phase_encoded, color_encoded."""
-    df['phase_encoded'] = df['phase'].map({'opening': 0, 'middlegame': 1, 'endgame': 2})
+    df['phase_encoded'] = df['phase'].map(
+        {'opening': 0, 'middlegame': 1, 'endgame': 2})
     df['color_encoded'] = df['player_color'].map({'white': 0, 'black': 1})
     return df
 
@@ -74,8 +80,10 @@ def extract_castling_rights(fen: str, player: str) -> int:
 
 def add_castling_columns(df: pd.DataFrame) -> pd.DataFrame:
     """Agrega columnas separadas: white_can_castle, black_can_castle."""
-    df['white_can_castle'] = df['fen'].apply(lambda f: extract_castling_rights(f, 'white'))
-    df['black_can_castle'] = df['fen'].apply(lambda f: extract_castling_rights(f, 'black'))
+    df['white_can_castle'] = df['fen'].apply(
+        lambda f: extract_castling_rights(f, 'white'))
+    df['black_can_castle'] = df['fen'].apply(
+        lambda f: extract_castling_rights(f, 'black'))
     return df
 
 

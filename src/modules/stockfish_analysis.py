@@ -1,13 +1,16 @@
 
 
 import os
+import traceback
 import chess
 import dotenv
 env = dotenv.load_dotenv()
 
 STOCKFISH_PATH = os.environ.get("STOCKFISH_PATH")
 
-#TODO: Analizar donde usaar este analisis, si en el juego o en el ejercicio
+# TODO: Analizar donde usar este analisis, si en el juego o en el ejercicio
+
+
 def analyze_critical_moves(game, depth=15, threshold=0.5):
     engine, d = get_engine(depth)
     board = game.board()
@@ -44,30 +47,43 @@ def analyze_critical_moves(game, depth=15, threshold=0.5):
     engine.quit()
     return feedback
 
+
 def get_engine(depth=15):
     return chess.engine.SimpleEngine.popen_uci(STOCKFISH_PATH), depth
 
+
 def get_evaluation(fen, depth=10, multipv=1):
-    with chess.engine.SimpleEngine.popen_uci(STOCKFISH_PATH) as engine:
-        board = chess.Board(fen)
-        info = engine.analyse(board, chess.engine.Limit(depth=depth), multipv=multipv)
-        turn = board.turn
-        if multipv == 1:
-            print("Multipv is set to 1, returning single evaluation.")
-            return parse_info(info,turn=board.turn)
-        else:
-            return {
-              "best": parse_info(info[0], turn),
-              "alternatives": [parse_info(i, turn) for i in info[1:]]
-            } if multipv > 1 else {"best": parse_info(info, turn), "alternatives": []}
-                
-def evaluate(board, engine, depth=10,multipv=1):
-    info = engine.analyse(board, chess.engine.Limit(depth=depth),multipv=multipv)
+    try:
+        with chess.engine.SimpleEngine.popen_uci(STOCKFISH_PATH) as engine:
+            board = chess.Board(fen)
+            info = engine.analyse(board, chess.engine.Limit(
+                depth=depth), multipv=multipv)
+            turn = board.turn
+            if multipv == 1:
+                print("Multipv is set to 1, returning single evaluation.")
+                return parse_info(info, turn=board.turn)
+            else:
+                return {
+                    "best": parse_info(info[0], turn),
+                    "alternatives": [parse_info(i, turn) for i in info[1:]]
+                } if multipv > 1 else {"best": parse_info(info, turn), "alternatives": []}
+    except Exception as e:
+        print(f"❌ Error al obtener evaluación: {e} - {traceback.format_exc()}")
+        if e.__cause__:
+            print(f"Caused by: {e.__cause__}")
+        return {"best": {"type": "error", "value": None, "mate_in": None}, "alternatives": []}
+
+
+def evaluate(board, engine, depth=10, multipv=1):
+    info = engine.analyse(board, chess.engine.Limit(
+        depth=depth), multipv=multipv)
     return info["score"].relative.score(mate_score=10000) / 100.0
+
 
 def best_move(board, engine, depth):
     result = engine.play(board, chess.engine.Limit(depth=depth))
     return result.move
+
 
 def parse_info(info, turn=chess.WHITE):
     # Si es una lista (multiPV), usamos el primero
@@ -96,6 +112,7 @@ def parse_info(info, turn=chess.WHITE):
             "mate_in": None
         }
 
+
 def compare_to_best(actual_eval: dict, alternatives: list, threshold_cp: int = 100) -> str | None:
     """
     Compara la evaluación de la jugada actual con las mejores jugadas alternativas.
@@ -116,6 +133,7 @@ def compare_to_best(actual_eval: dict, alternatives: list, threshold_cp: int = 1
             return "inaccurate_or_blunder"
 
     return None
+
 
 def convert_pov_score(score: chess.engine.PovScore) -> dict:
     """

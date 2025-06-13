@@ -8,15 +8,15 @@ import dotenv
 from sqlalchemy.orm import Session
 from sqlalchemy import select, not_
 from db.db_utils import DBUtils
-from db.models.games import Games  # Debes tener este modelo definido
-from db.session import get_session  # Función que retorna una sesión SQLAlchemy
+from db.models.games import Games  # You must have this model defined
+from db.session import get_session  # Function that returns a SQLAlchemy session
 
 dotenv.load_dotenv()
 
 DB_PATH = os.environ.get("CHESS_TRAINER_DB", "data/chess_trainer.db")
 
 
-class GameRepository:
+class GamesRepository:
     def __init__(self, session_factory=get_session):
         self.session_factory = session_factory
         self.db_utils = DBUtils()
@@ -27,12 +27,26 @@ class GameRepository:
             stmt = select(Games)
             games = session.execute(stmt).scalars().all()
             self.db_utils.print_sql_query(stmt, engine)
-            print(f"🔢 Total partidas recuperadas: {len(games)}")
-            return games  # lista de objetos Games del ORM
+            print(f"🔢 Total games retrieved: {len(games)}")
+            return games  # list of Games ORM objects
+
+    def get_games_by_pagination(self, offset: int = 0, limit: int = 10):
+        """
+        Retrieves a list of games using pagination.
+        :param offset: Number of games to skip.
+        :param limit: Maximum number of games to return.
+        :return: List of Games objects.
+        """
+        with self.session_factory() as session:
+            engine = session.get_bind()
+            stmt = select(Games).offset(offset).limit(limit)
+            games = session.execute(stmt).scalars().all()
+            self.db_utils.print_sql_query(stmt, engine)
+            return games
 
     def get_games_not_analyzed(self, analyzed_hashes: set):
         """
-        Devuelve partidas cuya ID (hash) no esté en analyzed_hashes.
+        Returns games whose ID (hash) is not in analyzed_hashes.
         """
         with self.session_factory() as session:
             if analyzed_hashes:
@@ -56,13 +70,13 @@ class GameRepository:
             ).first()
             return row
 
-    def get_game_id_by_game(self, game):
+    def is_game_in_db(self, game_id: str) -> bool:
         """
-        Obtiene el ID de una partida dada.
+        Checks if a game with the given game_id exists in the database.
+        :param game_id: Unique identifier for the game.
+        :return: True if the game exists, False otherwise.
         """
-        game_hash = self.db_utils.get_game_id_by_game(game)
         with self.session_factory() as session:
-            row = session.execute(
-                select(Games.game_id).where(Games.game_id == game_hash)
-            ).first()
-            return row[0] if row else None
+            stmt = select(Games).where(Games.game_id == game_id)
+            result = session.execute(stmt).first()
+            return result is not None

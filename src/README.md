@@ -1,4 +1,4 @@
-# CHESS TRAINER - Versión: v0.1.8-dd59d65
+# CHESS TRAINER - Versión: v0.1.11-5c3809d
 
 # ♟ chess_trainer – Análisis y entrenamiento con partidas de élite
 
@@ -64,7 +64,7 @@ chess_trainer/
 
 ```bash
 # Guardar partidas en base
-python src/scripts/save_games_to_db.py --input src/data/games/lichess_elite_2020-05.pgn
+python src/scripts/import_game.py --input src/data/games/lichess_elite_2020-05.pgn
 
 # Etiquetar, analizar, generar ejercicios y dataset acumulativo
 bash src/scripts/run_pipeline.sh
@@ -94,7 +94,7 @@ Definí la ruta a la base SQLite en un `.env`:
 
 ```env
 CHESS_TRAINER_DB=src/data/chess_trainer.db
-STOCKFISH_PATH=/usr/games/stockfish
+STOCKFISH_PATH=/usr/local/bin/stockfish’
 ```
 
 Y cargala con:
@@ -103,6 +103,46 @@ Y cargala con:
 from dotenv import load_dotenv
 load_dotenv()
 ```
+
+---
+## Configurar e implementar migraciona de base de datos usando Alembic y SqlAlchemy 
+**Soporta multiples motors como Sqlite, MySql, Postgres , MariaDb etc**
+
+## 📦 Paso 1: Instalá Alembic si aún no lo hiciste
+pip install alembic
+
+## 📁 Paso 2: Inicializá Alembic en la raíz del proyecto (por ejemplo en /app)
+cd /app
+alembic init alembic
+
+#### Esto crea una carpeta alembic/ y un archivo alembic.ini.
+
+## 🛠️ Paso 3: Configurá alembic/env.py
+#### Reemplazá el contenido de target_metadata y agregá tu engine.
+
+#### En alembic/env.py
+from db.database import Base
+from db import models  # asegúrate que __init__.py importe todos los modelos
+
+target_metadata = Base.metadata
+
+## 🧩 Paso 4: Configurá la conexión a la base de datos
+#### Editá alembic.ini y cambiá la línea sqlalchemy.url
+
+sqlalchemy.url = postgresql+psycopg2://usuario:password@localhost:5432/tu_base
+#### O podés usar una variable de entorno si ya usás dotenv
+#### sqlalchemy.url = env:CHESS_TRAINER_DB_URL
+
+## 🧱 Paso 5: Generá el script de migración
+alembic revision --autogenerate -m "Agregar columnas a Games"
+
+## 🚀 Paso 6: Aplicá la migración a la base de datos
+alembic upgrade head
+
+## 🧽 Paso 7 (opcional): Revertí una migración
+alembic downgrade -1
+
+**Nota: el comando alembic se tiene que ejecutar en la misma carpeta donde está alembic.ini (ej: /app)**
 
 ---
 
@@ -155,7 +195,7 @@ Con `publish_to_lichess.py` podés subir partidas desde la DB como estudios. Nec
 | `is_center_controlled`| 1 si el jugador controla d4/e4/d5/e5 con alguna pieza                           |
 | `is_pawn_endgame`    | 1 si solo hay reyes y peones en el tablero                                      |
 
-## Diseño para en analisis de tacticas
+## Diseño para en analisis de tácticas
 
 | Aspecto                                  | Ventaja                                      |
 |------------------------------------------|----------------------------------------------|

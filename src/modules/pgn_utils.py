@@ -1,28 +1,51 @@
 from typing import Dict, List
 import chess.pgn
+from chess.pgn import StringExporter
 import io
 from pathlib import Path
-import hashlib
-import sqlite3
-import os
-from dotenv import load_dotenv
+from typing import Tuple
 
-load_dotenv()
-DB_PATH = os.environ.get("CHESS_TRAINER_DB")
+from nbconvert import ScriptExporter
+
+# Validate pgn text
 
 
-# 🔁 Cargar desde string PGN
+def is_valid_pgn(pgn_text: str) -> Tuple[bool, chess.pgn.Game]:
+    """
+    Checks if the PGN text is valid.
+    Returns True if valid, False otherwise.
+    """
+    try:
+        parsed_game = chess.pgn.read_game(io.StringIO(pgn_text))
+
+        if not parsed_game or not isinstance(parsed_game, chess.pgn.Game):
+            print("⚠️ Could not parse PGN or it is not a valid Game.")
+            return False, None
+
+        headers = parsed_game.headers
+        critical_headers = ["Event", "Site",
+                            "Date", "White", "Black", "Result"]
+        if not all(h in headers and headers[h].strip() for h in critical_headers):
+            print(f"⚠️ Missing critical headers in the game: {headers}")
+            return False, None
+        return True, parsed_game
+    except Exception as e:
+        print(f"⚠️ Error validating PGN: {e}")
+        return False, None
+
+
+# 🔁 Load from PGN string
 def load_pgn_from_string(pgn_str):
     return chess.pgn.read_game(io.StringIO(pgn_str))
 
-# 📄 Cargar primer juego de un archivo
+# 📄 Load first game from a file
 
 
 def load_pgn_from_file(path):
     with open(path, "r", encoding="utf-8") as f:
         return chess.pgn.read_game(f)
 
-# 📄📄 Cargar todos los juegos de un archivo
+# 📄📄 Load all games from a file
 
 
 def load_multiple_games_from_file(path):
@@ -36,15 +59,58 @@ def load_multiple_games_from_file(path):
     return games
 
 
+def split_pgn_file_by_games(pgn_text: str, games_per_chunk: int = 10):
+    """
+    Split a PGN string into chunks of N games (as strings).
+    Each chunk is a list of complete PGN games.
+
+    Args:
+        pgn_text (str): Entire content of a PGN file as a single string.
+        games_per_chunk (int): Number of games per yielded chunk.
+
+    Yields:
+        List[str]: A list of PGN strings (one per game) in each chunk.
+    """
+
+    """
+    Split a PGN string (or Game object) into chunks of N games.
+    """
+    import io
+    import chess.pgn
+
+    # Convierte si es objeto Game
+    if isinstance(pgn_text, chess.pgn.Game):
+        output = io.StringIO()
+        pgn_text = pgn_text.accept(StringExporter(
+            headers=True, variations=True, comments=True))
+
+    if not isinstance(pgn_text, str):
+        raise TypeError(f"Expected pgn_text to be str, got {type(pgn_text)}")
+
+    # Split the PGN by double newlines between games
+    raw_games = pgn_text.strip().split("\n\n[")
+    normalized_games = []
+
+    for i, game_text in enumerate(raw_games):
+        if i == 0:
+            normalized_games.append(game_text.strip())
+        else:
+            normalized_games.append("[{}".format(game_text.strip()))
+
+    # Yield in chunks
+    for i in range(0, len(normalized_games), games_per_chunk):
+        yield normalized_games[i:i + games_per_chunk]
+
+
 def parse_games_from_orm(orm_games):
     """
-    Transforma una lista de objetos ORM Games a una lista de tuplas (game_id, chess.pgn.Game)
+    Transforms a list of ORM Games objects into a list of tuples (game_id, chess.pgn.Game)
 
     Parameters:
-    orm_games (List[Games]): Lista de objetos Games del ORM
+    orm_games (List[Games]): List of Games ORM objects
 
     Returns:
-    List[Tuple[str, chess.pgn.Game]]: Lista de tuplas con game_id y objeto PGN parseado
+    List[Tuple[str, chess.pgn.Game]]: List of tuples with game_id and parsed PGN object
     """
     parsed = []
     for g in orm_games:
@@ -56,50 +122,45 @@ def parse_games_from_orm(orm_games):
             if game is not None:
                 parsed.append((g.game_id, game))
         except Exception as e:
-            print(f"⚠️ Error al parsear game_id={g.game_id}: {e}")
+            print(f"⚠️ Error parsing game_id={g.game_id}: {e}")
     return parsed
 
 
-def get_game_hash(game):
-    """
-    Genera un hash único para una partida PGN.
-    Incluye headers y movimientos para evitar reprocesar duplicados.
-    """
-    headers = "".join(f"{k}:{v}" for k, v in sorted(game.headers.items()))
-    moves = " ".join(move.uci() for move in game.mainline_moves())
-    game_str = headers + moves
-    return hashlib.sha256(game_str.encode("utf-8")).hexdigest()
-
-# Cargas las partidas desde una base de datos
-
-
-def load_all_games_from_db():
-    if not DB_PATH or not os.path.exists(DB_PATH):
-        raise FileNotFoundError(
-            f"❌ No se encontró la base de datos: {DB_PATH}")
-
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-
-    cursor.execute("SELECT pgn FROM games")
-    rows = cursor.fetchall()
-    conn.close()
-
-    all_games = []
-    for pgn_str, in rows:
-        game = chess.pgn.read_game(io.StringIO(pgn_str))
-        if game:
-            all_games.append(game)
-
-    if not all_games:
-        print("❌ No se encontraron partidas en la base de datos.")
-        return []
-    # Verificar si se cargaron partidas
-    print(f"🔍 Cargadas {len(all_games)} partidas desde la base de datos.")
-    return all_games
+def extract_features_from_game(game, game_id):
+    # Extract basic features as an example
+    return {
+        "game_id": game_id,
+        "site": game.headers.get("Site", ""),
+        "event": game.headers.get("Event", ""),
+        "date": game.headers.get("Date", ""),
+        "white_player": game.headers.get("White", ""),
+        "black_player": game.headers.get("Black", ""),
+        "result": game.headers.get("Result", ""),
+        "num_moves": len(list(game.mainline_moves()))
+    }
 
 
-# 📁📄📄 Cargar todos los juegos de todos los .pgn en una carpeta
+def count_moves(game: chess.pgn.Game) -> int:
+    return sum(1 for _ in game.mainline_moves())
+
+
+def get_game_id(game):
+    try:
+        # Logic to generate a unique hash or game identifier
+        # Usually based on PGN or key metadata
+        exporter = chess.pgn.StringExporter(
+            headers=True, variations=False, comments=False)
+        pgn_str = game.accept(exporter)
+        import hashlib
+        return hashlib.sha256(pgn_str.encode("utf-8")).hexdigest()
+    except Exception as e:
+        print(f"⚠️ Error getting game ID: {e}")
+        if e.__cause__:
+            print(f"   Cause: {e.__cause__}")
+        return None
+
+
+# 📁📄📄 Load all games from all .pgn files in a folder
 def load_all_games_from_dir(directory):
     all_games = []
     pgn_files = Path(directory).rglob("*.pgn")
@@ -107,10 +168,10 @@ def load_all_games_from_dir(directory):
         games = load_multiple_games_from_file(pgn_path)
         all_games.extend(games)
 
-    print(f"🔍 Cargados {len(all_games)} juegos de {directory}")
+    print(f"🔍 Loaded {len(all_games)} games from {directory}")
     return all_games
 
-# 🧠 Compatibilidad con el viejo nombre
+# 🧠 Compatibility with the old name
 
 
 def parse_pgn_file(path):
@@ -119,11 +180,11 @@ def parse_pgn_file(path):
 
 def pgn_to_position_sequence(pgn_text: str, critical_fens: List[str] = None) -> List[Dict]:
     """
-    Convierte un PGN en una secuencia de posiciones con FENs y marca las críticas.
+    Converts a PGN into a sequence of positions with FENs and marks the critical ones.
 
-    :param pgn_text: Contenido completo del PGN como string
-    :param critical_fens: Lista opcional de FENs consideradas críticas
-    :return: Lista de diccionarios con 'fen', 'comment' y 'is_critical'
+    :param pgn_text: Full PGN content as string
+    :param critical_fens: Optional list of FENs considered critical
+    :return: List of dicts with 'fen', 'comment' and 'is_critical'
     """
     critical_fens = set(critical_fens or [])
     game = chess.pgn.read_game(io.StringIO(pgn_text))
@@ -140,7 +201,7 @@ def pgn_to_position_sequence(pgn_text: str, critical_fens: List[str] = None) -> 
         })
         board.push(move)
 
-    # Agregar la posición final si se desea
+    # Add the final position if desired
     position_sequence.append({
         "fen": board.fen(),
         "comment": "",
@@ -150,7 +211,7 @@ def pgn_to_position_sequence(pgn_text: str, critical_fens: List[str] = None) -> 
     return position_sequence
 
 
-# 📝 Extraer posiciones (FENs) de todas las jugadas
+# 📝 Extract positions (FENs) from all moves
 def load_pgn_positions(path):
     positions = []
     with open(path, 'r') as pgn_file:
@@ -164,7 +225,7 @@ def load_pgn_positions(path):
                 positions.append(board.fen())
     return positions
 
-# 🔄 Serializar a string PGN
+# 🔄 Serialize to PGN string
 
 
 def game_to_string(game):
@@ -172,7 +233,7 @@ def game_to_string(game):
     print(game, file=out)
     return out.getvalue()
 
-# 💾 Guardar juego PGN a archivo
+# 💾 Save PGN game to file
 
 
 def save_game_to_file(game, path):

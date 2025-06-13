@@ -21,5 +21,4 @@ def get_schema():
 
 
 def get_session():
-    print("Dialect in use:", engine.dialect.name)
     return SessionLocal()

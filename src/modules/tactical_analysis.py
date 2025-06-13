@@ -4,90 +4,67 @@ import traceback
 import chess
 import chess.engine
 import pandas as pd
-from decorators.measure_time import measure_time
 from config.tactical_analysis_config import PHASE_DEPTHS, TACTICAL_ANALYSIS_SETTINGS
 from db.db_utils import DBUtils
+from db.models.games import Games
 from modules.stockfish_analysis import compare_to_best, get_evaluation
 from decorators.auto_logger import auto_log_module_functions, auto_logger_execution_time
 import dotenv
-
-from modules.pgn_utils import get_game_hash, load_all_games_from_db
-from db.tactical_db import update_features_tags_and_score_diff
+from modules.pgn_utils import get_game_id
+from db.repository.features_repository import FeaturesRepository
+from db.repository.games_repository import GamesRepository
+from db.repository.analyzed_tacticals_repository import Analyzed_tacticalsRepository
 env = dotenv.load_dotenv()
 
 STOCKFISH_PATH = os.environ.get("STOCKFISH_PATH")
 db_utils = DBUtils()
+features_repo = FeaturesRepository()
+games_repo = GamesRepository()
+analyzed_tacticals_repo = Analyzed_tacticalsRepository()
 
 
-@auto_logger_execution_time
-def analyze_single_game_tactics(game_id):
-    """
-    Analiza tácticas de una partida específica por su ID.
-    """
-    db_utils.init_analyzed_tacticals_table()
-    analyzed = db_utils.load_analyzed_tacticals_hashes()
+# @auto_logger_execution_time
+# def analyze_games_tactics():
+#     db_utils.init_analyzed_tacticals_table()
+#     analyzed = db_utils.load_analyzed_tacticals_hashes()
+#     # PRINT ALREADY ANALYZED GAMES COUNT
+#     print(
+#         f"🔍 PRINT ALREADY ANALYZED GAMES COUNT... {len(analyzed)} partidas encontradas.")
 
-    if game_id in analyzed:
-        print(f"✅ Partida {game_id} ya analizada, saltando...")
-        return
+#     games = games_repo.get_all()
 
-    game = db_utils.get_game_by_id(game_id)
+#     for game in games:
+#         game_hash = get_game_id(game)
+#         if game_hash in analyzed:
+#             print(
+#                 f"✅ Partida {game_hash} : {game.headers.get('White', '?')} vs {game.headers.get('Black', '?')} ya analizada, saltando...")
+#             continue
 
-    print(
-        f"🔍 Analizando táctica: {game.headers.get('White', '?')} vs {game.headers.get('Black', '?')}")
+#         print(
+#             f"🔍 Analizando táctica: {game.headers.get('White', '?')} vs {game.headers.get('Black', '?')}")
 
-    try:
-        depth = TACTICAL_ANALYSIS_SETTINGS.get("depth", 8)
-        tags_df = detect_tactics_from_game(game, depth=depth)
-        update_features_tags_and_score_diff(game_id, tags_df)
+#         try:
+#             depth = TACTICAL_ANALYSIS_SETTINGS.get("depth", 8)
+#             tags_df = detect_tactics_from_game(game, depth=depth)
+#             features_repo.update_features_tags_and_score_diff(
+#                 game_hash, tags_df)
+#             analyzed_tacticals_repo.save_analyzed_tactical_hash(game_hash)
 
-    except Exception as e:
-        print(
-            f"❌ Excepcion al analizar partida {game_id} - {game.headers.get('White', '?')} vs {game.headers.get('Black', '?')}: {e} - {traceback.print_exc()}")
-        if e.__cause__:
-            print("🔗 Causa original (inner exception):", e.__cause__)
-        return
-
-
-@auto_logger_execution_time
-def analyze_game_tactics():
-    db_utils.init_analyzed_tacticals_table()
-    analyzed = db_utils.load_analyzed_tacticals_hashes()
-    print(
-        f"🔍 Cargando partidas ya analizadas... {len(analyzed)} partidas encontradas.")
-
-    games = load_all_games_from_db()
-
-    for game in games:
-        game_hash = get_game_hash(game)
-        if game_hash in analyzed:
-            print(
-                f"✅ Partida {game_hash} : {game.headers.get('White', '?')} vs {game.headers.get('Black', '?')} ya analizada, saltando...")
-            continue
-
-        print(
-            f"🔍 Analizando táctica: {game.headers.get('White', '?')} vs {game.headers.get('Black', '?')}")
-
-        try:
-            depth = TACTICAL_ANALYSIS_SETTINGS.get("depth", 8)
-            tags_df = detect_tactics_from_game(game, depth=depth)
-            db_utils.insert_tactical_tags_to_db(game_hash, tags_df)
-
-        except Exception as e:
-            print(
-                f"❌ Excepcion al analizar partida {game_hash} - {game.headers.get('White', '?')} vs {game.headers.get('Black', '?')}: {e} - {traceback.print_exc()}")
-            if e.__cause__:
-                print("🔗 Causa original (inner exception):", e.__cause__)
-            continue  # ⚠️ No marcar como procesada si hay error
-
-        db_utils.save_analyzed_tacticals_hash(game_hash)
+#         except Exception as e:
+#             print(
+#                 f"❌ Excepcion al analizar partida {game_hash} - {game.headers.get('White', '?')} vs {game.headers.get('Black', '?')}: {e} - {traceback.print_exc()}")
+#             if e.__cause__:
+#                 print("🔗 Causa original (inner exception):", e.__cause__)
+#             continue  # ⚠️ No marcar como procesada si hay error
 
 
 # Detecta patrones tácticos en una partida de ajedrez. Bajo depth=15 a 10 para acelerar el análisis
+@auto_logger_execution_time
 def detect_tactics_from_game(game, depth=10):
+    tags = []
+
     try:
         print("Init detect_tactics_from_game")
-        tags = []
         eval_cache = {}
 
         node = game
@@ -95,7 +72,7 @@ def detect_tactics_from_game(game, depth=10):
 
         for i, move in enumerate(game.mainline_moves()):
             if i + 1 <= TACTICAL_ANALYSIS_SETTINGS.get("opening_move_threshold", 6):
-                print(f"⏭️ Saltando jugada de apertura #{i+1}")
+                print(f"⏭️ Skiping opening move #{i+1}")
                 board.push(move)
                 continue
 
@@ -115,31 +92,35 @@ def detect_tactics_from_game(game, depth=10):
 
             fen_before = board.fen()
             print(f"🔢 Move #{i+1}")
-            print(f"Evaluando FEN antes del movimiento: {fen_before}")
 
             min_branching_for_analysis = TACTICAL_ANALYSIS_SETTINGS.get(
                 "min_branching_for_analysis", 4)
 
             if len(list(board.legal_moves)) <= min_branching_for_analysis:
                 print(
-                    f"⏭️ Jugada #{i+1} omitida por baja complejidad (branching < {min_branching_for_analysis})")
+                    f"⏭️ Move #{i+1} skipped due to low complexity (branching < {min_branching_for_analysis})")
                 board.push(move)
                 continue
 
             if fen_before in eval_cache:
+                print(f"Evaluating FEN before move: {fen_before}")
                 eval_before = eval_cache[fen_before]
             else:
-                print(f"Evaluando FEN antes del movimiento: {fen_before}")
+                print(f"Evaluating FEN before move: {fen_before}")
                 eval_before = get_evaluation(
                     fen_before, depth, multipv=multipv)
                 eval_cache[fen_before] = eval_before
+
+                best_move = eval_before.get("best", None)
+                if not best_move:
+                    print("⚠️ No 'best move' received, skipping comparison.")
             # ➤ Copia antes de aplicar la jugada
             board_before = board.copy()
             # ➤ Aplicar movimiento
             board.push(move)
 
-            print(f"Evaluación antes del movimiento: {eval_before}")
-            print(f"Efectuando movimiento {move.uci()}")
+            print(f"Evaluation before move: {eval_before}")
+            print(f"Making move {move.uci()}")
 
             # ➤ Evaluación después del movimiento
             fen_after = board.fen()
@@ -165,8 +146,14 @@ def detect_tactics_from_game(game, depth=10):
                 score_before = -score_before
                 score_after = -score_after
 
-            score_diff = score_after - score_before
-            print(f"Diferencia de score: {score_diff}")
+            if isinstance(score_before, int) and isinstance(score_after, int):
+                score_diff = score_after - score_before
+            else:
+                print(
+                    f"⚠️ Non-numeric evaluation before/after: {score_before}, {score_after}")
+                score_diff = 0
+
+            print(f"Score difference {score_diff}")
 
            # ➤ Clasificar jugada táctica por patrón
             tag = classify_tactical_pattern(score_diff, board_before, move)
@@ -175,10 +162,10 @@ def detect_tactics_from_game(game, depth=10):
                 tag_alt = compare_to_best(eval_before["best"], eval_before.get(
                     "alternatives", []), threshold_cp=100)
             else:
-                print("⚠️ eval_before no tiene clave 'best':", eval_before)
+                print("⚠️ eval_before does not have key 'best':", eval_before)
                 tag_alt = "unknown"
 
-            print(f"Etiqueta táctica: {tag} (alternativa: {tag_alt})")
+            print(f"Tactical tag: {tag} (alternative: {tag_alt})")
             if tag:
                 tags.append({
                     "fen": fen_before,
@@ -190,16 +177,25 @@ def detect_tactics_from_game(game, depth=10):
                 })
 
             fen_after = board.fen()
-            print(f"Evaluando FEN después del movimiento: {fen_after}")
+            print(f"Evaluating FEN after move: {fen_after}")
             eval_after = get_evaluation(fen_after, depth, multipv=multipv)
-            print(f"Evaluación después del movimiento: {eval_after}")
+            print(f"Evaluation after move: {eval_after}")
             print(
-                f"Evaluacion completa para el movimiento {board.turn}:{i+1} : {move.uci()}")
+                f"Full evaluation for move {board.turn}:{i+1} : {move.uci()}")
+            print(
+                f"Score before: {score_before}, Score after: {score_after}, Score diff: {score_diff}")
+            print(f"Tags found: {tags[-1] if tags else 'None'}")
+
+        print(f"Tags returned by detect_tactics_from_game: {tags}")
         return tags
     except Exception as e:
-        print(f"❌ Error al analizar la partida: {e} - {traceback.print_exc()}")
+        print(f"❌ Error analyzing game: {e} - {traceback.print_exc()}")
         if e.__cause__:
-            print("❌ Original casue (inner exception):", e.__cause__)
+            print("❌ Original cause (inner exception):", e.__cause__)
+        # returned already procecess tags
+        print(
+            f"Returning already processed {len(tags) if tags else None} tags before detect_tactics_from_game crashed.")
+        return tags if tags else None
 
 
 def extract_score(evaluation):
@@ -217,6 +213,51 @@ def extract_score(evaluation):
     return 0
 
 
+def generate_comments_for_game(game: Games) -> list:
+    """
+    Genera lista de jugadas anotadas usando datos del repositorio de características (Features).
+    """
+    repo = FeaturesRepository()
+    features = repo.get_by_game_id(game.id)
+
+    comments = []
+
+    for feat in sorted(features, key=lambda x: x.move_number):
+        san = feat.move_san or ""
+        tags = feat.tags or []
+        diff = feat.score_diff or 0
+
+        comment_parts = []
+
+        if diff > 100:
+            comment_parts.append(
+                "Muy buena jugada, mejora claramente la evaluación.")
+        elif diff < -300:
+            comment_parts.append("Blunder, la evaluación empeora gravemente.")
+        elif diff < -100:
+            comment_parts.append("Jugada dudosa o error táctico importante.")
+
+        # Etiquetas tácticas desde `tags`
+        tag_map = {
+            "mate": "Mate threat detected.",
+            "sacrifice": "Interesting tactical sacrifice.",
+            "pin": "Exploits a pin.",
+            "fork": "Creates a double attack.",
+            "discovered_attack": "Discovered attack.",
+            "attraction": "Attraction tactic to weaken.",
+            "deflection": "Defensive deflection of the opponent."
+        }
+
+        for tag in tags:
+            if tag in tag_map:
+                comment_parts.append(tag_map[tag])
+
+        comment = f" {{{' '.join(comment_parts)}}}" if comment_parts else ""
+        comments.append(f"{san}{comment}")
+
+    return comments
+
+
 def get_game_phase(board):
     pieces_count = len(board.piece_map())
     if pieces_count >= 24:
@@ -232,7 +273,7 @@ def classify_tactical_pattern(score_diff, board, move):
     if simple_tag:
         return simple_tag
 
-    if abs(score_diff) >= 1.5:
+    if abs(score_diff) >= 300:
         return "blunder" if score_diff < 0 else "tactical_opportunity"
 
     return None
@@ -313,7 +354,7 @@ def is_fork(board, move):
         return False
 
     print(
-        f"Evaluando fork para el movimiento: {move.uci()} desde {chess.square_name(move.from_square)} a {chess.square_name(move.to_square)}")
+        f"Evaluating fork for move: {move.uci()} from {chess.square_name(move.from_square)} to {chess.square_name(move.to_square)}")
     board.push(move)
     attacked = list(board.attacks(move.to_square))
     valuable_targets = [
@@ -329,7 +370,7 @@ def is_pin(board, move):
     Detecta si la jugada genera una clavada (pin).
     """
     print(
-        f"Evaluando pin para el movimiento: {move.uci()} desde {chess.square_name(move.from_square)} a {chess.square_name(move.to_square)}")
+        f"Evaluating pin for move: {move.uci()} from {chess.square_name(move.from_square)} to {chess.square_name(move.to_square)}")
     board.push(move)
     result = False
     for sq in chess.SQUARES:
@@ -348,7 +389,7 @@ def is_discovered_attack(board, move):
     """
     attacker_color = board.turn
     print(
-        f"Evaluando ataque descubierto para el movimiento: {move.uci()} desde {chess.square_name(move.from_square)} a {chess.square_name(move.to_square)}")
+        f"Evaluating discovered attack for move: {move.uci()} from {chess.square_name(move.from_square)} to {chess.square_name(move.to_square)}")
     board.push(move)
 
     # Verificar si hay alguna pieza enemiga ahora bajo ataque

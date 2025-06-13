@@ -18,7 +18,7 @@ from altair import Column
 import pandas as pd
 from sqlalchemy import String, Table, insert, select
 from modules.pgn_utils import get_game_hash, parse_games_from_orm
-from db.repository.game_repository import GameRepository
+from repository.games_repository import GameRepository
 from sqlalchemy import create_engine, MetaData
 from db.db_utils import DBUtils
 import dotenv
@@ -35,32 +35,32 @@ metadata = MetaData()
 
 
 def ensure_table_exists():
-    processed_games_table = Table(
-        "processed_games", metadata, autoload_with=engine)
-    metadata.create_all(engine, tables=[processed_games_table])
+    processed_features_table = Table(
+        "processed_features", metadata, autoload_with=engine)
+    metadata.create_all(engine, tables=[processed_features_table])
 
 
 def load_processed_hashes():
     ensure_table_exists()
     with engine.connect() as conn:
-        processed_games_table = Table(
-            "processed_games",
+        processed_features_table = Table(
+            "processed_features",
             metadata,
             autoload_with=engine
         )
-        result = conn.execute(processed_games_table.select()).mappings()
+        result = conn.execute(processed_features_table.select()).mappings()
         return set(row["game_id"] for row in result)
 
 
 def save_processed_hash(game_hash):
-    # Use SQLAlchemy to insert into the processed_games table
-    processed_games_table = Table(
-        "processed_games",
+    # Use SQLAlchemy to insert into the processed_features table
+    processed_features_table = Table(
+        "processed_features",
         metadata,
         autoload_with=engine
     )
     with engine.begin() as conn:
-        stmt = insert(processed_games_table).values(
+        stmt = insert(processed_features_table).values(
             game_id=game_hash).on_conflict_do_nothing(index_elements=['game_id'])
         conn.execute(stmt)
 
@@ -162,12 +162,6 @@ def find_pgn_files(path):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--input-dir', default=PGN_PATH,
-                        required=False, help='Directory with .pgn files')
-    parser.add_argument('--output', default=TRANING_DATA_PATH,
-                        required=False, help='Output CSV file')
-    parser.add_argument('--skip-existing', default=True,
-                        action='store_true', help='Avoid reprocessing already analyzed games')
     parser.add_argument('--max-games', required=False, default=100,
                         help='Maximum number of games to process (optional, for testing)')
     args = parser.parse_args()
@@ -175,7 +169,6 @@ def main():
 
     input_path = Path(args.input_dir)
     max_games = int(args.max_games) if args.max_games else None
-    max_games = 100
     if not input_path.is_dir():
         print(f"❌ Error: {args.input_dir} is not a valid directory.")
         return
@@ -186,8 +179,6 @@ def main():
     games = repo.get_all_games()
 
     print(f"🔍 Found {len(games)} games in the database")
-
-    count_games = 0
 
     for i, (game_id, game) in enumerate(parse_games_from_orm(games)):
         if i >= int(args.max_games):
@@ -215,7 +206,7 @@ def main():
             print(
                 f"📊 Generated {len(final_df)} rows with {len(final_df.columns)} columns.")
 
-        # Save to SQLite (only)
+        # Save to DB (only)
         with engine.begin() as conn:
             # Read the IDs of games already processed in the 'features' table
             features_table = Table(

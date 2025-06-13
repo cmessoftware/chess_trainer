@@ -8,7 +8,7 @@ from sqlalchemy import create_engine, text
 
 dotenv.load_dotenv()
 
-DB_URL = os.getenv("CHESS_TRAINER_DB")
+DB_URL = os.getenv("CHESS_TRAINER_DB_URL")
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 DEFAULT_OUTPUT_CSV = f"/app/src/data/training_dataset_{timestamp}.csv"
 

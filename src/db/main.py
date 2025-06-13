@@ -1,8 +1,6 @@
 from src.db.database import SessionLocal, engine, Base
 from src.db import models, crud
 
-#TODO: Para un refactoring usando PostgreSQL, primero asegúrate de tener la base de datos creada y configurada en tu entorno.
-
 # Crear tablas si no existen
 Base.metadata.create_all(bind=engine)
 

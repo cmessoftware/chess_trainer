@@ -1,40 +1,16 @@
-# chess_trainer/scripts/generate_exercises_from_elite.py
+from sqlalchemy import create_engine, Column, String, DateTime
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.sql import func
 
-import os
-import sqlite3
-import chess.pgn
-from modules.exercise_utils import generate_exercise_from_game
-from modules.pgn_utils import hash_game
-from db.db_utils import init_db, load_processed_exercises_hashes, save_processed_exercises_hash
-from modules.config_utils import get_valid_paths_from_env
-
-DB_PATH = get_valid_paths_from_env(["CHESS_TRAINER_DB"])[0] 
-PGN_DIR = "data/elite_games/"
+Base = declarative_base()
 
 
-def init_db():
-    with sqlite3.connect(DB_PATH) as conn:
-        conn.execute("""
-            CREATE TABLE IF NOT EXISTS processed_games (
-                game_hash TEXT PRIMARY KEY,
-                date_processed TEXT DEFAULT CURRENT_TIMESTAMP
-            )
-        """)
-        conn.commit()
+class ProcessedGame(Base):
+    __tablename__ = 'processed_features'
+    game_hash = Column(String, primary_key=True)
+    date_processed = Column(DateTime(timezone=True), server_default=func.now())
 
-def main():
-    init_db()
-    processed = load_processed_exercises_hashes()
-    for fname in os.listdir(PGN_DIR):
-        if not fname.endswith(".pgn"):
-            continue
-        with open(os.path.join(PGN_DIR, fname)) as f:
-            game = chess.pgn.read_game(f)
-            h = hash_game(game)
-            if h in processed:
-                continue
-            generate_exercise_from_game(game)
-            save_processed_exercises_hash(h)
 
-if __name__ == "__main__":
-    main()
+# Ejemplo de creación de la tabla:
+engine = create_engine('postgresql://usuario:contraseña@localhost:5432/tu_db')
+Base.metadata.create_all(engine)
