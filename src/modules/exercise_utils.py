@@ -3,10 +3,11 @@
 import os
 import json
 from datetime import datetime
-from tactical_analysis import detect_tactics_from_game  
+from tactical_analysis import detect_tactics_from_game
 from pgn_utils import extract_fen_labels_from_game
 
 EXERCISE_DIR = "data/generated_exercises/"
+
 
 def generate_exercise_from_game(game, game_id=None):
     """

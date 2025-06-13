@@ -1,6 +1,4 @@
-# db/models/features.py
-from sqlalchemy import Column, Integer, String, Float, ForeignKey
-from sqlalchemy.dialects.postgresql import JSON
+from sqlalchemy import Column, Integer, String, Float, JSON, Boolean
 from db.database import Base
 from db.session import get_schema
 
@@ -9,40 +7,37 @@ class Features(Base):
     __tablename__ = 'features'
     __table_args__ = {"schema": get_schema()}
 
-    game_id = Column(String, ForeignKey(
-        f"{get_schema()}.games.game_id"), primary_key=True)
+    game_id = Column(String, primary_key=True)
     move_number = Column(Integer, primary_key=True)
-    player_color = Column(String, primary_key=True)  # 'white' o 'black'
+    player_color = Column(Integer, primary_key=True)
 
-    fen = Column(String)
-    move_san = Column(String)
-    move_uci = Column(String)
+    fen = Column(String, nullable=True)
+    move_san = Column(String, nullable=True)
+    move_uci = Column(String, nullable=True)
 
-    material_balance = Column(Float)
-    material_total = Column(Float)
-    num_pieces = Column(Integer)
+    material_balance = Column(Float, nullable=True)
+    material_total = Column(Float, nullable=True)
+    num_pieces = Column(Integer, nullable=True)
+    branching_factor = Column(Integer, nullable=True)
+    self_mobility = Column(Integer, nullable=True)
+    opponent_mobility = Column(Integer, nullable=True)
+    phase = Column(String, nullable=True)
+    has_castling_rights = Column(Integer, nullable=True)
+    move_number_global = Column(Integer, nullable=True)
+    is_repetition = Column(Integer, nullable=True)
+    is_low_mobility = Column(Integer, nullable=True)
+    is_center_controlled = Column(Integer, nullable=True)
+    is_pawn_endgame = Column(Integer, nullable=True)
 
-    branching_factor = Column(Integer)
-    self_mobility = Column(Integer)
-    opponent_mobility = Column(Integer)
+    tags = Column(JSON, nullable=True)
+    score_diff = Column(Float, nullable=True)
 
-    phase = Column(String)
-    has_castling_rights = Column(Integer)
-    move_number_global = Column(Integer)
+    site = Column(String, nullable=True)
+    event = Column(String, nullable=True)
+    date = Column(String, nullable=True)
+    white_player = Column(String, nullable=True)
+    black_player = Column(String, nullable=True)
+    result = Column(String, nullable=True)
 
-    is_repetition = Column(Integer)
-    is_low_mobility = Column(Integer)
-    is_center_controlled = Column(Integer)
-    is_pawn_endgame = Column(Integer)
-
-    # Flexible: puede contener ["pin", "fork"] o estructuras complejas
-    tags = Column(JSON)
-    score_diff = Column(Float)
-
-    # Opcionales para evitar JOINs constantes con `games`
-    site = Column(String)
-    event = Column(String)
-    date = Column(String)
-    white_player = Column(String)
-    black_player = Column(String)
-    result = Column(String)
+    num_moves = Column(Integer, nullable=True)
+    is_stockfish_test = Column(Boolean, nullable=False, default=False)

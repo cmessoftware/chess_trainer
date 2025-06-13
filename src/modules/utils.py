@@ -8,6 +8,13 @@ import sys
 import streamlit as st
 
 
+def safe_int(value):
+    try:
+        return int(value)
+    except (ValueError, TypeError):
+        return None
+
+
 def get_valid_paths_from_env(var_names):
     """
     Receives a list of environment variable names, checks if they exist,
@@ -20,6 +27,7 @@ def get_valid_paths_from_env(var_names):
             valid_paths.append(path)
     return valid_paths
 
+
 def show_spinner_message(message):
     """
     Prints a message to the console with a spinner effect.
@@ -28,10 +36,11 @@ def show_spinner_message(message):
     sys.stdout.write(f"\r{next(spinner)} {message}")
     sys.stdout.flush()
 
+
 def normalize_score_cp(score_cp, cap=300):
     """
     Normaliza un score de centipawns a una escala de -100 a +100.
-    
+
     - Un score de +cap o más se transforma en +100.
     - Un score de -cap o menos se transforma en -100.
     - Los scores intermedios se escalan linealmente.
@@ -45,6 +54,7 @@ def normalize_score_cp(score_cp, cap=300):
     """
     score_cp = max(min(score_cp, cap), -cap)
     return (score_cp / cap) * 100
+
 
 def render_svg_board(svg: str):
     """Renderiza un string SVG como tablero en Streamlit usando HTML embebido."""

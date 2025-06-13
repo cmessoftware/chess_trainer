@@ -1,4 +1,4 @@
-# CHESS TRAINER - Versión: v0.1.8-dd59d65
+# CHESS TRAINER - Versión: v0.1.11-5c3809d
 
 # Chess Trainer (versión base estable)
 
@@ -186,4 +186,4 @@ Este enfoque te proporcionará una base sólida para integrar Machine Learning e
 
 ## Créditos
 
-Desarrollado por Sergio como parte de su trabajo práctico para la Diplomatura en Ciencia de Datos.
+Desarrollado por cmessoftware como parte de su trabajo práctico para la Diplomatura en Ciencia de Datos.

@@ -1,9 +1,9 @@
 #!/bin/bash
-# Usage: run_pipeline.sh {all | from <step> | auto_tag | analyze_game_tactics | generate_exercises | generate_features [args]}
+# Usage: run_pipeline.sh {all | from <step> | auto_tag | analyze_tactics | generate_exercises | generate_features [args]}
 # Examples:
 # ./run_pipeline.sh all
 # ./run_pipeline.sh generate_exercises
-# ./run_pipeline.sh from analyze_game_tactics
+# ./run_pipeline.sh from analyze_tactics
 # ./run_pipeline.sh generate_features --max-games 5
 
 set -e
@@ -18,7 +18,7 @@ NC="\033[0m"
 # Paths
 export PYTHONPATH=/app/src
 export CHESS_TRAINER_DB=/app/src/data/chess_trainer.db
-export STOCKFISH_PATH=/usr/games/stockfish
+export STOCKFISH_PATH=/usr/local/bin/stockfish
 export PGN_PATH=/app/src/data/games
 
 LOG_DIR=/app/src/logs
@@ -72,7 +72,6 @@ run_step() {
 
 # Step implementations
 
-
 check_db() {
   echo -e "${CYAN}🔍 Checking database connection...${NC}"
   # Ensure schema
@@ -86,32 +85,38 @@ check_db() {
   fi
 }
 
-
 import_games() {
-  echo -e "${CYAN}🔍 Verificando si hay partidas nuevas para importar...${NC}"
+  echo -e "${CYAN}🔍 Checking if there are new games to import...${NC}"
   python scripts/import_games_parallel.py --input "$PGN_PATH"
   if [ $? -eq 0 ]; then
-    echo -e "${GREEN}✔ Nuevas partidas importadas correctamente.${NC}"
+    echo -e "${GREEN}✔ New games imported successfully.${NC}"
   else
-    echo -e "${RED}❌ Error al importar nuevas partidas.${NC}"
+    echo -e "${RED}❌ Error importing new games.${NC}"
     exit 1
   fi
- 
 }
 
 auto_tag() {
   python scripts/auto_tag_games.py
 }
 
-analyze_game_tactics() {
-  python scripts/analyze_game_tactics_parallel.py
+analyze_tactics() {
+  echo -e "${CYAN}🔍 Analyzing tactics in games...${NC}"
+  echo -e "${YELLOW}This step can take a long time depending on the number of games.${NC}"
+  echo "${CYAN} 🧹 Clearing analized_tacticals logs"
+  rm -rf /app/src/logs/analized_tacticals*
+  python scripts/analyze_games_tactics_parallel.py
 }
 
 generate_exercises() {
+  echo "${CYAN} 🧹 Clearing generate_exercises logs"
+  rm -rf /app/src/logs/generate_exercises*
   python scripts/generate_exercises_from_elite.py
 }
 
 generate_features() {
+  echo "${CYAN} 🧹 Clearing generate_features logs"
+  rm -rf /app/src/logs/generate_features*
   python scripts/generate_features_parallel.py \
     "$@"
 }
@@ -120,22 +125,23 @@ clean_db() {
   python db/truncate_postgres_tables.py
 }
 
-#TODO: No migra tags y score_diff a CSV.
+#TODO: Does not migrate tags and score_diff to CSV.
 export_dataset() {
   python scripts/export_dataset_to_csv.py
 }
 
 get_games() {
-  echo -e "${CYAN}📥 Importing new games from remotes servers...${NC}"
+  echo -e "${CYAN}📥 Importing new games from remote servers...${NC}"
   # python scripts/generate_pgn_from_chess_servers.py "$@"
   # Example usage:
-  python scripts/generate_pgn_from_chess_servers.py --server lichess.org --users cmess4401 cmess1315 --since 2025-01-01
-  # Validate required parameters for generate_pgn_from_chees_servers.py
-  if [ $# -lt 2 ]; then
-    echo -e "${YELLOW}Usage:${NC} $0 get_games <server> <username> [options]"
-    echo -e "${YELLOW}Example:${NC} $0 get_games lichess myuser --max-games 10"
-    exit 1
-  fi
+  python scripts/generate_pgn_from_chess_servers.py --server lichess.org --users cmess4401 cmess1315 --since 2010-01-01
+  # Validate required parameters for generate_pgn_from_chess_servers.py
+  #TODO: Uncomment when ready
+  # if [ $# -lt 2 ]; then
+  #   echo -e "${YELLOW}Usage:${NC} $0 get_games <server> <username> [options]"
+  #   echo -e "${YELLOW}Example:${NC} $0 get_games lichess.org myuser --max-games 10"
+  #   exit 1
+  # fi
   echo -e "${GREEN}✔ Games imported successfully.${NC}"
 }
 
@@ -153,7 +159,7 @@ inspect_pgn_zip() {
 
 clean_games() {
   echo -e "${CYAN}🧹 Cleaning PGN files...${NC}"
-  read -p "$(echo -e "${YELLOW}❓ Do you want clean ALL pgn files? If yes do you must import games again (get_games command) (y/n): ${NC}")" confirm
+  read -p "$(echo -e "${YELLOW}❓ Do you want to clean ALL pgn files? If yes, you must import games again (get_games command) (y/n): ${NC}")" confirm
   if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
     echo -e "${RED}⏹ Pipeline execution stopped by user.${NC}"
     exit 0
@@ -182,6 +188,39 @@ run_sqlite_web() {
   python -m sqlite_web /app/src/data/chess_trainer.db -H 0.0.0.0 -p 8081
 }
 
+run_upto() {
+  local upto_step="$1"
+  shift
+  echo -e "${CYAN}▶ Running pipeline up to and including step: $upto_step...${NC}"
+
+  # Define the steps in order
+  local steps=("init_db" "clean_db" "import_games" "inspect_pgn" "generate_features" "analyze_tactics" "generate_exercises" "export_dataset" "run_sqlite_web")
+  local found=0
+
+  for step in "${steps[@]}"; do
+    read -p "$(echo -e "${YELLOW}❓ Do you want to continue to the next step: ${CYAN}${step}${NC}? (y/n): ")" confirm
+    if [ $? -ne 0 ]; then
+      echo -e "${RED}❌ Step '$step' failed. Stopping pipeline.${NC}"
+      exit 1
+    fi
+    run_step "$step" "$step" "$@"
+    if [ "$step" = "$upto_step" ]; then
+      found=1
+      echo -e "${GREEN}✔ Step '$step' completed. Stopping as requested.${NC}"
+      break
+    fi
+    if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
+      echo -e "${RED}⏹ Pipeline execution stopped by user after '$step'.${NC}"
+      exit 0
+    fi
+  done
+
+  if [ $found -eq 0 ]; then
+    echo -e "${RED}❌ Step '$upto_step' not found in pipeline.${NC}"
+    return 1
+  fi
+}
+
 # Full pipeline
 run_all() { 
   run_step init_db init_db
@@ -202,8 +241,8 @@ run_all() {
   run_step generate_features generate_features
   [ $? -ne 0 ] && { echo -e "${RED}❌ Step 'generate_features' failed. Stopping pipeline.${NC}"; exit 1; }
 
-  run_step analyze_game_tactics analyze_game_tactics
-  [ $? -ne 0 ] && { echo -e "${RED}❌ Step 'analyze_game_tactics' failed. Stopping pipeline.${NC}"; exit 1; }
+  run_step analyze_tactics analyze_tactics
+  [ $? -ne 0 ] && { echo -e "${RED}❌ Step 'analyze_tactics' failed. Stopping pipeline.${NC}"; exit 1; }
 
   run_step generate_exercises generate_exercises
   [ $? -ne 0 ] && { echo -e "${RED}❌ Step 'generate_exercises' failed. Stopping pipeline.${NC}"; exit 1; }
@@ -225,7 +264,7 @@ run_all() {
 # From a specific step
 run_from_step() {
   local found=0
-  for step in auto_tag analyze_game_tactics generate_exercises generate_features export_dataset clean_db import_games init_db clean_cache run_sqlite_web clean_games inspect_pgn_zip check_db;  do
+  for step in auto_tag analyze_tactics generate_exercises generate_features export_dataset clean_db import_games init_db clean_cache run_sqlite_web clean_games inspect_pgn_zip check_db run_upto;  do
     if [ "$found" -eq 1 ]; then run_step "$step" "$step"; fi
     if [ "$step" = "$1" ]; then found=1; run_step "$step" "$step"; fi
   done
@@ -240,13 +279,13 @@ case "$1" in
     shift
     run_from_step "$1"
     ;;
-  auto_tag|analyze_game_tactics|generate_exercises|generate_features|clean_db|export_dataset|import_games|init_db|clean_cache|get_games|inspect_pgn|run_sqlite_web|clean_games|inspect_pgn_zip|check_db)
+  auto_tag|analyze_tactics|generate_exercises|generate_features|clean_db|export_dataset|import_games|init_db|clean_cache|get_games|inspect_pgn|run_sqlite_web|clean_games|inspect_pgn_zip|check_db|run_upto)
     STEP="$1"
     shift
     run_step "$STEP" "$STEP" "$@"
     ;;
   *)
-    echo -e "${YELLOW}Usage:${NC} $0 {all | from <step> | auto_tag | analyze_game_tactics | generate_exercises | generate_features [args] | \
+    echo -e "${YELLOW}Usage:${NC} $0 {all | from <step> | auto_tag | analyze_tactics | generate_exercises | generate_features [args] | \
 clean_db | export_dataset | import_games | init_db | clean_cache | get_games | inspect_pgn | run_sqlite_web|clean_games| inspect_pgn_zip| check_db}"
     exit 1
     ;;
