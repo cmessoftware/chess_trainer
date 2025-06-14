@@ -10,7 +10,8 @@ games/
 data/
 
 # Ignorar todo el contenido de /app/src/data/games
-/app/src/data/games/
+/app/src/data/games/*
+/app/src/data/*
 
 
 #db files
@@ -23,7 +24,7 @@ log/
 
 #datasets
 *.csv
-
+*.parquet
 # C extensions
 *.so
 
@@ -193,3 +194,4 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+/app/src/data/chess_trainer.db
