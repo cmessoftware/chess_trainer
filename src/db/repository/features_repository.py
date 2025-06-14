@@ -4,18 +4,15 @@ import logging
 from typing import Dict, List
 import chess
 import pandas as pd
-from sqlalchemy import update
+from sqlalchemy import and_, join, or_, select, update
 from sqlalchemy.dialects.postgresql import insert
 from db.models.features import Features
+from db.models.games import Games
 from db.db_utils import DBUtils, Session
 from db.session import get_session
 from modules.pgn_utils import get_game_id
 
 logger = logging.getLogger(__name__)
-
-# TODO: Actualizar tabla,
-# 1. en la base tiene el campo pgn, acá ya no está.
-# 2. EL campo move_number se llama move_number_global en la base de datos
 
 
 class FeaturesRepository:
@@ -100,7 +97,7 @@ class FeaturesRepository:
     def save_many_features(self, feature_rows: list[dict]):
         print(f"🔍 Saving {len(feature_rows)} features...")
 
-        # TODO: Este fragmento de código debería estar en un método publico de la capa de servicios.
+        # TODO-MIGRATED: Este fragmento de código debería estar en un método publico de la capa de servicios.
         if not isinstance(feature_rows, list):
             logger.error(
                 "❌ save_many_features received an invalid type. Expected: List[Dict]")
@@ -239,3 +236,106 @@ class FeaturesRepository:
                 session.rollback()
                 print(f"❌ Error updating features for {game_id}: {e}")
                 raise
+
+    def get_features_with_filters(
+        self,
+        output_path: str = "filtered_features.parquet",
+        min_elo: int = None,
+        max_elo: int = None,
+        player_name: str = None,
+        opening: str = None,
+        limit: int = None
+    ):
+        """
+        Exporta un archivo Parquet con los features filtrados por ELO, jugador, apertura y
+        límite de cantidad de partidas completas (no por jugadas).
+        """
+        print(f"🔍 Exportando dataset filtrado a {output_path}...")
+
+        try:
+            with self.session_factory() as session:
+                filters = []
+
+                if min_elo is not None:
+                    filters.append(Games.white_elo >= min_elo)
+                    filters.append(Games.black_elo >= min_elo)
+
+                if max_elo is not None:
+                    filters.append(Games.white_elo <= max_elo)
+                    filters.append(Games.black_elo <= max_elo)
+
+                if player_name:
+                    filters.append(or_(
+                        Games.white_player.ilike(f"%{player_name}%"),
+                        Games.black_player.ilike(f"%{player_name}%")
+                    ))
+
+                if opening:
+                    filters.append(or_(
+                        Games.eco.ilike(f"%{opening}%"),
+                        Games.opening.ilike(f"%{opening}%")
+                    ))
+
+                # Paso 1: Obtener game_ids que cumplen los filtros
+                game_stmt = select(Games.game_id).distinct()
+                if filters:
+                    game_stmt = game_stmt.where(and_(*filters))
+                if limit is not None:
+                    game_stmt = game_stmt.limit(limit)
+
+                filtered_game_ids = [row[0]
+                                     for row in session.execute(game_stmt).fetchall()]
+                if not filtered_game_ids:
+                    print("⚠️ No se encontraron partidas que cumplan los filtros.")
+                    return
+
+                # Paso 2: Obtener todos los features que pertenecen a esos game_ids
+                j = join(Features, Games, Features.game_id == Games.game_id)
+
+                stmt = select(
+                    Features.game_id,
+                    Features.move_number,
+                    Features.player_color,
+                    Features.fen,
+                    Features.move_san,
+                    Features.move_uci,
+                    Features.material_balance,
+                    Features.material_total,
+                    Features.num_pieces,
+                    Features.branching_factor,
+                    Features.self_mobility,
+                    Features.opponent_mobility,
+                    Features.phase,
+                    Features.has_castling_rights,
+                    Features.move_number_global,
+                    Features.is_repetition,
+                    Features.is_low_mobility,
+                    Features.is_center_controlled,
+                    Features.is_pawn_endgame,
+                    Features.tags,
+                    Features.score_diff,
+                    Features.is_stockfish_test,
+                    Features.num_moves,
+                    Games.site,
+                    Games.event,
+                    Games.date,
+                    Games.white_player,
+                    Games.black_player,
+                    Games.white_elo,
+                    Games.black_elo,
+                    Games.result,
+                    Games.eco,
+                    Games.opening
+                ).select_from(j).where(Features.game_id.in_(filtered_game_ids))
+
+                result = session.execute(stmt)
+                df = pd.DataFrame(result.fetchall(), columns=result.keys())
+
+                df.to_parquet(output_path, index=False)
+                print(
+                    f"✅ Exportado {len(df)} filas ({df['game_id'].nunique()} partidas) a {output_path}")
+                return df
+
+        except Exception as e:
+            print(f"❌ Error exportando dataset filtrado: {e}")
+            raise

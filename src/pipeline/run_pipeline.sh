@@ -110,7 +110,7 @@ analyze_tactics() {
 
 generate_exercises() {
   echo "${CYAN} 🧹 Clearing generate_exercises logs"
-  rm -rf /app/src/logs/generate_exercises*
+  rm -rf /app/src/logs/generate_features*
   python scripts/generate_exercises_from_elite.py
 }
 
@@ -127,7 +127,7 @@ clean_db() {
 
 #TODO: Does not migrate tags and score_diff to CSV.
 export_dataset() {
-  python scripts/export_dataset_to_csv.py
+  python scripts/export_features_dataset.py
 }
 
 get_games() {
