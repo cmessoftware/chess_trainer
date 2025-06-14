@@ -1,6 +1,6 @@
 from services.feature_export_services import export_features_to_parquet
 
-OUTPUT_PATH = "/app/src/data/features_dataset.parquet"
+OUTPUT_PATH = "/app/src/data/export/features_dataset.parquet"
 
 if __name__ == "__main__":
     import argparse
