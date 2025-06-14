@@ -5,9 +5,13 @@ __pycache__/
 
 #pgn games
 *.pgn
-stockfish
+stockfish*
 games/
 data/
+
+# Ignorar todo el contenido de /app/src/data/games
+/app/src/data/games/
+
 
 #db files
 *.db

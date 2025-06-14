@@ -1,4 +1,4 @@
-# CHESS TRAINER - Versión: v0.1.11-5c3809d
+# CHESS TRAINER - Versión: v0.1.12-e2056ce
 
 # ♟ chess_trainer – Análisis y entrenamiento con partidas de élite
 
@@ -109,42 +109,62 @@ load_dotenv()
 **Soporta multiples motors como Sqlite, MySql, Postgres , MariaDb etc**
 
 ## 📦 Paso 1: Instalá Alembic si aún no lo hiciste
+```bash
 pip install alembic
-
+```
 ## 📁 Paso 2: Inicializá Alembic en la raíz del proyecto (por ejemplo en /app)
+```bash
 cd /app
 alembic init alembic
-
+```
 #### Esto crea una carpeta alembic/ y un archivo alembic.ini.
 
 ## 🛠️ Paso 3: Configurá alembic/env.py
 #### Reemplazá el contenido de target_metadata y agregá tu engine.
 
 #### En alembic/env.py
+```python
 from db.database import Base
 from db import models  # asegúrate que __init__.py importe todos los modelos
 
 target_metadata = Base.metadata
-
+```
 ## 🧩 Paso 4: Configurá la conexión a la base de datos
 #### Editá alembic.ini y cambiá la línea sqlalchemy.url
-
+```python
 sqlalchemy.url = postgresql+psycopg2://usuario:password@localhost:5432/tu_base
+```
 #### O podés usar una variable de entorno si ya usás dotenv
 #### sqlalchemy.url = env:CHESS_TRAINER_DB_URL
 
 ## 🧱 Paso 5: Generá el script de migración
+```bash
 alembic revision --autogenerate -m "Agregar columnas a Games"
+```
 
 ## 🚀 Paso 6: Aplicá la migración a la base de datos
+```bash
 alembic upgrade head
-
+```
 ## 🧽 Paso 7 (opcional): Revertí una migración
+```bash
 alembic downgrade -1
-
+```
 **Nota: el comando alembic se tiene que ejecutar en la misma carpeta donde está alembic.ini (ej: /app)**
 
 ---
+# Uso de GIT LFS para almecamiento de grandes datasets y modelos ML
+
+**Se elige GTI LFS para reutilizar la infraestructura, esperiencia y credenciales de GitHub**
+
+```bash
+git lfs install
+git lfs track "*.csv"
+git add .gitattributes
+git add /app/src/data/features_dataset_*.csv #O el path elegido para el dataset.
+git commit -m "Agrego dataset al repo con Git LFS"
+git push
+```
 
 ## 📊 Análisis exploratorio (EDA)
 
