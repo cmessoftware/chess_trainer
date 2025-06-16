@@ -7,7 +7,7 @@ import sqlite3
 import json
 import io
 from db.tactical_db import save_tactic_to_db
-import  dotenv 
+import dotenv
 dotenv.load_dotenv()
 
 
@@ -23,9 +23,11 @@ OUTPUT_DIR = "data/tactics/elite"
 TAGS = ["sacrifice", "blunder", "tactical"]
 MAX_EXERCISES = 50
 
+#MIGRATED-TODO: Migrate code to repository pattern and use a repository for exercises
 
-def generate_elite_exercises(depth=10,multipv=3):
-    
+
+def generate_elite_exercises(depth=10, multipv=3):
+
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
     engine = chess.engine.SimpleEngine.popen_uci(STOCKFISH_PATH)
@@ -47,7 +49,8 @@ def generate_elite_exercises(depth=10,multipv=3):
 
         for i, move in enumerate(moves):
             board_before = board.copy()
-            info = engine.analyse(board, chess.engine.Limit(depth=depth), multipv=multipv)
+            info = engine.analyse(board, chess.engine.Limit(
+                depth=depth), multipv=multipv)
             if multipv == 1:
                 info = [info]
                 score_before = info["score"].white().score(mate_score=10000)
@@ -57,7 +60,8 @@ def generate_elite_exercises(depth=10,multipv=3):
                 continue
 
             board.push(move)
-            info = engine.analyse(board, chess.engine.Limit(depth=depth), multipv=multipv)
+            info = engine.analyse(board, chess.engine.Limit(
+                depth=depth), multipv=multipv)
             if multipv == 1:
                 info = [info]
                 score_after = info["score"].white().score(mate_score=10000)
@@ -90,7 +94,9 @@ def generate_elite_exercises(depth=10,multipv=3):
 
     conn.close()
     engine.quit()
-    print(f"✅ {exercise_id} exercise(s) saved to table tactical_exercises in {DB_PATH}")
+    print(
+        f"✅ {exercise_id} exercise(s) saved to table tactical_exercises in {DB_PATH}")
+
 
 # To run:
 if __name__ == "__main__":

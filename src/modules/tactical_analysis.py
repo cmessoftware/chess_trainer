@@ -1,4 +1,3 @@
-import io
 import os
 import traceback
 import chess
@@ -23,44 +22,37 @@ games_repo = GamesRepository()
 analyzed_tacticals_repo = Analyzed_tacticalsRepository()
 
 
-# @auto_logger_execution_time
-# def analyze_games_tactics():
-#     db_utils.init_analyzed_tacticals_table()
-#     analyzed = db_utils.load_analyzed_tacticals_hashes()
-#     # PRINT ALREADY ANALYZED GAMES COUNT
-#     print(
-#         f"🔍 PRINT ALREADY ANALYZED GAMES COUNT... {len(analyzed)} partidas encontradas.")
-
-#     games = games_repo.get_all()
-
-#     for game in games:
-#         game_hash = get_game_id(game)
-#         if game_hash in analyzed:
-#             print(
-#                 f"✅ Partida {game_hash} : {game.headers.get('White', '?')} vs {game.headers.get('Black', '?')} ya analizada, saltando...")
-#             continue
-
-#         print(
-#             f"🔍 Analizando táctica: {game.headers.get('White', '?')} vs {game.headers.get('Black', '?')}")
-
-#         try:
-#             depth = TACTICAL_ANALYSIS_SETTINGS.get("depth", 8)
-#             tags_df = detect_tactics_from_game(game, depth=depth)
-#             features_repo.update_features_tags_and_score_diff(
-#                 game_hash, tags_df)
-#             analyzed_tacticals_repo.save_analyzed_tactical_hash(game_hash)
-
-#         except Exception as e:
-#             print(
-#                 f"❌ Excepcion al analizar partida {game_hash} - {game.headers.get('White', '?')} vs {game.headers.get('Black', '?')}: {e} - {traceback.print_exc()}")
-#             if e.__cause__:
-#                 print("🔗 Causa original (inner exception):", e.__cause__)
-#             continue  # ⚠️ No marcar como procesada si hay error
-
-
 # Detecta patrones tácticos en una partida de ajedrez. Bajo depth=15 a 10 para acelerar el análisis
 @auto_logger_execution_time
 def detect_tactics_from_game(game, depth=10):
+    """
+    Analyzes a chess game to detect tactical motifs and errors for each move beyond the opening phase.
+
+    This function iterates through the mainline moves of a given chess game, skipping the opening moves as defined by
+    TACTICAL_ANALYSIS_SETTINGS. For each move, it evaluates the position before and after the move using a chess engine,
+    classifies tactical patterns, and assigns error labels based on the evaluation difference. It also considers alternative
+    moves using MultiPV analysis when appropriate.
+
+    Args:
+        game: A chess.pgn.Game object representing the chess game to analyze.
+        depth (int, optional): The default engine search depth for evaluation. May be dynamically adjusted per move.
+
+    Returns:
+        list[dict]: A list of dictionaries, each containing information about detected tactical tags, error labels,
+                    score differences, player color, move number, and FEN for each analyzed move.
+                    Returns None if no tags are found or if an exception occurs before any tags are processed.
+
+    Raises:
+        Any exceptions encountered during analysis are caught and logged; the function returns the tags processed up to
+        the point of failure, or None if none were processed.
+
+    Note:
+        - Requires global settings and helper functions such as TACTICAL_ANALYSIS_SETTINGS, PHASE_DEPTHS,
+          classify_simple_pattern, get_game_phase, get_evaluation, classify_tactical_pattern, classify_error_label,
+          and compare_to_best.
+        - Uses a cache to avoid redundant evaluations of the same positions.
+        - Designed for use in tactical analysis modules for chess applications.
+    """
     tags = []
 
     try:
@@ -156,7 +148,9 @@ def detect_tactics_from_game(game, depth=10):
             print(f"Score difference {score_diff}")
 
            # ➤ Clasificar jugada táctica por patrón
-            tag = classify_tactical_pattern(score_diff, board_before, move)
+            tactical_tag = classify_tactical_pattern(
+                score_diff, board_before, move)
+            error_label = classify_error_label(score_diff)
            # ➤ Analizar con MultiPV si hay alternativas mejores
             if "best" in eval_before:
                 tag_alt = compare_to_best(eval_before["best"], eval_before.get(
@@ -165,12 +159,13 @@ def detect_tactics_from_game(game, depth=10):
                 print("⚠️ eval_before does not have key 'best':", eval_before)
                 tag_alt = "unknown"
 
-            print(f"Tactical tag: {tag} (alternative: {tag_alt})")
-            if tag:
+            print(f"Tactical tag: {tactical_tag} (alternative: {tag_alt})")
+            if tactical_tag:
                 tags.append({
                     "fen": fen_before,
                     "move": move.uci(),
-                    "tag": pre_tag if pre_tag else tag or tag_alt,
+                    "tag": pre_tag if pre_tag else tactical_tag or tag_alt,
+                    "error_label": error_label,
                     "score_diff": score_diff,
                     "player_color": 1 if board.turn == chess.WHITE else 0,
                     "move_number": i + 1
@@ -267,16 +262,39 @@ def get_game_phase(board):
     return "endgame"
 
 
+def classify_error(score_diff):
+    if pd.isnull(score_diff):
+        return None
+    if score_diff < 100:
+        return "good"
+    elif score_diff < 300:
+        return "inaccuracy"
+    elif score_diff < 700:
+        return "mistake"
+    else:
+        return "blunder"
+
+
 def classify_tactical_pattern(score_diff, board, move):
     # Reutiliza las etiquetas simples
     simple_tag = classify_simple_pattern(board, move)
     if simple_tag:
         return simple_tag
 
-    if abs(score_diff) >= 300:
-        return "blunder" if score_diff < 0 else "tactical_opportunity"
-
     return None
+
+
+def classify_error_label(score_diff):
+    if score_diff is None:
+        return None
+    if score_diff <= 50:
+        return "good"
+    elif score_diff <= 150:
+        return "inaccuracy"
+    elif score_diff <= 500:
+        return "mistake"
+    else:
+        return "blunder"
 
 
 def classify_simple_pattern(board, move):

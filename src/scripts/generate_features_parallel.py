@@ -93,7 +93,7 @@ def process_chunk(pgn_list: list[str]):
                 print(
                     f"🔍 Game {game_id} tiene {len(features)} features generados")
                 print(
-                    f"🔍 Features a agregar par para game {game_id}: {features}")
+                    f"🔍 Se agregaron {len(features)} al game {game_id}")
 
                 features_repo.save_many_features(features)
                 processed_features_repo.save_processed_hash(game_id)

@@ -14,7 +14,7 @@ class Features(Base):
     fen = Column(String, nullable=True)
     move_san = Column(String, nullable=True)
     move_uci = Column(String, nullable=True)
-
+    error_label = Column(String, nullable=True)
     material_balance = Column(Float, nullable=True)
     material_total = Column(Float, nullable=True)
     num_pieces = Column(Integer, nullable=True)

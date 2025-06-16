@@ -8,7 +8,7 @@ env = dotenv.load_dotenv()
 
 STOCKFISH_PATH = os.environ.get("STOCKFISH_PATH")
 
-#TODO-MIGRATED: Analizar donde usar este analisis, si en el juego o en el ejercicio
+# MIGRATED-TODO: Analizar donde usar este analisis, si en el juego o en el ejercicio
 
 
 def analyze_critical_moves(game, depth=15, threshold=0.5):

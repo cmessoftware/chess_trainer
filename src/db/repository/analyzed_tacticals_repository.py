@@ -7,7 +7,6 @@ from sqlalchemy import insert
 from db.models.analyzed_tacticals import Analyzed_tacticals
 from db.db_utils import DBUtils
 from db.session import get_session
-from modules.pgn_utils import get_game_id
 
 logger = logging.getLogger(__name__)
 

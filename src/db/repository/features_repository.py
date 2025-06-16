@@ -97,7 +97,7 @@ class FeaturesRepository:
     def save_many_features(self, feature_rows: list[dict]):
         print(f"🔍 Saving {len(feature_rows)} features...")
 
-        # TODO-MIGRATED: Este fragmento de código debería estar en un método publico de la capa de servicios.
+        # MIGRATED-TODO: Este fragmento de código debería estar en un método publico de la capa de servicios.
         if not isinstance(feature_rows, list):
             logger.error(
                 "❌ save_many_features received an invalid type. Expected: List[Dict]")
@@ -170,21 +170,10 @@ class FeaturesRepository:
                     player_color = row.get("player_color")
                     tag = row.get("tag")
                     score_diff = row.get("score_diff")
+                    error_label = row.get("error_label", None)
                     print(
                         f"🔍 Processing row: move_number={move_number}, player_color={player_color}, tag={tag}, score_diff={score_diff}")
 
-                    # Map color if it comes as int
-                    # if isinstance(player_color, int):
-                    #     player_color = {0: "white", 1: "black"}.get(
-                    #         player_color, "unknown")
-
-                    # if isinstance(player_color, bool):
-                    #     player_color = "white" if player_color else "black"
-
-                    # if player_color not in {"white", "black"} or move_number < 0:
-                    #     print(f"❌ Invalid values for tag: {row}")
-                    #     skipped += 1
-                    #     continue
                     if isinstance(player_color, str):
                         player_color = 1 if "white" else 0
 
@@ -205,12 +194,6 @@ class FeaturesRepository:
                         skipped += 1
                         continue
 
-                    # exists = session.query(Features).filter_by(
-                    #     game_id=game_id,
-                    #     move_number=move_number,
-                    #     player_color=player_color
-                    # ).first()
-
                     stmt = (
                         update(self.model)
                         .where(
@@ -220,6 +203,7 @@ class FeaturesRepository:
                         )
                         .values(
                             tags=tag,
+                            error_label=error_label,  # Assuming error_label is not used here
                             score_diff=score_diff
                         )
                     )
@@ -245,6 +229,7 @@ class FeaturesRepository:
         player_name: str = None,
         opening: str = None,
         limit: int = None
+
     ):
         """
         Exporta un archivo Parquet con los features filtrados por ELO, jugador, apertura y
@@ -316,6 +301,7 @@ class FeaturesRepository:
                     Features.score_diff,
                     Features.is_stockfish_test,
                     Features.num_moves,
+                    Features.error_label,
                     Games.site,
                     Games.event,
                     Games.date,
@@ -331,9 +317,6 @@ class FeaturesRepository:
                 result = session.execute(stmt)
                 df = pd.DataFrame(result.fetchall(), columns=result.keys())
 
-                df.to_parquet(output_path, index=False)
-                print(
-                    f"✅ Exportado {len(df)} filas ({df['game_id'].nunique()} partidas) a {output_path}")
                 return df
 
         except Exception as e:

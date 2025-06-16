@@ -44,8 +44,18 @@ chess_trainer/
 │   │   ├── analyze_errors_from_games.py
 │   │   ├── generate_exercises_from_elite.py
 │   │   ├── save_games_to_db.py
+|   |   |__ analize_games_tactics_paralell  
+|   |   |__ generate_features_paralell
+|   |   |__ generate_pgn_from_chess_server
 │   │   └── inspect_db.py
-│   ├── pages/                   # Páginas de Streamlit
+|   |__ services/
+│   │   ├── features_export_service.py
+│   │   ├── get_lichess_studies.py
+│   │   ├── study_importer_service.py
+|   |__ tools/ 
+│   │   ├── elite_explorer.py
+|   |   |__create_issues_from_json
+|   ├── pages/                   # Páginas de Streamlit
 │   │   ├── elite_explorer.py
 │   │   ├── elite_training.py
 │   │   ├── elite_stats.py
@@ -255,6 +265,77 @@ Con `publish_to_lichess.py` podés subir partidas desde la DB como estudios. Nec
 | 🧪 Test manual de `multipv`    | ✅ Confirmado | Stockfish devuelve `list[dict]` correctamente al usar `multipv > 1`.       |
 
 ---
+
+## Separación de dataset según fuente.
+
+```
+/data/games/
+    ├── personal/
+    │   └── cmess1315_games_2020_2024.pgn
+    ├── novice/
+    │   └── lichess_novice_2023.pgn
+    ├── elite/
+    │   └── lichess_elite_2023.pgn
+    └── stockfish/
+        └── stockfish_vs_stockfish_tests.pgn
+
+/data/processed/
+    ├── personal_games.parquet
+    ├── novice_games.parquet
+    ├── elite_games.parquet
+    ├── stockfish_games.parquet
+    └── training_dataset.parquet  ← dataset combinado final
+```
+
+### ✅ ¿Por qué tener múltiples datasets?
+
+Separar los datasets por origen (personal, novato, élite, stockfish) ofrece ventajas clave:
+
+1. **Control y trazabilidad**
+  - Permite saber cuántas partidas hay de cada tipo.
+  - Facilita el análisis de errores según la fuente.
+  - Evita mezclar datos que podrían sesgar el modelo (por ejemplo, humanos vs Stockfish).
+
+2. **Entrenamiento dirigido**
+  - Posibilita entrenar modelos específicos:
+    - Personal: para recomendaciones personalizadas.
+    - Novato: para detectar errores frecuentes en principiantes.
+    - Élite/Stockfish: para generar datasets de jugadas correctas o perfectas.
+
+3. **Balance y mezcla estratégica**
+  - Permite decidir la proporción de cada tipo de partida en el dataset final.
+  - Facilita técnicas como undersampling/oversampling según el objetivo.
+
+🧩 **¿Por qué unificar los datasets?**
+- Tras procesar cada dataset por separado, se pueden:
+  - Aplicar los mismos análisis y extracción de features.
+  - Añadir un campo `source` para identificar el origen.
+  - Combinar todos en un dataset final para entrenamiento general, evaluación o análisis cruzado.
+
+El script `generate_combined_dataset.py` automatiza este proceso.
+
+---
+
+## 🧩 Resumen óptimo de datasets por tipo de partida
+
+| Tipo de partida                | Cantidad estimada | Uso principal                                                                 |
+|-------------------------------|-------------------|------------------------------------------------------------------------------|
+| **Tus propias partidas**      | ~12.000           | Entrenamiento personalizado, detección de patrones de error, evaluación real |
+| **Novatos (ELO < 1500)**      | 50k–200k          | Entrenamiento base, comparación de estilos, generalización                   |
+| **Élite (ELO > 2200)**        | >300k             | Modelar buen juego, etiquetar jugadas correctas, referencia                  |
+| **Stockfish vs Stockfish**    | >300k             | Ground truth, partidas perfectas, validación de scoring                      |
+
+
+  ### 🎯 Proporciones sugeridas en el dataset de entrenamiento
+
+  | Tipo de partida      | % en dataset final | Motivo principal                                 |
+  |---------------------|--------------------|--------------------------------------------------|
+  | Tus partidas        | 10–20%             | Personalización y evaluación                     |
+  | Novatos humanos     | 30–40%             | Entrenamiento base y errores típicos             |
+  | Partidas de élite   | 20–30%             | Modelar buen juego, contraste con novatos        |
+  | Stockfish test      | 10–20%             | Ground truth y jugadas perfectas                 |
+
+
 
 ## 🔜 Próximos pasos sugeridos
 

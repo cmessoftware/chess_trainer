@@ -12,7 +12,7 @@ from pages.components.file_uploader import upload_file
 import dotenv
 dotenv.load_dotenv()  
 
-#TODO-MIGRATED: No funciona el alta de archivos pgn.
+#MIGRATED-TODO-MIGRATED: No funciona el alta de archivos pgn.
 
 PGN_PATH = os.environ.get("PGN_PATH")
 

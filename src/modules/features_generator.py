@@ -61,7 +61,7 @@ def extract_features_from_position(board, move):
         "is_repetition": is_repetition,
         "is_low_mobility": is_low_mobility,
         "is_center_controlled": int(is_center_controlled(board, player_color)),
-        "is_pawn_endgame": is_pawn_endgame(board)
+        "is_pawn_endgame": is_pawn_endgame(board),
     }
 
 
@@ -89,6 +89,7 @@ def create_metadata_feature_row(game_id: str, meta: dict) -> dict:
         "opponent_mobility": None,
         "phase": None,
         "has_castling_rights": None,
+        # MIGRATED-TODO: Implement global move number in features table failed
         "move_number_global": None,
         "is_repetition": None,
         "is_low_mobility": None,

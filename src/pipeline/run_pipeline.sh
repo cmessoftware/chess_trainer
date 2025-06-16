@@ -125,7 +125,6 @@ clean_db() {
   python db/truncate_postgres_tables.py
 }
 
-#TODO: Does not migrate tags and score_diff to CSV.
 export_dataset() {
   python scripts/export_features_dataset.py
 }
@@ -183,18 +182,13 @@ clean_cache() {
   cd /app/src/pipeline || exit 1
 }
 
-run_sqlite_web() {
-  echo -e "${CYAN}🌐 Starting SQLite Web...${NC}"
-  python -m sqlite_web /app/src/data/chess_trainer.db -H 0.0.0.0 -p 8081
-}
-
 run_upto() {
   local upto_step="$1"
   shift
   echo -e "${CYAN}▶ Running pipeline up to and including step: $upto_step...${NC}"
 
   # Define the steps in order
-  local steps=("init_db" "clean_db" "import_games" "inspect_pgn" "generate_features" "analyze_tactics" "generate_exercises" "export_dataset" "run_sqlite_web")
+  local steps=("init_db" "clean_db" "import_games" "inspect_pgn" "generate_features" "analyze_tactics" "export_dataset" "generate_exercises") 
   local found=0
 
   for step in "${steps[@]}"; do
@@ -244,27 +238,20 @@ run_all() {
   run_step analyze_tactics analyze_tactics
   [ $? -ne 0 ] && { echo -e "${RED}❌ Step 'analyze_tactics' failed. Stopping pipeline.${NC}"; exit 1; }
 
-  run_step generate_exercises generate_exercises
-  [ $? -ne 0 ] && { echo -e "${RED}❌ Step 'generate_exercises' failed. Stopping pipeline.${NC}"; exit 1; }
-
   run_step export_dataset export_dataset 
   [ $? -ne 0 ] && { echo -e "${RED}❌ Step 'export_dataset' failed. Stopping pipeline.${NC}"; exit 1; }
 
-  read -p "$(echo -e "${YELLOW}❓ run sqlite_web? (y/n): ${NC}")" confirm
-  if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
-    echo -e "${RED}⏹ Pipeline execution stopped by user.${NC}"
-    exit 0
-  fi
-  run_step run_sqlite_web run_sqlite_web
-  [ $? -ne 0 ] && { echo -e "${RED}❌ Step 'run_sqlite_web' failed. Stopping pipeline.${NC}"; exit 1; }
+  run_step generate_exercises generate_exercises
+  [ $? -ne 0 ] && { echo -e "${RED}❌ Step 'generate_exercises' failed. Stopping pipeline.${NC}"; exit 1; }
 
+  
   echo -e "${GREEN}🎉 Pipeline executed successfully.${NC}"
 }
 
 # From a specific step
 run_from_step() {
   local found=0
-  for step in auto_tag analyze_tactics generate_exercises generate_features export_dataset clean_db import_games init_db clean_cache run_sqlite_web clean_games inspect_pgn_zip check_db run_upto;  do
+  for step in auto_tag analyze_tactics generate_exercises generate_features export_dataset clean_db import_games init_db clean_cache clean_games inspect_pgn_zip check_db run_upto;  do
     if [ "$found" -eq 1 ]; then run_step "$step" "$step"; fi
     if [ "$step" = "$1" ]; then found=1; run_step "$step" "$step"; fi
   done
@@ -279,14 +266,14 @@ case "$1" in
     shift
     run_from_step "$1"
     ;;
-  auto_tag|analyze_tactics|generate_exercises|generate_features|clean_db|export_dataset|import_games|init_db|clean_cache|get_games|inspect_pgn|run_sqlite_web|clean_games|inspect_pgn_zip|check_db|run_upto)
+  auto_tag|analyze_tactics|generate_exercises|generate_features|clean_db|export_dataset|import_games|init_db|clean_cache|get_games|inspect_pgn|clean_games|inspect_pgn_zip|check_db|run_upto)
     STEP="$1"
     shift
     run_step "$STEP" "$STEP" "$@"
     ;;
   *)
     echo -e "${YELLOW}Usage:${NC} $0 {all | from <step> | auto_tag | analyze_tactics | generate_exercises | generate_features [args] | \
-clean_db | export_dataset | import_games | init_db | clean_cache | get_games | inspect_pgn | run_sqlite_web|clean_games| inspect_pgn_zip| check_db}"
+clean_db | export_dataset | import_games | init_db | clean_cache | get_games | inspect_pgn | clean_games| inspect_pgn_zip| check_db}"
     exit 1
     ;;
 esac

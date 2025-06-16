@@ -3,6 +3,8 @@ import pandas as pd
 from datetime import datetime
 from pathlib import Path
 
+import predict_error_label
+
 if st.button("Guardar predicción"):
     pred = predict_error_label(features)
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")

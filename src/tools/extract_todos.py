@@ -5,7 +5,7 @@ import re
 
 ISSUES_FILE = "issues_todo.json"
 TODO_PATTERN = re.compile(r"#\s*TODO\s*[:\-]?\s*(.*)", re.IGNORECASE)
-MIGRATED_TAG = "#TODO-MIGRATED"
+MIGRATED_TAG = "#MIGRATED-TODO"
 
 
 def find_todos(base_path="."):

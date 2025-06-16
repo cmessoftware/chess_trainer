@@ -4,24 +4,26 @@ import pandas as pd
 from db.repository.features_repository import FeaturesRepository
 
 
-def export_features_to_parquet(
+def export_features_to_dataset(
     output_path: str,
     player: str | None = None,
     opening: str | None = None,
     min_elo: int | None = None,
     max_elo: int | None = None,
     limit: int | None = None,
+    file_type: str = "parquet"
 ):
     """
     Exporta un subconjunto de la tabla `features` a un archivo Parquet
     aplicando filtros opcionales por jugador, apertura, ELO y límite de partidas.
     """
     print("🔄 Exportando dataset de features...")
-    print(f"Filtros aplicados:  \n")
-    print(f"  - Jugador: {player if player else 'Todos'}\n")
-    print(f"  - Min elo: {min_elo}\n")
-    print(f"  - Max elo: {max_elo} \n")
-    print(f"  - Limit games: {limit}\n")
+    print(f"Filtros aplicados:  ")
+    print(f"  - Jugador: {player if player else 'Todos'}")
+    print(f"  - Min elo: {min_elo}")
+    print(f"  - Max elo: {max_elo} ")
+    print(f"  - Limit games: {limit}")
+    print(f"  - File type: {file_type}")
 
     features_repo = FeaturesRepository()
 
@@ -38,8 +40,14 @@ def export_features_to_parquet(
         return
 
     print(f"🔄 Total de features encontradas: {len(df)}")
-    print(df.head(5))
-
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    df.to_parquet(output_path, index=False)
-    print(f"✅ Dataset exportado a {output_path} con {len(df)} filas.")
+
+    if file_type == "parquet":
+        output_path = output_path + ".parquet"
+        df.to_parquet(output_path, index=False)
+    elif file_type == "csv":
+        output_path = output_path + ".csv"
+        df.to_csv(output_path, index=False)
+
+    print(
+        f"✅ Exported {len(df)} rows ({df['game_id'].nunique()} games) to {output_path}")
