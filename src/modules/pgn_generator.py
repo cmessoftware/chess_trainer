@@ -1,5 +1,5 @@
 import chess.pgn
-import io
+
 
 def generate_pgn_from_moves(moves, starting_fen=None):
     game = chess.pgn.Game()
@@ -11,5 +11,6 @@ def generate_pgn_from_moves(moves, starting_fen=None):
         move_obj = board.parse_san(move)
         board.push(move_obj)
         node = node.add_variation(move_obj)
-    exporter = chess.pgn.StringExporter(headers=True, variations=False, comments=True)
+    exporter = chess.pgn.StringExporter(
+        headers=True, variations=False, comments=True)
     return game.accept(exporter)

@@ -6,7 +6,7 @@ from modules.pgn_utils import get_game_id
 
 def extract_features_from_position(board, move):
     values = {
-        chess.PAWN: 1, chess.KNIGHT: 3, chess.BISHOP: 3.25,
+        chess.PAWN: 1, chess.KNIGHT: 3, chess.BISHOP: 3,
         chess.ROOK: 5, chess.QUEEN: 9
     }
 

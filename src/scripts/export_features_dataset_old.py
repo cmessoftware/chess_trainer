@@ -1,6 +1,7 @@
 
 from datetime import datetime
-from services.feature_export_services import export_features_to_dataset
+
+from export_features_for_source import export_features_to_dataset
 
 
 def get_output_path():
@@ -30,7 +31,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    args.file_type = "csv"
+    args.file_type = "parquet"
     export_features_to_dataset(
         output_path=OUTPUT_PATH,
         min_elo=args.min_elo,

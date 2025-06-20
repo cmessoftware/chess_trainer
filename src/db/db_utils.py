@@ -11,7 +11,6 @@ import dotenv
 
 from db.models.games import Games
 from db.models.processed_features import Processed_features
-from modules.pgn_utils import extract_features_from_game
 
 dotenv.load_dotenv()
 

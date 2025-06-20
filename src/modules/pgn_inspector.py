@@ -1,4 +1,7 @@
 # pgn_inspector.py
+from datetime import time
+import logging
+import os
 from pathlib import Path
 import zipfile
 import tarfile
@@ -7,6 +10,9 @@ import gzip
 import chess.pgn
 import io
 from modules.utils import show_spinner_message
+from concurrent.futures import ProcessPoolExecutor, as_completed
+from tqdm import tqdm
+
 
 def estimate_processing_time(num_games, avg_time_per_game=0.05, avg_tactical_analysis_time=0.15):
     """
@@ -17,6 +23,7 @@ def estimate_processing_time(num_games, avg_time_per_game=0.05, avg_tactical_ana
     tactics_time = num_games * avg_tactical_analysis_time
     total_time = import_time + tactics_time
     return import_time, tactics_time, total_time
+
 
 def count_games_in_pgn(file_like):
     """Cuenta la cantidad de partidas PGN en un archivo ya abierto (modo texto)."""
@@ -32,6 +39,132 @@ def count_games_in_pgn(file_like):
             break
     return count
 
+
+def _inspect_single_zip(zip_path):
+    try:
+        result = inspect_pgn_sources_from_zip(zip_path)
+        return zip_path.name, result
+    except Exception as e:
+        return zip_path.name, {"error": str(e)}
+
+
+def inspect_pgn_zip_files(folder_path):
+    zip_files = [Path(folder_path) /
+                 f for f in os.listdir(folder_path) if f.endswith(".zip")]
+    if not zip_files:
+        msg = "❌ No se encontraron archivos .zip en la carpeta."
+        print(msg)
+        logging.warning(msg)
+        return 0
+
+    total_pgns = 0
+    total_games = 0
+    total_import_time = 0.0
+    total_analysis_time = 0.0
+
+    with ProcessPoolExecutor() as executor:
+        futures = [executor.submit(_inspect_single_zip, path)
+                   for path in zip_files]
+        for future in tqdm(as_completed(futures), total=len(futures), desc="📦 Inspeccionando .zip"):
+            zip_name, result = future.result()
+            if "error" in result:
+                msg = f"❌ Error al procesar {zip_name}: {result['error']}"
+                print(msg)
+                logging.error(msg)
+                continue
+
+            total_pgns += result["total_pgn_files"]
+            total_games += result["total_games"]
+            total_import_time += result["estimated_import_time_sec"]
+            total_analysis_time += result["estimated_tactical_analysis_time_sec"]
+
+            log_msg = (
+                f"Archivo: {zip_name}\n"
+                f"  🧾 PGNs encontrados: {result['total_pgn_files']}\n"
+                f"  ♟️ Total de partidas: {result['total_games']}\n"
+                f"  ⏱️ Estimado de importación: {result['estimated_import_time_sec']:.1f} s\n"
+                f"  ⏱️ Estimado de análisis táctico: {result['estimated_tactical_analysis_time_sec']:.1f} s"
+            )
+            print(log_msg)
+            logging.info(log_msg)
+
+    summary = (
+        "\n📊 RESUMEN FINAL\n"
+        f"  Archivos ZIP procesados: {len(zip_files)}\n"
+        f"  Archivos PGN totales: {total_pgns}\n"
+        f"  Partidas totales: {total_games}\n"
+        f"  ⏱️ Tiempo estimado total de importación: {total_import_time:.1f} s\n"
+        f"  ⏱️ Tiempo estimado total de análisis táctico: {total_analysis_time:.1f} s"
+    )
+
+    print(summary)
+    logging.info(summary)
+    return total_games
+
+
+def _count_games_in_file(file_path):
+    import chess.pgn
+    count = 0
+    try:
+        with open(file_path, "r", encoding="utf-8") as f:
+            while True:
+                game = chess.pgn.read_game(f)
+                if game is None:
+                    break
+                count += 1
+    except Exception:
+        pass
+    return str(file_path), count
+
+
+def inspect_pgn_sources_from_folder(path):
+    """
+    Inspecciona archivos .pgn en una carpeta (no comprimidos).
+    Devuelve el total de archivos PGN, partidas, y tiempo estimado.
+    """
+    total_pgn_files = 0
+    total_games = 0
+
+    path = Path(path)
+    if not path.exists():
+        raise FileNotFoundError(f"No existe el path: {path}")
+
+    pgn_files = []
+    if path.is_dir():
+        pgn_files = list(path.rglob("*.pgn"))
+    elif path.suffix == ".pgn":
+        pgn_files = [path]
+    else:
+        raise ValueError(
+            f"El path proporcionado no es una carpeta ni un archivo .pgn: {path}")
+
+    if not pgn_files:
+        print(f"❌ No se encontraron archivos PGN en: {path}")
+        return 0
+
+    with ProcessPoolExecutor() as executor:
+        futures = [executor.submit(_count_games_in_file, f) for f in pgn_files]
+        for future in tqdm(as_completed(futures), total=len(futures), desc="📂 Inspeccionando .pgn"):
+            file_path, game_count = future.result()
+            total_pgn_files += 1
+            total_games += game_count
+
+    import_time, tactics_time, total_time = estimate_processing_time(
+        total_games)
+
+    summary = {
+        "total_pgn_files": total_pgn_files,
+        "total_games": total_games,
+        "estimated_import_time_sec": round(import_time, 2),
+        "estimated_tactical_analysis_time_sec": round(tactics_time, 2),
+        "estimated_total_time_sec": round(total_time, 2)
+    }
+
+    print(summary)
+    logging.info(summary)
+    return total_games
+
+
 def inspect_pgn_sources_from_zip(path):
     """
     Inspecciona archivos .pgn, incluso dentro de .zip, .tar, .gz, y .bz2.
@@ -45,7 +178,8 @@ def inspect_pgn_sources_from_zip(path):
         total_pgn_files += 1
         try:
             if isinstance(fileobj, (bytes, bytearray)):
-                fileobj = io.TextIOWrapper(io.BytesIO(fileobj), encoding="utf-8")
+                fileobj = io.TextIOWrapper(
+                    io.BytesIO(fileobj), encoding="utf-8")
             elif not isinstance(fileobj, io.TextIOBase):
                 fileobj = io.TextIOWrapper(fileobj, encoding="utf-8")
             total_games += count_games_in_pgn(fileobj)
@@ -95,7 +229,8 @@ def inspect_pgn_sources_from_zip(path):
     else:
         process_file(path)
 
-    import_time, tactics_time, total_time = estimate_processing_time(total_games)
+    import_time, tactics_time, total_time = estimate_processing_time(
+        total_games)
 
     return {
         "total_pgn_files": total_pgn_files,

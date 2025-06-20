@@ -1,4 +1,6 @@
 import traceback
+
+from anyio import Path
 from db.models.games import Games
 import io
 import chess.pgn
@@ -114,17 +116,19 @@ def load_pgn_batches(input_path: str, batch_size: int) -> Generator[list[Tuple[s
     return chunked_iterable(extract_pgn_files(input_path), batch_size)
 
 
-def parse_game_text(game_text: str) -> dict:
+def extract_features_from_game(game_text: str) -> dict:
     try:
-        print(f"🔍 Parsing game text {game_text}")
+        print(f"🔍 Parsing game text resume: {game_text[:50]}")
         pgn_io = io.StringIO(game_text)
         game = chess.pgn.read_game(pgn_io)
 
         if game is None or not game.headers:
+            print("❌ No se pudo leer el juego o no tiene encabezados.")
             return None
 
         # Verificar si tiene encabezado FEN
         if "FEN" not in game.headers:
+            print("⚠️ No se encontró FEN en los encabezados, usando posición inicial.")
             board = chess.Board()  # posición inicial
         else:
             board = chess.Board(game.headers["FEN"])
@@ -152,7 +156,8 @@ def parse_game_text(game_text: str) -> dict:
             "date": headers.get("Date", ""),
             "eco": headers.get("ECO", ""),
             "opening": headers.get("Opening", ""),
-            "pgn": game_text
+            "pgn": game_text,
+            "source": headers.get("Source", "unknown"),
         }
     except Exception as e:
         print(f"❌ Error al procesar el juego: {e} - {traceback.format_exc()}")

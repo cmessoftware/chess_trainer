@@ -2,10 +2,8 @@
 
 from io import StringIO
 import os
-from pathlib import Path
 import chess
 import dotenv
-from sqlalchemy.orm import Session
 from sqlalchemy import select, not_
 from db.db_utils import DBUtils
 from db.models.games import Games  # You must have this model defined
@@ -19,6 +17,7 @@ DB_PATH = os.environ.get("CHESS_TRAINER_DB", "data/chess_trainer.db")
 class GamesRepository:
     def __init__(self, session_factory=get_session):
         self.session_factory = session_factory
+        self.session = session_factory()
         self.db_utils = DBUtils()
 
     def get_all_games(self):
@@ -69,6 +68,20 @@ class GamesRepository:
                     Games.game_id == game_id)
             ).first()
             return row
+
+    def game_exists(self, game_id: str) -> bool:
+        return self.session.query(Games).filter(Games.game_id == game_id).first() is not None
+
+    def save_game(self, game_data: dict):
+        game = Games(**game_data)
+        self.session.add(game)
+        self.commit()
+
+    def commit(self):
+        self.session.commit()
+
+    def close(self):
+        self.session.close()
 
     def is_game_in_db(self, game_id: str) -> bool:
         """

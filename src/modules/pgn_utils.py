@@ -126,20 +126,6 @@ def parse_games_from_orm(orm_games):
     return parsed
 
 
-def extract_features_from_game(game, game_id):
-    # Extract basic features as an example
-    return {
-        "game_id": game_id,
-        "site": game.headers.get("Site", ""),
-        "event": game.headers.get("Event", ""),
-        "date": game.headers.get("Date", ""),
-        "white_player": game.headers.get("White", ""),
-        "black_player": game.headers.get("Black", ""),
-        "result": game.headers.get("Result", ""),
-        "num_moves": len(list(game.mainline_moves()))
-    }
-
-
 def count_moves(game: chess.pgn.Game) -> int:
     return sum(1 for _ in game.mainline_moves())
 

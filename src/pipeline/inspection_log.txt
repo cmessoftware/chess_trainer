@@ -1,10 +1,10 @@
-2025-06-05 17:52:20,202 - INFO - Archivo: 5dc0ba190ebc5904493b0110.zip
+|||| 2025-06-05 17:52:20,202 - INFO - Archivo: 5dc0ba190ebc5904493b0110.zip
   🧾 PGNs encontrados: 143
   ♟️ Total de partidas: 33786
   ⏱️ Estimado de importación: 1689.3 s
   ⏱️ Estimado de análisis táctico: 5067.9 s
   ✅ Completado en 196.0 s
-2025-06-05 17:52:57,376 - INFO - Archivo: 5dc408e20ebc5902de59148b.zip
+202506-05 17:52:57,376 - INFO - Archivo: 5dc408e20ebc5902de59148b.zip
   🧾 PGNs encontrados: 78
   ♟️ Total de partidas: 7671
   ⏱️ Estimado de importación: 383.6 s
