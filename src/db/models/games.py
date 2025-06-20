@@ -14,9 +14,11 @@ class Games(Base):
     event = Column(String)
     date = Column(String)
     white_player = Column(String)
-    white_elo = Column(String)  # Nuevo: Elo del jugador blanco
+    white_elo = Column(String)  # New: White player's Elo
     black_player = Column(String)
-    black_elo = Column(String)  # Nuevo
+    black_elo = Column(String)  # New
     result = Column(String)
-    eco = Column(String)              # Nuevo: código ECO
-    opening = Column(String)          # Nuevo: descripción apertura
+    eco = Column(String)              # New: ECO code
+    opening = Column(String)          # New: opening description
+    # New: PGN source --> for example, personal, novice, lichess elite, stockfish test, etc.
+    source = Column(String)

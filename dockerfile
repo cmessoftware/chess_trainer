@@ -18,17 +18,17 @@ WORKDIR /app
 #RUN /app/entrypoint.sh --> Instala stockfish y las dependencias de Python
 # Descargar Stockfish 17.1 AVX2
 # Descargar y extraer Stockfish
-RUN wget https://github.com/official-stockfish/Stockfish/releases/download/sf_17.1/stockfish-ubuntu-x86-64-avx2.tar && \
-    mkdir -p /usr/local/bin && \
-    tar -xf stockfish-ubuntu-x86-64-avx2.tar -C /usr/local/bin && \
-    mv /usr/local/bin/ /usr/local/bin/stockfish2 && \
-    mv /usr/local/bin/stockfish2/stockfish/stockfish-ubuntu-x86-64-avx2 /usr/local/bin && \
-    rm -rf /usr/local/bin/stockfish2 && \
-    chmod +x /usr/local/bin && \
-    rm -rf stockfish-ubuntu-x86-64-avx2.tar
+# RUN wget https://github.com/official-stockfish/Stockfish/releases/download/sf_17.1/stockfish-ubuntu-x86-64-avx2.tar && \
+#     mkdir -p /usr/local/bin && \
+#     tar -xf stockfish-ubuntu-x86-64-avx2.tar -C /usr/local/bin && \
+#     mv /usr/local/bin/ /usr/games/stockfish2 && \
+#     mv /usr/games/stockfish2/stockfish/stockfish-ubuntu-x86-64-avx2 /usr/local/bin && \
+#     rm -rf /usr/games/stockfish2 && \
+#     chmod +x /usr/local/bin && \
+#     rm -rf stockfish-ubuntu-x86-64-avx2.tar
 
-# Añadir Stockfish al PATH
-ENV PATH="/usr/local/bin/stockfish:${PATH}"
+# # Añadir Stockfish al PATH
+# ENV PATH="/usr/games/stockfish:${PATH}"
 
 # Copiar requirements.txt
 COPY requirements.txt .

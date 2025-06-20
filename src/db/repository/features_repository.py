@@ -67,6 +67,7 @@ class FeaturesRepository:
             headers=True, variations=True, comments=True))
         game_id = get_game_id(parsed_game)
         features = self._extract_features_from_game(parsed_game, game_id)
+        print(f"Extracted features for game {game_id}: {features}")
 
         if not features:
             print("⚠️ No features extracted.")
@@ -220,6 +221,12 @@ class FeaturesRepository:
                 session.rollback()
                 print(f"❌ Error updating features for {game_id}: {e}")
                 raise
+
+    def get_unique_sources(self):
+        with self.session_factory() as session:
+            stmt = select(Games.source).distinct()
+            result = session.execute(stmt).fetchall()
+            return [row[0] for row in result if row[0] is not None]
 
     def get_features_with_filters(
         self,

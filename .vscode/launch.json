@@ -6,16 +6,6 @@
       "type": "debugpy",
       "request": "launch",
       "program": "${file}",
-      "args": [
-        "--server",
-        "chess.com",
-        "--user",
-        "cmess4401 cmess1315",
-        "--since",
-        "2023-01-01",
-        "--until",
-        "2025-12-31"
-      ],
       "console": "integratedTerminal"
     },
     {
@@ -32,6 +22,23 @@
           "remoteRoot": "/app"
         }
       ]
+    },
+    {
+      "name": "Generate PGN from Chess Servers",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "scripts/generate_pgn_from_chess_servers.py",
+      "args": [
+        "--server",
+        "lichess.org",
+        "--users",
+        "cmess1315 cmess4401",
+        "--since",
+        "2025-01-01",
+        "--max-games",
+        "1000"
+      ],
+      "console": "integratedTerminal"
     }
   ]
 }

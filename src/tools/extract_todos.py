@@ -1,7 +1,7 @@
-# tools/extract_todos.py
 import os
 import json
 import re
+import argparse
 
 ISSUES_FILE = "issues_todo.json"
 TODO_PATTERN = re.compile(r"#\s*TODO\s*[:\-]?\s*(.*)", re.IGNORECASE)
@@ -11,9 +11,8 @@ MIGRATED_TAG = "#MIGRATED-TODO"
 def find_todos(base_path="."):
     todos = []
     for root, _, files in os.walk(base_path):
-
         for file in files:
-            if file.endswith(('.py', '.js', '.ts', '.cs', '.cpp', '.java', '.go', '.rb')):
+            if file.endswith(('.py', '.js', '.ts', '.cs', '.cpp', '.java', '.go', '.rb', '.html', '.css', '.md')):
                 full_path = os.path.join(root, file)
                 with open(full_path, 'r', encoding='utf-8') as f:
                     lines = f.readlines()
@@ -39,14 +38,16 @@ def find_todos(base_path="."):
                             "line": i + 1
                         })
 
-                        # Reemplazo seguro
+                        # Marcar como migrado con timestamp
+                        timestamp = int(__import__('time').time())
+                        migrated_tag = f"#MIGRATED-TODO-{timestamp}"
                         lines[i] = re.sub(
-                            r"#\s*TODO", MIGRATED_TAG, line, count=1, flags=re.IGNORECASE)
+                            r"#\s*TODO", migrated_tag, line, count=1, flags=re.IGNORECASE)
                         modified = True
 
                 if modified:
                     print(
-                        f"✏️ Actualizando {full_path} ...con {len(todos)} TODOs encontrados")
+                        f"✏️ Actualizando {full_path} con los TODOs encontrados...")
                     with open(full_path, 'w', encoding='utf-8') as f:
                         f.writelines(lines)
 
@@ -59,14 +60,28 @@ def save_issues(issues):
     print(f"\n✅ {len(issues)} issues guardados en '{ISSUES_FILE}'")
 
 
-if __name__ == "__main__":
+def main():
+    parser = argparse.ArgumentParser(
+        description="Extraer TODOs del código fuente.")
+    parser.add_argument("--path", type=str, default=".",
+                        help="Ruta base donde buscar TODOs (por defecto '.')")
+    args = parser.parse_args()
+
     print("🚀 Buscando TODOs...")
-    import sys
-    path = sys.argv[1] if len(sys.argv) > 1 else "."
-    issues = find_todos(path)
+    issues = find_todos(args.path)
+
     print(f"\n🔍 Se encontraron {len(issues)} TODOs.")
     for i, issue in enumerate(issues, 1):
         print(f"{i}. {issue['title']} ({issue['file']}:{issue['line']})")
         if issue['body']:
             print(f"   {issue['body']}")
+
+    if not issues:
+        print("❌ No se encontraron TODOs.")
+        exit(1)
+
     save_issues(issues)
+
+
+if __name__ == "__main__":
+    main()

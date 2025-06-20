@@ -1,0 +1,1 @@
+2025-06-17 22:38:01,337 - WARNING - ❌ No se encontraron archivos .zip en la carpeta.

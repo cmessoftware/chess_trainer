@@ -104,7 +104,7 @@ Definí la ruta a la base SQLite en un `.env`:
 
 ```env
 CHESS_TRAINER_DB=src/data/chess_trainer.db
-STOCKFISH_PATH=/usr/local/bin/stockfish’
+STOCKFISH_PATH=/usr/games/stockfish’
 ```
 
 Y cargala con:
@@ -339,12 +339,19 @@ El script `generate_combined_dataset.py` automatiza este proceso.
 
 ## 🔜 Próximos pasos sugeridos
 
-- [ ] Aplicar `is_forced_move` en `detect_tactics_from_game` para omitir jugadas inevitables.
-- [ ] Integrar `depth_score_diff`, `threatens_mate`, `is_forced_move` como columnas adicionales del análisis.
-- [ ] Consolidar tags + features tácticas en un solo dataframe.
-- [ ] Guardar evaluaciones de Stockfish en base de datos para trazabilidad y debugging.
-
-
+- [#MIGRATED-TODO-1750286988] Aplicar `is_forced_move` en `detect_tactics_from_game` para omitir jugadas inevitables.
+- [#MIGRATED-TODO-1750287009] Integrar `depth_score_diff`, `threatens_mate`, `is_forced_move` como columnas adicionales del análisis.
+- [#MIGRATED-TODO-1750287014] Consolidar tags + features tácticas en un solo dataframe.
+- [#MIGRATED-TODO-1750287017] Guardar evaluaciones de Stockfish en base de datos para trazabilidad y debugging.
+- [#MIGRATED-TODO-1750288408] Implementar tests unitarios para init_db.
+- [#MIGRATED-TODO-1750288409] Implementar tests unitarios para get_games.
+- [#MIGRATED-TODO-1750288409] Implementar tests unitarios para import_games.
+- [#MIGRATED-TODO-1750288409] Implementar tests unitarios para generate_features.
+- [#MIGRATED-TODO-1750288410] Implementar tests unitarios para analyze_tactics.
+- [#MIGRATED-TODO-1750288410] Implementar tests unitarios para  export_dataset.
+- [#MIGRATED-TODO-1750288411] Implementar tests unitarios generate_exercises.
+- [#MIGRATED-TODO-1750288411] Consolidar scripts para implementar lógica de generación/visualización/nvageación/edición de estudio tipo Lichess.
+- [#MIGRATED-TODO-1750288412] Analizar notebooks de analisis EDA, Clustering, Machine Leaning de en base a los dataset generados.
 
 
 ## 📌 Autor

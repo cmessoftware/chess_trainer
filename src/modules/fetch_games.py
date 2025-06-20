@@ -8,6 +8,7 @@ HEADERS = {
     "User-Agent": "chess_trainer/1.0 (+https://github.com/cmessoftware/chess_trainer)"
 }
 
+
 def fetch_chesscom_games(username, since, until):
     games = []
     since_dt = datetime.strptime(since, "%Y-%m-%d")
@@ -22,7 +23,8 @@ def fetch_chesscom_games(username, since, until):
         else:
             current = current.replace(month=current.month+1)
     for year, month in months:
-        print(f"Fetching Chess.com games for {username} from {year}-{month:02d}")
+        print(
+            f"Fetching Chess.com games for {username} from {year}-{month:02d}")
         url = f"https://api.chess.com/pub/player/{username}/games/{year}/{month:02d}"
         resp = requests.get(url, headers=HEADERS)
         print(f"Response status: {resp.status_code}")
@@ -35,6 +37,7 @@ def fetch_chesscom_games(username, since, until):
                 if "pgn" in game:
                     games.append(game["pgn"])
     return games
+
 
 def fetch_lichess_games(username, since, until):
     # Lichess API allows filtering by date (timestamp in ms)
@@ -63,5 +66,6 @@ def fetch_lichess_games(username, since, until):
                 except Exception:
                     continue
     return games
+
 
 auto_log_module_functions(locals())

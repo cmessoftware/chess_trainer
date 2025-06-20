@@ -46,18 +46,18 @@ def run_parallel_analysis_from_db(max_workers=4):
         f"🔍 Type = {type(pending_games_id)}, length = {len(pending_games_id) if hasattr(pending_games_id, '__len__') else 'N/A'}")
 
     # 🔄 CAMBIO: limitador activo
-    pending_games_id = pending_games_id[:LIMIT_FOR_DEBUG]
-    print(f"🔍 Analysis limited to {len(pending_games_id)} games for debugging")
+    # pending_games_id = pending_games_id[:LIMIT_FOR_DEBUG]
+    # print(f"🔍 Analysis limited to {len(pending_games_id)} games for debugging")
 
-    # Testing with a single game for debugging
-    game_id, tags_df = analyze_game_parallel(game_id=pending_games_id[0])
+    # # Testing with a single game for debugging
+    # game_id, tags_df = analyze_game_parallel(game_id=pending_games_id[0])
 
-    print(
-        f"🔍 Analyzed data from analyze_game_parallel: game {game_id} - Tags found: {len(tags_df) if tags_df is not None else 'None'}")
-    # 🔄 CAMBIO: log claro
-    features_repo.update_features_tags_and_score_diff(game_id, tags_df)
-    analyzed_tacticals_repo.save_analyzed_tactical_hash(game_id)
-    return
+    # print(
+    #     f"🔍 Analyzed data from analyze_game_parallel: game {game_id} - Tags found: {len(tags_df) if tags_df is not None else 'None'}")
+    # # 🔄 CAMBIO: log claro
+    # features_repo.update_features_tags_and_score_diff(game_id, tags_df)
+    # analyzed_tacticals_repo.save_analyzed_tactical_hash(game_id)
+    # return
 
     # 🔄 CAMBIO: podrías usar ThreadPoolExecutor para debug
     with ProcessPoolExecutor(max_workers=max_workers) as executor:

@@ -17,7 +17,7 @@ def get_repo():
 
 
 def create_issues():
-    with open(ISSUES_FILE, 'r', encoding='utf-8') as f:
+    with open(ISSUES_FILE, 'r', encoding='utf-8') as + p f:
         issues = json.load(f)
 
     repo = get_repo()

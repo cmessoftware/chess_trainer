@@ -1,7 +1,11 @@
 import os
-import pandas as pd
-
+from pathlib import Path
+from concurrent.futures import ProcessPoolExecutor
 from db.repository.features_repository import FeaturesRepository
+
+# Constantes
+BASE_DIR = Path("/app/src/data/games")
+SOURCES = ["personal", "novice", "elite", "stockfish", "fide"]
 
 
 def export_features_to_dataset(
@@ -44,6 +48,7 @@ def export_features_to_dataset(
 
     if file_type == "parquet":
         output_path = output_path + ".parquet"
+        print(f"🔄 Exportando a Parquet en {output_path}")
         df.to_parquet(output_path, index=False)
     elif file_type == "csv":
         output_path = output_path + ".csv"
@@ -51,3 +56,20 @@ def export_features_to_dataset(
 
     print(
         f"✅ Exported {len(df)} rows ({df['game_id'].nunique()} games) to {output_path}")
+
+
+def export_features_for_source(source: str):
+    output_path = BASE_DIR / source / "features"
+    export_features_to_dataset(output_path=str(
+        output_path), file_type="parquet")
+
+
+def export_all_sources_parallel():
+    print("🔄 Exportando features por source en paralelo...")
+    with ProcessPoolExecutor() as executor:
+        executor.map(export_features_for_source, SOURCES)
+    print("✅ Exportación paralela por source completada.")
+
+
+if __name__ == "__main__":
+    export_all_sources_parallel()
