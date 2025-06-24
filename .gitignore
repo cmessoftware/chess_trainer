@@ -9,6 +9,24 @@ stockfish*
 games/
 data/
 
+# Ignorar datasets, modelos y outputs (manejados por DVC)
+data/exports/
+data/processed/
+data/outputs/
+data/models/
+
+# Pero seguir el seguimiento de punteros .dvc
+!data/exports/*.dvc
+!data/processed/*.dvc
+!data/outputs/*.dvc
+!data/models/*.dvc
+
+# Ignorar cachés y temporales
+.dvc/
+.dvc/cache/
+*.log
+*.tmp
+
 # Ignorar todo el contenido de /app/src/data/games
 /app/src/data/games/*
 /app/src/data/*

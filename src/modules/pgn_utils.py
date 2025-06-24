@@ -130,6 +130,22 @@ def count_moves(game: chess.pgn.Game) -> int:
     return sum(1 for _ in game.mainline_moves())
 
 
+def pgn_str_to_game(pgn_str: str) -> chess.pgn.Game:
+    """
+    Converts a PGN string to a chess.pgn.Game object.
+
+    Args:
+        pgn_str (str): The PGN text.
+
+    Returns:
+        chess.pgn.Game: The parsed game object, or None if parsing fails.
+    """
+    try:
+        return chess.pgn.read_game(io.StringIO(pgn_str))
+    except Exception as e:
+        print(f"⚠️ Error parsing PGN string: {e}")
+        return None
+
 def get_game_id(game):
     try:
         # Logic to generate a unique hash or game identifier

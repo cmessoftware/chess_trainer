@@ -109,15 +109,9 @@ check_db() {
 
 create_issues() {
   echo -e "${CYAN}📝 Creating GitHub issues from TODOs...${NC}"
-  python /app/src/tools/extract_todos.py --path /app
+  python /app/src/tools/create_issues.py 
   if [ $? -eq 0 ]; then
-      python /app/src/tools/create_issues.py 
-      if [ $? -eq 0 ]; then
-          echo "✅ Issues creados correctamente."
-      else
-          echo "❌ Error al crear los issues."
-          exit 1
-      fi
+     echo "✅ Issues creados correctamente."
   else
       echo "❌ Error al extraer los TODOs."
       exit 1
@@ -142,15 +136,15 @@ auto_tag() {
 analyze_tactics() {
   echo -e "${CYAN}🔍 Analyzing tactics in games...${NC}"
   echo -e "${YELLOW}This step can take a long time depending on the number of games.${NC}"
-  echo "${CYAN} 🧹 Clearing analized_tacticals logs"
-  rm -rf /app/src/logs/analized_tacticals*
-  python scripts/analyze_games_tactics_parallel.py
+  #echo "${CYAN} 🧹 Clearing analized_tacticals logs"
+  # rm -rf /app/src/logs/analyze_tactics.log
+  python /app/src/scripts/analyze_games_tactics_parallel.py
 }
 
 generate_exercises() {
   echo "${CYAN} 🧹 Clearing generate_exercises logs"
   rm -rf /app/src/logs/generate_features*
-  python scripts/generate_exercises_from_elite.py
+  python /app/src/scripts/generate_exercises_from_elite.py
 }
 
 generate_features() {
@@ -165,14 +159,14 @@ clean_db() {
 }
 
 export_dataset() {
-  python scripts/export_features_dataset_parallel.py
+  python /app/src/scripts/export_features_dataset_parallel.py
 }
 
 get_random_games() {
   echo -e "${CYAN}📥 Importing random games from remote servers...${NC}"
   # python scripts/generate_pgn_from_chess_servers.py "$@"
   # Example usage:
-  python scripts/fetch_lichess_intermediate_games.py 
+  python /app/src/scripts/fetch_lichess_intermediate_games.py 
   # Validate required parameters for generate_pgn_from_chess_servers.py
 }
 
@@ -180,7 +174,7 @@ get_games() {
   echo -e "${CYAN}📥 Importing new games from remote servers...${NC}"
   # python scripts/generate_pgn_from_chess_servers.py "$@"
   # Example usage:
-  python scripts/download_games_parallel.py --server chess.com --users cmess4401 cmess1315 --since 2008-01-01
+  python /app/src/scripts/download_games_parallel.py --server chess.com --users cmess4401 cmess1315 --since 2008-01-01
   # Validate required parameters for generate_pgn_from_chess_servers.py
   #TODO: Uncomment when ready9  ]
   # if [ $# -lt 2 ]; then
@@ -193,13 +187,13 @@ get_games() {
 
 inspect_pgn() {
   echo -e "${CYAN}🔍 Inspecting PGN files...${NC}"
-  python scripts/inspect_pgn.py --output "$PGN_PATH" 
+  python /app/src/scripts/inspect_pgn.py --output "$PGN_PATH" 
   echo -e "${GREEN}✔ PGN inspection completed.${NC}"
 }
 
 inspect_pgn_zip() {
   echo -e "${CYAN}🔍 Inspecting PGN files...${NC}"
-  python scripts/inspect_pgn_cli.py "$@"
+  python /app/src/scripts/inspect_pgn_cli.py "$@"
   echo -e "${GREEN}✔ PGN inspection completed.${NC}"
 }
 
@@ -216,7 +210,7 @@ clean_games() {
 
 init_db() {
   echo -e "${CYAN}🛠️ Initializing database schema...${NC}"
-  python scripts/init_db.py
+  python /app/src/scripts/init_db.py
   echo -e "${GREEN}✔ Database schema initialized.${NC}"
 }
 

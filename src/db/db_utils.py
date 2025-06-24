@@ -29,30 +29,6 @@ class DBUtils:
     def compute_game_id(game):
         return hashlib.md5(str(game).encode('utf-8')).hexdigest()
 
-    @staticmethod
-    def is_game_in_db(game_id):
-        with Session() as session:
-            return session.query(Games).filter_by(game_id=game_id).first() is not None
-
-    @staticmethod
-    def get_game_by_id(game_id):
-        with Session() as session:
-            game = session.query(Games).filter_by(game_id=game_id).first()
-            if game:
-                return {c.name: getattr(game, c.name) for c in Games.__table__.columns}
-            return None
-
-    @staticmethod
-    def was_game_already_processed(game_hash):
-        with Session() as session:
-            return session.query(Processed_features).filter_by(game_id=game_hash).first() is not None
-
-    @staticmethod
-    def mark_game_as_processed(game_hash):
-        with Session() as session:
-            if not session.query(Processed_features).filter_by(game_id=game_hash).first():
-                session.add(Processed_features(game_id=game_hash))
-                session.commit()
 
     @staticmethod
     def print_sql_query(statement: Select, engine: Engine = None, show_params: bool = True):

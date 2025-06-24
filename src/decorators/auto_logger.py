@@ -1,4 +1,3 @@
-
 import functools
 import logging
 import inspect
@@ -7,18 +6,18 @@ from logging.handlers import RotatingFileHandler
 from datetime import datetime
 import time
 
-# Crear directorio si no existe
+# Create directory if it does not exist
 os.makedirs("logs", exist_ok=True)
 
-# Nivel configurable (default: INFO)
+# Configurable level (default: INFO)
 log_level = os.getenv("LOG_LEVEL", "INFO").upper()
 
-# Configuración del logger
+# Logger configuration
 log_file = os.path.join(
     "logs", f"log_{datetime.now().strftime('%Y-%m-%d')}.txt"
 )
 handler = RotatingFileHandler(
-    log_file, maxBytes=1_000_000, backupCount=5, mode="a"  # modo append
+    log_file, maxBytes=1_000_000, backupCount=5, mode="a"  # append mode
 )
 
 formatter = logging.Formatter(
@@ -30,7 +29,7 @@ handler.setFormatter(formatter)
 logger = logging.getLogger("auto_logger")
 logger.setLevel(log_level)
 logger.addHandler(handler)
-logger.propagate = False  # Evita duplicados si hay otros handlers globales
+logger.propagate = False  # Prevent duplicates if there are other global handlers
 
 def log_function_call(func):
     @functools.wraps(func)
@@ -71,4 +70,3 @@ def auto_logger_execution_time(func):
             print(f"❌ {name} failed after {duration} seconds. Error: {e}")
             raise
     return wrapper
-
