@@ -165,7 +165,7 @@ class FeaturesRepository:
         with self.session_factory() as session:
             try:
                 print(
-                    f"🔍 Processing tags for game {game_id}...tags_df: {tags_df}")
+                    f"🔍 Processing tags for game {game_id}...tags_df: {tags_df.head(3)}")
                 for _, row in tags_df.iterrows():
                     move_number = int(row.get("move_number", -1))
                     player_color = row.get("player_color")
@@ -194,6 +194,9 @@ class FeaturesRepository:
                             f"⏭️ Feature for game {game_id}, move {move_number}, color {player_color} does not exist, skipping update.")
                         skipped += 1
                         continue
+                    else:
+                        print(
+                            f"Updating {game_id}, move: {move_number}, color: {player_color}")
 
                     stmt = (
                         update(self.model)
@@ -208,6 +211,9 @@ class FeaturesRepository:
                             score_diff=score_diff
                         )
                     )
+
+                    print(f"STMT: {stmt}")
+
                     session.execute(stmt)
                     updated_count += 1
 

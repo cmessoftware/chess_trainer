@@ -15,7 +15,9 @@
         "./src/db/models",
         "./src/db",
         "./src/db",
-        "./src"
+        "./src",
+        "./src/publishers/li",
+        "./src/publishers/li"
     ],
     "python.linting.enabled": true,
     "python.linting.flake8Enabled": true,

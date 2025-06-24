@@ -1,56 +1,20 @@
 [
   {
-    "title": "] Implementar tests unitarios para init_db.",
+    "title": "Aplicar estandarización de elo (campo standarized_elo)",
     "body": "",
-    "file": "/app/src/README.md",
-    "line": 346
+    "file": "/app/VERSION_BASE_es.md",
+    "line": 368
   },
   {
-    "title": "] Implementar tests unitarios para get_games.",
+    "title": "Agregar campos mate_in y depth_score_diff para enriquecer modelo ML",
     "body": "",
-    "file": "/app/src/README.md",
-    "line": 347
+    "file": "/app/VERSION_BASE_es.md",
+    "line": 369
   },
   {
-    "title": "] Implementar tests unitarios para import_games.",
+    "title": "Implementación SHAP en Chess para descripcion de predicciones ML.",
     "body": "",
-    "file": "/app/src/README.md",
-    "line": 348
-  },
-  {
-    "title": "] Implementar tests unitarios para generate_features.",
-    "body": "",
-    "file": "/app/src/README.md",
-    "line": 349
-  },
-  {
-    "title": "] Implementar tests unitarios para analyze_tactics.",
-    "body": "",
-    "file": "/app/src/README.md",
-    "line": 350
-  },
-  {
-    "title": "] Implementar tests unitarios para  export_dataset.",
-    "body": "",
-    "file": "/app/src/README.md",
-    "line": 351
-  },
-  {
-    "title": "] Implementar tests unitarios generate_exercises.",
-    "body": "",
-    "file": "/app/src/README.md",
-    "line": 352
-  },
-  {
-    "title": "] Consolidar scripts para implementar lógica de generación/visualización/nvageación/edición de estudio tipo Lichess.",
-    "body": "",
-    "file": "/app/src/README.md",
-    "line": 353
-  },
-  {
-    "title": "] Analizar notebooks de analisis EDA, Clustering, Machine Leaning de en base a los dataset generados.",
-    "body": "",
-    "file": "/app/src/README.md",
-    "line": 354
+    "file": "/app/VERSION_BASE_es.md",
+    "line": 370
   }
 ]

@@ -1,189 +1,195 @@
-# CHESS TRAINER - Versión: v0.1.17-d729782
+# CHESS TRAINER - Version: v0.1.20-f9d0260
 
-# Chess Trainer (versión base estable)
+# Chess Trainer (stable base version)
 
-Este proyecto permite analizar y entrenar tácticamente partidas de ajedrez usando ciencia de datos y visualización interactiva.
+This project allows you to analyze and tactically train chess games using data science and interactive visualization.
 
-## Funcionalidades
+## Features
 
-- Generación de dataset desde archivos PGN
-- Enriquecimiento táctico con Stockfish
-- Clasificación de errores con etiquetas automáticas (`error_label`)
-- Exploración y visualización con Streamlit y notebooks
-- Entrenamiento de modelos supervisados para predicción de errores
-- Registro e historial de predicciones
+- Generation of datasets from PGN files
+- Tactical enrichment with Stockfish
+- Error classification with automatic labels (`error_label`)
+- Exploration and visualization with Streamlit and notebooks
+- Training of supervised models for error prediction
+- Logging and history of predictions
 
-## Requisitos
+## Requirements
 
 - Python 3.8+
 - streamlit
 - pandas, seaborn, matplotlib
 - python-chess
 - scikit-learn
-- Stockfish (colocar en `/engines/stockfish`)
+- Stockfish (place in `/engines/stockfish`)
 
-## Estructura
+## Structure
 
-Ver archivo `VERSIÓN_BASE.md` para estructura completa del proyecto.
+See the [`VERSIÓN_BASE.md`](./VERSION_BASE.md) file for the complete project structure.
 
-## Uso rápido
+## Quick usage
 
 ```bash
-# Ejecutar interfaz principal
-streamlit run app.py
+# Run the main interface
+streamlit run app.py (In development)
+
+# Generate datasets
+cd /app/src/pipeline
+./run_pipeline.sh interactive
+
 ```
 
 # chess_trainer
-Chess trainer software using data scientes tools , stockfish chess motor implemented in docker environment
+Chess training software using data science tools and the Stockfish chess engine, implemented in a Docker environment.
 
-# Teoría sobre el análisis de partidas de ajedrez
+# Theory on chess game analysis
 
-Para usar Machine Learning (ML) e Inteligencia Artificial (IA) en el análisis de partidas de ajedrez, debes comprender primero cómo se representan los datos del juego y cómo las IA pueden "aprender" patrones de juego.
+To use Machine Learning (ML) and Artificial Intelligence (AI) in chess game analysis, you must first understand how game data is represented and how AIs can "learn" game patterns.
 
-## 1. Representación de la información de la partida
-Las partidas de ajedrez pueden representarse de diferentes maneras. Una de las más comunes es mediante el formato PGN (Portable Game Notation), que es un formato estándar utilizado para almacenar las jugadas de una partida. Cada jugada se expresa en una notación algebraica, por ejemplo: "e4" o "Nf3".
+## 1. Representation of game information
+Chess games can be represented in different ways. One of the most common is the PGN (Portable Game Notation) format, a standard format used to store the moves of a game. Each move is expressed in algebraic notation, for example: "e4" or "Nf3".
 
-**Algunos elementos clave que puedes analizar de una partida son:**
+**Some key elements you can analyze from a game are:**
 
-- Apertura: Las primeras jugadas de la partida, que en ajedrez están bien estudiadas.
+- Opening: The first moves of the game, which are well studied in chess.
 
-- Errors y Blunders (Errores graves): Jugadas que son significativamente malas en comparación con las mejores jugadas posibles.
+- Errors and blunders (serious mistakes): Moves that are significantly worse compared to the best possible moves.
 
-- Precisión (Accuracy): La cantidad de jugadas correctas realizadas durante la partida.
+- Accuracy: The number of correct moves made during the game.
 
-- Resultado: Si ganaste, perdiste o empataron.
+- Result: Whether you won, lost, or drew.
 
-- Tiempo de juego: Si el jugador hizo movimientos impulsivos o pensó mucho antes de jugarlas.
+- Time spent: Whether the player made impulsive moves or thought a lot before playing.
 
-**Características de la partida**
+**Game features**
 
-En términos de Machine Learning, las características (features) de la partida son los datos que alimentan a los modelos para que puedan hacer predicciones. 
+In Machine Learning terms, the features of the game are the data that feed the models so they can make predictions.
 
-**Algunas características clave podrían ser:**
+**Some key features could be:**
 
-- Número de errores y blunders: Esto podría indicar la habilidad general del jugador.
+- Number of errors and blunders: This could indicate the player's general skill.
 
-- Precisión de las jugadas: ¿Cuánto se acerca el jugador a las jugadas óptimas?
+- Move accuracy: How close the player is to optimal moves.
 
-- Aperturas: Si el jugador prefiere una apertura específica (e.g., Siciliana, Apertura Ruy López, etc.).
+- Openings: Whether the player prefers a specific opening (e.g., Sicilian, Ruy Lopez, etc.).
 
-- Desarrollo de las piezas: Si el jugador sigue buenos principios de apertura y posicionamiento.
+- Piece development: Whether the player follows good opening and positioning principles.
 
-- Puntuación de la partida: Si fue una victoria, derrota o empate.
+- Game score: Whether it was a win, loss, or draw.
 
-## 2. Machine Learning aplicado al ajedrez
+## 2. Machine Learning applied to chess
 
-**Objetivo del Machine Learning en Ajedrez**
+**Objective of Machine Learning in chess**
 
-El objetivo principal del Machine Learning (ML) en este contexto es construir un modelo que pueda identificar patrones o hacer predicciones sobre el estilo de juego de un jugador o el resultado de una partida, basándose en los datos históricos (las partidas previas). Dependiendo del tipo de problema, hay varias formas de enfocar la solución:
+The main objective of Machine Learning (ML) in this context is to build a model that can identify patterns or make predictions about a player's playing style or the outcome of a game, based on historical data (previous games). Depending on the type of problem, there are several ways to approach the solution:
 
-- Clasificación: Predecir una clase (por ejemplo, si una partida tendrá errores graves o no).
+- Classification: Predict a class (e.g., whether a game will have serious errors or not).
 
-- Regresión: Predecir un valor continuo (como la precisión de un jugador durante una partida).
+- Regression: Predict a continuous value (such as a player's accuracy during a game).
 
-- Análisis de Clústeres: Agrupar jugadores con características similares (por ejemplo, jugadores que cometen errores similares).
+- Cluster analysis: Group players with similar characteristics (e.g., players who make similar mistakes).
 
-- Predicción de resultados: Determinar la probabilidad de que un jugador gane, pierda o empate según las jugadas previas.
+- Outcome prediction: Determine the probability that a player will win, lose, or draw based on previous moves.
 
-**Modelos de Machine Learning**
+**Machine Learning models**
 
-Algunos de los modelos más utilizados para análisis de ajedrez y juegos son:
+Some of the most used models for chess and game analysis are:
 
-- Modelos de regresión:
+- Regression models:
 
-    Para predecir una variable continua, como la precisión o el puntaje de un jugador.
+    To predict a continuous variable, such as a player's accuracy or score.
 
-- Modelos de clasificación:
+- Classification models:
 
-    Para clasificar partidas según el tipo de error o si el jugador tiene un estilo "agresivo", "defensivo", etc.
+    To classify games according to the type of error or whether the player has an "aggressive", "defensive", etc. style.
 
-    Por ejemplo, Random Forest y Support Vector Machines (SVM) son buenos para estos tipos de tareas.
+    For example, Random Forest and Support Vector Machines (SVM) are useful for these types of tasks.
 
-- Redes Neuronales:
+- Neural networks:
 
-    Más avanzadas, estas redes pueden aprender patrones complejos en los datos. Se utilizan para tareas como el reconocimiento de patrones o la predicción de jugadas.
+    More advanced, these networks can learn complex patterns in the data. They are used for tasks such as pattern recognition or move prediction.
 
-    Las redes neuronales también se utilizan en el ajedrez para predicciones más sofisticadas, como las que hace AlphaZero, que emplea una red neuronal profunda para jugar ajedrez.
+    Neural networks are also used in chess for more sophisticated predictions, such as those made by AlphaZero, which uses a deep neural network to play chess.
 
-## 3. Cómo aplicar Machine Learning al análisis de ajedrez
+## 3. How to apply Machine Learning to chess analysis
 
-**Preprocesamiento de Datos**
+**Data preprocessing**
 
-Antes de alimentar un modelo de Machine Learning, necesitas preprocesar los datos para transformarlos en una forma que el modelo pueda entender. Esto puede incluir:
+Before feeding a Machine Learning model, you need to preprocess the data to transform it into a form the model can understand. This may include:
 
-- Limpieza de los datos:
+- Data cleaning:
 
-- Eliminar o imputar valores nulos.
+    - Remove or impute null values.
 
-- Asegurarte de que todos los datos estén en el formato adecuado (por ejemplo, convertir fechas a un formato de fecha adecuado o clasificar errores).
+    - Ensure all data is in the correct format (e.g., convert dates to a proper date format or classify errors).
 
-**Transformación de los datos:**
+**Data transformation:**
 
-- Convertir jugadas y aperturas en un formato numérico:
+- Convert moves and openings into a numeric format:
 
-    Por ejemplo, usando codificación de una sola vez o técnicas de procesamiento de lenguaje natural como Word2Vec para las aperturas.
+    For example, using one-hot encoding or natural language processing techniques like Word2Vec for openings.
 
-- Normalización y escalado:
+- Normalization and scaling:
 
-    Algunas características (como la precisión) pueden tener diferentes rangos. Asegúrate de escalarlas para que el modelo no se vea sesgado hacia ciertas características.
+    Some features (such as accuracy) may have different ranges. Make sure to scale them so the model is not biased toward certain features.
 
-- Entrenamiento del Modelo
-    Una vez que hayas preprocesado tus datos, puedes empezar a entrenar tu modelo. Para ello, debes dividir tus datos en dos partes:
+- Model training
 
-        Conjunto de entrenamiento: 
-        Conjunto de datos sobre el que entrenas el modelo.
+    Once you have preprocessed your data, you can start training your model. To do this, you must split your data into two parts:
 
-        Conjunto de prueba: 
-        Conjunto de datos que el modelo no ha visto, para evaluar su rendimiento.
+        Training set:
+        The dataset on which you train the model.
 
-El modelo aprenderá de las características de las partidas, como los errores, la precisión y las aperturas, y tratará de predecir el resultado de la partida o identificar patrones de juego.
+        Test set:
+        The dataset the model has not seen, to evaluate its performance.
 
-- Evaluación del Modelo
+The model will learn from the features of the games, such as errors, accuracy, and openings, and will try to predict the outcome of the game or identify playing patterns.
 
-    Una vez que tu modelo esté entrenado, debes evaluar su rendimiento usando el conjunto de prueba. Algunas métricas comunes para evaluar modelos de clasificación son:
+- Model evaluation
 
-        Exactitud (Accuracy): Proporción de predicciones correctas.
+    Once your model is trained, you must evaluate its performance using the test set. Some common metrics for evaluating classification models are:
 
-        Precisión (Precision): Cuán exactas son las predicciones positivas.
+        Accuracy: Proportion of correct predictions.
 
-        Recall: Cuán bien el modelo detecta todas las predicciones positivas.
+        Precision: How accurate the positive predictions are.
 
-        F1-score: Una combinación de precisión y recall.
+        Recall: How well the model detects all positive predictions.
 
-        Ajuste de Hiperparámetros
+        F1-score: A combination of precision and recall.
 
-        Algunos modelos como Random Forest o SVM tienen "hiperparámetros" que puedes ajustar para mejorar el rendimiento del modelo. Puedes usar técnicas como GridSearchCV para encontrar los mejores hiperparámetros.
+        Hyperparameter tuning
 
-## 4. Recomendaciones personalizadas para mejorar el juego
+        Some models like Random Forest or SVM have "hyperparameters" that you can adjust to improve model performance. You can use techniques like GridSearchCV to find the best hyperparameters.
 
-Una vez que el modelo esté entrenado, puedes usarlo para hacer recomendaciones personalizadas a los jugadores basadas en su estilo de juego y sus errores previos. Por ejemplo:
+## 4. Personalized recommendations to improve play
 
-- Recomendaciones de apertura: 
-  
-    Si el jugador comete errores en una apertura específica, puedes sugerirle otras aperturas más seguras.
+Once the model is trained, you can use it to make personalized recommendations to players based on their playing style and previous mistakes. For example:
 
-- Sugerencias de jugadas: 
-  
-    Basadas en su estilo y los errores cometidos en partidas anteriores, el modelo puede sugerir jugadas más precisas o estrategias más efectivas.
+- Opening recommendations:
 
-- Análisis de partidas anteriores: 
-    
-    Mostrar al jugador las partidas en las que cometió más errores, cómo podría haber jugado mejor, y dar consejos para evitar esos errores.
+    If the player makes mistakes in a specific opening, you can suggest other safer openings.
 
-# 5. Resumen de los siguientes pasos:
+- Move suggestions:
 
-- Recolectar datos de partidas (PGN, Chess.com API o Lichess API).
+    Based on their style and mistakes made in previous games, the model can suggest more accurate moves or more effective strategies.
 
-- Preprocesar los datos (limpieza, transformación de jugadas en valores numéricos).
+- Analysis of previous games:
 
-- Entrenar un modelo de Machine Learning para predecir patrones o errores en las partidas.
+    Show the player the games in which they made the most mistakes, how they could have played better, and give advice to avoid those mistakes.
 
-- Evaluar el modelo y realizar ajustes si es necesario.
+# 5. Summary of next steps:
 
-- Implementar el modelo en tu API Django y generar recomendaciones personalizadas para los usuarios.
+- Collect game data (PGN, Chess.com API or Lichess API).
 
-Este enfoque te proporcionará una base sólida para integrar Machine Learning e IA en tu proyecto de ajedrez, mejorando tanto el análisis de partidas como la experiencia del usuario.
+- Preprocess the data (cleaning, transforming moves into numeric values).
 
-## Créditos
+- Train a Machine Learning model to predict patterns or errors in games.
 
-Desarrollado por cmessoftware como parte de su trabajo práctico para la Diplomatura en Ciencia de Datos.
+- Evaluate the model and make adjustments if necessary.
+
+- Implement the model in your Django API and generate personalized recommendations for users.
+
+This approach will provide you with a solid foundation to integrate Machine Learning and AI into your chess project, improving both game analysis and user experience.
+
+## Credits
+
+Developed by cmessoftware as part of their practical work for the Data Science Diploma.

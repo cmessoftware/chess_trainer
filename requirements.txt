@@ -171,6 +171,7 @@ prometheus_client==0.22.0
 prompt_toolkit==3.0.51
 protobuf==5.29.4
 psutil==7.0.0
+psutils==3.3.10
 psycopg2-binary==2.9.9
 ptyprocess==0.7.0
 pure_eval==0.2.3
@@ -185,6 +186,7 @@ pydeck==0.9.1
 pyflakes==3.3.2
 Pygments==2.19.1
 pyparsing==3.2.3
+pypdf==5.6.1
 pytest==8.3.5
 python-chess==1.999
 python-dateutil==2.9.0.post0
@@ -237,7 +239,6 @@ tinycss2==1.4.0
 toml==0.10.2
 toolz==1.0.0
 tornado==6.4.2
-# TPOT==1.0.0
 tqdm==4.67.1
 traitlets==5.14.3
 typeguard==4.4.2

@@ -39,25 +39,13 @@ class Analyzed_tacticalsRepository:
         self.session.query(Analyzed_tacticals).filter_by(
             id=tacticals_id).update(kwargs)
         self.session.commit()
+        
+    def save_analyzed_tactical_hash(self, game_id):
+        with self.session_factory() as session:
+            if session.query(Analyzed_tacticals).filter_by(game_id=game_id).first():
+                return
+            new_record = Analyzed_tacticals(game_id=game_id)
+            session.add(new_record)
+            session.commit()
 
-    def save_analyzed_tactical_hash(self, game_id: str):
-        existing = self.session.query(
-            Analyzed_tacticals).filter_by(game_id=game_id).first()
-        if existing:
-            logger.info(
-                f"⏭️ Game {game_id} ya fue analizado, omitiendo inserción.")
-            return
-
-        try:
-            analyzed_tactical_row = Analyzed_tacticals(
-                game_id=game_id,
-                date_analyzed=datetime.datetime.utcnow()
-            )
-            self.session.add(analyzed_tactical_row)
-            self.session.commit()
-            logger.info(f"✅ Análisis guardado para game_id {game_id}")
-        except Exception as e:
-            self.session.rollback()
-            logger.error(
-                f"❌ Error al insertar análisis táctico para {game_id}: {e}")
-            raise
+   
