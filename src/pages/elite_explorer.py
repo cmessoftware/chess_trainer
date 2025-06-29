@@ -1,34 +1,39 @@
 import os
 import streamlit as st
-import sqlite3
 import chess.pgn
 import streamlit_chess
 import io
-
 from dotenv import load_dotenv
+from db.postgres_utils import get_postgres_connection
+
 load_dotenv()  # Carga las variables del archivo .env
 
+DB_URL = os.environ.get("CHESS_TRAINER_DB_URL")
 
-DB_PATH = os.environ.get("CHESS_TRAINER_DB", "chess_trainer.db")
-
-if not DB_PATH or not os.path.exists(DB_PATH):
-    raise FileNotFoundError(f"❌ Database not found or CHESS_TRAINER_DB unset: {DB_PATH}")
+if not DB_URL:
+    raise ValueError("❌ CHESS_TRAINER_DB_URL environment variable not set")
 
 st.set_page_config(page_title="Elite Game Explorer", layout="wide")
 st.title("♟️ Elite Game Explorer")
 
 # Conectar a la base de datos
+
+
 def get_connection():
-    return sqlite3.connect(DB_PATH)
+    return get_postgres_connection()
 
 # Cargar opciones únicas para los filtros
+
+
 def get_filter_options():
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT DISTINCT white_player FROM games ORDER BY white_player")
+    cursor.execute(
+        "SELECT DISTINCT white_player FROM games ORDER BY white_player")
     white_players = [r[0] for r in cursor.fetchall() if r[0]]
 
-    cursor.execute("SELECT DISTINCT black_player FROM games ORDER BY black_player")
+    cursor.execute(
+        "SELECT DISTINCT black_player FROM games ORDER BY black_player")
     black_players = [r[0] for r in cursor.fetchall() if r[0]]
 
     cursor.execute("SELECT DISTINCT eco FROM games ORDER BY eco")
@@ -42,6 +47,7 @@ def get_filter_options():
 
     conn.close()
     return white_players, black_players, ecos, openings, events
+
 
 # Filtros
 white_players, black_players, ecos, openings, events = get_filter_options()
@@ -59,22 +65,22 @@ with st.sidebar:
 query = "SELECT id, white_player, black_player, result, event, date, eco, opening FROM games WHERE 1=1"
 params = []
 if wp != "Any":
-    query += " AND white_player = ?"
+    query += " AND white_player = %s"
     params.append(wp)
 if bp != "Any":
-    query += " AND black_player = ?"
+    query += " AND black_player = %s"
     params.append(bp)
 if eco != "Any":
-    query += " AND eco = ?"
+    query += " AND eco = %s"
     params.append(eco)
 if opening != "Any":
-    query += " AND opening = ?"
+    query += " AND opening = %s"
     params.append(opening)
 if event != "Any":
-    query += " AND event = ?"
+    query += " AND event = %s"
     params.append(event)
 
-query += " LIMIT ?"
+query += " LIMIT %s"
 params.append(limit)
 
 # Ejecutar query y mostrar resultados
@@ -97,7 +103,7 @@ for i, row in enumerate(results):
 if selected_game:
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT pgn FROM games WHERE id = ?", (selected_game,))
+    cursor.execute("SELECT pgn FROM games WHERE id = %s", (selected_game,))
     pgn_data = cursor.fetchone()[0]
     conn.close()
 
@@ -133,7 +139,8 @@ if selected_game:
         board.push(move)
 
     streamlit_chess.render(board)
-    st.caption(f"Showing position after move {st.session_state.move_index} of {len(moves)}")
+    st.caption(
+        f"Showing position after move {st.session_state.move_index} of {len(moves)}")
     if st.session_state.move_index < len(moves):
         next_move = moves[st.session_state.move_index]
         st.markdown(f"**Next Move:** {board.san(next_move)}")
