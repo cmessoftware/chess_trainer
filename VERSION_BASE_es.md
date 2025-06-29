@@ -15,7 +15,7 @@ Este proyecto automatiza la importación, análisis, etiquetado y entrenamiento 
   ```
 - Stockfish instalado (Linux):
   ```bash
-  sudo apt install stockfish
+  apt install stockfish
   ```
 
 ---
@@ -26,9 +26,9 @@ Este proyecto incluye scripts para construir los contenedores de forma sencilla,
 
 Los contenedores disponibles son:
 
-| Script               | Descripción                                | Imagen generada           |
-|----------------------|--------------------------------------------|----------------------------|
-| `build_app.sh`       | Construye el contenedor de la aplicación Streamlit | `chess_trainer_app`       |
+| Script               | Descripción                                                  | Imagen generada           |
+| -------------------- | ------------------------------------------------------------ | ------------------------- |
+| `build_app.sh`       | Construye el contenedor de la aplicación Streamlit           | `chess_trainer_app`       |
 | `build_notebooks.sh` | Construye el contenedor de JupyterLab con Keras y TensorFlow | `chess_trainer_notebooks` |
 
 ---
@@ -61,48 +61,74 @@ chmod +x build_app.sh build_notebooks.sh
 
 ```
 chess_trainer/
-├── notebooks/                   # Exploración, agrupamiento, predicciones
+├── alembic/                     # Gestión de migraciones de base de datos
+│   ├── env.py
+│   ├── versions/
+│   └── README
+├── data/                        # Datos de partidas y bases de datos
+│   ├── chess_trainer.db
+│   └── Undestanding ML/
+├── img/                         # Imágenes y diagramas del proyecto
+│   ├── architecture.png
+│   └── chessboard.png
+├── logs/                        # Logs de la aplicación
+├── notebooks/                   # Notebooks de Jupyter para análisis
+│   ├── chess_evaluation.ipynb
+│   ├── eda_advanced.ipynb
 │   ├── eda_analysis.ipynb
-│   ├── pca_clustering_chess.ipynb
-│   └── analyze_predictions.ipynb
-├── src/
-│   ├── data/                    # Base y PGNs de Lichess Elite
-│   │   ├── chess_trainer.db
-│   │   └── games/*.pgn
-│   ├── models/                  # Modelos entrenados
-│   │   └── error_label_model.pkl
-│   ├── modules/                 # Funcionalidad central (reutilizable)
+│   ├── ml_analize_tacticals_embedings.ipynb
+│   └── data/
+├── src/                         # Código fuente principal
+│   ├── config/                  # Archivos de configuración
+│   ├── data/                    # Utilidades de procesamiento de datos
+│   ├── db/                      # Utilidades y modelos de base de datos
+│   │   ├── postgres_utils.py
+│   │   └── repository/
+│   ├── decorators/              # Decoradores de Python
+│   ├── modules/                 # Módulos de lógica de negocio central
 │   │   ├── generate_dataset.py
 │   │   ├── extractor.py
+│   │   ├── tactics_generator.py
 │   │   └── eda_utils.py
+│   ├── pages/                   # Páginas de interfaz Streamlit
+│   │   ├── elite_explorer.py
+│   │   ├── elite_stats.py
+│   │   ├── elite_training.py
+│   │   ├── export_exercises.py
+│   │   ├── tag_games_ui.py
+│   │   └── streamlit_eda.py
+│   ├── pipeline/                # Pipelines de procesamiento de datos
 │   ├── scripts/                 # Scripts de ejecución autónoma
-│   │   ├── run_pipeline.sh
-│   │   ├── auto_tag_games.py
-│   │   ├── analyze_errors_from_games.py
+│   │   ├── analyze_games_tactics_parallel.py
+│   │   ├── generate_features_parallel.py
+│   │   ├── generate_pgn_from_chess_server.py
 │   │   ├── generate_exercises_from_elite.py
-│   │   ├── save_games_to_db.py
-|   |   |__ analize_games_tactics_paralell  
-|   |   |__ generate_features_paralell
-|   |   |__ generate_pgn_from_chess_server
-│   │   └── inspect_db.py
-|   |__ services/
+│   │   ├── inspect_db.py
+│   │   └── run_pipeline.sh
+│   ├── services/                # Componentes de capa de servicio
 │   │   ├── features_export_service.py
 │   │   ├── get_lichess_studies.py
-│   │   ├── study_importer_service.py
-|   |__ tools/ 
+│   │   └── study_importer_service.py
+│   ├── tools/                   # Herramientas utilitarias
 │   │   ├── elite_explorer.py
-|   |   |__create_issues_from_json
-|   ├── pages/                   # Páginas de Streamlit
-│   │   ├── elite_explorer.py
-│   │   ├── elite_training.py
-│   │   ├── elite_stats.py
-│   │   └── streamlit_eda.py
-│   └── tests/                   # Pruebas automatizadas con pytest
-│       ├── test_elite_pipeline.py
-│       └── test_tag_games.py
-├── .env                         # Ruta configurada a la base
-├── requirements.txt             # Dependencias
-└── README.md
+│   │   └── create_issues_from_json.py
+│   ├── validators/              # Utilidades de validación de datos
+│   └── app.py                   # Aplicación principal de Streamlit
+├── tests/                       # Suite de pruebas unificada
+│   ├── test_elite_pipeline.py
+│   ├── test_db_integrity.py
+│   ├── test_analyze_games_tactics_parallel.py
+│   └── run_tests.sh
+├── test_reports/                # Reportes de ejecución de pruebas
+├── docker-compose.yml           # Orquestación de contenedores
+├── dockerfile                   # Contenedor de aplicación principal
+├── dockerfile.notebooks         # Contenedor de Jupyter
+├── build_app.sh                 # Script de construcción del contenedor de app
+├── build_notebooks.sh           # Script de construcción del contenedor de notebooks
+├── alembic.ini                  # Configuración de migración de base de datos
+├── requirements.txt             # Dependencias de Python
+├── .env                         # Variables de entorno
+└── README.md                    # Documentación del proyecto
 ```
 
 ---
@@ -242,64 +268,64 @@ Con `publish_to_lichess.py` podés subir partidas desde la base de datos como es
 
 ### 📊 Campos generados por `generate_features_from_game`
 
-| Campo                | Origen / lógica                                                                 |
-|----------------------|----------------------------------------------------------------------------------|
-| `fen`                | `board.fen()` antes de la jugada                                                |
-| `move_san`           | `board.san(move)`                                                               |
-| `move_uci`           | `move.uci()`                                                                    |
-| `material_balance`   | Diferencia de material (blancas - negras), usando valores `{P:1, N:3, B:3.25...}` |
-| `material_total`     | Suma de material total en el tablero                                            |
-| `num_pieces`         | Cantidad de piezas (excluye peones y reyes)                                     |
-| `branching_factor`   | `len(legal_moves)` antes **+** después de la jugada                             |
-| `self_mobility`      | `len(legal_moves)` del jugador **antes** del movimiento                         |
-| `opponent_mobility`  | `len(legal_moves)` del oponente **después** de simular la jugada                |
-| `phase`              | `"opening"` (≥24 piezas), `"middlegame"` (12–23), `"endgame"` (<12)             |
-| `player_color`       | `"white"` o `"black"` según `board.turn`                                        |
-| `has_castling_rights`| `int(board.has_castling_rights())` (0 o 1)                                      |
-| `move_number`        | `board.fullmove_number`                                                         |
-| `is_repetition`      | `int(board.is_repetition())` (1 si es repetición)                               |
-| `is_low_mobility`    | `int(self_mobility <= 5)`                                                        |
-| `is_center_controlled`| 1 si el jugador controla d4/e4/d5/e5 con alguna pieza                           |
-| `is_pawn_endgame`    | 1 si solo hay reyes y peones en el tablero                                      |
+| Campo                  | Origen / lógica                                                                   |
+| ---------------------- | --------------------------------------------------------------------------------- |
+| `fen`                  | `board.fen()` antes de la jugada                                                  |
+| `move_san`             | `board.san(move)`                                                                 |
+| `move_uci`             | `move.uci()`                                                                      |
+| `material_balance`     | Diferencia de material (blancas - negras), usando valores `{P:1, N:3, B:3.25...}` |
+| `material_total`       | Suma de material total en el tablero                                              |
+| `num_pieces`           | Cantidad de piezas (excluye peones y reyes)                                       |
+| `branching_factor`     | `len(legal_moves)` antes **+** después de la jugada                               |
+| `self_mobility`        | `len(legal_moves)` del jugador **antes** del movimiento                           |
+| `opponent_mobility`    | `len(legal_moves)` del oponente **después** de simular la jugada                  |
+| `phase`                | `"opening"` (≥24 piezas), `"middlegame"` (12–23), `"endgame"` (<12)               |
+| `player_color`         | `"white"` o `"black"` según `board.turn`                                          |
+| `has_castling_rights`  | `int(board.has_castling_rights())` (0 o 1)                                        |
+| `move_number`          | `board.fullmove_number`                                                           |
+| `is_repetition`        | `int(board.is_repetition())` (1 si es repetición)                                 |
+| `is_low_mobility`      | `int(self_mobility <= 5)`                                                         |
+| `is_center_controlled` | 1 si el jugador controla d4/e4/d5/e5 con alguna pieza                             |
+| `is_pawn_endgame`      | 1 si solo hay reyes y peones en el tablero                                        |
 
 ## Diseño para el análisis de tácticas
 
-| Aspecto                                  | Ventaja                                      |
-|------------------------------------------|----------------------------------------------|
-| profundidad por fase                     | Ahorra tiempo sin perder precisión           |
-| multipv solo cuando hay muchas opciones  | No desperdicia recursos de CPU               |
-| compare_to_best evita falsos positivos   | Mejora la calidad de las etiquetas           |
-| classify_tactical_pattern sigue funcionando | Etiquetas clásicas como fork, pin, mate   |
-| eval_cache                               | Evita evaluaciones repetidas por FEN         |
+| Aspecto                                     | Ventaja                                 |
+| ------------------------------------------- | --------------------------------------- |
+| profundidad por fase                        | Ahorra tiempo sin perder precisión      |
+| multipv solo cuando hay muchas opciones     | No desperdicia recursos de CPU          |
+| compare_to_best evita falsos positivos      | Mejora la calidad de las etiquetas      |
+| classify_tactical_pattern sigue funcionando | Etiquetas clásicas como fork, pin, mate |
+| eval_cache                                  | Evita evaluaciones repetidas por FEN    |
 
 ## Optimizaciones para acelerar el análisis táctico (reducir de días a horas de análisis) 
 **Actualizado: 2025-06-02**
 
 ## ✅ Lista de optimizaciones en `tactical_analysis.py` - `chess_trainer`
 
-| Nº | Optimización                                     | Estado     | Detalles / Comentarios                                                                 |
-|----|--------------------------------------------------|------------|-----------------------------------------------------------------------------------------|
-| 1️⃣ | 🔻 Reducir profundidad fija                      | ✅ Aplicado | Se usa `depth=6` para jugadas con `pre_tag`; y valores dinámicos según fase para el resto. |
-| 2️⃣ | ⏭️ Omitir primeras jugadas                      | ✅ Aplicado | Si `move_number <= 6`, se salta el análisis. Controlado por `opening_move_threshold`.  |
-| 3️⃣ | 🧠 Profundidad variable por fase                 | ✅ Aplicado | Usa `PHASE_DEPTHS` basado en la fase del juego (`opening`, `middlegame`, `endgame`).   |
-| 4️⃣ | 🧮 Branching factor                              | ✅ Aplicado | Si `branching < 5`, se omite la jugada. Usado como indicador de baja complejidad.      |
-| 5️⃣ | 🤖 MultiPV inteligente                           | ✅ Aplicado | Se usa `multipv=3` si `branching > 10`, y se adaptó `get_evaluation` y `parse_info`.    |
-| 6️⃣ | 🧷 Análisis condicional por etiquetas previas    | ✅ Aplicado | Si `classify_simple_pattern` devuelve etiqueta, usa `depth=6` y `multipv=1`.           |
-| 7️⃣ | ⛓️ Evitar análisis redundante (cache FEN)        | ✅ Aplicado | Usa `eval_cache` para no recalcular evaluaciones por FEN.                              |
-| 8️⃣ | ⚡ Evitar jugadas forzadas (`is_forced_move`)     | 🔜 En progreso | Detectado en `evaluate_tactical_features()`, falta usarlo para saltar análisis.         |
-| 9️⃣ | 🧪 Score diferencial preciso (`score_diff`)      | ✅ Aplicado | Usa `extract_score()` y ajusta según el color del jugador.                             |
+| Nº  | Optimización                                 | Estado        | Detalles / Comentarios                                                                     |
+| --- | -------------------------------------------- | ------------- | ------------------------------------------------------------------------------------------ |
+| 1️⃣   | 🔻 Reducir profundidad fija                   | ✅ Aplicado    | Se usa `depth=6` para jugadas con `pre_tag`; y valores dinámicos según fase para el resto. |
+| 2️⃣   | ⏭️ Omitir primeras jugadas                    | ✅ Aplicado    | Si `move_number <= 6`, se salta el análisis. Controlado por `opening_move_threshold`.      |
+| 3️⃣   | 🧠 Profundidad variable por fase              | ✅ Aplicado    | Usa `PHASE_DEPTHS` basado en la fase del juego (`opening`, `middlegame`, `endgame`).       |
+| 4️⃣   | 🧮 Branching factor                           | ✅ Aplicado    | Si `branching < 5`, se omite la jugada. Usado como indicador de baja complejidad.          |
+| 5️⃣   | 🤖 MultiPV inteligente                        | ✅ Aplicado    | Se usa `multipv=3` si `branching > 10`, y se adaptó `get_evaluation` y `parse_info`.       |
+| 6️⃣   | 🧷 Análisis condicional por etiquetas previas | ✅ Aplicado    | Si `classify_simple_pattern` devuelve etiqueta, usa `depth=6` y `multipv=1`.               |
+| 7️⃣   | ⛓️ Evitar análisis redundante (cache FEN)     | ✅ Aplicado    | Usa `eval_cache` para no recalcular evaluaciones por FEN.                                  |
+| 8️⃣   | ⚡ Evitar jugadas forzadas (`is_forced_move`) | 🔜 En progreso | Detectado en `evaluate_tactical_features()`, falta usarlo para saltar análisis.            |
+| 9️⃣   | 🧪 Score diferencial preciso (`score_diff`)   | ✅ Aplicado    | Usa `extract_score()` y ajusta según el color del jugador.                                 |
 
 ---
 
 ## 📌 Otros puntos implementados
 
-| Tema                           | Estado     | Comentarios                                                                 |
-|--------------------------------|------------|-----------------------------------------------------------------------------|
-| 🧩 `classify_simple_pattern`   | ✅ Reutilizado | Preclasificación táctica rápida (jaque, tenedor, clavada, etc).             |
-| 🔄 `compare_to_best`           | ✅ Usado     | Compara jugada real con alternativas (`MultiPV`).                          |
-| 🧠 `get_game_phase()`          | ✅ Usado     | Determina fase del juego (apertura, medio juego, final).                   |
-| ⏱️ Decorador `@measure_execution_time` | ✅ Aplicado | En funciones clave para medir tiempos.                                     |
-| 🧪 Prueba manual de `multipv`  | ✅ Confirmado | Stockfish devuelve `list[dict]` correctamente al usar `multipv > 1`.       |
+| Tema                                  | Estado        | Comentarios                                                          |
+| ------------------------------------- | ------------- | -------------------------------------------------------------------- |
+| 🧩 `classify_simple_pattern`           | ✅ Reutilizado | Preclasificación táctica rápida (jaque, tenedor, clavada, etc).      |
+| 🔄 `compare_to_best`                   | ✅ Usado       | Compara jugada real con alternativas (`MultiPV`).                    |
+| 🧠 `get_game_phase()`                  | ✅ Usado       | Determina fase del juego (apertura, medio juego, final).             |
+| ⏱️ Decorador `@measure_execution_time` | ✅ Aplicado    | En funciones clave para medir tiempos.                               |
+| 🧪 Prueba manual de `multipv`          | ✅ Confirmado  | Stockfish devuelve `list[dict]` correctamente al usar `multipv > 1`. |
 
 ---
 
@@ -355,22 +381,22 @@ El script `generate_combined_dataset.py` automatiza este proceso.
 
 ## 🧩 Resumen óptimo de datasets por tipo de partida
 
-| Tipo de partida                | Cantidad estimada | Uso principal                                                                 |
-|-------------------------------|-------------------|------------------------------------------------------------------------------|
-| **Tus propias partidas**      | ~12.000           | Entrenamiento personalizado, detección de patrones de error, evaluación real |
-| **Novatos (ELO < 1500)**      | 50k–200k          | Entrenamiento base, comparación de estilos, generalización                   |
-| **Élite (ELO > 2200)**        | >300k             | Modelar buen juego, etiquetar jugadas correctas, referencia                  |
-| **Stockfish vs Stockfish**    | >300k             | Referencia perfecta, partidas ideales, validación de puntuaciones            |
+| Tipo de partida            | Cantidad estimada | Uso principal                                                                |
+| -------------------------- | ----------------- | ---------------------------------------------------------------------------- |
+| **Tus propias partidas**   | ~12.000           | Entrenamiento personalizado, detección de patrones de error, evaluación real |
+| **Novatos (ELO < 1500)**   | 50k–200k          | Entrenamiento base, comparación de estilos, generalización                   |
+| **Élite (ELO > 2200)**     | >300k             | Modelar buen juego, etiquetar jugadas correctas, referencia                  |
+| **Stockfish vs Stockfish** | >300k             | Referencia perfecta, partidas ideales, validación de puntuaciones            |
 
 
   ### 🎯 Proporciones sugeridas en el dataset de entrenamiento
 
-  | Tipo de partida      | % en dataset final | Motivo principal                                 |
-  |---------------------|--------------------|--------------------------------------------------|
-  | Tus partidas        | 10–20%             | Personalización y evaluación                     |
-  | Novatos humanos     | 30–40%             | Entrenamiento base y errores típicos             |
-  | Partidas de élite   | 20–30%             | Modelar buen juego, contraste con novatos        |
-  | Stockfish test      | 10–20%             | Referencia perfecta y jugadas ideales            |
+  | Tipo de partida   | % en dataset final | Motivo principal                          |
+  | ----------------- | ------------------ | ----------------------------------------- |
+  | Tus partidas      | 10–20%             | Personalización y evaluación              |
+  | Novatos humanos   | 30–40%             | Entrenamiento base y errores típicos      |
+  | Partidas de élite | 20–30%             | Modelar buen juego, contraste con novatos |
+  | Stockfish test    | 10–20%             | Referencia perfecta y jugadas ideales     |
 
 ## 🧠 Entrenamiento de modelos con DVC
 
@@ -427,18 +453,18 @@ python -m app.src.modules.tactics_generator
 
 ## 🧩 Estado Actual de Funcionalidades Predictivas en `chess_trainer`
 
-| Aspecto                                    | Estado           | Descripción                                                                                                 |
-|---------------------------------------------|------------------|-------------------------------------------------------------------------------------------------------------|
-| Análisis de partidas y aperturas            | ✅ Implementado   | Evaluación detallada de jugadas y aperturas usando Stockfish.                                               |
-| Evaluación de posiciones                    | ✅ Implementado   | Función heurística tradicional para valorar posiciones.                                                     |
-| Entrenamiento personalizado basado en errores| ✅ Implementado   | Adaptación de sesiones según errores frecuentes del usuario.                                                |
-| Integración de bases de datos de partidas   | ✅ Implementado   | Análisis de tendencias y patrones a partir de una base de datos de partidas.                                |
-| Análisis de estilo de juego del usuario     | ⚠️ Parcial        | Análisis básico del estilo, falta caracterización profunda (velocidad, riesgo, patrones estratégicos).      |
-| #MIGRATED-TODO-1750642686 Uso de redes neuronales para evaluación     | ❌ No implementado| No se usan redes neuronales para evaluar posiciones o jugadas.                                              |
-|#MIGRATED-TODO-1750642906 Entrenamiento mediante autoaprendizaje      | ❌ No implementado| Falta módulo de self-play para autoaprendizaje.                                                             |
-|#MIGRATED-TODO-1750643754 Bases de datos de finales (tablebases)      | ❌ No implementado| No se usan tablebases para finales perfectos.                                                               |
-|#MIGRATED-TODO-1750645297 Análisis de estilo de juego del oponente    | ❌ No implementado| No se analiza el estilo de los oponentes.                                                                   |
-|#MIGRATED-TODO-1750645646 Visualización de progresos y métricas       | ❌ No implementado| Falta interfaz para mostrar progreso y métricas del usuario.                                                |
+| Aspecto                                                            | Estado            | Descripción                                                                                            |
+| ------------------------------------------------------------------ | ----------------- | ------------------------------------------------------------------------------------------------------ |
+| Análisis de partidas y aperturas                                   | ✅ Implementado    | Evaluación detallada de jugadas y aperturas usando Stockfish.                                          |
+| Evaluación de posiciones                                           | ✅ Implementado    | Función heurística tradicional para valorar posiciones.                                                |
+| Entrenamiento personalizado basado en errores                      | ✅ Implementado    | Adaptación de sesiones según errores frecuentes del usuario.                                           |
+| Integración de bases de datos de partidas                          | ✅ Implementado    | Análisis de tendencias y patrones a partir de una base de datos de partidas.                           |
+| Análisis de estilo de juego del usuario                            | ⚠️ Parcial         | Análisis básico del estilo, falta caracterización profunda (velocidad, riesgo, patrones estratégicos). |
+| #MIGRATED-TODO-1750642686 Uso de redes neuronales para evaluación  | ❌ No implementado | No se usan redes neuronales para evaluar posiciones o jugadas.                                         |
+| #MIGRATED-TODO-1750642906 Entrenamiento mediante autoaprendizaje   | ❌ No implementado | Falta módulo de self-play para autoaprendizaje.                                                        |
+| #MIGRATED-TODO-1750643754 Bases de datos de finales (tablebases)   | ❌ No implementado | No se usan tablebases para finales perfectos.                                                          |
+| #MIGRATED-TODO-1750645297 Análisis de estilo de juego del oponente | ❌ No implementado | No se analiza el estilo de los oponentes.                                                              |
+| #MIGRATED-TODO-1750645646 Visualización de progresos y métricas    | ❌ No implementado | Falta interfaz para mostrar progreso y métricas del usuario.                                           |
 
 
 ### 💡 Ideas a Considerar
@@ -466,11 +492,11 @@ python -m app.src.modules.tactics_generator
 
 ### Etapa 1: Diagnóstico y Personalización (Prioridad Alta)
 
-| Tarea                                 | Objetivo                                               | Técnica / Herramienta                        | Tiempo Estimado |
-|---------------------------------------|--------------------------------------------------------|----------------------------------------------|-----------------|
-| 🔍 Análisis avanzado del estilo       | Identificar perfil del usuario                         | Clustering + métricas (score_diff, risk, etc)| 3 días          |
-| 📊 Visualización de progresos         | Mostrar evolución y errores frecuentes                 | Dashboard en Streamlit                       | 2 días          |
-| ⚙️ Análisis de oponentes              | Detectar patrones en rivales frecuentes                | Filtrado y clustering simplificado           | 2 días          |
+| Tarea                          | Objetivo                                | Técnica / Herramienta                         | Tiempo Estimado |
+| ------------------------------ | --------------------------------------- | --------------------------------------------- | --------------- |
+| 🔍 Análisis avanzado del estilo | Identificar perfil del usuario          | Clustering + métricas (score_diff, risk, etc) | 3 días          |
+| 📊 Visualización de progresos   | Mostrar evolución y errores frecuentes  | Dashboard en Streamlit                        | 2 días          |
+| ⚙️ Análisis de oponentes        | Detectar patrones en rivales frecuentes | Filtrado y clustering simplificado            | 2 días          |
 
 **Resultado:** Chess_trainer se adapta al usuario, mostrando perfil, errores y rivales clave.
 
@@ -478,70 +504,70 @@ python -m app.src.modules.tactics_generator
 
 ### Etapa 2: Potenciación con AI (Media Prioridad)
 
-| Tarea                                 | Objetivo                                               | Técnica / Herramienta                        | Tiempo Estimado |
-|---------------------------------------|--------------------------------------------------------|----------------------------------------------|-----------------|
-| 🧠 Evaluador basado en NNUE           | Evaluaciones más contextuales y posicionales           | Modelos open source NNUE                     | 4-6 días        |
-| ♟️ Integración de Tablebases          | Juego perfecto en finales                              | Syzygy + python-chess                        | 2 días          |
-| 🔁 Autoaprendizaje (Self-Play)        | Entrenamiento autónomo del sistema                     | Simulación de partidas y refuerzo            | 5 días          |
+| Tarea                         | Objetivo                                     | Técnica / Herramienta             | Tiempo Estimado |
+| ----------------------------- | -------------------------------------------- | --------------------------------- | --------------- |
+| 🧠 Evaluador basado en NNUE    | Evaluaciones más contextuales y posicionales | Modelos open source NNUE          | 4-6 días        |
+| ♟️ Integración de Tablebases   | Juego perfecto en finales                    | Syzygy + python-chess             | 2 días          |
+| 🔁 Autoaprendizaje (Self-Play) | Entrenamiento autónomo del sistema           | Simulación de partidas y refuerzo | 5 días          |
 
 ---
 
 ### Etapa 3: Estudios y Flujo Táctico Dinámico
 
-| Tarea                                 | Objetivo                                               | Técnica / Herramienta                        | Tiempo Estimado |
-|---------------------------------------|--------------------------------------------------------|----------------------------------------------|-----------------|
-| 🧩 Generador automático de estudios   | Crear estudios interactivos tipo Lichess               | Extracción de segmentos con score_diff alto  | 2 días          |
-| 🧠 Sugeridor de entrenamiento táctico | Recomendar ejercicios según fallas frecuentes           | tactical_recommender.py                      | 2 días          |
+| Tarea                                | Objetivo                                      | Técnica / Herramienta                       | Tiempo Estimado |
+| ------------------------------------ | --------------------------------------------- | ------------------------------------------- | --------------- |
+| 🧩 Generador automático de estudios   | Crear estudios interactivos tipo Lichess      | Extracción de segmentos con score_diff alto | 2 días          |
+| 🧠 Sugeridor de entrenamiento táctico | Recomendar ejercicios según fallas frecuentes | tactical_recommender.py                     | 2 días          |
 
 ---
 
 ### Etapa 4: Extras Opcionales e I+D
 
-| Tarea                                 | Objetivo                                               | Técnica / Herramienta                        | Estado          |
-|---------------------------------------|--------------------------------------------------------|----------------------------------------------|-----------------|
-| 🧮 Predicción de rendimiento futuro    | Predecir resultado según apertura y jugadas            | Logistic Regression / RandomForest           | Idea nueva      |
-| 🎮 Interfaz tipo videojuego            | Gamificación y logros por niveles                      | Sistema de badges + tracking en SQLite       | Idea nueva      |
+| Tarea                              | Objetivo                                    | Técnica / Herramienta                  | Estado     |
+| ---------------------------------- | ------------------------------------------- | -------------------------------------- | ---------- |
+| 🧮 Predicción de rendimiento futuro | Predecir resultado según apertura y jugadas | Logistic Regression / RandomForest     | Idea nueva |
+| 🎮 Interfaz tipo videojuego         | Gamificación y logros por niveles           | Sistema de badges + tracking en SQLite | Idea nueva |
 
 ---
 
 ## ✅ Pros y Contras de las Funcionalidades
 
-| Aspecto                   | Ventajas                                 | Desventajas                                  |
-|---------------------------|------------------------------------------|----------------------------------------------|
-| Personalización táctica   | Entrenamiento enfocado y motivante       | Requiere buen etiquetado y clustering        |
-| Evaluación NNUE           | Más precisión posicional                 | Complejidad técnica moderada                 |
-| Autoaprendizaje           | Sistema autónomo y replicable            | Puede consumir CPU si no se optimiza         |
-| Visualización de progreso | Clara percepción de mejora               | Puede generar frustración si no hay avances  |
-| Tablebases                | Juego perfecto en finales                | Sólo aplica a casos concretos                |
-| Análisis de oponentes     | Mejor preparación ante rivales           | Depende de partidas previas disponibles      |
+| Aspecto                   | Ventajas                           | Desventajas                                 |
+| ------------------------- | ---------------------------------- | ------------------------------------------- |
+| Personalización táctica   | Entrenamiento enfocado y motivante | Requiere buen etiquetado y clustering       |
+| Evaluación NNUE           | Más precisión posicional           | Complejidad técnica moderada                |
+| Autoaprendizaje           | Sistema autónomo y replicable      | Puede consumir CPU si no se optimiza        |
+| Visualización de progreso | Clara percepción de mejora         | Puede generar frustración si no hay avances |
+| Tablebases                | Juego perfecto en finales          | Sólo aplica a casos concretos               |
+| Análisis de oponentes     | Mejor preparación ante rivales     | Depende de partidas previas disponibles     |
 
 
 ## 🧠 Resumen de Machine Learning en `chess_trainer`
 
 ### ✅ Módulos implementados / bosquejados
 
-| Módulo / Archivo                | Descripción                                                                  | Estado                  |
-|---------------------------------|------------------------------------------------------------------------------|-------------------------|
-| `tactical_evaluator.py`         | Evalúa jugadas con Stockfish y etiqueta errores tácticos                     | ✅ Implementado         |
-| `training_dataset.parquet`      | Dataset generado con múltiples features por jugada (tácticos, posicionales)  | ✅ Generado             |
-| `eda_feedback.ipynb`            | Análisis exploratorio del dataset táctico con gráficos y boxplots            | ✅ En uso               |
-| `feedback_analysis.ipynb`       | Analiza errores frecuentes, aperturas problemáticas, patrones de blunder     | ✅ Base implementada    |
-| `error_label_model.ipynb`       | Entrena un modelo supervisado para predecir el tipo de error (`error_label`) | ⚠️ Parcialmente hecho   |
-| `predicciones.parquet`          | Guarda predicciones del modelo ML por jugada                                 | ✅ Implementado         |
-| `tactical_recommender.py`       | Recomienda ejercicios tácticos según debilidades detectadas                  | ✅ Implementado (base)  |
+| Módulo / Archivo           | Descripción                                                                  | Estado                |
+| -------------------------- | ---------------------------------------------------------------------------- | --------------------- |
+| `tactical_evaluator.py`    | Evalúa jugadas con Stockfish y etiqueta errores tácticos                     | ✅ Implementado        |
+| `training_dataset.parquet` | Dataset generado con múltiples features por jugada (tácticos, posicionales)  | ✅ Generado            |
+| `eda_feedback.ipynb`       | Análisis exploratorio del dataset táctico con gráficos y boxplots            | ✅ En uso              |
+| `feedback_analysis.ipynb`  | Analiza errores frecuentes, aperturas problemáticas, patrones de blunder     | ✅ Base implementada   |
+| `error_label_model.ipynb`  | Entrena un modelo supervisado para predecir el tipo de error (`error_label`) | ⚠️ Parcialmente hecho  |
+| `predicciones.parquet`     | Guarda predicciones del modelo ML por jugada                                 | ✅ Implementado        |
+| `tactical_recommender.py`  | Recomienda ejercicios tácticos según debilidades detectadas                  | ✅ Implementado (base) |
 
 ---
 
 ### 📊 Técnicas de ML aplicadas o preparadas
 
-| Técnica                | Uso                                                        | Estado                  |
-|------------------------|------------------------------------------------------------|-------------------------|
-| Aprendizaje supervisado| Clasificación de errores (`error_label`) por jugada        | ⚠️ Parcial (modelo inicial) |
-| Clustering (K-Means)   | Agrupación de jugadas por tipo de error, fase, etc.        | ⚠️ En notebooks         |
-| PCA                    | Reducción de dimensionalidad para visualización            | ✅ Aplicado en EDA      |
-| Feature Engineering    | Construcción de métricas como `score_diff`, `mobility`, etc.| ✅ Hecho                |
-| Árboles de decisión / Random Forest | Modelo candidato para clasificar errores tácticos | 💡 Idea sugerida        |
-| Regresión logística    | Predicción binaria de blunder / no blunder                 | 💡 Idea sugerida        |
+| Técnica                             | Uso                                                          | Estado                     |
+| ----------------------------------- | ------------------------------------------------------------ | -------------------------- |
+| Aprendizaje supervisado             | Clasificación de errores (`error_label`) por jugada          | ⚠️ Parcial (modelo inicial) |
+| Clustering (K-Means)                | Agrupación de jugadas por tipo de error, fase, etc.          | ⚠️ En notebooks             |
+| PCA                                 | Reducción de dimensionalidad para visualización              | ✅ Aplicado en EDA          |
+| Feature Engineering                 | Construcción de métricas como `score_diff`, `mobility`, etc. | ✅ Hecho                    |
+| Árboles de decisión / Random Forest | Modelo candidato para clasificar errores tácticos            | 💡 Idea sugerida            |
+| Regresión logística                 | Predicción binaria de blunder / no blunder                   | 💡 Idea sugerida            |
 
 ---
 
@@ -566,25 +592,25 @@ python -m app.src.modules.tactics_generator
 
 ### ❌ Faltantes en el pipeline ML
 
-| Faltante                        | Descripción                                                                 |
-|----------------------------------|-----------------------------------------------------------------------------|
-| Entrenamiento formal del modelo  | Definir y entrenar modelo final (ej: RandomForest, Logistic Regression)     |
-| Evaluación del modelo            | Validación cruzada, matriz de confusión, métricas tipo F1 o accuracy        |
-| Exportación del modelo           | Serializar como `.pkl` o `.joblib` para uso en producción                   |
-| Inferencia en producción         | Cargar modelo desde Python y etiquetar nuevas jugadas al vuelo              |
-| Visualización de predicciones    | Mostrar `predicciones.csv` en la interfaz para feedback al usuario          |
+| Faltante                        | Descripción                                                             |
+| ------------------------------- | ----------------------------------------------------------------------- |
+| Entrenamiento formal del modelo | Definir y entrenar modelo final (ej: RandomForest, Logistic Regression) |
+| Evaluación del modelo           | Validación cruzada, matriz de confusión, métricas tipo F1 o accuracy    |
+| Exportación del modelo          | Serializar como `.pkl` o `.joblib` para uso en producción               |
+| Inferencia en producción        | Cargar modelo desde Python y etiquetar nuevas jugadas al vuelo          |
+| Visualización de predicciones   | Mostrar `predicciones.csv` en la interfaz para feedback al usuario      |
 
 ---
 
 ### 🗂️ Próximos pasos sugeridos para completar ML
 
-| Paso | Acción                                                                 | Módulo/Notebook                |
-|------|------------------------------------------------------------------------|--------------------------------|
-| 1️⃣  | Terminar `error_label_model.ipynb` entrenando modelo completo           | Jupyter                        |
-| 2️⃣  | Evaluar modelo y guardar como `trained_model.pkl`                       | Jupyter + joblib               |
-| 3️⃣  | Crear módulo `ml_predictor.py` para cargar modelo y etiquetar jugadas   | Python                         |
-| 4️⃣  | Integrar a `full_pipeline.py` o `tactical_analysis.py`                  | Python                         |
-| 5️⃣  | Visualizar las predicciones en Streamlit con ejemplos y feedback        | Streamlit                      |
+| Paso | Acción                                                                | Módulo/Notebook  |
+| ---- | --------------------------------------------------------------------- | ---------------- |
+| 1️⃣    | Terminar `error_label_model.ipynb` entrenando modelo completo         | Jupyter          |
+| 2️⃣    | Evaluar modelo y guardar como `trained_model.pkl`                     | Jupyter + joblib |
+| 3️⃣    | Crear módulo `ml_predictor.py` para cargar modelo y etiquetar jugadas | Python           |
+| 4️⃣    | Integrar a `full_pipeline.py` o `tactical_analysis.py`                | Python           |
+| 5️⃣    | Visualizar las predicciones en Streamlit con ejemplos y feedback      | Streamlit        |
 
 
 ## 🔜 Vista general de próximos pasos sugeridos
@@ -612,26 +638,26 @@ python -m app.src.modules.tactics_generator
 **La aplicación tiene vistas UI básicas usandoo streamlit.
 ## 📝 Validación de funcionalidades por vista (v0.1.20-f9d0260)
 
-| Vista                        | Estado de validación | Notas / Comentarios |
-|------------------------------|---------------------|---------------------|
-| app                          | #TODO               |                     |
-| analyze feedback             | #TODO               |                     |
-| create exercise              | #TODO               |                     |
-| elite explorer               | #TODO               |                     |
-| elite stats                  | #TODO               |                     |
-| elite training               | #TODO               |                     |
-| export exercises             | #TODO               |                     |
-| log viewer                   | #TODO               |                     |
-| prediction history           | #TODO               |                     |
-| predictor error label        | #TODO               |                     |
-| streamlit eda                | #TODO               |                     |
-| streamlit study viewer       | #TODO               |                     |
-| streamlit tacticals viewer   | #TODO               |                     |
-| summary viewer               | #TODO               |                     |
-| tactics                      | #TODO               |                     |
-| tactics viewer               | #TODO               |                     |
-| tag games ui                 | #TODO               |                     |
-| upload pgn                   | #TODO               |                     |
+| *                                                          | Vista | Estado de validación | Notas / Comentarios |
+| ---------------------------------------------------------- | ----- | -------------------- |
+| #TODO Validar funcionamiento de app                        |
+| #TODO Validar funcionamiento de analyze feedback           |
+| #TODO Validar funcionamiento de create exercise            |
+| #TODO Validar funcionamiento de elite explorer             |
+| #TODO Validar funcionamiento de elite stats                |
+| #TODO Validar funcionamiento de elite training             |
+| #TODO Validar funcionamiento de export exercises           |
+| #TODO Validar funcionamiento de log viewer                 |
+| #TODO Validar funcionamiento de prediction history         |
+| #TODO Validar funcionamiento de predictor error label      |
+| #TODO Validar funcionamiento de streamlit eda              |
+| #TODO Validar funcionamiento de streamlit study viewer     |
+| #TODO Validar funcionamiento de streamlit tacticals viewer |
+| #TODO Validar funcionamiento de summary viewer             |
+| #TODO Validar funcionamiento de tactics                    |
+| #TODO Validar funcionamiento de tactics viewer             |
+| #TODO Validar funcionamiento de tag games ui               |
+| #TODO Validar funcionamiento de upload pgn                 |
 
 ## 📌 Autor
 
