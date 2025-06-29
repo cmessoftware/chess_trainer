@@ -20,6 +20,43 @@ Este proyecto automatiza la importación, análisis, etiquetado y entrenamiento 
 
 ---
 
+## 🚀 Construcción de contenedores con scripts automáticos
+
+Este proyecto incluye scripts para construir los contenedores de forma sencilla, sin necesidad de pasar parámetros manualmente.
+
+Los contenedores disponibles son:
+
+| Script               | Descripción                                | Imagen generada           |
+|----------------------|--------------------------------------------|----------------------------|
+| `build_app.sh`       | Construye el contenedor de la aplicación Streamlit | `chess_trainer_app`       |
+| `build_notebooks.sh` | Construye el contenedor de JupyterLab con Keras y TensorFlow | `chess_trainer_notebooks` |
+
+---
+
+### 🛠️ Requisitos
+
+- Docker versión **24.x** o superior (requerido para `--ignore-file`)
+- Scripts con permisos de ejecución
+
+Para dar permisos:
+
+```bash
+chmod +x build_app.sh build_notebooks.sh
+```
+---
+
+## 🚀 Cómo construir los contenedores
+**Para la aplicación Streamlit:**
+
+```bash
+./build_app.sh
+```
+**Para el entorno de JupyterLab:**
+
+```bash
+./build_notebooks.sh
+```
+
 ## 📂 Estructura del proyecto
 
 ```

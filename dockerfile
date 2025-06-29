@@ -1,45 +1,28 @@
-# Usar una imagen base de Python
-FROM python:3.11-bookworm
+# Dockerfile for a Streamlit application with minimal dependencies
+# Excludes heavy libraries like TensorFlow, JupyterLab, and TensorBoard
 
-# Upgrade all system packages to reduce vulnerabilities
-RUN apt-get update && apt-get upgrade -y && rm -rf /var/lib/apt/lists/*
+FROM python:3.11-slim
 
-
-# Instalar dependencias del sistema
-RUN apt-get update && apt-get install -y wget tar && apt-get install -y git && rm -rf /var/lib/apt/lists/*
-
-# Damos permisos de ejecución al entrypoint
-#RUN chmod +x /app/entrypoint.sh
-
-# Establecer directorio de trabajo
 WORKDIR /app
 
-# Ejecutar el entrypoint
-#RUN /app/entrypoint.sh --> Instala stockfish y las dependencias de Python
-# Descargar Stockfish 17.1 AVX2
-# Descargar y extraer Stockfish
-# RUN wget https://github.com/official-stockfish/Stockfish/releases/download/sf_17.1/stockfish-ubuntu-x86-64-avx2.tar && \
-#     mkdir -p /usr/local/bin && \
-#     tar -xf stockfish-ubuntu-x86-64-avx2.tar -C /usr/local/bin && \
-#     mv /usr/local/bin/ /usr/games/stockfish2 && \
-#     mv /usr/games/stockfish2/stockfish/stockfish-ubuntu-x86-64-avx2 /usr/local/bin && \
-#     rm -rf /usr/games/stockfish2 && \
-#     chmod +x /usr/local/bin && \
-#     rm -rf stockfish-ubuntu-x86-64-avx2.tar
+# Instala paquetes esenciales en un solo RUN para menor tamaño final
+RUN apt-get update && apt-get upgrade -y && \
+    apt-get install -y vim git git-lfs stockfish pytest pytest-mock ca-certificates && \
+    git lfs install && \
+    rm -rf /var/lib/apt/lists/*
 
-# # Añadir Stockfish al PATH
-# ENV PATH="/usr/games/stockfish:${PATH}"
-
-# Copiar requirements.txt
+# Filtra los requirements para excluir librerías pesadas
 COPY requirements.txt .
+RUN grep -vE "tensorflow|jupyterlab|notebook|tensorflow-io-gcs-filesystem|tensorboard" requirements.txt > requirements_min.txt
 
-# Instalar dependencias de Python
-RUN pip install --no-cache-dir -r requirements.txt
+# Instalación de dependencias
+RUN pip install --no-cache-dir -r requirements_min.txt && pip install --upgrade pip
 
-# Instalar debugpy (para debugging remoto)
-RUN pip install debugpy
+# Configuración del path
+ENV PYTHONPATH=/app/src
 
-# Exponer puerto para la interfaz web
-EXPOSE 8501
+# Copia el resto del proyecto
+COPY . .
 
+# Comando por defecto: levanta Streamlit
 CMD ["streamlit", "run", "src/app.py", "--server.port=8501", "--server.address=0.0.0.0"]

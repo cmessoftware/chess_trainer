@@ -6,7 +6,7 @@ from sqlalchemy import create_engine, text
 def main():
     dotenv.load_dotenv()
     # Ejemplo: postgresql://user:pass@localhost/dbname
-    DB_URL = os.environ.get("DATABASE_URL")
+    DB_URL = os.environ.get("CHESS_TRAINER_DB_URL")
 
     sql_script = """
     DELETE FROM games;

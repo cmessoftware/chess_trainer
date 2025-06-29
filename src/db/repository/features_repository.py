@@ -5,6 +5,7 @@ from typing import Dict, List
 import chess
 import pandas as pd
 from sqlalchemy import and_, join, or_, select, update
+import sqlalchemy
 from sqlalchemy.dialects.postgresql import insert
 from db.models.features import Features
 from db.models.games import Games
@@ -183,11 +184,16 @@ class FeaturesRepository:
 
                     print(
                         f"Checking existence for game {game_id}, move {move_number}, color {player_color}")
-                    exists = self.is_feature_in_db(
-                        game_id=game_id,
-                        move_number=move_number,
-                        player_color=player_color
-                    )
+                    try:
+                        exists = self.is_feature_in_db(
+                            game_id=game_id,
+                            move_number=move_number,
+                            player_color=player_color
+                        )
+                    except sqlalchemy.exc.PendingRollbackError as e:
+                        logger.error(f"Sesión en rollback, se resetea: {e}")
+                        self.session.rollback()
+                        raise e  # O seguir de forma controlada
 
                     if not exists:
                         print(
@@ -198,6 +204,12 @@ class FeaturesRepository:
                         print(
                             f"Updating {game_id}, move: {move_number}, color: {player_color}")
 
+                    print(
+                        f"Preparando update - move: {move_number}, player_color: {player_color}, tag: {tag}")
+
+                    tags_array = [tag] if tag else []
+                    print(f"tags_array generado: {tags_array}")
+
                     stmt = (
                         update(self.model)
                         .where(
@@ -206,13 +218,12 @@ class FeaturesRepository:
                             self.model.player_color == player_color
                         )
                         .values(
-                            tags=tag,
-                            error_label=error_label,  # Assuming error_label is not used here
+                            tags=tags_array,
+                            error_label=error_label,
                             score_diff=score_diff
                         )
                     )
-
-                    print(f"STMT: {stmt}")
+                    print(f"STMT generado: {stmt}")
 
                     session.execute(stmt)
                     updated_count += 1
@@ -236,6 +247,8 @@ class FeaturesRepository:
 
     def get_features_with_filters(
         self,
+        # Source of the games (e.g., "personal", "novice", "elite", "stockfish", "fide")
+        source,
         output_path: str = "filtered_features.parquet",
         min_elo: int = None,
         max_elo: int = None,
@@ -267,6 +280,9 @@ class FeaturesRepository:
                         Games.white_player.ilike(f"%{player_name}%"),
                         Games.black_player.ilike(f"%{player_name}%")
                     ))
+
+                if source:
+                    filters.append(Games.source == source)
 
                 if opening:
                     filters.append(or_(

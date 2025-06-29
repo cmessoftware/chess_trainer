@@ -1,8 +1,6 @@
-# /app/src/db/repository/Features_repository.py
+# /app/src/db/repository/Analyzed_tacticals.py
 
-import datetime
 import logging
-import pandas as pd
 from sqlalchemy import insert
 from db.models.analyzed_tacticals import Analyzed_tacticals
 from db.db_utils import DBUtils
@@ -39,7 +37,7 @@ class Analyzed_tacticalsRepository:
         self.session.query(Analyzed_tacticals).filter_by(
             id=tacticals_id).update(kwargs)
         self.session.commit()
-        
+
     def save_analyzed_tactical_hash(self, game_id):
         with self.session_factory() as session:
             if session.query(Analyzed_tacticals).filter_by(game_id=game_id).first():
@@ -47,5 +45,3 @@ class Analyzed_tacticalsRepository:
             new_record = Analyzed_tacticals(game_id=game_id)
             session.add(new_record)
             session.commit()
-
-   

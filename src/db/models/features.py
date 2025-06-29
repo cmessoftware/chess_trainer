@@ -35,6 +35,7 @@ class Features(Base):
     site = Column(String, nullable=True)
     event = Column(String, nullable=True)
     date = Column(String, nullable=True)
+    #TODO: Eliminar white_player y black_player (redundantes, ya están en games)
     white_player = Column(String, nullable=True)
     black_player = Column(String, nullable=True)
     result = Column(String, nullable=True)

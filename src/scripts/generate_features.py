@@ -24,7 +24,7 @@ from db.db_utils import DBUtils
 import dotenv
 dotenv.load_dotenv()
 
-DATABASE_URL = os.environ.get("DATABASE_URL")
+DATABASE_URL = os.environ.get("CHESS_TRAINER_DB_URL")
 # Define default paths
 PGN_PATH = os.environ.get("PGN_PATH")
 TRANING_DATA_PATH = os.environ.get("TRANING_DATA_PATH")
