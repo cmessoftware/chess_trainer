@@ -75,6 +75,7 @@ referencing==0.36.2
 requests==2.32.3
 rich==13.9.4
 rpds-py==0.25.1
+scikit-learn==1.7.0
 scipy==1.15.2
 six==1.17.0
 smmap==5.0.2
@@ -85,6 +86,7 @@ stchess @ git+https://github.com/TheoLvs/streamlit-chess@58a6171db5768b73b5caabf
 stockfish==3.28.0
 streamlit==1.39.0
 tenacity==9.1.2
+threadpoolctl==3.6.0
 tinycss2==1.4.0
 toml==0.10.2
 toolz==1.0.0
