@@ -1,5 +1,7 @@
+from modules.tagging import detect_tags_from_game
 import pytest
-from ..modules.tagging import detect_tags_from_game
+import sys
+sys.path.insert(0, '/app/src')
 
 simple_pgn = """[Event "Test"]
 [Site "?"]
@@ -10,6 +12,7 @@ simple_pgn = """[Event "Test"]
 [Result "1-0"]
 
 1. e4 e5 2. Qh5 Nc6 3. Bc4 Nf6 4. Qxf7# 1-0"""
+
 
 def test_detects_attack_tag():
     tags = detect_tags_from_game(simple_pgn)

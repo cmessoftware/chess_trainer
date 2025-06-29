@@ -1,0 +1,32 @@
+# Ignorar entornos virtuales y archivos temporales
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+env/
+venv/
+
+# Control de versiones y dvc
+.git/
+.dvc/cache/
+.dvc/tmp/
+.vscode/
+.idea/
+
+# Ignorar datasets grandes, pero permitir notebooks
+data/exports/
+data/processed/
+data/outputs/
+models/
+*.parquet
+*.csv
+*.pgn
+*.zip
+*.bz2
+*.tar.gz
+
+# Otros archivos
+*.log
+*.tmp
+*.bak
+*.swp

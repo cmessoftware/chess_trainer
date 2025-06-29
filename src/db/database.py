@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-DATABASE_URL = os.environ.get("DATABASE_URL")
+DATABASE_URL = os.environ.get("CHESS_TRAINER_DB_URL")
 engine = create_engine(DATABASE_URL)
 Base = declarative_base()
 

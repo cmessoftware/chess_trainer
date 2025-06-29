@@ -1,9 +1,10 @@
+import chess.pgn
+from modules.analyze_games_tactics import detect_tactics_from_game
 import pytest
 import chess
 from unittest.mock import patch, MagicMock
-from modules.tactical_analysis import detect_tactics_from_game
-
-import chess.pgn
+import sys
+sys.path.insert(0, '/app/src')
 
 
 # Minimal config mocks for required globals
@@ -15,34 +16,34 @@ class DummySettings(dict):
 @pytest.fixture(autouse=True)
 def patch_globals(monkeypatch):
     # Patch TACTICAL_ANALYSIS_SETTINGS and PHASE_DEPTHS
-    monkeypatch.setattr("modules.tactical_analysis.TACTICAL_ANALYSIS_SETTINGS", DummySettings({
+    monkeypatch.setattr("modules.analyze_games_tactics.TACTICAL_ANALYSIS_SETTINGS", DummySettings({
         "opening_move_threshold": 2,
         "min_branching_for_analysis": 0,
     }))
-    monkeypatch.setattr("modules.tactical_analysis.PHASE_DEPTHS", {
+    monkeypatch.setattr("modules.analyze_games_tactics.PHASE_DEPTHS", {
                         "opening": 4, "middlegame": 6, "endgame": 8})
 
     # Patch classify_simple_pattern to return None (no pre_tag)
     monkeypatch.setattr(
-        "modules.tactical_analysis.classify_simple_pattern", lambda board, move: None)
+        "modules.analyze_games_tactics.classify_simple_pattern", lambda board, move: None)
     # Patch get_game_phase to always return 'middlegame'
     monkeypatch.setattr(
-        "modules.tactical_analysis.get_game_phase", lambda board: "middlegame")
+        "modules.analyze_games_tactics.get_game_phase", lambda board: "middlegame")
     # Patch classify_tactical_pattern to return a dummy tag
-    monkeypatch.setattr("modules.tactical_analysis.classify_tactical_pattern",
+    monkeypatch.setattr("modules.analyze_games_tactics.classify_tactical_pattern",
                         lambda score_diff, board, move: "dummy_tag")
     # Patch classify_error_label to return a dummy error label
     monkeypatch.setattr(
-        "modules.tactical_analysis.classify_error_label", lambda score_diff: "dummy_error")
+        "modules.analyze_games_tactics.classify_error_label", lambda score_diff: "dummy_error")
     # Patch compare_to_best to return a dummy alternative tag
-    monkeypatch.setattr("modules.tactical_analysis.compare_to_best",
+    monkeypatch.setattr("modules.analyze_games_tactics.compare_to_best",
                         lambda best, alternatives, threshold_cp=100: "alt_tag")
 
     # Patch get_evaluation to return a dummy evaluation dict
     def dummy_get_evaluation(fen, depth, multipv=1):
         return {"best": {"value": 50}, "alternatives": []}
     monkeypatch.setattr(
-        "modules.tactical_analysis.get_evaluation", dummy_get_evaluation)
+        "modules.analyze_games_tactics.get_evaluation", dummy_get_evaluation)
 
 
 def make_pgn_game(moves):

@@ -12,8 +12,9 @@ dotenv.load_dotenv()
 
 
 class GamesRepository:
-    def __init__(self, session_factory):
+    def __init__(self, session_factory=get_session):
         self.session_factory = session_factory
+        self.session = self.session_factory()
 
     def get_all_games(self):
         with self.session_factory() as session:
@@ -37,18 +38,28 @@ class GamesRepository:
             # self.db_utils.print_sql_query(stmt, engine)
             return games
 
-    def get_games_by_pagination_not_analyzed(self, analyzed_hashes: set, offset: int = 0, limit: int = 10):
+    def get_games_by_pagination_not_analyzed(self, analyzed_hashes: set, offset: int = 0, limit: int = 10, source: str = None):
         """
-        Returns games whose ID (hash) is not in analyzed_hashes, paginated.
+        Returns games whose ID (hash) is not in analyzed_hashes, paginated, optionally filtered by source.
         """
         with self.session_factory() as session:
+            stmt = select(Games.pgn)
+
+            # Condiciones dinámicas
+            conditions = []
+
             if analyzed_hashes:
-                stmt = select(Games.pgn).where(not_(Games.game_id.in_(analyzed_hashes)))
-            else:
-                stmt = select(Games.pgn)
+                conditions.append(not_(Games.game_id.in_(analyzed_hashes)))
+
+            if source:
+                conditions.append(Games.source == source)
+
+            if conditions:
+                stmt = stmt.where(*conditions)
 
             stmt = stmt.offset(offset).limit(limit)
             games = session.execute(stmt).scalars().all()
+
         return games
 
     def get_games_not_analyzed(self, analyzed_hashes: set):
@@ -70,10 +81,9 @@ class GamesRepository:
                         games.append(game)
                 return games
             except Exception as e:
-                    session.rollback()
-                    raise e
-    
-    
+                session.rollback()
+                raise e
+
     def get_pgn_text_by_id(self, game_id):
         with self.session_factory() as session:
             try:

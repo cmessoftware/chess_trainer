@@ -1,0 +1,115 @@
+Script started on 2025-06-29 03:32:27+00:00 [TERM="xterm-256color" TTY="/dev/pts/1" COLUMNS="122" LINES="13"]
+[?2004hroot@f429d04bafad:/app# cd scr[K[Krc/scripts/
+[?2004l[?2004hroot@f429d04bafad:/app/src/scripts# r[K./run_t[K[K[K[K[K[K[Kls run*
+[?2004lrun_sqlite_web.sh  run_streamlit.sh
+[?2004hroot@f429d04bafad:/app/src/scripts# cd ..
+[?2004l[?2004hroot@f429d04bafad:/app/src# cd ..
+[?2004l[?2004hroot@f429d04bafad:/app# ls run*
+[?2004lrun_tests.sh
+[?2004hroot@f429d04bafad:/app# ./run_tests.sh
+[?2004lbash: ./run_tests.sh: Permission denied
+[?2004hroot@f429d04bafad:/app# chamod[K[K[K[Kmod +x run_tests.sh 
+[?2004l[?2004hroot@f429d04bafad:/app# ./run_tests.sh 
+[?2004l[1;33m🧪 Running tests for analyze_games_tactics_parallel.py[0m
+[1;33m🔧 Test configuration:[0m
+  PYTHONPATH: /app/src:/app/src
+  TEST_OPTIONS: -v --tb=short --color=yes
+
+[1;33m🚀 Running analyze_games_tactics_parallel tests...[0m
+4[1m================================================== test session starts ===================================================[0m
+platform linux -- Python 3.11.13, pytest-8.4.1, pluggy-1.6.0 -- /usr/local/bin/python3.11
+cachedir: .pytest_cache
+rootdir: /app
+configfile: pytest.ini
+plugins: mock-3.14.1, anyio-4.9.0
+[1mcollecting ... [0m[1mcollecting 3 items                                                                                                       [0m[1mcollected 31 items                                                                                                       [0m
+
+src/tests/test_analyze_games_tactics_parallel.py::TestRunParallelAnalysisFromDb::test_run_parallel_analysis_basic_flow [32mPASSED[0m[33m [  3%][0m
+src/tests/test_analyze_games_tactics_parallel.py::TestRunParallelAnalysisFromDb::test_run_parallel_analysis_no_games [32mPASSED[0m[33m [  6%][0m
+src/tests/test_analyze_games_tactics_parallel.py::TestRunParallelAnalysisFromDb::test_run_parallel_analysis_with_sqlalchemy_error [32mPASSED[0m[33m [  9%][0m
+src/tests/test_analyze_games_tactics_parallel.py::TestAnalyzeGameParallel::test_analyze_game_parallel_success [32mPASSED[0m[33m [ 12%][0m
+src/tests/test_analyze_games_tactics_parallel.py::TestAnalyzeGameParallel::test_analyze_game_parallel_empty_pgn [32mPASSED[0m[33m [ 16%][0m
+src/tests/test_analyze_games_tactics_parallel.py::TestAnalyzeGameParallel::test_analyze_game_parallel_invalid_pgn [32mPASSED[0m[33m [ 19%][0m
+src/tests/test_analyze_games_tactics_parallel.py::TestAnalyzeGameParallel::test_analyze_game_parallel_no_tactics_found [32mPASSED[0m[33m [ 22%][0m
+src/tests/test_analyze_games_tactics_parallel.py::TestAnalyzeGameParallel::test_analyze_game_parallel_exception_handling [32mPASSED[0m[33m [ 25%][0m
+src/tests/test_analyze_games_tactics_parallel.py::TestEnvironmentVariables::test_default_environment_variables [31mFAILED[0m[31m [ 29%][0m
+src/tests/test_analyze_games_tactics_parallel.py::TestEnvironmentVariables::test_custom_environment_variables [32mPASSED[0m[31m [ 32%][0m
+src/tests/test_analyze_games_tactics_parallel.py::TestIntegration::test_main_execution [32mPASSED[0m[31m                      [ 35%][0m
+src/tests/test_analyze_games_tactics_parallel.py::TestIntegration::test_import_all_dependencies [32mPASSED[0m[31m             [ 38%][0m
+src/tests/test_analyze_games_tactics_parallel.py::test_max_games_parameter[5-1] [32mPASSED[0m[31m                             [ 41%][0m
+src/tests/test_analyze_games_tactics_parallel.py::test_max_games_parameter[100-1] [32mPASSED[0m[31m                           [ 45%][0m
+src/tests/test_analyze_games_tactics_parallel.py::test_max_games_parameter[0-0] [31mFAILED[0m[31m                             [ 48%][0m
+src/tests/test_analyze_games_tactics_parallel_simple.py::TestAnalyzeGameParallelFunction::test_analyze_game_parallel_successful_analysis [32mPASSED[0m[31m [ 51%][0m
+src/tests/test_analyze_games_tactics_parallel_simple.py::TestAnalyzeGameParallelFunction::test_analyze_game_parallel_empty_pgn [32mPASSED[0m[31m [ 54%][0m
+src/tests/test_analyze_games_tactics_parallel_simple.py::TestAnalyzeGameParallelFunction::test_analyze_game_parallel_invalid_pgn [32mPASSED[0m[31m [ 58%][0m
+src/tests/test_analyze_games_tactics_parallel_simple.py::TestAnalyzeGameParallelFunction::test_analyze_game_parallel_no_tactics_detected [32mPASSED[0m[31m [ 61%][0m
+src/tests/test_analyze_games_tactics_parallel_simple.py::TestRunParallelAnalysisFromDbFunction::test_run_parallel_analysis_no_games_available [32mPASSED[0m[31m [ 64%][0m
+src/tests/test_analyze_games_tactics_parallel_simple.py::TestRunParallelAnalysisFromDbFunction::test_run_parallel_analysis_with_analyzed_games [32mPASSED[0m[31m [ 67%][0m
+src/tests/test_analyze_games_tactics_parallel_simple.py::TestEnvironmentVariableHandling::test_environment_variables_loaded [32mPASSED[0m[31m [ 70%][0m
+src/tests/test_analyze_games_tactics_parallel_simple.py::TestEnvironmentVariableHandling::test_environment_variables_set [32mPASSED[0m[31m [ 74%][0m
+src/tests/test_analyze_games_tactics_parallel_simple.py::TestDataFrameHandling::test_empty_tags_dataframe_creation [32mPASSED[0m[31m [ 77%][0m
+src/tests/test_analyze_games_tactics_parallel_simple.py::TestDataFrameHandling::test_tags_dataframe_creation_with_data [32mPASSED[0m[31m [ 80%][0m
+src/tests/test_analyze_games_tactics_parallel_simple.py::TestDataFrameHandling::test_tags_dataframe_expected_columns [32mPASSED[0m[31m [ 83%][0m
+src/tests/test_analyze_games_tactics_parallel_simple.py::TestErrorHandling::test_database_connection_error [32mPASSED[0m[31m  [ 87%][0m
+src/tests/test_analyze_games_tactics_parallel_simple.py::TestErrorHandling::test_tactics_detection_error [32mPASSED[0m[31m    [ 90%][0m
+src/tests/test_analyze_games_tactics_parallel_simple.py::test_invalid_pgn_inputs[-None] [32mPASSED[0m[31m                     [ 93%][0m
+src/tests/test_analyze_games_tactics_parallel_simple.py::test_invalid_pgn_inputs[   -None] [32mPASSED[0m[31m                  [ 96%][0m
+src/tests/test_analyze_games_tactics_parallel_simple.py::test_invalid_pgn_inputs[None-None] [32mPASSED[0m[31m                 [100%][0m
+
+======================================================== FAILURES ========================================================
+[31m[1m______________________________ TestEnvironmentVariables.test_default_environment_variables _______________________________[0m
+[1m[31msrc/tests/test_analyze_games_tactics_parallel.py[0m:470: in test_default_environment_variables
+    [0m[94massert[39;49;00m module.LIMIT_FOR_DEBUG == [94m0[39;49;00m[90m[39;49;00m
+[1m[31mE   AssertionError: assert 1 == 0[0m
+[1m[31mE    +  where 1 = <module 'scripts.analyze_games_tactics_parallel' from '/app/src/scripts/analyze_games_tactics_parallel.py'>.LIMIT_FOR_DEBUG[0m
+[31m[1m_____________________________________________ test_max_games_parameter[0-0] ______________________________________________[0m
+[1m[31m/usr/local/lib/python3.11/unittest/mock.py[0m:918: in assert_called_once
+    [0m[94mraise[39;49;00m [96mAssertionError[39;49;00m(msg)[90m[39;49;00m
+[1m[31mE   AssertionError: Expected 'get_games_by_pagination_not_analyzed' to have been called once. Called 0 times.[0m
+
+[33mDuring handling of the above exception, another exception occurred:[0m
+[1m[31msrc/tests/test_analyze_games_tactics_parallel.py[0m:560: in test_max_games_parameter
+    [0mmock_games_repo.get_games_by_pagination_not_analyzed.assert_called_once()[90m[39;49;00m
+[1m[31mE   AssertionError: Expected 'get_games_by_pagination_not_analyzed' to have been called once. Called 0 times.[0m
+[33m==================================================== warnings summary ====================================================[0m
+../usr/local/lib/python3.11/site-packages/jupyter_client/connect.py:22
+  /usr/local/lib/python3.11/site-packages/jupyter_client/connect.py:22: DeprecationWarning: Jupyter is migrating its paths to use standard platformdirs
+  given by the platformdirs library.  To remove this warning and
+  see the appropriate new directories, set the environment variable
+  `JUPYTER_PLATFORM_DIRS=1` and then run `jupyter --paths`.
+  The use of platformdirs will be the default in `jupyter_core` v6
+    from jupyter_core.paths import jupyter_data_dir, jupyter_runtime_dir, secure_write
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+[36m[1m================================================ short test summary info =================================================[0m
+[31mFAILED[0m src/tests/test_analyze_games_tactics_parallel.py::[1mTestEnvironmentVariables::test_default_environment_variables[0m - AssertionError: assert 1 == 0
+[31mFAILED[0m src/tests/test_analyze_games_tactics_parallel.py::[1mtest_max_games_parameter[0-0][0m - AssertionError: Expected 'get_games_by_pagination_not_analyzed' to have been called once. Called 0 times.
+[31m======================================== [31m[1m2 failed[0m, [32m29 passed[0m, [33m1 warning[0m[31m in 2.14s[0m[31m =========================================[0m
+[0;31m❌ Some tests failed![0m
+[?2004hroot@f429d04bafad:/app# 4[Kroot@f429d04bafad:/app# 4[Kroot@f429d04bafad:/app# 4[Kroot@f429d04bafad:/app# 4[Kroot@f429d04bafad:/app# 4[Kroot@f429d04bafad:/app# 4[Kroot@f429d04bafad:/app# 4[Kroot@f429d04bafad:/app# 4[Kroot@f429d04bafad:/app# 4[Kroot@f429d04bafad:/app# 4[Kroot@f429d04bafad:/app# 4[Kroot@f429d04bafad:/app# 4[Kroot@f429d04bafad:/app# 4[Kclear
+[?2004l[H[2J[3J[?2004hroot@f429d04bafad:/app# [7mcd /app && pip install pytest-html[27m[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ccd /app && pip install pytest-html
+[?2004lCollecting pytest-html
+  Downloading pytest_html-4.1.1-py3-none-any.whl.metadata (3.9 kB)
+Requirement already satisfied: jinja2>=3.0.0 in /usr/local/lib/python3.11/site-packages (from pytest-html) (3.1.6)
+Collecting pytest-metadata>=2.0.0 (from pytest-html)
+  Downloading pytest_metadata-3.1.1-py3-none-any.whl.metadata (8.6 kB)
+Requirement already satisfied: pytest>=7.0.0 in /usr/local/lib/python3.11/site-packages (from pytest-html) (8.4.1)
+Requirement already satisfied: MarkupSafe>=2.0 in /usr/local/lib/python3.11/site-packages (from jinja2>=3.0.0->pytest-html) (3.0.2)
+Requirement already satisfied: iniconfig>=1 in /usr/local/lib/python3.11/site-packages (from pytest>=7.0.0->pytest-html) (2.1.0)
+Requirement already satisfied: packaging>=20 in /usr/local/lib/python3.11/site-packages (from pytest>=7.0.0->pytest-html) (24.2)
+Requirement already satisfied: pluggy<2,>=1.5 in /usr/local/lib/python3.11/site-packages (from pytest>=7.0.0->pytest-html) (1.6.0)
+Requirement already satisfied: pygments>=2.7.2 in /usr/local/lib/python3.11/site-packages (from pytest>=7.0.0->pytest-html) (2.19.2)
+Downloading pytest_html-4.1.1-py3-none-any.whl (23 kB)
+Downloading pytest_metadata-3.1.1-py3-none-any.whl (11 kB)
+Installing collected packages: pytest-metadata, pytest-html
+Successfully installed pytest-html-4.1.1 pytest-metadata-3.1.1
+[33mWARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv[0m[33m
+[0m
+[1m[[0m[34;49mnotice[0m[1;39;49m][0m[39;49m A new release of pip is available: [0m[31;49m24.0[0m[39;49m -> [0m[32;49m25.1.1[0m
+[1m[[0m[34;49mnotice[0m[1;39;49m][0m[39;49m To update, run: [0m[32;49mpip install --upgrade pip[0m
+[?2004hroot@f429d04bafad:/app# [7mpip install --upgrade pip[27mpip install --upgrade pip
+[?2004lRequirement already satisfied: pip in /usr/local/lib/python3.11/site-packages (24.0)
+Collecting pip
+  Downloading pip-25.1.1-py3-none-any.whl.metadata (3.6 kB)
+Downloading pip-25.1.1-py3-none-any.whl (1.8 MB)
+[?25l   [38;5;237m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m [32m0.0/1.8 MB[0m [31m?[0m eta [36m-:--:--[0m[2

@@ -1,5 +1,7 @@
+from modules.analyze_games_tactics import classify_error_label
 import pytest
-from src.modules.tactical_analysis import classify_error_label
+import sys
+sys.path.insert(0, '/app/src')
 
 
 @pytest.mark.parametrize("score_diff, expected_label", [

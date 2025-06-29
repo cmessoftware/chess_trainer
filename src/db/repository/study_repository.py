@@ -1,34 +1,37 @@
 import os
-import sqlite3
 import dotenv
 import json
 from modules.study_generator import StudyGenerator
+from db.postgres_utils import get_postgres_connection
 
 dotenv.load_dotenv()
-db_path = os.environ.get("CHESS_TRAINER_DB_URL")
+db_url = os.environ.get("CHESS_TRAINER_DB_URL")
 
-if not db_path or not os.path.exists(db_path):
+if not db_url:
     raise ValueError(
-        f"Ruta de base de datos inválida o no encontrada: {db_path}")
+        f"CHESS_TRAINER_DB_URL environment variable not set")
 
 
 class StudyRepository:
     def __init__(self):
-        self.conn = sqlite3.connect(db_path)
-        self.conn.row_factory = sqlite3.Row
+        self.conn = get_postgres_connection()
         self.generator = StudyGenerator(self)
 
     def get_all_studies(self):
-        cursor = self.conn.execute("SELECT study_id, title FROM studies")
-        return [dict(row) for row in cursor.fetchall()]
+        cursor = self.conn.cursor()
+        cursor.execute("SELECT study_id, title FROM studies")
+        return [dict(zip([desc[0] for desc in cursor.description], row)) for row in cursor.fetchall()]
 
     def get_study_by_id(self, study_id):
-        cursor = self.conn.execute(
-            "SELECT * FROM studies WHERE study_id = ?", (study_id,))
+        cursor = self.conn.cursor()
+        cursor.execute(
+            "SELECT * FROM studies WHERE study_id = %s", (study_id,))
         row = cursor.fetchone()
         if row is None:
             return None
-        study = dict(row)
+
+        # Convert row to dict
+        study = dict(zip([desc[0] for desc in cursor.description], row))
         study['tags'] = json.loads(study.get('tags', '[]'))
         study['position_sequence'] = self.get_study_positions(study_id)
 
@@ -41,20 +44,22 @@ class StudyRepository:
         return study
 
     def get_study_positions(self, study_id):
-        cursor = self.conn.execute(
-            "SELECT fen, comment, is_critical FROM study_positions WHERE study_id = ?", (study_id,))
-        return [dict(row) for row in cursor.fetchall()]
+        cursor = self.conn.cursor()
+        cursor.execute(
+            "SELECT fen, comment, is_critical FROM study_positions WHERE study_id = %s", (study_id,))
+        return [dict(zip([desc[0] for desc in cursor.description], row)) for row in cursor.fetchall()]
 
     def save_study(self, study):
-        self.conn.execute("UPDATE studies SET title = ?, description = ?, source = ?, tags = ? WHERE study_id = ?", (
+        cursor = self.conn.cursor()
+        cursor.execute("UPDATE studies SET title = %s, description = %s, source = %s, tags = %s WHERE study_id = %s", (
             study['title'], study['description'], study['source'], json.dumps(
                 study['tags']), study['study_id']
         ))
-        self.conn.execute(
-            "DELETE FROM study_positions WHERE study_id = ?", (study['study_id'],))
+        cursor.execute(
+            "DELETE FROM study_positions WHERE study_id = %s", (study['study_id'],))
         for pos in study['position_sequence']:
-            self.conn.execute(
-                "INSERT INTO study_positions (study_id, fen, comment, is_critical) VALUES (?, ?, ?, ?)",
+            cursor.execute(
+                "INSERT INTO study_positions (study_id, fen, comment, is_critical) VALUES (%s, %s, %s, %s)",
                 (study['study_id'], pos['fen'], pos.get(
                     'comment', ''), pos.get('is_critical', False))
             )

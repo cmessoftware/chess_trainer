@@ -1,29 +1,30 @@
-version: '3.8'
 
 services:
   chess_trainer:
     build:
       context: .
-    container_name: chess_trainer
-    volumes:
-      - .:/app
+      dockerfile: Dockerfile
     ports:
-      - "8501:8501"  # Streamlit, o ajustá si usás otra cosa
-    depends_on:
-      - postgres
-    environment:
-      DATABASE_URL: postgresql://chess:chess_pass@postgres:5432/chess_trainer_db
-    env_file:
-      - .env
+      - "8501:8501"
+    volumes:
+      - ./data:/app/data
+
+  notebooks:
+    build:
+      context: .
+      dockerfile: dockerfile.notebooks
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./notebooks:/notebooks
+      - ./data:/notebooks/data
 
   postgres:
     image: postgres:13
-    container_name: chess_trainer_postgres
-    restart: unless-stopped
     environment:
-      POSTGRES_USER: chess
-      POSTGRES_PASSWORD: chess_pass
-      POSTGRES_DB: chess_trainer_db
+      - POSTGRES_USER=chess
+      - POSTGRES_PASSWORD=chess_pass
+      - POSTGRES_DB=chess_trainer_db
     ports:
       - "5432:5432"
     volumes:

@@ -1,0 +1,10 @@
+# Test requirements for analyze_games_tactics_parallel.py
+pytest>=7.0.0
+pytest-mock>=3.10.0
+pytest-cov>=4.0.0
+pytest-xdist>=3.0.0  # For parallel test execution
+pytest-html==4.1.1
+python-chess>=1.999
+pandas>=1.5.0
+psutil>=5.9.0
+sqlalchemy>=1.4.0

@@ -186,7 +186,7 @@ Una vez que el modelo esté entrenado, puedes usarlo para hacer recomendaciones 
 
 - Evaluar el modelo y realizar ajustes si es necesario.
 
-- Implementar el modelo en tu API Django y generar recomendaciones personalizadas para los usuarios.
+- Implementar el modelo en tu API Fast API y generar recomendaciones personalizadas para los usuarios.
 
 Este enfoque te proporcionará una base sólida para integrar Machine Learning e IA en tu proyecto de ajedrez, mejorando tanto el análisis de partidas como la experiencia del usuario.
 

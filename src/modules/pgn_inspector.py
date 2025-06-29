@@ -88,13 +88,19 @@ def inspect_pgn_zip_files(folder_path):
             print(log_msg)
             logging.info(log_msg)
 
+    def format_seconds(seconds):
+        hours = int(seconds // 3600)
+        minutes = int((seconds % 3600) // 60)
+        secs = int(seconds % 60)
+        return f"{hours:02}:{minutes:02}:{secs:02}"
+
     summary = (
         "\n📊 RESUMEN FINAL\n"
         f"  Archivos ZIP procesados: {len(zip_files)}\n"
         f"  Archivos PGN totales: {total_pgns}\n"
         f"  Partidas totales: {total_games}\n"
-        f"  ⏱️ Tiempo estimado total de importación: {total_import_time:.1f} s\n"
-        f"  ⏱️ Tiempo estimado total de análisis táctico: {total_analysis_time:.1f} s"
+        f"  ⏱️ Tiempo estimado total de importación: {format_seconds(total_import_time)}\n"
+        f"  ⏱️ Tiempo estimado total de análisis táctico: {format_seconds(total_analysis_time)}"
     )
 
     print(summary)

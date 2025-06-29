@@ -1,54 +1,56 @@
 import json
 import streamlit as st
-import sqlite3
 import pandas as pd
 import dotenv
 import os
-dotenv.load_dotenv() 
+from db.postgres_utils import execute_postgres_query, read_postgres_sql
 
-DB_PATH = os.environ.get("CHESS_TRAINER_DB")
+dotenv.load_dotenv()
 
-def ensure_tactical_exercises_table(db_path):
-    conn = sqlite3.connect(db_path)
-    cur = conn.cursor()
-    cur.execute("""
-        CREATE TABLE IF NOT EXISTS tactical_exercises (
-            id TEXT PRIMARY KEY,
-            fen TEXT NOT NULL,
-            move TEXT NOT NULL,
-            uci TEXT NOT NULL,
-            tags TEXT NOT NULL,  -- JSON string con la lista de tags
-            source_game_id TEXT  -- puede venir del header o ser un hash
-        );
-    """)
-    conn.commit()
-    conn.close()
+DB_URL = os.environ.get("CHESS_TRAINER_DB_URL")
 
 
-def save_tactic_to_db(tactic, db_path=DB_PATH):
-    ensure_tactical_exercises_table
-    conn = sqlite3.connect(db_path)
-    cur = conn.cursor()
-    cur.execute("""
-        INSERT OR REPLACE INTO tactical_exercises (id, fen, move, uci, tags, source_game_id)
-        VALUES (?, ?, ?, ?, ?, ?)
-    """, (
+def ensure_tactical_exercises_table():
+    """Create tactical_exercises table if it doesn't exist"""
+    query = """
+    CREATE TABLE IF NOT EXISTS tactical_exercises (
+        id TEXT PRIMARY KEY,
+        fen TEXT NOT NULL,
+        move TEXT NOT NULL,
+        uci TEXT NOT NULL,
+        tags TEXT NOT NULL,
+        source_game_id TEXT
+    );
+    """
+    execute_postgres_query(query, fetch=False)
+
+
+def save_tactic_to_db(tactic):
+    ensure_tactical_exercises_table()
+    query = """
+        INSERT INTO tactical_exercises (id, fen, move, uci, tags, source_game_id)
+        VALUES (%s, %s, %s, %s, %s, %s)
+        ON CONFLICT (id) DO UPDATE SET
+            fen = EXCLUDED.fen,
+            move = EXCLUDED.move,
+            uci = EXCLUDED.uci,
+            tags = EXCLUDED.tags,
+            source_game_id = EXCLUDED.source_game_id
+    """
+    execute_postgres_query(query, (
         tactic["id"],
         tactic["fen"],
         tactic["move"],
         tactic["uci"],
         json.dumps(tactic["tags"]),
         tactic.get("source_game_id"),
-    ))
-    conn.commit()
-    conn.close()
+    ), fetch=False)
+
 
 def load_tactics_from_db():
-    ensure_tactical_exercises_table(DB_PATH)
-    conn = sqlite3.connect(DB_PATH)
-    df = pd.read_sql_query("SELECT * FROM tactical_exercises", conn)
-    conn.close()
-    return df
+    ensure_tactical_exercises_table()
+    return read_postgres_sql("SELECT * FROM tactical_exercises")
+
 
 st.title("📤 Exportar ejercicios tácticos")
 
@@ -57,7 +59,9 @@ st.dataframe(df)
 
 col1, col2 = st.columns(2)
 with col1:
-    st.download_button("⬇ Exportar a CSV", df.to_csv(index=False), file_name="tactics.csv")
+    st.download_button("⬇ Exportar a CSV", df.to_csv(
+        index=False), file_name="tactics.csv")
 
 with col2:
-    st.download_button("⬇ Exportar a JSON", df.to_json(orient="records", indent=2), file_name="tactics.json")
+    st.download_button("⬇ Exportar a JSON", df.to_json(
+        orient="records", indent=2), file_name="tactics.json")
