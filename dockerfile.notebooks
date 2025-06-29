@@ -1,0 +1,28 @@
+## Dockerfile for JupyterLab with Keras and TensorFlow
+# Este contenedor configura un entorno de JupyterLab con TensorFlow, Keras y soporte para git-lfs.
+
+FROM python:3.11-slim
+
+WORKDIR /notebooks
+
+# Instalación de herramientas necesarias y limpieza en un solo RUN
+RUN apt-get update && \
+    apt-get install -y stockfish vim git git-lfs && \
+    git lfs install && \
+    rm -rf /var/lib/apt/lists/*
+
+# Copia y filtrado de requirements
+COPY requirements_keras_tf_clean.txt .
+
+# Instalación de dependencias y actualización de pip
+RUN pip install --no-cache-dir -r requirements_keras_tf_clean.txt && \
+    pip install --upgrade pip
+
+# Configuración de rutas
+ENV PYTHONPATH=/app/src
+
+# Exposición de puerto Jupyter
+EXPOSE 8888
+
+# Comando por defecto: levanta JupyterLab
+CMD ["jupyter", "lab", "--ip=0.0.0.0", "--allow-root", "--no-browser"]

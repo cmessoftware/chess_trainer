@@ -1,0 +1,160 @@
+diff --git a/README.md b/README.md
+index bafb382..c3665ad 100644
+--- a/README.md
++++ b/README.md
+@@ -1,3 +1,5 @@
++# CHESS TRAINER - Versión: v0.1.22-d5aa4b2
++
+ # CHESS TRAINER - Version: v0.1.20-f9d0260
+ 
+ # Chess Trainer (stable base version)
+diff --git a/VERSION b/VERSION
+index bb1b51b..97ecf05 100644
+--- a/VERSION
++++ b/VERSION
+@@ -1 +1 @@
+-v0.1.20-f9d0260
++v0.1.22-d5aa4b2
+diff --git a/docker-compose.yml b/docker-compose.yml
+index e995c33..d644d9f 100644
+--- a/docker-compose.yml
++++ b/docker-compose.yml
+@@ -1,4 +1,4 @@
+-version: '3.8'
++version: "3.9"
+ 
+ services:
+   chess_trainer:
+@@ -8,7 +8,7 @@ services:
+     volumes:
+       - .:/app
+     ports:
+-      - "8501:8501"  # Streamlit, o ajustá si usás otra cosa
++      - "8501:8501" # Streamlit, o ajustá si usás otra cosa
+     depends_on:
+       - postgres
+     environment:
+@@ -27,7 +27,8 @@ services:
+     ports:
+       - "5432:5432"
+     volumes:
+-      - chess_pgdata:/var/lib/postgresql/data
++      - chess_trainer_chess_pgdata:/var/lib/postgresql/data
+ 
+ volumes:
+-  chess_pgdata:
++  chess_trainer_chess_pgdata:
++    external: true
+diff --git a/dockerfile b/dockerfile
+index af44139..5cae8cf 100644
+--- a/dockerfile
++++ b/dockerfile
+@@ -1,18 +1,37 @@
+-# Usar una imagen base de Python
+-FROM python:3.11-bookworm
++# Imagen oficial de Python, ligera pero completa
++FROM python:3.11-slim-bullseye
+ 
+-# Upgrade all system packages to reduce vulnerabilities
+-RUN apt-get update && apt-get upgrade -y && rm -rf /var/lib/apt/lists/*
++# Ensure all system packages are up to date to reduce vulnerabilities
++RUN apt-get update && apt-get upgrade -y && apt-get clean
+ 
++# Evitás problemas de buffer de logs
++ENV PYTHONUNBUFFERED=1
+ 
+-# Instalar dependencias del sistema
+-RUN apt-get update && apt-get install -y wget tar && apt-get install -y git && rm -rf /var/lib/apt/lists/*
++# Configurás el directorio de trabajo
++WORKDIR /app
+ 
+-# Damos permisos de ejecución al entrypoint
+-#RUN chmod +x /app/entrypoint.sh
++# Instalás dependencias del sistema que vas a necesitar
++RUN apt update && apt install -y --no-install-recommends \
++    gcc \
++    libpq-dev \
++    && rm -rf /var/lib/apt/lists/*
+ 
+-# Establecer directorio de trabajo
+-WORKDIR /app
++# Copiás primero solo requirements.txt para aprovechar cache en builds sucesivos
++COPY requirements.txt .
++
++# Instalás dependencias de Python directamente en el entorno del contenedor
++RUN pip install --no-cache-dir --break-system-packages -r requirements.txt
++
++# Copiás el resto del proyecto
++COPY . .
++
++# Puerto de Streamlit o el que uses
++EXPOSE 8501
++
++# Comando por defecto (ajustalo según tu app)
++# CMD ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0"]
++# Ajustes opcionales si solo se hace backend y no se usa Streamlit:
++CMD ["bash"]
+ 
+ # Ejecutar el entrypoint
+ #RUN /app/entrypoint.sh --> Instala stockfish y las dependencias de Python
+@@ -26,20 +45,3 @@ WORKDIR /app
+ #     rm -rf /usr/games/stockfish2 && \
+ #     chmod +x /usr/local/bin && \
+ #     rm -rf stockfish-ubuntu-x86-64-avx2.tar
+-
+-# # Añadir Stockfish al PATH
+-# ENV PATH="/usr/games/stockfish:${PATH}"
+-
+-# Copiar requirements.txt
+-COPY requirements.txt .
+-
+-# Instalar dependencias de Python
+-RUN pip install --no-cache-dir -r requirements.txt
+-
+-# Instalar debugpy (para debugging remoto)
+-RUN pip install debugpy
+-
+-# Exponer puerto para la interfaz web
+-EXPOSE 8501
+-
+-CMD ["streamlit", "run", "src/app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+diff --git a/src/db/repository/games_repository.py b/src/db/repository/games_repository.py
+index d121047..3661079 100644
+--- a/src/db/repository/games_repository.py
++++ b/src/db/repository/games_repository.py
+@@ -12,9 +12,10 @@ dotenv.load_dotenv()
+ 
+ 
+ class GamesRepository:
+-    def __init__(self, session_factory):
++    def __init__(self, session_factory=get_session):
+         self.session_factory = session_factory
+-
++        self.session = self.session_factory()
++ 
+     def get_all_games(self):
+         with self.session_factory() as session:
+             engine = session.get_bind()
+diff --git a/src/modules/analyze_games_tactics.py b/src/modules/analyze_games_tactics.py
+index 7498f5f..9c3ef70 100644
+--- a/src/modules/analyze_games_tactics.py
++++ b/src/modules/analyze_games_tactics.py
+@@ -9,7 +9,6 @@ from db.models.games import Games
+ from modules.stockfish_analysis import compare_to_best, get_evaluation
+ from decorators.auto_logger import auto_log_module_functions, auto_logger_execution_time
+ import dotenv
+-from modules.pgn_utils import get_game_id
+ from db.repository.features_repository import FeaturesRepository
+ from db.repository.games_repository import GamesRepository
+ from db.repository.analyzed_tacticals_repository import Analyzed_tacticalsRepository
+@@ -135,8 +134,8 @@ def detect_tactics_from_game(game, depth=10):
+ 
+             # Ajuste por turno: invertir si juega negras
+             if not board.turn:
+-                score_before = -score_before
+-                score_after = -score_after
++                score_before = 0 if score_before is None else -score_before
++                score_after = 0 if score_before is None else -score_after
+ 
+             if isinstance(score_before, int) and isinstance(score_after, int):
+                 score_diff = score_after - score_before
