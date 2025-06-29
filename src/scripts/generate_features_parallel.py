@@ -48,9 +48,9 @@ from sqlalchemy.orm import sessionmaker
 from modules.pgn_utils import get_game_id, is_valid_pgn
 from modules.features_generator import generate_features_from_game
 from db.repository.features_repository import FeaturesRepository
+from db.repository.games_repository import GamesRepository
 from db.repository.processed_feature_repository import ProcessedFeaturesRepository
 from db.repository.games_repository import GamesRepository
-from db.db_utils import DBUtils
 
 # Load environment variables
 import dotenv
@@ -63,7 +63,6 @@ FEATURES_PER_CHUNK = int(os.environ.get("FEATURES_PER_CHUNK", 500))
 
 engine = create_engine(DB_URL)
 metadata = MetaData()
-db_utils = DBUtils()
 
 
 def load_processed_hashes():
@@ -78,7 +77,7 @@ def load_processed_hashes():
         return set()
 
 
-def process_chunk(pgn_list: list[str]):
+def process_chunk(pgn_list: list[str], max_to_process=None):
     Session = sessionmaker(bind=engine)
     session = Session()
     processed_count = 0
@@ -94,12 +93,18 @@ def process_chunk(pgn_list: list[str]):
 
         if not pgn_list:
             print("🔍 No games to process in this chunk.")
-            return
+            return processed_count
 
         # Load processed hashes at chunk level to reduce database calls
         processed_hashes = load_processed_hashes()
 
-        for pgn_text in pgn_list:
+        for i, pgn_text in enumerate(pgn_list):
+            # Stop if we've reached the max limit
+            if max_to_process and processed_count >= max_to_process:
+                print(
+                    f"🛑 Reached processing limit of {max_to_process} games in this chunk.")
+                break
+
             try:
                 valid, parsed_game = is_valid_pgn(pgn_text)
 
@@ -116,7 +121,8 @@ def process_chunk(pgn_list: list[str]):
 
                 parsed_game = chess.pgn.read_game(StringIO(pgn_text))
 
-                print(f"🎯 Processing game ID: {game_id}")
+                print(
+                    f"🎯 Processing game ID: {game_id} ({processed_count + 1})")
                 white_player = parsed_game.headers.get('White', 'Unknown')
                 black_player = parsed_game.headers.get('Black', 'Unknown')
                 print(f"   {white_player} vs {black_player}")
@@ -135,7 +141,7 @@ def process_chunk(pgn_list: list[str]):
                     skipped_count += 1
                     continue
 
-                print(f"� Game {game_id} generated {len(features)} features")
+                print(f"📊 Game {game_id} generated {len(features)} features")
 
                 features_repo.save_many_features(features)
                 processed_features_repo.save_processed_hash(game_id)
@@ -152,12 +158,14 @@ def process_chunk(pgn_list: list[str]):
         session.commit()
         print(
             f"📈 Chunk completed - Processed: {processed_count}, Skipped: {skipped_count}, Errors: {error_count}")
+        return processed_count
 
     except Exception as e:
         session.rollback()
         print(f"❌ Error in chunk processing: {e} {traceback.format_exc()}")
         if e.__cause__:
             print(f"🔍 Error cause: {e.__cause__}")
+        return processed_count
     finally:
         session.close()
 
@@ -167,37 +175,50 @@ def chunkify(lst, chunk_size):
         yield lst[i:i + chunk_size]
 
 
-def main(max_games=1000, source=None):
+def main(max_games, source=None, start_offset=0):
     games_repo = GamesRepository()
 
     all_games = []
 
     try:
-        offset = 0
+        offset = start_offset  # Start from the provided offset
         processed_hashes = load_processed_hashes()
 
         print(f"🔍 Starting feature generation process...")
         if source:
             print(f"📋 Filtering by source: {source}")
         print(f"🎯 Maximum games to process: {max_games}")
+        print(f"📊 Starting offset: {start_offset}")
         print(f"📊 Already processed games: {len(processed_hashes)}")
 
         while len(all_games) < max_games:
+            # Calculate how many more games we need
+            remaining_games = max_games - len(all_games)
+            fetch_limit = min(FEATURES_PER_CHUNK, remaining_games)
+
             # Use the method that supports source filtering and excludes already processed games
             current_chunk = games_repo.get_games_by_pagination_not_analyzed(
                 analyzed_hashes=processed_hashes,
                 offset=offset,
-                limit=FEATURES_PER_CHUNK,
+                limit=fetch_limit,
                 source=source
             )
             if not current_chunk:
                 print(
                     f"🔍 No more games available. Retrieved {len(all_games)} games total.")
                 break
-            all_games.extend(current_chunk)
-            offset += FEATURES_PER_CHUNK
+
+            # Only add the games we need to reach max_games
+            games_to_add = current_chunk[:remaining_games]
+            all_games.extend(games_to_add)
+            offset += len(games_to_add)
+
             print(
-                f"📥 Retrieved {len(current_chunk)} games (total: {len(all_games)})")
+                f"📥 Retrieved {len(games_to_add)} games (total: {len(all_games)}/{max_games})")
+
+            # Break if we've reached our limit
+            if len(all_games) >= max_games:
+                break
     except Exception as e:
         print(f"⚠️ Error getting games: {e}")
         return
@@ -206,31 +227,104 @@ def main(max_games=1000, source=None):
         print("🔍 No games to process.")
         return
 
-    # all_games now contains PGN strings directly since we used get_games_by_pagination_not_analyzed
-    all_game_pgns = all_games
-    chunks = list(chunkify(all_game_pgns, FEATURES_PER_CHUNK))
-    print(f"🧩 Total chunks to process: {len(chunks)}")
-    print(f"📊 Total games to process: {len(all_game_pgns)}")
+    # Ensure we don't process more than max_games
+    all_game_pgns = all_games[:max_games]
+    print(
+        f"📊 Total games to process (limited to max_games): {len(all_game_pgns)}")
 
-    with ProcessPoolExecutor(max_workers=MAX_WORKERS) as executor:
-        futures = [executor.submit(process_chunk, chunk) for chunk in chunks]
-        for i, future in enumerate(futures, 1):
-            print(f"⏳ Processing chunk {i}/{len(futures)}...")
-            future.result()
-            print(f"✅ Completed chunk {i}/{len(futures)}")
+    # For precise control with small numbers, always process sequentially
+    if max_games <= 50:
+        print("🔄 Processing games sequentially for precise control...")
+        actual_processed = process_chunk(
+            all_game_pgns, max_to_process=max_games)
+        print(f"📊 Actually processed: {actual_processed} games")
+    else:
+        chunks = list(chunkify(all_game_pgns, FEATURES_PER_CHUNK))
+        print(f"🧩 Total chunks to process: {len(chunks)}")
+
+        total_processed = 0
+        for i, chunk in enumerate(chunks, 1):
+            remaining_to_process = max_games - total_processed
+            if remaining_to_process <= 0:
+                print(f"🛑 Reached max_games limit of {max_games}. Stopping.")
+                break
+
+            print(f"⏳ Processing chunk {i}/{len(chunks)}...")
+            chunk_processed = process_chunk(
+                chunk, max_to_process=remaining_to_process)
+            total_processed += chunk_processed
+            print(
+                f"✅ Completed chunk {i}/{len(chunks)} - Processed: {chunk_processed} (Total: {total_processed})")
 
     print("✅ Parallel feature generation completed.")
+
+
+def get_all_sources(games_repo):
+    """Get all unique sources from the games table."""
+    try:
+        return games_repo.get_all_sources()
+    except Exception as e:
+        print(f"❌ Error fetching sources: {e}")
+        return []
+
+
+def process_all_sources(batch_size=10000):
+    games_repo = GamesRepository()
+    sources = get_all_sources(games_repo)
+    if not sources:
+        print("❌ No sources found in the games table.")
+        return
+    print(f"🔎 Found sources: {sources}")
+
+    for source in sources:
+        print(f"\n=== Processing source: {source} ===")
+        offset = 0
+        total_processed_for_source = 0
+
+        while True:
+            print(
+                f"\n➡️  Processing batch from offset {offset} (batch size: {batch_size}) for source '{source}'...")
+
+            # Get processed count before this batch
+            processed_hashes_before = load_processed_hashes()
+            initial_count = len(processed_hashes_before)
+
+            # Process the batch
+            main(max_games=batch_size, source=source, start_offset=offset)
+
+            # Get processed count after this batch
+            processed_hashes_after = load_processed_hashes()
+            final_count = len(processed_hashes_after)
+
+            # Calculate how many were actually processed in this batch
+            batch_processed = final_count - initial_count
+            total_processed_for_source += batch_processed
+
+            print(
+                f"📊 Batch processed {batch_processed} games. Total for source '{source}': {total_processed_for_source}")
+
+            # If no games were processed in this batch, we're done with this source
+            if batch_processed == 0:
+                print(
+                    f"✅ All games processed for source '{source}'. Total: {total_processed_for_source}")
+                break
+
+            offset += batch_size
+
+    print("\n✅ All sources processed.")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Import chess games and generate features in parallel.")
-    parser.add_argument('--max-games', required=False, default=1000, type=int,
+    parser.add_argument('--max-games', required=False, default=10, type=int,
                         help='Maximum number of games to process (optional, for testing)')
     parser.add_argument('--source', required=False, default=None, type=str,
-                        choices=['stockfish', 'elite',
-                                 'personal', 'novice', 'fide'],
-                        help='Filter games by source (optional). Examples: "personal", "novice", "elite","fide')
+                        help='Filter games by source (optional). Examples: "personal", "novice", "elite", "fide", "stockfish"')
+    parser.add_argument('--offset', required=False, default=0, type=int,
+                        help='Starting offset for game pagination (optional, for batch processing)')
+    parser.add_argument('--all-sources', action='store_true',
+                        help='Process all sources sequentially in batches of 10,000 games each')
     args = parser.parse_args()
 
     try:
@@ -238,15 +332,20 @@ if __name__ == "__main__":
             raise ValueError(
                 "CHESS_TRAINER_DB_URL environment variable is not set.")
 
-        print(f"🚀 Starting parallel feature generation...")
-        print(f"📋 Parameters:")
-        print(f"   - Max games: {args.max_games}")
-        print(
-            f"   - Source filter: {args.source if args.source else 'All sources'}")
-        print(f"   - Max workers: {MAX_WORKERS}")
-        print(f"   - Features per chunk: {FEATURES_PER_CHUNK}")
+        if args.all_sources:
+            process_all_sources(batch_size=10000)
+        else:
+            print(f"🚀 Starting parallel feature generation...")
+            print(f"📋 Parameters:")
+            print(f"   - Max games: {args.max_games}")
+            print(
+                f"   - Source filter: {args.source if args.source else 'All sources'}")
+            print(f"   - Starting offset: {args.offset}")
+            print(f"   - Max workers: {MAX_WORKERS}")
+            print(f"   - Features per chunk: {FEATURES_PER_CHUNK}")
 
-        main(max_games=args.max_games, source=args.source)
+            main(max_games=args.max_games,
+                 source=args.source, start_offset=args.offset)
     except Exception as e:
         print(f"❌ Error during import: {e}")
         if e.__cause__:
