@@ -7,6 +7,7 @@ import io
 import dotenv
 import psutil
 import chess.pgn
+import argparse
 from concurrent.futures import ProcessPoolExecutor, as_completed
 
 import sqlalchemy
@@ -42,10 +43,19 @@ ANALYZED_PER_CHUNK = int(os.environ.get("ANALYZED_PER_CHUNK", 10))
 GAMES_SOURCE = os.environ.get("GAMES_SOURCE", None)
 
 
-def run_parallel_analysis_from_db(source=None, max_games=1000000):
+def run_parallel_analysis_from_db(source=None, max_games=1000000, offset=0):
     logging.info("🔍 Starting parallel analysis of games from database...")
     logging.info(
         f"🔧 Config: WORKERS={ANALYSIS_WORKERS}, CHUNK={ANALYZED_PER_CHUNK}, LIMIT_DEBUG={LIMIT_FOR_DEBUG}")
+    logging.info(f"🎯 Max games: {max_games}")
+
+    if offset > 0:
+        logging.info(f"⏭️  Starting from offset: {offset}")
+
+    if source:
+        logging.info(f"📋 Filtering by source: {source}")
+    else:
+        logging.info("📋 Processing all sources")
 
     analyzed_tacticals_repo = Analyzed_tacticalsRepository()
     features_repo = FeaturesRepository()
@@ -53,15 +63,18 @@ def run_parallel_analysis_from_db(source=None, max_games=1000000):
 
     analyzed = set(row.game_id for row in analyzed_tacticals_repo.get_all())
 
-    offset = 0
+    current_offset = offset
     total_processed = 0
 
     while total_processed < max_games:
         try:
+            remaining_games = max_games - total_processed
+            current_chunk_size = min(ANALYZED_PER_CHUNK, remaining_games)
+
             print(
-                f"🔄 Fetching games to analyze by source {GAMES_SOURCE if GAMES_SOURCE is not None else 'All'}")
+                f"🔄 Fetching games to analyze by source {source if source is not None else 'All'} (processed: {total_processed}/{max_games})")
             chunk = games_repo_local.get_games_by_pagination_not_analyzed(
-                analyzed, offset, ANALYZED_PER_CHUNK, source=GAMES_SOURCE)
+                analyzed, current_offset, current_chunk_size, source=source)
             if not chunk:
                 logging.info("✅ No more games to process.")
                 break
@@ -105,8 +118,12 @@ def run_parallel_analysis_from_db(source=None, max_games=1000000):
                     except Exception as e:
                         logging.error(
                             f"❌ Error saving analysis for game {game_id}: {e}\n{traceback.format_exc()}")
-            offset += ANALYZED_PER_CHUNK
+            current_offset += current_chunk_size
             total_processed += len(chunk)
+
+            if total_processed >= max_games:
+                logging.info(f"✅ Reached max games limit: {max_games}")
+                break
 
         except Exception as e:
             logging.error(
@@ -149,7 +166,22 @@ def analyze_game_parallel(game_id):
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description="Parallel analysis of chess games for tactical patterns")
+    parser.add_argument("--source", type=str, default=None,
+                        help="Filter games by source (e.g., 'lichess', 'chesscom'). If not specified, processes all sources.")
+    parser.add_argument("--max-games", type=int, default=1000000,
+                        help="Maximum number of games to process (default: 1000000)")
+    parser.add_argument("--offset", type=int, default=0,
+                        help="Number of games to skip from the beginning (default: 0)")
+
+    args = parser.parse_args()
+
+    # Use command-line source if provided, otherwise fall back to environment variable
+    source_to_use = args.source or GAMES_SOURCE
+
     start = time.time()
-    run_parallel_analysis_from_db()
+    run_parallel_analysis_from_db(
+        source=source_to_use, max_games=args.max_games, offset=args.offset)
     elapsed = time.time() - start
     logging.info(f"🏁 Parallel analysis completed in {elapsed:.2f} seconds.")

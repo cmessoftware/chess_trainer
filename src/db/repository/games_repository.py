@@ -115,6 +115,19 @@ class GamesRepository:
     def close(self):
         self.session.close()
 
+    def get_all_sources(self):
+        """
+        Returns all unique sources from the games table.
+        """
+        with self.session_factory() as session:
+            try:
+                stmt = select(Games.source).distinct()
+                sources = session.execute(stmt).scalars().all()
+                return [source for source in sources if source is not None]
+            except Exception as e:
+                session.rollback()
+                raise e
+
     def is_game_in_db(self, game_id: str) -> bool:
         """
         Checks if a game with the given game_id exists in the database.
