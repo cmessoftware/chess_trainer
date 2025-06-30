@@ -35,6 +35,8 @@ cd /app/tests
 - `--parallel-analysis` - Run parallel game analysis tests
 - `--simple` - Run simple parallel analysis tests (recommended for quick testing)
 - `--tactics` - Run tactical analysis tests
+- `--batch-processing` - Run batch processing functionality tests
+- `--features` - Run feature generation pipeline tests
 - `--db` - Run database tests
 - `--downloads` - Run download functionality tests
 - `--exercises` - Run exercise generation tests
@@ -65,6 +67,12 @@ cd /app/tests
 # Run tactical tests with verbose output
 ./tests/run_tests.sh --tactics --verbose
 
+# Run batch processing tests
+./tests/run_tests.sh --batch-processing
+
+# Run feature generation tests
+./tests/run_tests.sh --features
+
 # Run tests in parallel (faster execution)
 ./tests/run_tests.sh --all --parallel
 
@@ -82,6 +90,10 @@ cd /app/tests
 - `test_tactical_analysis.py` - Tactical pattern detection tests
 - `test_classify_error_label.py` - Error classification tests ✅
 - `test_tag_games.py` - Game tagging tests ✅
+- `test_batch_processing_analyze_tactics.py` - Batch processing functionality tests ✅
+
+**Pipeline Tests:**
+- `test_generate_features_pipeline.py` - Feature generation pipeline tests ✅
 
 **Database Tests:**
 - `test_db_integrity.py` - Database structure and integrity tests
@@ -131,6 +143,8 @@ The script will automatically install test requirements from `requirements_test.
 - **`--simple`**: Quick, reliable tests for core parallel analysis functionality
 - **`--parallel-analysis`**: All tests related to parallel game analysis
 - **`--tactics`**: Tests for tactical pattern recognition and analysis
+- **`--batch-processing`**: Tests for batch processing functionality in pipeline steps
+- **`--features`**: Tests for feature generation pipeline and related functionality
 - **`--db`**: Database-related tests (integrity, saving, retrieval)
 - **`--downloads`**: Tests for downloading games from chess platforms
 - **`--exercises`**: Tests for exercise and training data generation
@@ -138,4 +152,4 @@ The script will automatically install test requirements from `requirements_test.
 
 ---
 
-*Last updated: June 29, 2025*
+*Last updated: June 30, 2025*

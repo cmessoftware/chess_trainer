@@ -40,6 +40,11 @@ while [[ $# -gt 0 ]]; do
             TEST_OPTIONS="$TEST_OPTIONS --cov=src --cov-report=html --cov-report=term"
             shift
             ;;
+        --html-report)
+            TEST_OPTIONS="$TEST_OPTIONS --html=test_reports/test_report_$(date +%Y%m%d_%H%M%S).html --self-contained-html"
+            mkdir -p test_reports
+            shift
+            ;;
         --parallel)
             TEST_OPTIONS="$TEST_OPTIONS -n auto"
             shift
@@ -81,6 +86,10 @@ while [[ $# -gt 0 ]]; do
             TEST_FILES="tests/test_tactical*.py tests/test_tactics.py"
             shift
             ;;
+        --batch-processing)
+            TEST_FILES="tests/test_batch_processing_analyze_tactics.py"
+            shift
+            ;;
         --db)
             TEST_FILES="tests/test_db*.py"
             shift
@@ -91,6 +100,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         --exercises)
             TEST_FILES="tests/test_*exercise*.py tests/test_generate*.py"
+            shift
+            ;;
+        --features)
+            TEST_FILES="tests/test_generate_features_pipeline.py"
             shift
             ;;
         --all)
@@ -106,6 +119,8 @@ while [[ $# -gt 0 ]]; do
             echo "  --parallel-analysis  : Parallel game analysis tests"
             echo "  --simple            : Simple parallel analysis tests"
             echo "  --tactics           : Tactical analysis tests"
+            echo "  --batch-processing  : Batch processing functionality tests"
+            echo "  --features          : Feature generation pipeline tests"
             echo "  --db                : Database tests"
             echo "  --downloads         : Download functionality tests"
             echo "  --exercises         : Exercise generation tests"
@@ -117,6 +132,7 @@ while [[ $# -gt 0 ]]; do
             echo ""
             echo "Options:"
             echo "  --coverage          Run with code coverage"
+            echo "  --html-report       Generate HTML test report"
             echo "  --parallel          Run tests in parallel"
             echo "  --slow              Run only slow tests"
             echo "  --unit              Run only unit tests"
@@ -129,6 +145,8 @@ while [[ $# -gt 0 ]]; do
             echo "  --parallel-analysis Run parallel analysis tests"
             echo "  --simple            Run simple parallel analysis tests"
             echo "  --tactics           Run tactical analysis tests"
+            echo "  --batch-processing  Run batch processing functionality tests"
+            echo "  --features          Run feature generation pipeline tests"
             echo "  --db                Run database tests"
             echo "  --downloads         Run download tests"
             echo "  --exercises         Run exercise generation tests"
@@ -142,8 +160,10 @@ while [[ $# -gt 0 ]]; do
             echo "  $0 --simple                    # Run simple tests only"
             echo "  $0 --all --coverage            # Run all tests with coverage"
             echo "  $0 --parallel-analysis --verbose  # Run parallel tests with verbose output"
+            echo "  $0 --tactics --html-report     # Run tactical tests and generate HTML report"
             echo "  $0 test_specific.py            # Run specific test file"
             echo "  $0 --tactics --parallel        # Run tactical tests in parallel"
+            echo "  $0 --batch-processing          # Run batch processing tests"
             exit 0
             ;;
         test_*.py|*/test_*.py)
@@ -181,6 +201,12 @@ echo ""
 cd /app
 
 # Run the tests
+HTML_REPORT_FILE=""
+if [[ "$TEST_OPTIONS" == *"--html="* ]]; then
+    # Extract HTML report filename from TEST_OPTIONS
+    HTML_REPORT_FILE=$(echo "$TEST_OPTIONS" | grep -o '--html=[^ ]*' | cut -d'=' -f2)
+fi
+
 if [[ "$TEST_FILES" == *"*"* ]]; then
     # Handle wildcard patterns
     echo -e "${YELLOW}🚀 Running tests: $TEST_FILES${NC}"
@@ -216,6 +242,23 @@ if [[ "$RUN_SYNTAX_CHECK" == true ]]; then
         echo -e "${GREEN}✅ analyze_games_tactics_parallel.py syntax OK${NC}"
     else
         echo -e "${RED}❌ analyze_games_tactics_parallel.py syntax error${NC}"
+        SYNTAX_SUCCESS=false
+    fi
+    
+    # Test batch processing parameter validation
+    echo -e "${YELLOW}🔧 Testing batch processing parameter validation...${NC}"
+    if python src/scripts/analyze_games_tactics_parallel.py --help >/dev/null 2>&1; then
+        echo -e "${GREEN}✅ analyze_games_tactics_parallel.py parameters OK${NC}"
+    else
+        echo -e "${RED}❌ analyze_games_tactics_parallel.py parameter validation failed${NC}"
+        SYNTAX_SUCCESS=false
+    fi
+    
+    # Test pipeline script syntax
+    if bash -n src/pipeline/run_pipeline.sh 2>/dev/null; then
+        echo -e "${GREEN}✅ run_pipeline.sh syntax OK${NC}"
+    else
+        echo -e "${RED}❌ run_pipeline.sh syntax error${NC}"
         SYNTAX_SUCCESS=false
     fi
     
