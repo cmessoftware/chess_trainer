@@ -55,10 +55,11 @@ This project includes scripts to build containers easily, without needing to pas
 
 Available containers are:
 
-| Script               | Description                                               | Generated Image           |
-| -------------------- | --------------------------------------------------------- | ------------------------- |
-| `build_app.sh`       | Builds the Streamlit application container                | `chess_trainer_app`       |
-| `build_notebooks.sh` | Builds the JupyterLab container with Keras and TensorFlow | `chess_trainer_notebooks` |
+| Script                    | Description                                               | Generated Image           |
+| ------------------------- | --------------------------------------------------------- | ------------------------- |
+| `build_app.sh`            | Builds the Streamlit application container                | `chess_trainer_app`       |
+| `build_notebooks.sh`      | Builds the JupyterLab container with Keras and TensorFlow | `chess_trainer_notebooks` |
+| `build_up_clean_all.ps1`  | **Windows PowerShell**: Builds both containers, starts services, and cleans unused images | All containers + cleanup |
 
 ---
 
@@ -72,19 +73,42 @@ To give permissions:
 ```bash
 chmod +x build_app.sh build_notebooks.sh
 ```
+
+**For Windows users**, the PowerShell script `build_up_clean_all.ps1` provides automated setup without requiring permission changes.
 ---
 
 ## 🚀 How to Build the Containers
-**For the Streamlit application:**
 
+### Linux/macOS Users:
+**For the Streamlit application:**
 ```bash
 ./build_app.sh
 ```
 **For the JupyterLab environment:**
-
 ```bash
 ./build_notebooks.sh
 ```
+
+### Windows Users:
+**One-command setup (builds, starts, and cleans):**
+```powershell
+.\build_up_clean_all.ps1
+```
+
+This PowerShell script will:
+- 🚀 Build both chess_trainer and notebooks images
+- ✅ Start all containers in detached mode  
+- 🧹 Clean up unused Docker images automatically
+- 🏁 Show active containers status
+
+### 🎯 Benefits of Windows PowerShell Automation:
+- **Single Command Setup**: Complete environment setup with one command
+- **No Permission Management**: Avoids Unix-style `chmod` permission requirements
+- **Automatic Cleanup**: Removes unused Docker images to save disk space
+- **Background Execution**: Containers run in detached mode for continuous operation
+- **Instant Feedback**: Shows running containers status after completion
+- **Error Prevention**: Automated sequence reduces manual configuration errors
+- **Time Saving**: Eliminates need for multiple individual docker commands
 
 ## 📂 Project Structure
 
@@ -154,6 +178,7 @@ chess_trainer/
 ├── dockerfile.notebooks         # Jupyter container
 ├── build_app.sh                 # App container build script
 ├── build_notebooks.sh           # Notebook container build script
+├── build_up_clean_all.ps1       # Windows PowerShell: Complete setup script
 ├── alembic.ini                  # Database migration config
 ├── requirements.txt             # Python dependencies
 ├── .env                         # Environment variables

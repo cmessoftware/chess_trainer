@@ -2,6 +2,22 @@
 
 This directory contains all test scripts and utilities for the chess_trainer project. All tests have been centralized here for better organization and management.
 
+## Prerequisites
+
+### Docker Environment Setup
+Tests require a properly configured Docker environment with PostgreSQL database and Stockfish engine. 
+
+**For Windows users (Recommended):**
+```powershell
+.\build_up_clean_all.ps1
+```
+This ensures all required services (PostgreSQL, Stockfish) are running before executing tests.
+
+**Manual Docker setup:**
+```bash
+docker-compose up -d
+```
+
 ## Test Runner
 
 The comprehensive test runner script is located at `/app/tests/run_tests.sh` and can be used to execute any tests in the project.

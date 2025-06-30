@@ -55,10 +55,11 @@ Este proyecto incluye scripts para construir los contenedores de forma sencilla,
 
 Los contenedores disponibles son:
 
-| Script               | Descripción                                                  | Imagen generada           |
-| -------------------- | ------------------------------------------------------------ | ------------------------- |
-| `build_app.sh`       | Construye el contenedor de la aplicación Streamlit           | `chess_trainer_app`       |
-| `build_notebooks.sh` | Construye el contenedor de JupyterLab con Keras y TensorFlow | `chess_trainer_notebooks` |
+| Script                    | Descripción                                                  | Imagen generada           |
+| ------------------------- | ------------------------------------------------------------ | ------------------------- |
+| `build_app.sh`            | Construye el contenedor de la aplicación Streamlit           | `chess_trainer_app`       |
+| `build_notebooks.sh`      | Construye el contenedor de JupyterLab con Keras y TensorFlow | `chess_trainer_notebooks` |
+| `build_up_clean_all.ps1`  | **Windows PowerShell**: Construye ambos contenedores, inicia servicios y limpia imágenes no utilizadas | Todos los contenedores + limpieza |
 
 ---
 
@@ -72,19 +73,42 @@ Para dar permisos:
 ```bash
 chmod +x build_app.sh build_notebooks.sh
 ```
+
+**Para usuarios de Windows**, el script de PowerShell `build_up_clean_all.ps1` proporciona configuración automatizada sin requerir cambios de permisos.
 ---
 
 ## 🚀 Cómo construir los contenedores
-**Para la aplicación Streamlit:**
 
+### Usuarios de Linux/macOS:
+**Para la aplicación Streamlit:**
 ```bash
 ./build_app.sh
 ```
 **Para el entorno de JupyterLab:**
-
 ```bash
 ./build_notebooks.sh
 ```
+
+### Usuarios de Windows:
+**Configuración con un solo comando (construye, inicia y limpia):**
+```powershell
+.\build_up_clean_all.ps1
+```
+
+Este script de PowerShell:
+- 🚀 Construye las imágenes chess_trainer y notebooks
+- ✅ Inicia todos los contenedores en modo separado
+- 🧹 Limpia automáticamente las imágenes Docker no utilizadas
+- 🏁 Muestra el estado de los contenedores activos
+
+### 🎯 Beneficios de la Automatización con PowerShell de Windows:
+- **Configuración con Un Solo Comando**: Configuración completa del entorno con un comando
+- **Sin Gestión de Permisos**: Evita los requisitos de permisos `chmod` estilo Unix
+- **Limpieza Automática**: Elimina imágenes Docker no utilizadas para ahorrar espacio en disco
+- **Ejecución en Segundo Plano**: Los contenedores se ejecutan en modo separado para operación continua
+- **Retroalimentación Instantánea**: Muestra el estado de los contenedores en ejecución después de completarse
+- **Prevención de Errores**: La secuencia automatizada reduce errores de configuración manual
+- **Ahorro de Tiempo**: Elimina la necesidad de múltiples comandos docker individuales
 
 ## 📂 Estructura del proyecto
 
@@ -154,6 +178,7 @@ chess_trainer/
 ├── dockerfile.notebooks         # Contenedor de Jupyter
 ├── build_app.sh                 # Script de construcción del contenedor de app
 ├── build_notebooks.sh           # Script de construcción del contenedor de notebooks
+├── build_up_clean_all.ps1       # Windows PowerShell: Script de configuración completa
 ├── alembic.ini                  # Configuración de migración de base de datos
 ├── requirements.txt             # Dependencias de Python
 ├── .env                         # Variables de entorno

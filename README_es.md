@@ -28,6 +28,28 @@ Consulta el archivo [`VERSIÓN_BASE.md`](./VERSION_BASE.md) para ver la estructu
 
 ## Uso rápido
 
+### Configuración Docker (Recomendado)
+
+#### Usuarios de Windows - Configuración con Un Solo Comando:
+```powershell
+.\build_up_clean_all.ps1
+```
+
+#### 🎯 Beneficios de la Automatización PowerShell:
+- **Configuración Completa del Entorno**: Construye e inicia todos los contenedores con un comando
+- **Compatibilidad Multiplataforma**: Soporte nativo de PowerShell de Windows sin requisitos de permisos Unix
+- **Limpieza Automática**: Elimina imágenes Docker no utilizadas para optimizar el uso de disco
+- **Integración de Servicios**: Inicia tanto la aplicación principal como los contenedores de notebooks Jupyter
+- **Operación en Segundo Plano**: Los contenedores se ejecutan separados para flujo de trabajo de desarrollo continuo
+- **Reducción de Errores**: La secuencia automatizada minimiza errores de configuración manual
+
+#### Configuración Manual de Docker:
+```bash
+docker-compose build
+docker-compose up -d
+```
+
+### Desarrollo Local:
 ```bash
 # Ejecutar la interfaz principal
 streamlit run app.py (En desarrollo)

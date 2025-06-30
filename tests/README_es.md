@@ -2,6 +2,22 @@
 
 Este directorio contiene todos los scripts de prueba y utilidades para el proyecto chess_trainer. Todas las pruebas han sido centralizadas aquí para una mejor organización y gestión.
 
+## Prerrequisitos
+
+### Configuración del Entorno Docker
+Las pruebas requieren un entorno Docker configurado adecuadamente con base de datos PostgreSQL y motor Stockfish.
+
+**Para usuarios de Windows (Recomendado):**
+```powershell
+.\build_up_clean_all.ps1
+```
+Esto asegura que todos los servicios requeridos (PostgreSQL, Stockfish) estén ejecutándose antes de ejecutar las pruebas.
+
+**Configuración manual de Docker:**
+```bash
+docker-compose up -d
+```
+
 ## Ejecutor de Pruebas
 
 El script ejecutor de pruebas completo está ubicado en `/app/tests/run_tests.sh` y puede usarse para ejecutar cualquier prueba en el proyecto.
