@@ -1,4 +1,4 @@
-# CHESS TRAINER - Versión: v0.1.24-a64124c
+# CHESS TRAINER - Versión: v0.1.25-0b18173
 
 # CHESS TRAINER - Version: v0.1.20-f9d0260
 
@@ -191,68 +191,6 @@ Once the model is trained, you can use it to make personalized recommendations t
 - Implement the model in your Django API and generate personalized recommendations for users.
 
 This approach will provide you with a solid foundation to integrate Machine Learning and AI into your chess project, improving both game analysis and user experience.
-
-## Docker Setup and Shared Volumes
-
-### 📦 Container Configuration
-
-The project uses Docker containers with shared volumes for efficient data sharing:
-
-- **chess_trainer**: Main application container for data processing
-- **notebooks**: Jupyter notebook container for analysis and ML
-- **postgres**: Database container for storing game data
-
-### 📊 Shared Datasets Volume
-
-A shared volume (`chess_datasets`) enables seamless data sharing between containers:
-
-```yaml
-volumes:
-  chess_datasets:  # Shared volume for Parquet datasets
-```
-
-**Container Paths:**
-- App container: `/app/src/data` → `chess_datasets` volume
-- Notebooks container: `/notebooks/datasets` → `chess_datasets` volume
-
-### 🚀 Quick Start
-
-```bash
-# Start all containers
-docker-compose up -d
-
-# Generate datasets (in app container)
-docker exec -it chess_trainer_chess_trainer_1 bash
-$ cd src/pipeline 
-# Get games from servers (Chess.com or Lichess) 
-$ ./run_pipeline get_games
-$ ./run_pipeline generate_features --source elite --max-games 1000
-$ ./run_pipeline analyze_tactics --source elite --max-games 1000
-$ ./run_pipeline export_dataset --source elite
-```
-## How to add more games to datasets?
-
-- Saving files in pgn format or into comporessed files (zip,gzip,tar.gz,gz o bz2 format) in /app/src/data/games/<source> 
-
-| Source    | Description                                           | URL                                                                                                    |
-| --------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| elite     | From Lichess Elite database                           | [Lichess Elite Database](https://lichess.org/team/lichess-elite-database)                              |
-| personal  | Your personal games from chess.com, lichess.org, etc. | [chess.com](https://www.chess.com), [lichess.org](https://lichess.org)                                 |
-| novice    | Other games from users with ELO < 2000                | [chess.com](https://www.chess.com), [lichess.org](https://lichess.org)                                 |
-| fide      | Official FIDE games ELO > 2000                        | [Chess mentor](https://www.pgnmentor.com/) or other sources                                            |
-| stockfish | Stockfish test games                                  | [Stockfish Fishtest PGN Files](https://official-stockfish.github.io/docs/fishtest-wiki/PGN-Files.html) |
-
-**and run again**
-```bash
-$ ./run_pipeline generate_features --source elite --max-games 1000
-$ ./run_pipeline analyze_tactics --source elite --max-games 1000
-$ ./run_pipeline export_dataset --source elite
-
-# Access notebooks for analysis
-# Open http://localhost:8888 in your browser
-```
-
-For detailed configuration information, see [`DATASETS_VOLUMES_CONFIG.md`](./DATASETS_VOLUMES_CONFIG.md).
 
 ## Credits
 
