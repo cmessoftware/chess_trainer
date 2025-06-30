@@ -2,35 +2,50 @@
 
 # ♟ chess_trainer – Analysis and Training with Elite Games
 
-This project automates the import, analysis, labeling, ## 🧠 Environment Variables
-
-Define the database path in a `.env` file:
-
-```env
-CHESS_TRAINER_DB_URL=postgresql://chess:chess_pass@postgres:5432/chess_trainer_db
-STOCKFISH_PATH=/usr/games/stockfish
-```
-
-And load it with:
-
-```python
-from dotenv import load_dotenv
-load_dotenv()
-```om thousands of games played by elite players (ELO >2300), combining tactical analysis with visual exploration and exercise generation.
+This project automates the import, analysis, labeling, and training from thousands of games played by elite players (ELO >2300), combining tactical analysis with visual exploration and exercise generation.
 
 ---
 
-## 📦 Requirements
+## 📚 Documentation Index
 
-- Python 3.10+
-- Packages:
-  ```bash
-  pip install -r requirements.txt
-  ```
-- Stockfish installed (Linux):
-  ```bash
-  apt install stockfish
-  ```
+### Core Documentation
+- **[Main README](./README.md)** - Project overview and quick start guide
+- **[README (Español)](./README_es.md)** - Descripción del proyecto y guía rápida en español
+- **[Version Base (English)](./VERSION_BASE.md)** - Complete project documentation (this file)
+- **[Version Base (Español)](./VERSION_BASE_es.md)** - Documentación completa del proyecto en español
+
+### Configuration and Setup
+- **[Datasets Volumes Configuration](./DATASETS_VOLUMES_CONFIG.md)** - Docker volumes setup for dataset sharing
+- **[Configuración de Volúmenes de Datasets](./DATASETS_VOLUMES_CONFIG_es.md)** - Configuración de volúmenes Docker para compartir datasets
+
+### Architecture and Development
+- **[System Architecture](./src/architecture.md)** - System architecture diagram and component overview
+- **[Arquitectura del Sistema](./src/architecture_es.md)** - Diagrama de arquitectura y descripción de componentes
+- **[Feature Generation Enhancement](./src/scripts/GENERATE_FEATURES_ENHANCEMENT.md)** - Feature generation improvements documentation
+
+### Testing
+- **[Tests Documentation](./tests/README.md)** - Comprehensive testing guide and runner documentation
+- **[Documentación de Pruebas](./tests/README_es.md)** - Guía completa de pruebas y documentación del ejecutor
+- **[PostgreSQL Migration](./tests/POSTGRESQL_MIGRATION_COMPLETE.md)** - Database migration documentation
+- **[Unification Complete](./tests/UNIFICATION_COMPLETE.md)** - Project unification documentation
+
+### Reports
+- **[Test Reports](./test_reports/)** - Automated test execution reports
+- **[Analysis Reports](./test_reports/analyze_tactics_parallel_20250629_035806_summary.md)** - Tactical analysis execution summaries
+
+### 📦 Installation & Requirements
+
+**All dependencies are automatically installed via Docker containers:**
+- **[Dockerfile](./dockerfile)** - Main application container with Python 3.11+ and all required packages
+- **[Dockerfile.notebooks](./dockerfile.notebooks)** - Jupyter environment with Keras, TensorFlow, and data science libraries
+- **[requirements.txt](./requirements.txt)** - Complete Python dependencies list
+- **[docker-compose.yml](./docker-compose.yml)** - Container orchestration with automatic setup
+
+**Manual installation (if not using Docker):**
+```bash
+pip install -r requirements.txt  # Python packages
+apt install stockfish           # Chess engine (Linux)
+```
 
 ---
 
@@ -373,18 +388,18 @@ python -m app.src.modules.tactics_generator
 
 ## 🧩 Current State of Predictive Functionalities in `chess_trainer`
 
-| Aspect                                                       | Status            | Description                                                                          |
-| ------------------------------------------------------------ | ----------------- | ------------------------------------------------------------------------------------ |
-| Game and opening analysis                                    | ✅ Implemented     | Detailed evaluation of moves and openings using Stockfish.                           |
-| Position evaluation                                          | ✅ Implemented     | Traditional heuristic function to evaluate positions.                                |
-| Personalized training based on errors                        | ✅ Implemented     | Adaptation of sessions based on user's frequent errors.                              |
-| Game database integration                                    | ✅ Implemented     | Trend and pattern analysis from a game database.                                     |
-| User playing style analysis                                  | ⚠️ Partial         | Basic style analysis, lacks deep characterization (speed, risk, strategic patterns). |
-| #MIGRATED-TODO-1750642686 Neural networks for evaluation     | ❌ Not implemented | Neural networks are not used to evaluate positions or moves.                         |
-| #MIGRATED-TODO-1750642906 Self-learning training             | ❌ Not implemented | Self-play module for self-learning is missing.                                       |
-| #MIGRATED-TODO-1750643754 Endgame databases (tablebases)     | ❌ Not implemented | Tablebases are not used for perfect endgames.                                        |
-| #MIGRATED-TODO-1750645297 Opponent playing style analysis    | ❌ Not implemented | Opponent style is not analyzed.                                                      |
-| #MIGRATED-TODO-1750645646 Progress and metrics visualization | ❌ Not implemented | Interface to show user progress and metrics is missing.                              |
+| Aspect                                | Status            | Description                                                                          |
+| ------------------------------------- | ----------------- | ------------------------------------------------------------------------------------ |
+| Game and opening analysis             | ✅ Implemented     | Detailed evaluation of moves and openings using Stockfish.                           |
+| Position evaluation                   | ✅ Implemented     | Traditional heuristic function to evaluate positions.                                |
+| Personalized training based on errors | ✅ Implemented     | Adaptation of sessions based on user's frequent errors.                              |
+| Game database integration             | ✅ Implemented     | Trend and pattern analysis from a game database.                                     |
+| User playing style analysis           | ⚠️ Partial         | Basic style analysis, lacks deep characterization (speed, risk, strategic patterns). |
+| Neural networks for evaluation        | ❌ Not implemented | Neural networks are not used to evaluate positions or moves.                         |
+| Self-learning training                | ❌ Not implemented | Self-play module for self-learning is missing.                                       |
+| Endgame databases (tablebases)        | ❌ Not implemented | Tablebases are not used for perfect endgames.                                        |
+| Opponent playing style analysis       | ❌ Not implemented | Opponent style is not analyzed.                                                      |
+| Progress and metrics visualization    | ❌ Not implemented | Interface to show user progress and metrics is missing.                              |
 
 ### 💡 Ideas to Consider
 
@@ -530,51 +545,6 @@ python -m app.src.modules.tactics_generator
 | 4️⃣    | Integrate to `full_pipeline.py` or `tactical_analysis.py`     | Python           |
 | 5️⃣    | Visualize predictions in Streamlit with examples and feedback | Streamlit        |
 
-## 🔜 General overview of suggested next steps
-
-**Note: MIGRATED-TODOs were migrated with issues from the project's github repository**
-
-- [#MIGRATED-TODO-1750286988] Apply `is_forced_move` in `detect_tactics_from_game` to skip unavoidable moves.
-- [#MIGRATED-TODO-1750287009] Integrate `depth_score_diff`, `threatens_mate`, `is_forced_move` as additional analysis columns.
-- [#MIGRATED-TODO-1750287014] Consolidate labels + tactical features in a single dataframe.
-- [#MIGRATED-TODO-1750287017] Save Stockfish evaluations in database for traceability and debugging.
-- [#MIGRATED-TODO-1750288408] Implement unit tests for init_db.
-- [#MIGRATED-TODO-1750288409] Implement unit tests for get_games.
-- [#MIGRATED-TODO-1750288409] Implement unit tests for import_games.
-- [#MIGRATED-TODO-1750288409] Implement unit tests for generate_features.
-- [#MIGRATED-TODO-1750288410] Implement unit tests for analyze_tactics.
-- [#MIGRATED-TODO-1750288410] Implement unit tests for export_dataset.
-- [#MIGRATED-TODO-1750288411] Implement unit tests for generate_exercises.
-- [#MIGRATED-TODO-1750288411] Consolidate scripts to implement logic for generation/visualization/navigation/editing of Lichess-style studies.
-- [#MIGRATED-TODO-1750288412] Analyze EDA, clustering, machine learning notebooks based on generated datasets.
-- #MIGRATED-TODO-1750618157 Apply elo standardization (standardized_elo field)
-- #MIGRATED-TODO-1750618158 Add mate_in and depth_score_diff fields to enrich ML model 
-- #MIGRATED-TODO-1750618158 SHAP implementation in Chess for ML prediction description.
-
-## Pending UI Views (streamlit)
-**The application has basic UI views using streamlit.**
-## 📝 Functionality validation by view (v0.1.20-f9d0260)
-
-| *                                                       | View | Validation Status | Notes / Comments |
-| ------------------------------------------------------- | ---- | ----------------- | ---------------- |
-| #TODO Validate app functionality                        |      |                   |                  |
-| #TODO Validate analyze feedback functionality           |      |                   |                  |
-| #TODO Validate create exercise functionality            |      |                   |                  |
-| #TODO Validate elite explorer functionality             |      |                   |                  |
-| #TODO Validate elite stats functionality                |      |                   |                  |
-| #TODO Validate elite training functionality             |      |                   |                  |
-| #TODO Validate export exercises functionality           |      |                   |                  |
-| #TODO Validate log viewer functionality                 |      |                   |                  |
-| #TODO Validate prediction history functionality         |      |                   |                  |
-| #TODO Validate predictor error label functionality      |      |                   |                  |
-| #TODO Validate streamlit eda functionality              |      |                   |                  |
-| #TODO Validate streamlit study viewer functionality     |      |                   |                  |
-| #TODO Validate streamlit tacticals viewer functionality |      |                   |                  |
-| #TODO Validate summary viewer functionality             |      |                   |                  |
-| #TODO Validate tactics functionality                    |      |                   |                  |
-| #TODO Validate tactics viewer functionality             |      |                   |                  |
-| #TODO Validate tag games ui functionality               |      |                   |                  |
-| #TODO Validate upload pgn functionality                 |      |                   |                  |
 
 ## 📌 Author
 
