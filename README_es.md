@@ -20,7 +20,7 @@ Este proyecto permite analizar y entrenar tácticamente partidas de ajedrez usan
 - pandas, seaborn, matplotlib
 - python-chess
 - scikit-learn
-- Stockfish (colocar en `/engines/stockfish`)
+- Stockfish
 
 ## Estructura
 

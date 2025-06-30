@@ -1,4 +1,4 @@
-# CHESS TRAINER - Versión: v0.1.24-a64124c
+# CHESS TRAINER - Versión: v0.1.42-e6619b7
 
 # CHESS TRAINER - Version: v0.1.20-f9d0260
 
@@ -22,7 +22,7 @@ This project allows you to analyze and tactically train chess games using data s
 - pandas, seaborn, matplotlib
 - python-chess
 - scikit-learn
-- Stockfish (place in `/engines/stockfish`)
+- Stockfish 
 
 ## Structure
 

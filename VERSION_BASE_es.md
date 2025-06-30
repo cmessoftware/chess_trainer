@@ -6,17 +6,46 @@ Este proyecto automatiza la importación, análisis, etiquetado y entrenamiento 
 
 ---
 
-## 📦 Requisitos
+## � Índice de Documentación
 
-- Python 3.10+
-- Paquetes:
-  ```bash
-  pip install -r requirements.txt
-  ```
-- Stockfish instalado (Linux):
-  ```bash
-  apt install stockfish
-  ```
+### Documentación Principal
+- **[README Principal](./README.md)** - Descripción del proyecto y guía rápida en inglés
+- **[README (Español)](./README_es.md)** - Descripción del proyecto y guía rápida en español
+- **[Version Base (English)](./VERSION_BASE.md)** - Documentación completa del proyecto en inglés
+- **[Version Base (Español)](./VERSION_BASE_es.md)** - Documentación completa del proyecto (este archivo)
+
+### Configuración e Instalación
+- **[Configuración de Volúmenes de Datasets](./DATASETS_VOLUMES_CONFIG_es.md)** - Configuración de volúmenes Docker para compartir datasets
+- **[Datasets Volumes Configuration](./DATASETS_VOLUMES_CONFIG.md)** - Docker volumes setup for dataset sharing
+
+### Arquitectura y Desarrollo
+- **[Arquitectura del Sistema](./src/architecture_es.md)** - Diagrama de arquitectura y descripción de componentes
+- **[System Architecture](./src/architecture.md)** - System architecture diagram and component overview
+- **[Mejoras en Generación de Características](./src/scripts/GENERATE_FEATURES_ENHANCEMENT.md)** - Documentación de mejoras en generación de características
+
+### Pruebas
+- **[Documentación de Pruebas](./tests/README_es.md)** - Guía completa de pruebas y documentación del ejecutor
+- **[Tests Documentation](./tests/README.md)** - Comprehensive testing guide and runner documentation
+- **[Migración PostgreSQL](./tests/POSTGRESQL_MIGRATION_COMPLETE.md)** - Documentación de migración de base de datos
+- **[Unificación Completa](./tests/UNIFICATION_COMPLETE.md)** - Documentación de unificación del proyecto
+
+### Reportes
+- **[Reportes de Pruebas](./test_reports/)** - Reportes automatizados de ejecución de pruebas
+- **[Reportes de Análisis](./test_reports/analyze_tactics_parallel_20250629_035806_summary.md)** - Resúmenes de ejecución de análisis táctico
+
+### 📦 Instalación y Requisitos
+
+**Todas las dependencias se instalan automáticamente vía contenedores Docker:**
+- **[Dockerfile](./dockerfile)** - Contenedor principal de la aplicación con Python 3.11+ y todos los paquetes requeridos
+- **[Dockerfile.notebooks](./dockerfile.notebooks)** - Entorno Jupyter con Keras, TensorFlow y librerías de ciencia de datos
+- **[requirements.txt](./requirements.txt)** - Lista completa de dependencias de Python
+- **[docker-compose.yml](./docker-compose.yml)** - Orquestación de contenedores con configuración automática
+
+**Instalación manual (si no usas Docker):**
+```bash
+pip install -r requirements.txt  # Paquetes de Python
+apt install stockfish           # Motor de ajedrez (Linux)
+```
 
 ---
 
@@ -638,30 +667,30 @@ python -m app.src.modules.tactics_generator
 **La aplicación tiene vistas UI básicas usandoo streamlit.
 ## 📝 Validación de funcionalidades por vista (v0.1.20-f9d0260)
 
-| *                                                          | Vista | Estado de validación | Notas / Comentarios |
-| ---------------------------------------------------------- | ----- | -------------------- |
-| #TODO Validar funcionamiento de app                        |
-| #TODO Validar funcionamiento de analyze feedback           |
-| #TODO Validar funcionamiento de create exercise            |
-| #TODO Validar funcionamiento de elite explorer             |
-| #TODO Validar funcionamiento de elite stats                |
-| #TODO Validar funcionamiento de elite training             |
-| #TODO Validar funcionamiento de export exercises           |
-| #TODO Validar funcionamiento de log viewer                 |
-| #TODO Validar funcionamiento de prediction history         |
-| #TODO Validar funcionamiento de predictor error label      |
-| #TODO Validar funcionamiento de streamlit eda              |
-| #TODO Validar funcionamiento de streamlit study viewer     |
-| #TODO Validar funcionamiento de streamlit tacticals viewer |
-| #TODO Validar funcionamiento de summary viewer             |
-| #TODO Validar funcionamiento de tactics                    |
-| #TODO Validar funcionamiento de tactics viewer             |
-| #TODO Validar funcionamiento de tag games ui               |
-| #TODO Validar funcionamiento de upload pgn                 |
+#TODO Validar funcionamiento de app                        
+#TODO Validar funcionamiento de analyze feedback           
+#TODO Validar funcionamiento de create exercise            
+#TODO Validar funcionamiento de elite explorer             
+#TODO Validar funcionamiento de elite stats                
+#TODO Validar funcionamiento de elite training             
+#TODO Validar funcionamiento de export exercises           
+#TODO Validar funcionamiento de log viewer                 
+#TODO Validar funcionamiento de prediction history         
+#TODO Validar funcionamiento de predictor error label      
+#TODO Validar funcionamiento de streamlit eda              
+#TODO Validar funcionamiento de streamlit study viewer     
+#TODO Validar funcionamiento de streamlit tacticals viewer 
+#TODO Validar funcionamiento de summary viewer             
+#TODO Validar funcionamiento de tactics                    
+#TODO Validar funcionamiento de tactics viewer             
+#TODO Validar funcionamiento de tag games ui               
+#TODO Validar funcionamiento de upload pgn                 
 
 ## 📌 Autor
 
 
 > Proyecto creado por cmessoftware para la diplomatura de Ciencia de Datos  
 > Contacto: [agregá tu correo o GitHub si querés]
+
+---
 
