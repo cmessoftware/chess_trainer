@@ -55,11 +55,11 @@ This project includes scripts to build containers easily, without needing to pas
 
 Available containers are:
 
-| Script                    | Description                                               | Generated Image           |
-| ------------------------- | --------------------------------------------------------- | ------------------------- |
-| `build_app.sh`            | Builds the Streamlit application container                | `chess_trainer_app`       |
-| `build_notebooks.sh`      | Builds the JupyterLab container with Keras and TensorFlow | `chess_trainer_notebooks` |
-| `build_up_clean_all.ps1`  | **Windows PowerShell**: Builds both containers, starts services, and cleans unused images | All containers + cleanup |
+| Script                   | Description                                                                               | Generated Image           |
+| ------------------------ | ----------------------------------------------------------------------------------------- | ------------------------- |
+| `build_app.sh`           | Builds the Streamlit application container                                                | `chess_trainer_app`       |
+| `build_notebooks.sh`     | Builds the JupyterLab container with Keras and TensorFlow                                 | `chess_trainer_notebooks` |
+| `build_up_clean_all.ps1` | **Windows PowerShell**: Builds both containers, starts services, and cleans unused images | All containers + cleanup  |
 
 ---
 

@@ -55,11 +55,11 @@ Este proyecto incluye scripts para construir los contenedores de forma sencilla,
 
 Los contenedores disponibles son:
 
-| Script                    | Descripción                                                  | Imagen generada           |
-| ------------------------- | ------------------------------------------------------------ | ------------------------- |
-| `build_app.sh`            | Construye el contenedor de la aplicación Streamlit           | `chess_trainer_app`       |
-| `build_notebooks.sh`      | Construye el contenedor de JupyterLab con Keras y TensorFlow | `chess_trainer_notebooks` |
-| `build_up_clean_all.ps1`  | **Windows PowerShell**: Construye ambos contenedores, inicia servicios y limpia imágenes no utilizadas | Todos los contenedores + limpieza |
+| Script                   | Descripción                                                                                            | Imagen generada                   |
+| ------------------------ | ------------------------------------------------------------------------------------------------------ | --------------------------------- |
+| `build_app.sh`           | Construye el contenedor de la aplicación Streamlit                                                     | `chess_trainer_app`               |
+| `build_notebooks.sh`     | Construye el contenedor de JupyterLab con Keras y TensorFlow                                           | `chess_trainer_notebooks`         |
+| `build_up_clean_all.ps1` | **Windows PowerShell**: Construye ambos contenedores, inicia servicios y limpia imágenes no utilizadas | Todos los contenedores + limpieza |
 
 ---
 
