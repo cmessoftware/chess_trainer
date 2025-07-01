@@ -102,6 +102,10 @@ while [[ $# -gt 0 ]]; do
             TEST_FILES="tests/test_*exercise*.py tests/test_generate*.py"
             shift
             ;;
+        --export-dataset)
+            TEST_FILES="tests/test_export_features_dataset.py tests/test_features_repository_export.py"
+            shift
+            ;;
         --features)
             TEST_FILES="tests/test_generate_features_pipeline.py"
             shift
@@ -124,6 +128,7 @@ while [[ $# -gt 0 ]]; do
             echo "  --db                : Database tests"
             echo "  --downloads         : Download functionality tests"
             echo "  --exercises         : Exercise generation tests"
+            echo "  --export-dataset    : Dataset export functionality tests"
             echo "  --all               : All tests"
             exit 0
             ;;
@@ -150,6 +155,7 @@ while [[ $# -gt 0 ]]; do
             echo "  --db                Run database tests"
             echo "  --downloads         Run download tests"
             echo "  --exercises         Run exercise generation tests"
+            echo "  --export-dataset    Run dataset export functionality tests"
             echo "  --all               Run all tests"
             echo ""
             echo "Utility:"
@@ -161,6 +167,7 @@ while [[ $# -gt 0 ]]; do
             echo "  $0 --all --coverage            # Run all tests with coverage"
             echo "  $0 --parallel-analysis --verbose  # Run parallel tests with verbose output"
             echo "  $0 --tactics --html-report     # Run tactical tests and generate HTML report"
+            echo "  $0 --export-dataset --unit     # Run export dataset unit tests"
             echo "  $0 test_specific.py            # Run specific test file"
             echo "  $0 --tactics --parallel        # Run tactical tests in parallel"
             echo "  $0 --batch-processing          # Run batch processing tests"
@@ -260,6 +267,24 @@ if [[ "$RUN_SYNTAX_CHECK" == true ]]; then
     else
         echo -e "${RED}❌ run_pipeline.sh syntax error${NC}"
         SYNTAX_SUCCESS=false
+    fi
+    
+    # Test export dataset script syntax
+    if [[ -f "src/scripts/export_features_dataset_parallel.py" ]]; then
+        if python -m py_compile src/scripts/export_features_dataset_parallel.py 2>/dev/null; then
+            echo -e "${GREEN}✅ export_features_dataset_parallel.py syntax OK${NC}"
+        else
+            echo -e "${RED}❌ export_features_dataset_parallel.py syntax error${NC}"
+            SYNTAX_SUCCESS=false
+        fi
+        
+        # Test export script parameter validation
+        if python src/scripts/export_features_dataset_parallel.py --help >/dev/null 2>&1; then
+            echo -e "${GREEN}✅ export_features_dataset_parallel.py parameters OK${NC}"
+        else
+            echo -e "${RED}❌ export_features_dataset_parallel.py parameter validation failed${NC}"
+            SYNTAX_SUCCESS=false
+        fi
     fi
     
     # Check other key modules

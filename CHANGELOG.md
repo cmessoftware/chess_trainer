@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.1.44] - 2025-07-01
+
+### Added
+- **Export Dataset Test Suite** - Comprehensive testing infrastructure for export_features_dataset functionality:
+  - `tests/test_export_features_dataset.py` - 18 unit, integration, and performance tests for export script
+  - `tests/test_features_repository_export.py` - 13 unit tests for FeaturesRepository export logic
+  - `tests/run_export_dataset_tests.sh` - Custom test runner with categorized execution
+  - `tests/EXPORT_DATASET_TESTS.md` - Complete test suite documentation
+  - `tests/pytest_export.ini` - Dedicated pytest configuration for export tests
+- **Test Categories** - Organized test execution by type:
+  - Unit tests: Fast, isolated function testing with mocked dependencies
+  - Integration tests: Component interaction and data flow verification
+  - Performance tests: Large dataset handling and parallel processing
+- **Test Infrastructure** - Enhanced test automation and reporting:
+  - HTML and JUnit XML test reports with timestamps
+  - Test summary generation with coverage area documentation
+  - Parallel test execution support for performance validation
+
+### Fixed
+- **Repository Test Mocking** - Resolved DataFrame mock call count issues in repository export tests
+- **Test Isolation** - Improved test independence and reduced brittleness in mocking pandas operations
+- **Export Logic Validation** - Comprehensive testing of filter application, error handling, and edge cases
+
 ## [v0.1.43] - 2025-06-30
 
 ### Added
@@ -102,6 +125,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Export Dataset Unit Tests** - Comprehensive test suite for export_features_dataset_parallel functionality
+  - `tests/test_export_features_dataset.py` - Main export functionality tests (25+ test cases)
+  - `tests/test_features_repository_export.py` - Repository layer tests (15+ test cases)
+  - `tests/run_export_dataset_tests.sh` - Dedicated test runner with categorized execution
+  - `tests/EXPORT_DATASET_TESTS.md` - Complete testing documentation
+  - **Test Categories**: Unit tests, Integration tests, Performance tests
+  - **Coverage Areas**: Export functions, file formats, filters, error handling, parallel processing
+  - **Mock Strategies**: Database layer, file system, parallel processing
+  - **Performance Benchmarks**: Small to large dataset handling validation
+
 ### Changed  
 ### Deprecated
 ### Removed
