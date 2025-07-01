@@ -5,6 +5,58 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.1.57] - 2025-07-01
+
+### Added
+- **Export Dataset Test Suite Integration** - Integrated comprehensive testing infrastructure into main test runner:
+  - Added `--export-dataset` option to main `tests/run_tests.sh` test runner
+  - Unified test interface supporting coverage, HTML reports, and parallel execution
+  - Syntax validation for `export_features_dataset_parallel.py` script
+  - Integrated 18 export functionality tests and 13 repository tests into main testing framework
+- **Test Runner Enhancement** - Enhanced main test runner with export dataset support:
+  - Centralized test management with consistent command-line interface
+  - Standardized reporting formats across all test categories
+  - Better maintainability and CI/CD integration through single entry point
+
+### Changed
+- **Test Infrastructure** - Consolidated test execution into unified runner system
+- **Documentation** - Updated test documentation to reflect integration with main test runner
+
+### Removed
+- **Legacy Test Runner** - Removed redundant standalone `run_export_dataset_tests.sh` script
+  - All functionality now available through main test runner
+  - Simplified maintenance with single test entry point
+
+### Fixed
+- **Repository Test Mocking** - Resolved DataFrame mock call count issues in repository export tests  
+- **Test Isolation** - Improved test independence and reduced brittleness in mocking pandas operations
+- **Export Logic Validation** - Comprehensive testing of filter application, error handling, and edge cases
+
+## [v0.1.53] - 2025-07-01
+
+### Added
+- **PostgreSQL Optimization** - Enhanced database configuration and utilities for improved performance
+- **Docker Git LFS Support** - Proper gnupg installation and enhanced Git LFS integration
+- **Windows Setup Guide** - Comprehensive setup documentation for Windows environments
+- **Git LFS Setup Documentation** - Complete guide for large file storage configuration
+
+### Changed
+- **Requirements Management** - Updated requirements across all environments (app, notebooks, tests)
+- **Documentation Localization** - Enhanced Spanish documentation (architecture_es.md, VERSION_BASE_es.md)
+- **Pipeline Scripts** - Improved database management tools and pipeline utilities
+- **Test Infrastructure** - Enhanced test suite with PostgreSQL migration support
+
+### Enhanced
+- **Feature Generation** - Improved parallel processing capabilities
+- **UI Components** - Updated elite_explorer, elite_stats, and export_exercises interfaces
+- **DevOps Scripts** - Added Docker management scripts (manage-docker.ps1/.bat)
+- **Version Management** - Enhanced commit automation and version control systems
+
+### Fixed
+- **Database Migration** - Resolved PostgreSQL migration issues
+- **Docker Optimization** - Improved container build and deployment processes
+- **Test Framework** - Comprehensive testing framework implementation
+
 ## [v0.1.44] - 2025-07-01
 
 ### Added

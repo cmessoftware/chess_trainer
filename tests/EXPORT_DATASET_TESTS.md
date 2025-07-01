@@ -18,10 +18,10 @@ This document describes the comprehensive test suite for the `export_dataset` fu
    - Tests SQL query generation and data retrieval
    - Covers filter application and data formatting
 
-3. **`run_export_dataset_tests.sh`**
-   - Test runner script with categorized execution
-   - Generates comprehensive reports
-   - Supports selective test execution
+3. **Test Runner Integration**
+   - Fully integrated into main test runner system
+   - Supports categorized execution and comprehensive reporting
+   - Unified interface with other test categories
 
 ### Test Categories
 
@@ -122,17 +122,7 @@ bash run_tests.sh --export-dataset --html-report
 bash run_tests.sh --export-dataset --parallel
 ```
 
-### Standalone Test Runner (Legacy)
-```bash
-# Run all export dataset tests
-cd /app/tests
-./run_export_dataset_tests.sh
 
-# Run specific test categories
-./run_export_dataset_tests.sh --unit          # Fast unit tests only
-./run_export_dataset_tests.sh --integration   # Integration tests only
-./run_export_dataset_tests.sh --performance   # Performance tests only
-```
 
 ### Manual Pytest Execution
 ```bash

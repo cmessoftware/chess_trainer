@@ -58,8 +58,13 @@ def export_features_to_dataset(
         output_path = output_path + ".csv"
         df.to_csv(output_path, index=False)
 
-    print(
-        f"✅ Exported {len(df)} rows ({df['game_id'].nunique()} games) to {output_path}")
+    # Handle empty DataFrames safely
+    if len(df) == 0:
+        print(f"✅ Exported 0 rows (0 games) to {output_path}")
+    else:
+        game_count = df['game_id'].nunique() if 'game_id' in df.columns else 0
+        print(
+            f"✅ Exported {len(df)} rows ({game_count} games) to {output_path}")
 
 
 def export_features_for_source(source: str):
