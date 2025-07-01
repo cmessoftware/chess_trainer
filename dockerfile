@@ -25,8 +25,21 @@ RUN pip install --no-cache-dir -r requirements_min.txt && pip install --upgrade 
 # Configuración del path
 ENV PYTHONPATH=/app/src
 
+# Asigna permisos de ejecución a los scripts de Streamlit
+RUN chmod +x /usr/local/bin/streamlit
+
+
+# Asigna permisos a script del pipeline y de tests
+RUN chmod +x /app/src/pipeline/run_pipeline.sh
+RUN chmod +x /app/tests/run_tests.sh
+
+
 # Copia el resto del proyecto
 COPY . .
+
+# Asegurarte de tener dos2unix y limpiar todos los .sh
+RUN apt update && apt install -y dos2unix && \
+    find /app -type f -name "*.sh" -exec dos2unix {} \;
 
 # Comando por defecto: levanta Streamlit
 CMD ["streamlit", "run", "src/app.py", "--server.port=8501", "--server.address=0.0.0.0"]
