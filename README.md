@@ -1,32 +1,18 @@
-# CHESS TRAINER - Versión: v0.1.53-3512f2d
+# CHESS TRAINER - Versión: v0.1.59-6f5b61a
 
-# CHESS TRAINER - Version: v0.1.20-f9d0260
+# ♟ chess_trainer – Analysis and Training with Elite Games
 
-# Chess Trainer (stable base version)
+This project automates the import, analysis, labeling, and training from thousands of games played by elite players (ELO >2300), combining tactical analysis with visual exploration and exercise generation.
 
-This project allows you to analyze and tactically train chess games using data science and interactive visualization.
+---
 
-## Features
+## 📚 Documentation Index
 
-- Generation of datasets from PGN files
-- Tactical enrichment with Stockfish
-- Error classification with automatic labels (`error_label`)
-- Exploration and visualization with Streamlit and notebooks
-- Training of supervised models for error prediction
-- Logging and history of predictions
-
-## Requirements
-
-- Python 3.8+
-- streamlit
-- pandas, seaborn, matplotlib
-- python-chess
-- scikit-learn
-- Stockfish 
-
-## Structure
-
-See the [`VERSIÓN_BASE.md`](./VERSION_BASE.md) file for the complete project structure.
+### Core Documentation
+- **[Main README](./README.md)** - Complete project documentation (this file)  
+- **[README (Español)](./README_es.md)** - Documentación completa del proyecto en español
+- **[Version Base (English)](./VERSION_BASE.md)** - Project overview and quick start guide
+- **[Version Base (Español)](./VERSION_BASE_es.md)** - Descripción del proyecto y guía rápida en español
 
 ## Quick usage
 
