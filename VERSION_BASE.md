@@ -49,57 +49,68 @@ apt install stockfish           # Chess engine (Linux)
 
 ---
 
-## 🚀 Automated Container Building with Scripts
+## 🚀 Unified Docker Management for Windows
 
-This project includes scripts to build containers easily, without needing to pass parameters manually.
+This project provides a comprehensive PowerShell script for complete Docker environment management on Windows.
 
-Available containers are:
+### 🔧 Main Script: `build_up_clean_all.ps1`
 
-| Script                   | Description                                                                               | Generated Image           |
-| ------------------------ | ----------------------------------------------------------------------------------------- | ------------------------- |
-| `build_app.sh`           | Builds the Streamlit application container                                                | `chess_trainer_app`       |
-| `build_notebooks.sh`     | Builds the JupyterLab container with Keras and TensorFlow                                 | `chess_trainer_notebooks` |
-| `build_up_clean_all.ps1` | **Windows PowerShell**: Builds both containers, starts services, and cleans unused images | All containers + cleanup  |
+| Usage                                 | Description                        | Generated Images                                |
+| ------------------------------------- | ---------------------------------- | ----------------------------------------------- |
+| `.\build_up_clean_all.ps1`            | **Default**: Build + Start + Clean | `chess_trainer_app` + `chess_trainer_notebooks` |
+| `.\build_up_clean_all.ps1 -BuildOnly` | Only build containers              | Both images                                     |
+| `.\build_up_clean_all.ps1 -StartOnly` | Only start existing containers     | N/A                                             |
+| `.\build_up_clean_all.ps1 -Backup`    | Backup Docker images               | N/A                                             |
+| `.\build_up_clean_all.ps1 -Clean`     | Clean unused images/volumes        | N/A                                             |
+| `.\build_up_clean_all.ps1 -Stop`      | Stop all containers                | N/A                                             |
+| `.\build_up_clean_all.ps1 -Status`    | Show container status              | N/A                                             |
+| `.\build_up_clean_all.ps1 -Help`      | Show usage help                    | N/A                                             |
 
 ---
 
 ### 🛠️ Requirements
 
-- Docker version **24.x** or higher (required for `--ignore-file`)
-- Scripts with execution permissions
+- Docker version **24.x** or higher
+- PowerShell 5.1+ (Windows built-in)
 
-To give permissions:
-
-```bash
-chmod +x build_app.sh build_notebooks.sh
-```
-
-**For Windows users**, the PowerShell script `build_up_clean_all.ps1` provides automated setup without requiring permission changes.
 ---
 
-## 🚀 How to Build the Containers
+## 🚀 How to Use the Docker Environment
 
-### Linux/macOS Users:
-**For the Streamlit application:**
-```bash
-./build_app.sh
-```
-**For the JupyterLab environment:**
-```bash
-./build_notebooks.sh
-```
+### Windows Environment (Recommended)
 
-### Windows Users:
-**One-command setup (builds, starts, and cleans):**
+**🎯 Quick Start - Full Setup:**
 ```powershell
 .\build_up_clean_all.ps1
 ```
 
-This PowerShell script will:
-- 🚀 Build both chess_trainer and notebooks images
-- ✅ Start all containers in detached mode  
-- 🧹 Clean up unused Docker images automatically
-- 🏁 Show active containers status
+**🔧 Advanced Usage:**
+```powershell
+# Build containers only
+.\build_up_clean_all.ps1 -BuildOnly
+
+# Start existing containers
+.\build_up_clean_all.ps1 -StartOnly
+
+# Backup Docker images
+.\build_up_clean_all.ps1 -Backup
+
+# Clean up unused images/volumes
+.\build_up_clean_all.ps1 -Clean
+
+# Check container status
+.\build_up_clean_all.ps1 -Status
+
+# Get help
+.\build_up_clean_all.ps1 -Help
+```
+
+### Manual Docker Commands (Alternative)
+```bash
+# Build and start manually
+docker-compose build
+docker-compose up -d
+```
 
 ### 🎯 Benefits of Windows PowerShell Automation:
 - **Single Command Setup**: Complete environment setup with one command
@@ -176,9 +187,7 @@ chess_trainer/
 ├── docker-compose.yml           # Container orchestration
 ├── dockerfile                   # Main app container
 ├── dockerfile.notebooks         # Jupyter container
-├── build_app.sh                 # App container build script
-├── build_notebooks.sh           # Notebook container build script
-├── build_up_clean_all.ps1       # Windows PowerShell: Complete setup script
+├── build_up_clean_all.ps1       # Windows PowerShell: Unified Docker management script
 ├── alembic.ini                  # Database migration config
 ├── requirements.txt             # Python dependencies
 ├── .env                         # Environment variables

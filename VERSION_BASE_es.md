@@ -2,7 +2,14 @@
 
 # ♟ chess_trainer – Análisis y entrenamiento con partidas de élite
 
-Este proyecto automatiza la importación, análisis, etiquetado y entrenamiento a partir de miles de partidas de jugadores de élite (ELO >2300), combinando análisis táctico con exploración visual y generación de ejercicios.
+Este proyecto automatiza la importación, análisis, etiquetado y├── test_reports/                # Reportes de ejecución de pruebas
+├── docker-compose.yml           # Orquestación de contenedores
+├── dockerfile                   # Contenedor de aplicación principal
+├── dockerfile.notebooks         # Contenedor de Jupyter
+├── build_up_clean_all.ps1       # Windows PowerShell: Script unificado de gestión Docker
+├── alembic.ini                  # Configuración de migración de base de datos
+├── requirements.txt             # Dependencias de Python
+├── .env                         # Variables de entornoento a partir de miles de partidas de jugadores de élite (ELO >2300), combinando análisis táctico con exploración visual y generación de ejercicios.
 
 ---
 
@@ -49,24 +56,29 @@ apt install stockfish           # Motor de ajedrez (Linux)
 
 ---
 
-## 🚀 Construcción de contenedores con scripts automáticos
+## 🚀 Gestión Unificada de Docker para Windows
 
-Este proyecto incluye scripts para construir los contenedores de forma sencilla, sin necesidad de pasar parámetros manualmente.
+Este proyecto proporciona un script PowerShell integral para la gestión completa del entorno Docker en Windows.
 
-Los contenedores disponibles son:
+### 🔧 Script Principal: `build_up_clean_all.ps1`
 
-| Script                   | Descripción                                                                                            | Imagen generada                   |
-| ------------------------ | ------------------------------------------------------------------------------------------------------ | --------------------------------- |
-| `build_app.sh`           | Construye el contenedor de la aplicación Streamlit                                                     | `chess_trainer_app`               |
-| `build_notebooks.sh`     | Construye el contenedor de JupyterLab con Keras y TensorFlow                                           | `chess_trainer_notebooks`         |
-| `build_up_clean_all.ps1` | **Windows PowerShell**: Construye ambos contenedores, inicia servicios y limpia imágenes no utilizadas | Todos los contenedores + limpieza |
+| Uso                                   | Descripción                                    | Imágenes Generadas                              |
+| ------------------------------------- | ---------------------------------------------- | ----------------------------------------------- |
+| `.\build_up_clean_all.ps1`            | **Por defecto**: Construir + Iniciar + Limpiar | `chess_trainer_app` + `chess_trainer_notebooks` |
+| `.\build_up_clean_all.ps1 -BuildOnly` | Solo construir contenedores                    | Ambas imágenes                                  |
+| `.\build_up_clean_all.ps1 -StartOnly` | Solo iniciar contenedores existentes           | N/A                                             |
+| `.\build_up_clean_all.ps1 -Backup`    | Respaldar imágenes Docker                      | N/A                                             |
+| `.\build_up_clean_all.ps1 -Clean`     | Limpiar imágenes/volúmenes no utilizados       | N/A                                             |
+| `.\build_up_clean_all.ps1 -Stop`      | Detener todos los contenedores                 | N/A                                             |
+| `.\build_up_clean_all.ps1 -Status`    | Mostrar estado de contenedores                 | N/A                                             |
+| `.\build_up_clean_all.ps1 -Help`      | Mostrar ayuda de uso                           | N/A                                             |
 
 ---
 
 ### 🛠️ Requisitos
 
-- Docker versión **24.x** o superior (requerido para `--ignore-file`)
-- Scripts con permisos de ejecución
+- Docker versión **24.x** o superior
+- PowerShell 5.1+ (incluido en Windows)
 
 Para dar permisos:
 
