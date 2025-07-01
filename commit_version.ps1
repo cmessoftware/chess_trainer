@@ -29,6 +29,7 @@ if ($hasChanges) {
     git commit -m "auto-update version to $version"
     
     Write-Host "✅ Version update committed successfully!" -ForegroundColor Green
-} else {
+}
+else {
     Write-Host "✅ No version changes to commit" -ForegroundColor Green
 }
