@@ -2,29 +2,87 @@
 
 ## Visión General
 
-Este proyecto utiliza **Git Large File Storage (LFS)** para gestionar eficientemente grandes datasets, notebooks y archivos de modelos. Git LFS reemplaza archivos grandes con punteros de texto dentro de Git, mientras almacena el contenido de los archivos en un servidor remoto.
+Este pro### � Trabajando con Archivos Grandes
+
+### **Verificar E## 💡 Mejores Prácticas para Datasetstado de LFS**
+```bash
+# Ver qué archivos son rastreados por LFS
+git lfs track
+
+# Verificar estado de archivos LFS
+git lfs status
+
+# Listar todos los archivos LFS
+git lfs ls-files
+```
+
+### **Agregando Nuevos Archivos Grandes**
+```bash
+# Rastrear nuevos tipos de archivo
+git lfs track "*.nueva_extension"
+
+# Agregar y hacer commit
+git add .gitattributes
+git add tu_archivo_grande.extension
+git commit -m "Agregar archivo grande con LFS"
+```
+
+### **Descargar Archivos LFS Específicos**
+```bash
+# Descargar solo archivos específicos
+git lfs pull --include="*.ipynb"
+
+# Descargar excluyendo ciertos archivos
+git lfs pull --exclude="*.zip"
+```
+
+## 🐳 Entorno Docker
+
+El entorno Docker maneja automáticamente Git LFS:📊 Mejores Prácticas para Datasets
+
+### **Archivos que NO deben estar en el repositorio:**
+- **Archivos comprimidos grandes** (*.zip, *.gz, *.tar): Usar servicios de almacenamiento externo o APIs
+- **Datasets crudos masivos** (*.pgn): Usar APIs de Lichess/Chess.com para descargar bajo demanda
+- **Archivos temporales**: Generar localmente según sea necesario
+
+### **Cuándo usar LFS para notebooks:**
+- **Notebooks >1MB**: Especialmente aquellos con outputs extensos
+- **Notebooks EDA**: Con visualizaciones grandes y resultados de análisis
+- **Notebooks de análisis ML**: Con outputs de modelos y métricas de rendimiento
+- **Notebooks de investigación**: Con análisis estadístico comprehensivo
+
+### **Uso recomendado de fuentes externas:**
+```bash
+# Descargar datasets de Lichess
+curl "https://database.lichess.org/standard/lichess_db_standard_rated_2024-01.pgn.bz2"
+
+# Usar API de Chess.com
+curl "https://api.chess.com/pub/player/{username}/games/{YYYY}/{MM}"
+``` **Git Large File Storage (LFS)** para gestionar eficientemente grandes datasets, notebooks y archivos de modelos. Git LFS reemplaza archivos grandes con punteros de texto dentro de Git, mientras almacena el contenido de los archivos en un servidor remoto.
 
 ## 📋 Archivos Rastreados por Git LFS
 
 Los siguientes tipos de archivo son automáticamente rastreados por Git LFS:
 
-### **Notebooks y Documentación**
-- `*.ipynb` - Notebooks de Jupyter con análisis y modelos
-- `*.html` - Reportes generados y documentación
-
-### **Datasets y Partidas**
-- `*.zip` - Colecciones de partidas comprimidas
-- `*.pgn` - Archivos de notación de partidas de ajedrez
-- `*.parquet` - Datasets de características procesadas
-
-### **Modelos y Artefactos**
+### **Modelos de Machine Learning**
 - `*.pkl` - Modelos de machine learning entrenados
 - `*.h5` - Archivos de modelos Keras/TensorFlow
 - `*.joblib` - Modelos serializados de Scikit-learn
+- `*.model` - Archivos de modelos genéricos
 
-### **Media y Visualizaciones**
-- `*.png` - Gráficos generados y matrices de correlación
-- `*.jpg` - Diagramas de posiciones de ajedrez
+### **Datasets Procesados**
+- `*.parquet` - Datasets de características procesadas
+- `*.csv` - Datasets CSV grandes
+
+### **Notebooks con Outputs Grandes**
+- `*.ipynb` - Notebooks de Jupyter con análisis y modelos
+  - **Especialmente importante para**: Notebooks EDA, análisis ML, visualizaciones grandes
+  - **Umbral**: Notebooks >1MB deben usar LFS
+
+### **Archivos NO Rastreados por LFS** (Excluidos por Eficiencia)
+- `*.zip`, `*.gz`, `*.tar` - Archivos comprimidos (usar fuentes externas)
+- `*.pgn` - Archivos de partidas crudos (usar APIs de lichess/chess.com)
+- `*.png`, `*.jpg` - Imágenes (mantenidas pequeñas y manejables)
 
 ## 🚀 Configuración Rápida
 
@@ -56,7 +114,7 @@ cd chess_trainer
 git lfs pull
 ```
 
-## 🐳 Entorno Docker
+## � Trabajando con Archivos Grandes
 
 El entorno Docker maneja automáticamente Git LFS:
 
@@ -75,7 +133,32 @@ El `dockerfile.notebooks` incluye:
 - ✅ Descarga automática de archivos LFS
 - ✅ JupyterLab con acceso completo a datasets
 
-## 📊 Trabajando con Archivos Grandes
+## � Mejores Prácticas para Datasets
+
+### **Archivos que NO deben estar en el repositorio:**
+- **Archivos comprimidos grandes** (*.zip, *.gz, *.tar): Usar servicios de almacenamiento externo o APIs
+- **Datasets crudos masivos** (*.pgn): Usar APIs de Lichess/Chess.com para descargar bajo demanda
+- **Archivos temporales**: Generar localmente según sea necesario
+
+### **Uso recomendado de fuentes externas:**
+```bash
+# Descargar datasets de Lichess
+curl "https://database.lichess.org/standard/lichess_db_standard_rated_2024-01.pgn.bz2"
+
+# Usar API de Chess.com
+curl "https://api.chess.com/pub/player/{username}/games/{YYYY}/{MM}"
+```
+
+### **Estructura recomendada:**
+```
+datasets/
+├── export/           # Datasets procesados (parquet, csv) → LFS
+├── models/           # Modelos entrenados (pkl, h5) → LFS  
+├── notebooks/        # Análisis (ipynb) → LFS (opcional)
+└── scripts/          # Scripts de descarga → Git normal
+```
+
+## �📊 Trabajando con Archivos Grandes
 
 ### **Verificar Estado de LFS**
 ```bash
@@ -113,16 +196,18 @@ git lfs pull --exclude="*.zip"
 
 ### **Configuración Actual de .gitattributes**
 ```
-*.ipynb filter=lfs diff=lfs merge=lfs -text
-*.zip filter=lfs diff=lfs merge=lfs -text
-*.pgn filter=lfs diff=lfs merge=lfs -text
-*.parquet filter=lfs diff=lfs merge=lfs -text
+# Modelos de Machine Learning
 *.pkl filter=lfs diff=lfs merge=lfs -text
 *.h5 filter=lfs diff=lfs merge=lfs -text
 *.joblib filter=lfs diff=lfs merge=lfs -text
-*.png filter=lfs diff=lfs merge=lfs -text
-*.jpg filter=lfs diff=lfs merge=lfs -text
-*.html filter=lfs diff=lfs merge=lfs -text
+*.model filter=lfs diff=lfs merge=lfs -text
+
+# Datasets procesados
+*.parquet filter=lfs diff=lfs merge=lfs -text
+*.csv filter=lfs diff=lfs merge=lfs -text
+
+# Notebooks con outputs grandes
+*.ipynb filter=lfs diff=lfs merge=lfs -text
 ```
 
 ### **Configuración de Docker**

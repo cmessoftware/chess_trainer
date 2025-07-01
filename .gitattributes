@@ -1,6 +1,12 @@
-# Datasets y backups
-*.zip filter=lfs diff=lfs merge=lfs -text
-# Partidas de ajedrez grandes
-*.pgn filter=lfs diff=lfs merge=lfs -text
-# Notebooks pesados (opcional, evaluá si los outputs inflan mucho)
+# Modelos de Machine Learning
+*.pkl filter=lfs diff=lfs merge=lfs -text
+*.h5 filter=lfs diff=lfs merge=lfs -text
+*.joblib filter=lfs diff=lfs merge=lfs -text
+*.model filter=lfs diff=lfs merge=lfs -text
+
+# Datasets procesados
+*.parquet filter=lfs diff=lfs merge=lfs -text
+*.csv filter=lfs diff=lfs merge=lfs -text
+
+# Notebooks con outputs grandes (opcional)
 *.ipynb filter=lfs diff=lfs merge=lfs -text
