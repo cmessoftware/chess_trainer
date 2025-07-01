@@ -4,6 +4,28 @@
 
 Se ha configurado un volumen compartido (`chess_datasets`) para compartir los datasets Parquet generados por el contenedor de la aplicación principal con el contenedor de notebooks.
 
+## Configuración Rápida
+
+### Usuarios de Windows (Recomendado):
+```powershell
+.\build_up_clean_all.ps1
+```
+Este script construye automáticamente ambos contenedores con la configuración de volúmenes adecuada e inicia todos los servicios.
+
+#### 🎯 Beneficios para la Gestión de Datasets:
+- **Vinculación Automática de Volúmenes**: Asegura la configuración correcta del volumen compartido (`chess_datasets`)
+- **Sincronización de Contenedores**: Tanto la aplicación como los notebooks acceden a la misma ubicación de datasets
+- **Sin Configuración Manual de Volúmenes**: Elimina la necesidad de creación y vinculación manual de volúmenes Docker
+- **Persistencia de Datos**: Los datasets permanecen disponibles entre reinicios y reconstrucciones de contenedores
+- **Acceso Entre Contenedores**: Intercambio de datos sin problemas entre la aplicación principal y los notebooks Jupyter
+- **Limpieza Integrada**: Elimina volúmenes no utilizados durante el proceso de limpieza
+
+### Configuración Manual:
+```bash
+docker-compose build
+docker-compose up -d
+```
+
 ## Estructura de Volúmenes
 
 ```

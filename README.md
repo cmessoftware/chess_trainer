@@ -1,4 +1,4 @@
-# CHESS TRAINER - Versión: v0.1.42-e6619b7
+# CHESS TRAINER - Versión: v0.1.53-3512f2d
 
 # CHESS TRAINER - Version: v0.1.20-f9d0260
 
@@ -30,6 +30,28 @@ See the [`VERSIÓN_BASE.md`](./VERSION_BASE.md) file for the complete project st
 
 ## Quick usage
 
+### Docker Setup (Recommended)
+
+#### Windows Users - One-Command Setup:
+```powershell
+.\build_up_clean_all.ps1
+```
+
+#### 🎯 Benefits of PowerShell Automation:
+- **Complete Environment Setup**: Builds and starts all containers with one command
+- **Cross-Platform Compatibility**: Native Windows PowerShell support without Unix permission requirements
+- **Automatic Cleanup**: Removes unused Docker images to optimize disk usage
+- **Service Integration**: Starts both main application and Jupyter notebooks containers
+- **Background Operation**: Containers run detached for continuous development workflow
+- **Error Reduction**: Automated sequence minimizes manual configuration mistakes
+
+#### Manual Docker Setup:
+```bash
+docker-compose build
+docker-compose up -d
+```
+
+### Local Development:
 ```bash
 # Run the main interface
 streamlit run app.py (In development)

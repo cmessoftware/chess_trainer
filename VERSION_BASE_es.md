@@ -2,7 +2,14 @@
 
 # ♟ chess_trainer – Análisis y entrenamiento con partidas de élite
 
-Este proyecto automatiza la importación, análisis, etiquetado y entrenamiento a partir de miles de partidas de jugadores de élite (ELO >2300), combinando análisis táctico con exploración visual y generación de ejercicios.
+Este proyecto automatiza la importación, análisis, etiquetado y├── test_reports/                # Reportes de ejecución de pruebas
+├── docker-compose.yml           # Orquestación de contenedores
+├── dockerfile                   # Contenedor de aplicación principal
+├── dockerfile.notebooks         # Contenedor de Jupyter
+├── build_up_clean_all.ps1       # Windows PowerShell: Script unificado de gestión Docker
+├── alembic.ini                  # Configuración de migración de base de datos
+├── requirements.txt             # Dependencias de Python
+├── .env                         # Variables de entornoento a partir de miles de partidas de jugadores de élite (ELO >2300), combinando análisis táctico con exploración visual y generación de ejercicios.
 
 ---
 
@@ -49,42 +56,71 @@ apt install stockfish           # Motor de ajedrez (Linux)
 
 ---
 
-## 🚀 Construcción de contenedores con scripts automáticos
+## 🚀 Gestión Unificada de Docker para Windows
 
-Este proyecto incluye scripts para construir los contenedores de forma sencilla, sin necesidad de pasar parámetros manualmente.
+Este proyecto proporciona un script PowerShell integral para la gestión completa del entorno Docker en Windows.
 
-Los contenedores disponibles son:
+### 🔧 Script Principal: `build_up_clean_all.ps1`
 
-| Script               | Descripción                                                  | Imagen generada           |
-| -------------------- | ------------------------------------------------------------ | ------------------------- |
-| `build_app.sh`       | Construye el contenedor de la aplicación Streamlit           | `chess_trainer_app`       |
-| `build_notebooks.sh` | Construye el contenedor de JupyterLab con Keras y TensorFlow | `chess_trainer_notebooks` |
+| Uso                                   | Descripción                                    | Imágenes Generadas                              |
+| ------------------------------------- | ---------------------------------------------- | ----------------------------------------------- |
+| `.\build_up_clean_all.ps1`            | **Por defecto**: Construir + Iniciar + Limpiar | `chess_trainer_app` + `chess_trainer_notebooks` |
+| `.\build_up_clean_all.ps1 -BuildOnly` | Solo construir contenedores                    | Ambas imágenes                                  |
+| `.\build_up_clean_all.ps1 -StartOnly` | Solo iniciar contenedores existentes           | N/A                                             |
+| `.\build_up_clean_all.ps1 -Backup`    | Respaldar imágenes Docker                      | N/A                                             |
+| `.\build_up_clean_all.ps1 -Clean`     | Limpiar imágenes/volúmenes no utilizados       | N/A                                             |
+| `.\build_up_clean_all.ps1 -Stop`      | Detener todos los contenedores                 | N/A                                             |
+| `.\build_up_clean_all.ps1 -Status`    | Mostrar estado de contenedores                 | N/A                                             |
+| `.\build_up_clean_all.ps1 -Help`      | Mostrar ayuda de uso                           | N/A                                             |
 
 ---
 
 ### 🛠️ Requisitos
 
-- Docker versión **24.x** o superior (requerido para `--ignore-file`)
-- Scripts con permisos de ejecución
+- Docker versión **24.x** o superior
+- PowerShell 5.1+ (incluido en Windows)
 
 Para dar permisos:
 
 ```bash
 chmod +x build_app.sh build_notebooks.sh
 ```
+
+**Para usuarios de Windows**, el script de PowerShell `build_up_clean_all.ps1` proporciona configuración automatizada sin requerir cambios de permisos.
 ---
 
 ## 🚀 Cómo construir los contenedores
-**Para la aplicación Streamlit:**
 
+### Usuarios de Linux/macOS:
+**Para la aplicación Streamlit:**
 ```bash
 ./build_app.sh
 ```
 **Para el entorno de JupyterLab:**
-
 ```bash
 ./build_notebooks.sh
 ```
+
+### Usuarios de Windows:
+**Configuración con un solo comando (construye, inicia y limpia):**
+```powershell
+.\build_up_clean_all.ps1
+```
+
+Este script de PowerShell:
+- 🚀 Construye las imágenes chess_trainer y notebooks
+- ✅ Inicia todos los contenedores en modo separado
+- 🧹 Limpia automáticamente las imágenes Docker no utilizadas
+- 🏁 Muestra el estado de los contenedores activos
+
+### 🎯 Beneficios de la Automatización con PowerShell de Windows:
+- **Configuración con Un Solo Comando**: Configuración completa del entorno con un comando
+- **Sin Gestión de Permisos**: Evita los requisitos de permisos `chmod` estilo Unix
+- **Limpieza Automática**: Elimina imágenes Docker no utilizadas para ahorrar espacio en disco
+- **Ejecución en Segundo Plano**: Los contenedores se ejecutan en modo separado para operación continua
+- **Retroalimentación Instantánea**: Muestra el estado de los contenedores en ejecución después de completarse
+- **Prevención de Errores**: La secuencia automatizada reduce errores de configuración manual
+- **Ahorro de Tiempo**: Elimina la necesidad de múltiples comandos docker individuales
 
 ## 📂 Estructura del proyecto
 
@@ -154,6 +190,7 @@ chess_trainer/
 ├── dockerfile.notebooks         # Contenedor de Jupyter
 ├── build_app.sh                 # Script de construcción del contenedor de app
 ├── build_notebooks.sh           # Script de construcción del contenedor de notebooks
+├── build_up_clean_all.ps1       # Windows PowerShell: Script de configuración completa
 ├── alembic.ini                  # Configuración de migración de base de datos
 ├── requirements.txt             # Dependencias de Python
 ├── .env                         # Variables de entorno
