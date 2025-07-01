@@ -1,0 +1,50 @@
+[
+    {
+        "fen": "r1b1k2r/1p1nppbp/2nN2p1/8/6P1/4P1P1/PPPQB2P/2KR3R w kq - 0 13",
+        "solution": [
+            "Nd6+",
+            "Kc7",
+            "Nxf7"
+        ],
+        "tags": [
+            "outpost",
+            "knight_fork",
+            "quality_gain",
+            "dark_squares"
+        ],
+        "type": "tactical",
+        "description": "Invasión en d6 para ganar calidad y colapsar la posición negra.",
+        "linked_study_id": 1
+    },
+    {
+        "fen": "r1bq1rk1/ppp2ppp/2n2n2/3Pp3/2B1P3/2N2N2/PPP2PPP/R1BQ1RK1 w - - 0 9",
+        "solution": [
+            "Nxf6+",
+            "Qxf6",
+            "dxc6"
+        ],
+        "tags": [
+            "sacrifice",
+            "open_lines",
+            "initiative",
+            "knight_capture"
+        ],
+        "type": "tactical",
+        "description": "Sacrificio en f6 seguido de apertura de líneas y ventaja dinámica.",
+        "linked_study_id": null
+    },
+    {
+        "fen": "rnbqk2r/pppp1ppp/4pn2/8/2BPP3/5N2/PPP2PPP/RNBQK2R b KQkq - 0 4",
+        "solution": [
+            "Ne6"
+        ],
+        "tags": [
+            "knight_outpost",
+            "weak_squares",
+            "tactical_threat"
+        ],
+        "type": "tactical",
+        "description": "Invasión en e6 para atacar casillas débiles y coordinar ataque.",
+        "linked_study_id": null
+    }
+]

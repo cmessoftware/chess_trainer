@@ -49,6 +49,13 @@ docker-compose build
 docker-compose up -d
 ```
 
+## 📊 Documentación
+
+### **Guías de Configuración**
+- [📁 Configuración de Volúmenes de Datasets](./DATASETS_VOLUMES_CONFIG_es.md) - Configurar volúmenes de datos y almacenamiento
+- [🗂️ Guía de Configuración Git LFS](./GIT_LFS_SETUP_GUIDE_es.md) - Configuración de almacenamiento de archivos grandes
+- [📝 Historial de Versiones](./VERSION_BASE_es.md) - Estructura completa del proyecto y registro de cambios
+
 ### Desarrollo Local:
 ```bash
 # Ejecutar la interfaz principal

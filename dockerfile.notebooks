@@ -1,9 +1,10 @@
 ## Dockerfile for JupyterLab with Keras and TensorFlow
 # Este contenedor configura un entorno de JupyterLab con TensorFlow, Keras y soporte para git-lfs.
+# Optimizado para trabajar con el repositorio completo y Git LFS
 
 FROM python:3.11-slim
 
-WORKDIR /notebooks
+WORKDIR /chess_trainer
 
 # Instalación de herramientas necesarias, GitHub CLI y limpieza en un solo RUN
 RUN apt-get update && \
@@ -22,11 +23,15 @@ COPY requirements_keras_tf_clean.txt .
 RUN pip install --no-cache-dir -r requirements_keras_tf_clean.txt && \
     pip install --upgrade pip
 
-# Configuración de rutas
-ENV PYTHONPATH=/app/src
+# Configuración de rutas para el repositorio completo
+ENV PYTHONPATH=/chess_trainer/src:/chess_trainer
+
+# Configuración de Git LFS para el usuario root
+RUN git config --global user.name "Chess Trainer Container" && \
+    git config --global user.email "container@chess-trainer.local"
 
 # Exposición de puerto Jupyter
 EXPOSE 8888
 
-# Comando por defecto: levanta JupyterLab
-CMD ["jupyter", "lab", "--ip=0.0.0.0", "--allow-root", "--no-browser"]
+# Comando por defecto: levanta JupyterLab con acceso al repositorio completo
+CMD ["jupyter", "lab", "--ip=0.0.0.0", "--allow-root", "--no-browser", "--notebook-dir=/chess_trainer"]

@@ -1,0 +1,16 @@
+[
+  {
+    "fen": "5rk1/pb3ppp/1pq1pn2/3p4/3P2b1/P2B1Q2/1P3PPP/3R1RK1 b - - 0 23",
+    "theme": "attack_defense",
+    "source": "UChT",
+    "correct_move": "Ra6",
+    "explanation": "Activación de la torre en la sexta fila para lanzar un ataque en el ala de rey."
+  },
+  {
+    "fen": "1r3rk1/p1p2pp1/3pb2p/1P1q4/2P4B/1P1P3P/P4PP1/2RQ1RK1 b - - 0 23",
+    "theme": "coordination",
+    "source": "UChT",
+    "correct_move": "Bc8",
+    "explanation": "Reubicación del alfil malo en d7 hacia una casilla activa."
+  }
+]
