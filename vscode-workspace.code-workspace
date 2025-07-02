@@ -1,0 +1,27 @@
+{
+  "folders": [
+    {
+      "name": "Chess Trainer Repository",
+      "path": "/chess_trainer"
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "**/.git": false,
+      "**/__pycache__": true,
+      "**/*.pyc": true,
+      "**/node_modules": true
+    },
+    "git.enabled": true,
+    "git.path": "/usr/bin/git",
+    "python.defaultInterpreterPath": "/usr/local/bin/python",
+    "jupyter.notebookFileRoot": "/chess_trainer/notebooks"
+  },
+  "extensions": {
+    "recommendations": [
+      "ms-python.python",
+      "ms-toolsai.jupyter",
+      "ms-vscode.vscode-json"
+    ]
+  }
+}
