@@ -113,6 +113,35 @@ class PipelineRepository:
                 session.rollback()
                 raise e
 
+    def count_games_missing_tactical_by_source(self, source: str) -> int:
+        """
+        Count games for a specific source that have features but are missing tactical data.
+
+        Args:
+            source: The source to count games for
+
+        Returns:
+            int: Count of games missing tactical features
+        """
+        from db.models.features import Features
+
+        with self.session_factory() as session:
+            stmt = select(func.count(distinct(Features.game_id))).select_from(
+                Features
+            ).join(
+                Games, Features.game_id == Games.game_id
+            ).where(
+                and_(
+                    Games.source == source,
+                    Features.fen.is_not(None),
+                    Features.move_uci.is_not(None),
+                    Features.score_diff.is_(None)
+                )
+            )
+
+            result = session.execute(stmt).scalar()
+            return result or 0
+
     def get_pipeline_stats(self) -> dict:
         """
         Get comprehensive pipeline statistics.
@@ -247,6 +276,7 @@ def main():
         'get-sources',
         'count-games',
         'count-unanalyzed',
+        'count-missing-tactical',
         'pipeline-stats',
         'sources-with-unanalyzed'
     ], help="Operation to perform")
@@ -283,6 +313,15 @@ def main():
                     "Error: --source required for count-unanalyzed operation", file=sys.stderr)
                 sys.exit(1)
             count = repository.count_unanalyzed_games_by_source(args.source)
+            print(count)
+
+        elif args.operation == 'count-missing-tactical':
+            if not args.source:
+                print(
+                    "Error: --source required for count-missing-tactical operation", file=sys.stderr)
+                sys.exit(1)
+            count = repository.count_games_missing_tactical_by_source(
+                args.source)
             print(count)
 
         elif args.operation == 'pipeline-stats':

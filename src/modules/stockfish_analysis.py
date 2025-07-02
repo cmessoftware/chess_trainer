@@ -53,25 +53,40 @@ def get_engine(depth=15):
 
 
 def get_evaluation(fen, depth=10, multipv=1):
+    engine = None
     try:
-        with chess.engine.SimpleEngine.popen_uci(STOCKFISH_PATH) as engine:
-            board = chess.Board(fen)
-            info = engine.analyse(board, chess.engine.Limit(
-                depth=depth), multipv=multipv)
-            turn = board.turn
-            if multipv == 1:
-                print("Multipv is set to 1, returning single evaluation.")
-                return parse_info(info, turn=board.turn)
-            else:
-                return {
-                    "best": parse_info(info[0], turn),
-                    "alternatives": [parse_info(i, turn) for i in info[1:]]
-                } if multipv > 1 else {"best": parse_info(info, turn), "alternatives": []}
+        engine = chess.engine.SimpleEngine.popen_uci(STOCKFISH_PATH)
+        board = chess.Board(fen)
+
+        # Add timeout to prevent hanging
+        time_limit = chess.engine.Limit(
+            depth=depth, time=10.0)  # 10 second timeout
+        info = engine.analyse(board, time_limit, multipv=multipv)
+        turn = board.turn
+
+        if multipv == 1:
+            print("Multipv is set to 1, returning single evaluation.")
+            return parse_info(info, turn=board.turn)
+        else:
+            return {
+                "best": parse_info(info[0], turn),
+                "alternatives": [parse_info(i, turn) for i in info[1:]]
+            } if multipv > 1 else {"best": parse_info(info, turn), "alternatives": []}
     except Exception as e:
         print(f"❌ Error al obtener evaluación: {e} - {traceback.format_exc()}")
         if e.__cause__:
             print(f"Caused by: {e.__cause__}")
         return {"best": {"type": "error", "value": None, "mate_in": None}, "alternatives": []}
+    finally:
+        # Ensure engine is properly closed
+        if engine:
+            try:
+                engine.quit()
+            except:
+                try:
+                    engine.close()
+                except:
+                    pass
 
 
 def evaluate(board, engine, depth=10, multipv=1):

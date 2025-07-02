@@ -138,24 +138,32 @@ analyze_tactics() {
   echo -e "${CYAN}🔍 Analyzing tactics in games...${NC}"
   echo -e "${YELLOW}This step can take a long time depending on the number of games.${NC}"
   
-  # Parse additional arguments for potential pass-through
+  # Parse additional arguments for tactical analysis options
   local pass_through_args=()
   local use_source_batching=true
+  local analysis_method="enhanced"  # default: enhanced, lightweight, or integrated
+  local max_games_per_batch=1000   # reduced default for better memory management
   
   while [[ $# -gt 0 ]]; do
     case $1 in
       --source)
-        # If a specific source is provided, disable batching and use direct processing
+        # If a specific source is provided, disable source batching
         use_source_batching=false
         pass_through_args+=(--source "$2")
         shift 2
         ;;
       --max-games)
-        # If max-games is provided with source batching disabled, pass it through
-        if [ "$use_source_batching" = false ]; then
-          pass_through_args+=(--max-games "$2")
-        fi
+        max_games_per_batch="$2"
+        pass_through_args+=(--max-games "$2")
         shift 2
+        ;;
+      --method)
+        analysis_method="$2"
+        shift 2
+        ;;
+      --force-reprocess)
+        pass_through_args+=(--force-reprocess)
+        shift
         ;;
       *)
         pass_through_args+=("$1")
@@ -164,15 +172,41 @@ analyze_tactics() {
     esac
   done
   
+  echo -e "${CYAN}🎯 Tactical Analysis Method: ${analysis_method}${NC}"
+  echo -e "${CYAN}📊 Max games per batch: ${max_games_per_batch}${NC}"
+  
+  # Choose analysis script based on method
+  local analysis_script=""
+  case $analysis_method in
+    "enhanced")
+      analysis_script="/app/src/scripts/enhanced_tactical_analysis.py"
+      echo -e "${CYAN}📈 Using enhanced batch tactical analysis with tracking${NC}"
+      ;;
+    "lightweight")
+      analysis_script="/app/src/scripts/estimate_tactical_features.py"
+      echo -e "${CYAN}⚡ Using lightweight tactical feature estimation${NC}"
+      ;;
+    "integrated")
+      echo -e "${RED}❌ Integrated method should be used with generate_features_with_tactics command${NC}"
+      echo -e "${YELLOW}💡 Use: ./run_pipeline.sh generate_features_with_tactics --source your_source${NC}"
+      return 1
+      ;;
+    *)
+      echo -e "${RED}❌ Invalid analysis method: ${analysis_method}${NC}"
+      echo -e "${YELLOW}💡 Valid methods: enhanced, lightweight${NC}"
+      return 1
+      ;;
+  esac
+  
   # If source batching is disabled (specific source provided), use direct processing
   if [ "$use_source_batching" = false ]; then
     echo -e "${CYAN}🎯 Processing with provided parameters...${NC}"
-    python /app/src/scripts/analyze_games_tactics_parallel.py "${pass_through_args[@]}"
+    python "$analysis_script" "${pass_through_args[@]}"
     return $?
   fi
   
   # Source batching mode - process each source sequentially
-  echo -e "${CYAN}🔄 Running analyze_tactics sequentially by source with batches of 10,000 games...${NC}"
+  echo -e "${CYAN}🔄 Running analyze_tactics sequentially by source with batches of ${max_games_per_batch} games...${NC}"
   
   # Get list of available sources from the database
   echo -e "${CYAN}📊 Getting available sources from database...${NC}"
@@ -180,7 +214,7 @@ analyze_tactics() {
   
   if [ ${#sources[@]} -eq 0 ]; then
     echo -e "${YELLOW}⚠️  No sources found in database, running without source filter...${NC}"
-    python /app/src/scripts/analyze_games_tactics_parallel.py --max-games 10000 "${pass_through_args[@]}"
+    python "$analysis_script" --max-games "$max_games_per_batch" "${pass_through_args[@]}"
     return $?
   fi
   
@@ -191,20 +225,24 @@ analyze_tactics() {
     echo -e "${CYAN}🎯 Processing source: ${source}${NC}"
     
     # Get total games for this source that haven't been analyzed for tactics
-    local total_games=$(python pipeline/pipeline_helper.py --operation count-unanalyzed --source "$source")
-    
-    echo -e "${CYAN}📈 Total unanalyzed games for source '$source': $total_games${NC}"
+    local total_games
+    if [ "$analysis_method" = "lightweight" ]; then
+      total_games=$(python pipeline/pipeline_helper.py --operation count-missing-tactical --source "$source")
+      echo -e "${CYAN}📈 Total games missing tactical features for source '$source': $total_games${NC}"
+    else
+      total_games=$(python pipeline/pipeline_helper.py --operation count-unanalyzed --source "$source")
+      echo -e "${CYAN}📈 Total unanalyzed games for source '$source': $total_games${NC}"
+    fi
     
     if [ "$total_games" -eq 0 ]; then
-      echo -e "${YELLOW}⏭️  No unanalyzed games found for source '$source', skipping...${NC}"
+      echo -e "${YELLOW}⏭️  No games needing analysis found for source '$source', skipping...${NC}"
       continue
     fi
     
     # Calculate number of batches needed
-    local batch_size=10000
-    local batches=$(( (total_games + batch_size - 1) / batch_size ))
+    local batches=$(( (total_games + max_games_per_batch - 1) / max_games_per_batch ))
     
-    echo -e "${CYAN}🔄 Will process $batches batch(es) of $batch_size games each for source '$source'${NC}"
+    echo -e "${CYAN}🔄 Will process $batches batch(es) of $max_games_per_batch games each for source '$source'${NC}"
     
     # Process batches for this source
     for ((batch=1; batch<=batches; batch++)); do
@@ -212,10 +250,10 @@ analyze_tactics() {
       
       local start_time=$(date +%s)
       
-      python /app/src/scripts/analyze_games_tactics_parallel.py \
+      # Run the selected analysis script
+      python "$analysis_script" \
         --source "$source" \
-        --max-games "$batch_size" \
-        --offset $(( (batch - 1) * batch_size )) \
+        --max-games "$max_games_per_batch" \
         "${pass_through_args[@]}"
       
       local exit_code=$?
@@ -230,13 +268,17 @@ analyze_tactics() {
       fi
       
       # Small delay between batches to prevent overwhelming the system
-      sleep 2
+      sleep 3
     done
     
     echo -e "${GREEN}🎉 Completed processing all batches for source '$source'${NC}"
   done
   
   echo -e "${GREEN}🏁 Tactical analysis completed for all sources!${NC}"
+  
+  # Report final coverage
+  echo -e "${CYAN}📊 Final tactical analysis coverage report:${NC}"
+  python /app/src/scripts/test_tactical_analysis.py
 }
 
 generate_exercises() {
@@ -325,26 +367,161 @@ export_dataset() {
 }
 
 get_random_games() {
-  echo -e "${CYAN}📥 Importing random games from remote servers...${NC}"
-  # python scripts/generate_pgn_from_chess_servers.py "$@"
-  # Example usage:
-  python /app/src/scripts/fetch_lichess_intermediate_games.py 
-  # Validate required parameters for generate_pgn_from_chess_servers.py
+  echo -e "${CYAN}📥 Importing random games using smart discovery...${NC}"
+  
+  # Parse additional arguments
+  local platform="both"
+  local users_count=25
+  local max_games_per_user=30
+  local since="2024-06-01"
+  local until=$(date +%Y-%m-%d)
+  
+  while [[ $# -gt 0 ]]; do
+    case $1 in
+      --platform)
+        platform="$2"
+        shift 2
+        ;;
+      --users-count)
+        users_count="$2"
+        shift 2
+        ;;
+      --max-games-per-user)
+        max_games_per_user="$2"
+        shift 2
+        ;;
+      --since)
+        since="$2"
+        shift 2
+        ;;
+      --until)
+        until="$2"
+        shift 2
+        ;;
+      *)
+        shift
+        ;;
+    esac
+  done
+  
+  echo -e "${CYAN}🎯 Platform: ${platform}${NC}"
+  echo -e "${CYAN}👥 Users count: ${users_count}${NC}"
+  echo -e "${CYAN}🎮 Max games per user: ${max_games_per_user}${NC}"
+  echo -e "${CYAN}📅 Date range: ${since} to ${until}${NC}"
+  
+  # Use smart fetcher
+  python /app/src/scripts/smart_random_games_fetcher.py \
+    --platform "$platform" \
+    --users-count "$users_count" \
+    --max-games-per-user "$max_games_per_user" \
+    --since "$since" \
+    --until "$until"
+  
+  if [ $? -eq 0 ]; then
+    echo -e "${GREEN}✅ Random games imported successfully${NC}"
+  else
+    echo -e "${RED}❌ Random game import failed${NC}"
+    return 1
+  fi
 }
 
 get_games() {
-  echo -e "${CYAN}📥 Importing new games from remote servers...${NC}"
-  # python scripts/generate_pgn_from_chess_servers.py "$@"
-  # Example usage:
-  python /app/src/scripts/download_games_parallel.py --server chess.com --users cmess4401 cmess1315 --since 2008-01-01
-  # Validate required parameters for generate_pgn_from_chess_servers.py
-  #TODO: Uncomment when ready9  ]
-  # if [ $# -lt 2 ]; then
-  #   echo -e "${YELLOW}Usage:${NC} $0 get_games <server> <username> [options]"
-  #   echo -e "${YELLOW}Example:${NC} $0 get_games lichess.org myuser --max-games 10"
-  #   exit 1
-  # fi
-  echo -e "${GREEN}✔ Games imported successfully.${NC}"
+  echo -e "${CYAN}📥 Intelligent game fetching from diverse random users...${NC}"
+  
+  # Parse additional arguments
+  local fetch_method="smart"
+  local platform="both"
+  local users_count=15
+  local max_games_per_user=50
+  local since="2024-01-01"
+  local until=$(date +%Y-%m-%d)
+  local pass_through_args=()
+  
+  while [[ $# -gt 0 ]]; do
+    case $1 in
+      --method)
+        fetch_method="$2"
+        shift 2
+        ;;
+      --platform)
+        platform="$2"
+        shift 2
+        ;;
+      --users-count)
+        users_count="$2"
+        shift 2
+        ;;
+      --max-games-per-user)
+        max_games_per_user="$2"
+        shift 2
+        ;;
+      --since)
+        since="$2"
+        shift 2
+        ;;
+      --until)
+        until="$2"
+        shift 2
+        ;;
+      *)
+        pass_through_args+=("$1")
+        shift
+        ;;
+    esac
+  done
+  
+  echo -e "${CYAN}🎯 Fetch method: ${fetch_method}${NC}"
+  echo -e "${CYAN}🌐 Platform(s): ${platform}${NC}"
+  echo -e "${CYAN}👥 Target users: ${users_count}${NC}"
+  echo -e "${CYAN}🎮 Max games per user: ${max_games_per_user}${NC}"
+  echo -e "${CYAN}📅 Date range: ${since} to ${until}${NC}"
+  
+  case $fetch_method in
+    "smart")
+      echo -e "${CYAN}🧠 Using smart heuristic user discovery...${NC}"
+      python /app/src/scripts/smart_random_games_fetcher.py \
+        --platform "$platform" \
+        --users-count "$users_count" \
+        --max-games-per-user "$max_games_per_user" \
+        --since "$since" \
+        --until "$until" \
+        "${pass_through_args[@]}"
+      ;;
+    "classic")
+      echo -e "${CYAN}📝 Using classic predefined user list...${NC}"
+      python /app/src/scripts/download_games_parallel.py \
+        --server chess.com lichess.org \
+        --max-games-per-games "$max_games_per_user" \
+        --since "$since" \
+        --until "$until" \
+        "${pass_through_args[@]}"
+      ;;
+    "random-lichess")
+      echo -e "${CYAN}🎲 Fetching from random intermediate Lichess players...${NC}"
+      python /app/src/scripts/fetch_lichess_intermediate_games.py \
+        "${pass_through_args[@]}"
+      ;;
+    "discover-only")
+      echo -e "${CYAN}🔍 Only discovering users (no game fetching)...${NC}"
+      python /app/src/scripts/smart_random_games_fetcher.py \
+        --platform "$platform" \
+        --users-count "$users_count" \
+        --discover-only \
+        "${pass_through_args[@]}"
+      ;;
+    *)
+      echo -e "${RED}❌ Invalid fetch method: ${fetch_method}${NC}"
+      echo -e "${YELLOW}💡 Valid methods: smart, classic, random-lichess, discover-only${NC}"
+      return 1
+      ;;
+  esac
+  
+  if [ $? -eq 0 ]; then
+    echo -e "${GREEN}✅ Games imported successfully using ${fetch_method} method${NC}"
+  else
+    echo -e "${RED}❌ Game import failed${NC}"
+    return 1
+  fi
 }
 
 inspect_pgn() {
@@ -446,7 +623,7 @@ run_all() {
 # From a specific step
 run_from_step() {
   local found=0
-  for step in auto_tag analyze_tactics generate_exercises generate_features export_dataset clean_db import_pgns init_db clean_cache clean_games inspect_pgn_zip check_db run_upto clean_analysis_data get_random_games;  do
+  for step in auto_tag analyze_tactics generate_exercises generate_features generate_features_with_tactics estimate_tactical_features test_tactical_analysis export_dataset clean_db import_pgns init_db clean_cache clean_games inspect_pgn_zip check_db run_upto clean_analysis_data get_random_games;  do
     if [ "$found" -eq 1 ]; then run_step "$step" "$step"; fi
     if [ "$step" = "$1" ]; then found=1; run_step "$step" "$step"; fi
   done
@@ -454,12 +631,208 @@ run_from_step() {
 
 run_interactive_pipeline() {
   # Lista de pasos que se desean ejecutar interactivamente
-  local steps=("init_db" "clean_cache" "get_games" "import_pgns" "inspect_pgn" "generate_features" "analyze_tactics" "export_dataset" "generate_exercises" "clean_analysis_data" "clean_games" "inspect_pgn_zip" "check_db" "run_upto" "create_issues")
+  local steps=("init_db" "clean_cache" "get_games" "import_pgns" "inspect_pgn" "generate_features" "generate_features_with_tactics" "analyze_tactics" "estimate_tactical_features" "test_tactical_analysis" "export_dataset" "generate_exercises" "clean_analysis_data" "clean_games" "inspect_pgn_zip" "check_db" "run_upto" "create_issues")
 
   echo -e "${CYAN}🧪 Modo interactivo: Ejecutar pasos del pipeline uno por uno${NC}"
   run_steps_interactive "${steps[@]}"
 }
 
+test_tactical_analysis() {
+  echo -e "${CYAN}🧪 Testing tactical analysis functionality...${NC}"
+  python /app/src/scripts/test_tactical_analysis.py
+  echo -e "${GREEN}✔ Tactical analysis test completed.${NC}"
+}
+
+estimate_tactical_features() {
+  echo -e "${CYAN}⚡ Running lightweight tactical feature estimation...${NC}"
+  echo -e "${YELLOW}💡 This method is ~100x faster but provides approximate values${NC}"
+  
+  # Parse additional arguments
+  local pass_through_args=()
+  
+  while [[ $# -gt 0 ]]; do
+    case $1 in
+      --source|--max-games)
+        pass_through_args+=("$1" "$2")
+        shift 2
+        ;;
+      *)
+        pass_through_args+=("$1")
+        shift
+        ;;
+    esac
+  done
+  
+  python /app/src/scripts/estimate_tactical_features.py "${pass_through_args[@]}"
+  
+  if [ $? -eq 0 ]; then
+    echo -e "${GREEN}✅ Lightweight tactical estimation completed${NC}"
+    echo -e "${CYAN}📊 Coverage report:${NC}"
+    python /app/src/scripts/test_tactical_analysis.py
+  else
+    echo -e "${RED}❌ Lightweight tactical estimation failed${NC}"
+    return 1
+  fi
+}
+
+generate_features_with_tactics() {
+  echo "${CYAN} 🧹 Clearing generate_features logs${NC}"
+  rm -rf /app/src/logs/generate_features*
+  
+  echo -e "${CYAN}🚀 Running integrated feature generation with tactical analysis...${NC}"
+  echo -e "${YELLOW}⚠️  This is slower than basic feature generation but provides complete tactical coverage${NC}"
+  
+  # Parse additional arguments
+  local pass_through_args=()
+  local use_source_batching=true
+  local max_games_per_batch=500  # smaller batches for integrated processing
+  
+  while [[ $# -gt 0 ]]; do
+    case $1 in
+      --source)
+        use_source_batching=false
+        pass_through_args+=(--source "$2")
+        shift 2
+        ;;
+      --max-games)
+        max_games_per_batch="$2"
+        pass_through_args+=(--max-games "$2")
+        shift 2
+        ;;
+      *)
+        pass_through_args+=("$1")
+        shift
+        ;;
+    esac
+  done
+  
+  echo -e "${CYAN}📊 Max games per batch: ${max_games_per_batch}${NC}"
+  
+  # If source batching is disabled (specific source provided), use direct processing
+  if [ "$use_source_batching" = false ]; then
+    echo -e "${CYAN}🎯 Processing with provided parameters...${NC}"
+    python /app/src/scripts/generate_features_with_tactics.py "${pass_through_args[@]}"
+    return $?
+  fi
+  
+  # Source batching mode - process each source sequentially
+  echo -e "${CYAN}🔄 Running integrated processing sequentially by source...${NC}"
+  
+  # Get list of available sources from the database
+  echo -e "${CYAN}📊 Getting available sources from database...${NC}"
+  local sources=($(python pipeline/pipeline_helper.py --operation get-sources --format space-separated))
+  
+  if [ ${#sources[@]} -eq 0 ]; then
+    echo -e "${YELLOW}⚠️  No sources found in database, running without source filter...${NC}"
+    python /app/src/scripts/generate_features_with_tactics.py --max-games "$max_games_per_batch" "${pass_through_args[@]}"
+    return $?
+  fi
+  
+  echo -e "${GREEN}📋 Found sources: ${sources[*]}${NC}"
+  
+  # Process each source sequentially
+  for source in "${sources[@]}"; do
+    echo -e "${CYAN}🎯 Processing source: ${source}${NC}"
+    
+    # Get total games for this source
+    local total_games=$(python pipeline/pipeline_helper.py --operation count-games --source "$source")
+    
+    echo -e "${CYAN}📈 Total games for source '$source': $total_games${NC}"
+    
+    if [ "$total_games" -eq 0 ]; then
+      echo -e "${YELLOW}⏭️  No games found for source '$source', skipping...${NC}"
+      continue
+    fi
+    
+    # Calculate number of batches needed
+    local batches=$(( (total_games + max_games_per_batch - 1) / max_games_per_batch ))
+    
+    echo -e "${CYAN}🔄 Will process $batches batch(es) of $max_games_per_batch games each for source '$source'${NC}"
+    
+    # Process batches for this source
+    for ((batch=1; batch<=batches; batch++)); do
+      echo -e "${CYAN}⚙️  Processing batch $batch/$batches for source '$source'...${NC}"
+      
+      local start_time=$(date +%s)
+      
+      python /app/src/scripts/generate_features_with_tactics.py \
+        --source "$source" \
+        --max-games "$max_games_per_batch" \
+        "${pass_through_args[@]}"
+      
+      local exit_code=$?
+      local end_time=$(date +%s)
+      local duration=$((end_time - start_time))
+      
+      if [ $exit_code -eq 0 ]; then
+        echo -e "${GREEN}✅ Batch $batch/$batches completed successfully for source '$source' in ${duration}s${NC}"
+      else
+        echo -e "${RED}❌ Batch $batch/$batches failed for source '$source' (exit code: $exit_code)${NC}"
+        return $exit_code
+      fi
+      
+      # Longer delay between batches for integrated processing
+      sleep 5
+    done
+    
+    echo -e "${GREEN}🎉 Completed processing all batches for source '$source'${NC}"
+  done
+  
+  echo -e "${GREEN}🏁 Integrated feature generation with tactics completed for all sources!${NC}"
+  
+  # Report final coverage
+  echo -e "${CYAN}📊 Final tactical analysis coverage report:${NC}"
+  python /app/src/scripts/test_tactical_analysis.py
+}
+
+export_unified_dataset() {
+  echo -e "${CYAN}🔄 Exporting unified dataset combining all sources...${NC}"
+  
+  # Parse additional arguments
+  local export_type="all"
+  
+  while [[ $# -gt 0 ]]; do
+    case $1 in
+      --type)
+        export_type="$2"
+        shift 2
+        ;;
+      *)
+        shift
+        ;;
+    esac
+  done
+  
+  echo -e "${CYAN}📊 Export type: ${export_type}${NC}"
+  
+  case $export_type in
+    "all")
+      echo -e "${CYAN}🔄 Creating unified dataset with all sources (limited)...${NC}"
+      python /app/src/scripts/export_features_dataset_parallel.py unified-all
+      ;;
+    "small")
+      echo -e "${CYAN}🔄 Creating unified dataset with small sources only...${NC}"
+      python /app/src/scripts/export_features_dataset_parallel.py unified-small
+      ;;
+    "multiple")
+      echo -e "${CYAN}🔄 Creating multiple unified dataset configurations...${NC}"
+      python /app/src/scripts/export_features_dataset_parallel.py unified
+      ;;
+    *)
+      echo -e "${RED}❌ Invalid export type: ${export_type}${NC}"
+      echo -e "${YELLOW}💡 Valid types: all, small, multiple${NC}"
+      return 1
+      ;;
+  esac
+  
+  if [ $? -eq 0 ]; then
+    echo -e "${GREEN}✅ Unified dataset export completed${NC}"
+    echo -e "${CYAN}📁 Check files in: /app/src/data/export/unified_*${NC}"
+  else
+    echo -e "${RED}❌ Unified dataset export failed${NC}"
+    return 1
+  fi
+}
 
 # Dispatcher
 case "$1" in
@@ -470,7 +843,7 @@ case "$1" in
     shift
     run_from_step "$1"
     ;;
-  auto_tag|analyze_tactics|generate_exercises|generate_features|clean_db|export_dataset|import_pgns|init_db|clean_cache|get_games|inspect_pgn|clean_games|inspect_pgn_zip|check_db|run_upto|clean_analysis_data|create_issues|get_random_games)
+  auto_tag|analyze_tactics|generate_exercises|generate_features|generate_features_with_tactics|estimate_tactical_features|test_tactical_analysis|clean_db|export_dataset|export_unified_dataset|import_pgns|init_db|clean_cache|get_games|inspect_pgn|clean_games|inspect_pgn_zip|check_db|run_upto|clean_analysis_data|create_issues|get_random_games)
     STEP="$1"
     shift
     run_step "$STEP" "$STEP" "$@"
@@ -479,8 +852,34 @@ case "$1" in
     run_interactive_pipeline
     ;;
   *)
-    echo -e "${YELLOW}Usage:${NC} $0 {all | from <step> | auto_tag | analyze_tactics | generate_exercises | generate_features [args] | \
-clean_db | export_dataset | import_pgns | init_db | clean_cache | get_games | inspect_pgn | clean_games| inspect_pgn_zip| check_db| run_upto | clean_analysis_data|create_issues| get_random_games}"
+    echo -e "${YELLOW}Usage:${NC} $0 {all | from <step> | auto_tag | analyze_tactics [--method enhanced|lightweight] | generate_exercises | generate_features [args] | generate_features_with_tactics [args] | estimate_tactical_features [args] | test_tactical_analysis | \
+clean_db | export_dataset | export_unified_dataset [--type all|small|multiple] | import_pgns | init_db | clean_cache | get_games [--method smart|classic|random-lichess|discover-only] | inspect_pgn | clean_games| inspect_pgn_zip| check_db| run_upto | clean_analysis_data|create_issues| get_random_games}"
+    echo -e "${CYAN}📚 New Tactical Analysis Commands:${NC}"
+    echo -e "  ${YELLOW}analyze_tactics --method enhanced${NC}     - Enhanced batch tactical analysis with tracking"
+    echo -e "  ${YELLOW}analyze_tactics --method lightweight${NC}  - Use lightweight estimation within analyze_tactics"
+    echo -e "  ${YELLOW}generate_features_with_tactics${NC}        - Integrated feature generation + tactical analysis"
+    echo -e "  ${YELLOW}estimate_tactical_features${NC}            - Fast lightweight tactical feature estimation"
+    echo -e "  ${YELLOW}test_tactical_analysis${NC}                - Test and report tactical analysis coverage"
+    echo -e "${CYAN}📚 Dataset Export Commands:${NC}"
+    echo -e "  ${YELLOW}export_dataset${NC}                        - Export each source to separate parquet files"
+    echo -e "  ${YELLOW}export_unified_dataset --type all${NC}     - Create single unified dataset from all sources"
+    echo -e "  ${YELLOW}export_unified_dataset --type small${NC}   - Create unified dataset from small sources only"
+    echo -e "  ${YELLOW}export_unified_dataset --type multiple${NC} - Create multiple unified dataset configurations"
+    echo -e "${CYAN}📚 Smart Game Import Commands:${NC}"
+    echo -e "  ${YELLOW}get_games --method smart${NC}              - Smart heuristic user discovery and game fetching"
+    echo -e "  ${YELLOW}get_games --method classic${NC}            - Classic predefined user list fetching"
+    echo -e "  ${YELLOW}get_games --method random-lichess${NC}     - Fetch from random intermediate Lichess players"
+    echo -e "  ${YELLOW}get_games --method discover-only${NC}      - Only discover users, don't fetch games"
+    echo -e "  ${YELLOW}get_random_games${NC}                      - Smart random game fetching from diverse users"
+    echo -e "${CYAN}📝 Examples:${NC}"
+    echo -e "  ${GREEN}$0 analyze_tactics --method enhanced --source personal --max-games 1000${NC}"
+    echo -e "  ${GREEN}$0 generate_features_with_tactics --source elite --max-games 500${NC}"
+    echo -e "  ${GREEN}$0 estimate_tactical_features --source personal --max-games 10000${NC}"
+    echo -e "  ${GREEN}$0 get_games --method smart --platform lichess.org --users-count 20 --max-games-per-user 100${NC}"
+    echo -e "  ${GREEN}$0 get_games --method discover-only --platform both --users-count 50${NC}"
+    echo -e "  ${GREEN}$0 get_random_games --platform both --users-count 30 --max-games-per-user 40${NC}"
+    echo -e "  ${GREEN}$0 export_unified_dataset --type all${NC}"
+    echo -e "  ${GREEN}$0 export_unified_dataset --type small${NC}"
     exit 1
     ;;
 esac

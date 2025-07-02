@@ -1,7 +1,7 @@
 # /app/src/db/repository/Analyzed_tacticals.py
 
 import logging
-from sqlalchemy import insert
+from sqlalchemy import insert, select
 from db.models.analyzed_tacticals import Analyzed_tacticals
 from db.db_utils import DBUtils
 from db.session import get_session
@@ -45,3 +45,100 @@ class Analyzed_tacticalsRepository:
             new_record = Analyzed_tacticals(game_id=game_id)
             session.add(new_record)
             session.commit()
+
+    def get_analysis_coverage_by_source(self, source: str):
+        """Get analysis coverage statistics for a specific source."""
+        from db.models.games import Games
+        import sqlalchemy
+
+        with self.session_factory() as session:
+            stmt = select(
+                sqlalchemy.func.count(sqlalchemy.distinct(
+                    Games.game_id)).label('total'),
+                sqlalchemy.func.count(sqlalchemy.distinct(
+                    Analyzed_tacticals.game_id)).label('analyzed')
+            ).select_from(
+                Games
+            ).outerjoin(
+                Analyzed_tacticals, Games.game_id == Analyzed_tacticals.game_id
+            ).where(Games.source == source)
+
+            result = session.execute(stmt).fetchone()
+            total = result.total
+            analyzed = result.analyzed
+            percentage = (analyzed / total * 100) if total > 0 else 0
+
+            return {
+                'total': total,
+                'analyzed': analyzed,
+                'percentage': percentage
+            }
+
+    def get_analysis_coverage(self):
+        """Get analysis coverage statistics for all sources."""
+        from db.models.games import Games
+        import sqlalchemy
+
+        with self.session_factory() as session:
+            stmt = select(
+                sqlalchemy.func.count(sqlalchemy.distinct(
+                    Games.game_id)).label('total'),
+                sqlalchemy.func.count(sqlalchemy.distinct(
+                    Analyzed_tacticals.game_id)).label('analyzed')
+            ).select_from(
+                Games
+            ).outerjoin(
+                Analyzed_tacticals, Games.game_id == Analyzed_tacticals.game_id
+            )
+
+            result = session.execute(stmt).fetchone()
+            total = result.total
+            analyzed = result.analyzed
+            percentage = (analyzed / total * 100) if total > 0 else 0
+
+            return {
+                'total': total,
+                'analyzed': analyzed,
+                'percentage': percentage
+            }
+
+    def get_total_analyzed_count(self):
+        """Get total number of analyzed games."""
+        with self.session_factory() as session:
+            return session.query(Analyzed_tacticals).count()
+
+    def get_coverage_by_source(self):
+        """Get analysis coverage by source."""
+        from db.models.games import Games
+        import sqlalchemy
+
+        with self.session_factory() as session:
+            stmt = select(
+                Games.source,
+                sqlalchemy.func.count(sqlalchemy.distinct(
+                    Games.game_id)).label('total_games'),
+                sqlalchemy.func.count(sqlalchemy.distinct(
+                    Analyzed_tacticals.game_id)).label('analyzed_games')
+            ).select_from(
+                Games
+            ).outerjoin(
+                Analyzed_tacticals, Games.game_id == Analyzed_tacticals.game_id
+            ).where(Games.source.is_not(None)).group_by(Games.source)
+
+            result = session.execute(stmt).fetchall()
+            coverage_data = []
+
+            for row in result:
+                source = row.source
+                total = row.total_games
+                analyzed = row.analyzed_games
+                coverage_pct = (analyzed / total * 100) if total > 0 else 0
+
+                coverage_data.append({
+                    'source': source,
+                    'total_games': total,
+                    'analyzed_games': analyzed,
+                    'coverage_percentage': coverage_pct
+                })
+
+            return coverage_data

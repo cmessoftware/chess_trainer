@@ -26,6 +26,20 @@ Este proyecto permite analizar y entrenar tácticamente partidas de ajedrez usan
 
 Consulta el archivo [`VERSIÓN_BASE.md`](./VERSION_BASE.md) para ver la estructura completa del proyecto.
 
+## Documentación
+
+### Documentación de Análisis Central
+- **[Guía de Mejora de Características Tácticas](docs/TACTICAL_FEATURES_ENHANCEMENT.md)** - Guía completa para mejorar la cobertura de características tácticas en conjuntos de datos de ajedrez
+- **[Análisis de Baja Cobertura de Características Tácticas](docs/TACTICAL_FEATURES_LOW_COVERAGE_ANALYSIS.md)** - Análisis de causa raíz y soluciones para la baja representación de características tácticas
+
+### Configuración y Instalación
+- **[Configuración de Volúmenes de Conjuntos de Datos](DATASETS_VOLUMES_CONFIG_es.md)** - Configuración de volúmenes Docker para compartir conjuntos de datos
+- **[Guía de Configuración para Windows](WINDOWS_SETUP_GUIDE.md)** - Guía completa de configuración para entornos Windows
+- **[Guía de Configuración Git LFS](GIT_LFS_SETUP_GUIDE.md)** - Configuración de almacenamiento de archivos grandes
+
+### Pruebas y Desarrollo
+- **[Guía de Pruebas](tests/README_es.md)** - Documentación completa de pruebas y guías de ejecución
+
 ## Uso rápido
 
 ### Configuración Docker (Recomendado)

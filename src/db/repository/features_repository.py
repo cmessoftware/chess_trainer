@@ -351,3 +351,239 @@ class FeaturesRepository:
         except Exception as e:
             print(f"❌ Error exportando dataset filtrado: {e}")
             raise
+
+    def get_game_ids_with_features_by_source(self, source: str, limit: int = None):
+        """Get game IDs that have features for a specific source."""
+        with self.session_factory() as session:
+            stmt = select(Features.game_id).distinct().join(
+                Games, Features.game_id == Games.game_id
+            ).where(
+                and_(
+                    Games.source == source,
+                    Features.fen.is_not(None),
+                    Features.move_uci.is_not(None)
+                )
+            )
+            if limit:
+                stmt = stmt.limit(limit)
+
+            result = session.execute(stmt)
+            return [row[0] for row in result.fetchall()]
+
+    def get_game_ids_with_features(self, limit: int = None):
+        """Get game IDs that have features."""
+        with self.session_factory() as session:
+            stmt = select(Features.game_id).distinct().where(
+                and_(
+                    Features.fen.is_not(None),
+                    Features.move_uci.is_not(None)
+                )
+            )
+            if limit:
+                stmt = stmt.limit(limit)
+
+            result = session.execute(stmt)
+            return [row[0] for row in result.fetchall()]
+
+    def get_unanalyzed_game_ids_by_source(self, source: str, limit: int = None):
+        """Get game IDs that need tactical analysis for a specific source."""
+        from db.models.analyzed_tacticals import Analyzed_tacticals
+
+        with self.session_factory() as session:
+            stmt = select(Features.game_id).distinct().join(
+                Games, Features.game_id == Games.game_id
+            ).outerjoin(
+                Analyzed_tacticals, Features.game_id == Analyzed_tacticals.game_id
+            ).where(
+                and_(
+                    Games.source == source,
+                    Features.fen.is_not(None),
+                    Features.move_uci.is_not(None),
+                    or_(
+                        Features.score_diff.is_(None),
+                        Features.error_label.is_(None)
+                    ),
+                    Analyzed_tacticals.game_id.is_(None)
+                )
+            )
+            if limit:
+                stmt = stmt.limit(limit)
+
+            result = session.execute(stmt)
+            return [row[0] for row in result.fetchall()]
+
+    def get_unanalyzed_game_ids(self, limit: int = None):
+        """Get game IDs that need tactical analysis."""
+        from db.models.analyzed_tacticals import Analyzed_tacticals
+
+        with self.session_factory() as session:
+            stmt = select(Features.game_id).distinct().outerjoin(
+                Analyzed_tacticals, Features.game_id == Analyzed_tacticals.game_id
+            ).where(
+                and_(
+                    Features.fen.is_not(None),
+                    Features.move_uci.is_not(None),
+                    or_(
+                        Features.score_diff.is_(None),
+                        Features.error_label.is_(None)
+                    ),
+                    Analyzed_tacticals.game_id.is_(None)
+                )
+            )
+            if limit:
+                stmt = stmt.limit(limit)
+
+            result = session.execute(stmt)
+            return [row[0] for row in result.fetchall()]
+
+    def get_tactical_coverage_by_source(self, source: str):
+        """Get tactical feature coverage statistics for a specific source."""
+        with self.session_factory() as session:
+            stmt = select(
+                sqlalchemy.func.count().label('total'),
+                sqlalchemy.func.count(
+                    Features.score_diff).label('with_tactical')
+            ).join(
+                Games, Features.game_id == Games.game_id
+            ).where(Games.source == source)
+
+            result = session.execute(stmt).fetchone()
+            total = result.total
+            with_tactical = result.with_tactical
+            percentage = (with_tactical / total * 100) if total > 0 else 0
+
+            return {
+                'total': total,
+                'with_tactical': with_tactical,
+                'percentage': percentage
+            }
+
+    def get_tactical_coverage(self):
+        """Get tactical feature coverage statistics for all sources."""
+        with self.session_factory() as session:
+            stmt = select(
+                sqlalchemy.func.count().label('total'),
+                sqlalchemy.func.count(
+                    Features.score_diff).label('with_tactical')
+            )
+
+            result = session.execute(stmt).fetchone()
+            total = result.total
+            with_tactical = result.with_tactical
+            percentage = (with_tactical / total * 100) if total > 0 else 0
+
+            return {
+                'total': total,
+                'with_tactical': with_tactical,
+                'percentage': percentage
+            }
+
+    def get_features_missing_tactical_data(self, source: str = None, limit: int = None):
+        """Get features that are missing tactical analysis (score_diff is NULL)."""
+        from db.models.games import Games
+        import pandas as pd
+
+        with self.session_factory() as session:
+            stmt = select(Features).join(
+                Games, Features.game_id == Games.game_id
+            ).where(
+                Features.score_diff.is_(None),
+                Features.fen.is_not(None),
+                Features.move_uci.is_not(None)
+            )
+
+            if source:
+                stmt = stmt.where(Games.source == source)
+
+            if limit:
+                stmt = stmt.limit(limit)
+
+            result = session.execute(stmt).fetchall()
+
+            # Convert to DataFrame with column names
+            if result:
+                columns = [col.name for col in Features.__table__.columns]
+                data = []
+                for row in result:
+                    features_obj = row[0]  # Features object
+                    row_data = []
+                    for col in columns:
+                        row_data.append(getattr(features_obj, col))
+                    data.append(row_data)
+
+                return pd.DataFrame(data, columns=columns)
+            else:
+                return pd.DataFrame()
+
+    def update_tactical_features(self, game_id: str, move_number: int, score_diff: float, error_label: str):
+        """
+        Update tactical features (score_diff and error_label) for a specific game position.
+
+        Args:
+            game_id: The game identifier
+            move_number: The move number in the game
+            score_diff: The score difference value
+            error_label: The error classification label
+        """
+        try:
+            with self.session_factory() as session:
+                stmt = update(Features).where(
+                    and_(
+                        Features.game_id == game_id,
+                        Features.move_number == move_number
+                    )
+                ).values(
+                    score_diff=score_diff,
+                    error_label=error_label
+                )
+
+                result = session.execute(stmt)
+                session.commit()
+
+                if result.rowcount == 0:
+                    logger.warning(
+                        f"No features found to update for game {game_id}, move {move_number}")
+                    return False
+
+                logger.debug(
+                    f"Updated tactical features for game {game_id}, move {move_number}")
+                return True
+
+        except Exception as e:
+            logger.error(
+                f"Error updating tactical features for game {game_id}: {e}")
+            if session:
+                session.rollback()
+            raise e
+
+    def update_tactical_features_bulk(self, updates: List[Dict]):
+        """
+        Bulk update tactical features for multiple game positions.
+
+        Args:
+            updates: List of dictionaries with game_id, move_number, score_diff, error_label
+        """
+        try:
+            with self.session_factory() as session:
+                for update_data in updates:
+                    stmt = update(Features).where(
+                        and_(
+                            Features.game_id == update_data['game_id'],
+                            Features.move_number == update_data.get(
+                                'move_number', 0)
+                        )
+                    ).values(
+                        score_diff=update_data['score_diff'],
+                        error_label=update_data['error_label']
+                    )
+                    session.execute(stmt)
+
+                session.commit()
+                logger.info(f"Bulk updated {len(updates)} tactical features")
+                return True
+
+        except Exception as e:
+            logger.error(f"Error in bulk update of tactical features: {e}")
+            if session:
+                session.rollback()
+            raise e

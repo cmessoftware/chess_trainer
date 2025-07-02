@@ -28,6 +28,20 @@ This project allows you to analyze and tactically train chess games using data s
 
 See the [`VERSIÓN_BASE.md`](./VERSION_BASE.md) file for the complete project structure.
 
+## Documentation
+
+### Core Analysis Documentation
+- **[Tactical Features Enhancement Guide](docs/TACTICAL_FEATURES_ENHANCEMENT.md)** - Comprehensive guide for improving tactical feature coverage in chess datasets
+- **[Tactical Features Low Coverage Analysis](docs/TACTICAL_FEATURES_LOW_COVERAGE_ANALYSIS.md)** - Root cause analysis and solutions for low tactical feature representation
+
+### Configuration and Setup
+- **[Dataset Volumes Configuration](DATASETS_VOLUMES_CONFIG.md)** - Docker volume setup for dataset sharing
+- **[Windows Setup Guide](WINDOWS_SETUP_GUIDE.md)** - Complete setup guide for Windows environments
+- **[Git LFS Setup Guide](GIT_LFS_SETUP_GUIDE.md)** - Large file storage configuration
+
+### Testing and Development
+- **[Testing Guide](tests/README.md)** - Comprehensive testing documentation and runner guides
+
 ## Quick usage
 
 ### Docker Setup (Recommended)
