@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.1.61] - 2025-07-02
+
+### Added
+- **Parameter Consistency** - Unified command-line parameter naming across all tactical analysis scripts:
+  - Changed `--limit` to `--max-games` in `estimate_tactical_features.py` for consistency with other scripts
+  - Updated pipeline `run_pipeline.sh` to handle `--max-games` parameter correctly
+  - Enhanced parameter documentation and examples in help output
+- **Pipeline Integration** - Complete integration of tactical analysis tools into main pipeline:
+  - All tactical analysis commands now properly integrated and tested
+  - Improved error handling and user feedback
+  - Enhanced documentation with clear examples for each command
+
+### Fixed
+- **Parameter Naming Inconsistency** - Resolved inconsistent parameter naming between scripts:
+  - `estimate_tactical_features.py` now uses `--max-games` instead of `--limit`
+  - Pipeline parameter passing now correctly handles all tactical analysis options
+  - Updated help documentation to reflect consistent parameter usage
+- **Process Control** - Enhanced process management and cleanup in tactical analysis:
+  - Improved signal handling and graceful shutdowns
+  - Better timeout management for long-running processes
+  - Robust cleanup of background processes and resources
+
 ## [v0.1.59] - 2025-07-01
 
 ### Added
