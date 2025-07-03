@@ -190,6 +190,46 @@ class SmartUserDiscovery:
         except Exception as e:
             logger.error(f"❌ Error saving cache: {e}")
 
+    def _load_known_users(self):
+        """Load known users from the known_users.json file."""
+        if not self.known_users_file.exists():
+            logger.info("📝 Known users file not found, creating template...")
+            return
+
+        try:
+            with open(self.known_users_file, 'r') as f:
+                known_data = json.load(f)
+
+            known_users = known_data.get('known_users', [])
+            loaded_count = 0
+
+            for user_data in known_users:
+                username = user_data.get('username')
+                platform = user_data.get('platform')
+
+                if not username or not platform:
+                    continue
+
+                user_key = f"{platform}:{username}"
+
+                # Add to our known users set for potential discovery
+                if user_key not in self.discovered_users:
+                    # Create a basic profile for known users
+                    # (will be enriched later when discovered)
+                    estimated_skill = user_data.get(
+                        'estimated_skill', 'intermediate')
+
+                    # Add to discovered users set so it gets prioritized
+                    self.discovered_users.add(user_key)
+                    loaded_count += 1
+
+            if loaded_count > 0:
+                logger.info(
+                    f"👥 Loaded {loaded_count} known users for prioritized discovery")
+
+        except Exception as e:
+            logger.warning(f"⚠️ Error loading known users: {e}")
+
     def _get_skill_level_range(self, skill_level: SkillLevel) -> Tuple[int, int]:
         """Get rating range for skill level."""
         ranges = {
@@ -913,7 +953,83 @@ class SmartUserDiscovery:
                 f"⚠️ Unknown discovery method: {self.discovery_method}, using efficient")
             return self._get_real_users_efficiently(platform, max_users)
 
-    # ...existing code...
+    def get_known_usernames(self, platform: Platform, max_users: int = 100) -> List[str]:
+        """Get usernames from the known users list for a specific platform."""
+        if not self.known_users_file.exists():
+            return []
+
+        try:
+            with open(self.known_users_file, 'r') as f:
+                known_data = json.load(f)
+
+            known_users = known_data.get('known_users', [])
+            platform_users = []
+
+            for user_data in known_users:
+                username = user_data.get('username')
+                user_platform = user_data.get('platform')
+
+                if not username or not user_platform:
+                    continue
+
+                # Check if platform matches
+                if platform == Platform.BOTH or user_platform == platform.value:
+                    platform_users.append(username)
+
+                if len(platform_users) >= max_users:
+                    break
+
+            logger.info(
+                f"👥 Retrieved {len(platform_users)} known users for {platform.value}")
+            return platform_users
+
+        except Exception as e:
+            logger.warning(f"⚠️ Error getting known users: {e}")
+            return []
+
+    def add_known_user(self, username: str, platform: str, description: str = "",
+                       estimated_skill: str = "intermediate", notes: str = ""):
+        """Add a new known user to the known_users.json file."""
+        try:
+            # Load existing data
+            known_data = {"known_users": []}
+            if self.known_users_file.exists():
+                with open(self.known_users_file, 'r') as f:
+                    known_data = json.load(f)
+
+            # Check if user already exists
+            existing_users = known_data.get('known_users', [])
+            for existing_user in existing_users:
+                if (existing_user.get('username') == username and
+                        existing_user.get('platform') == platform):
+                    logger.warning(
+                        f"⚠️ User {username} on {platform} already exists in known users")
+                    return False
+
+            # Add new user
+            new_user = {
+                "username": username,
+                "platform": platform,
+                "description": description,
+                "estimated_skill": estimated_skill,
+                "added_by": "manual",
+                "added_date": datetime.now().isoformat(),
+                "notes": notes
+            }
+
+            known_data['known_users'].append(new_user)
+            known_data['last_updated'] = datetime.now().isoformat()
+
+            # Save updated data
+            with open(self.known_users_file, 'w') as f:
+                json.dump(known_data, f, indent=2)
+
+            logger.info(f"✅ Added known user: {username} ({platform})")
+            return True
+
+        except Exception as e:
+            logger.error(f"❌ Error adding known user: {e}")
+            return False
 
 
 def main():
@@ -982,33 +1098,3 @@ Examples:
 
             # Print summary
             print(f"\n📊 Discovery Summary:")
-            print(f"   - Total users found: {len(discovered_users)}")
-            print(
-                f"   - Platforms: {', '.join(set(u.platform for u in discovered_users))}")
-            print(
-                f"   - Skill levels: {', '.join(set(u.skill_level for u in discovered_users))}")
-            print(f"   - Export file: {export_path}")
-
-            # Show sample users
-            if len(discovered_users) > 0:
-                print(f"\n👥 Sample discovered users:")
-                for i, user in enumerate(discovered_users[:5]):
-                    avg_rating = sum(user.ratings.values()) / \
-                        len(user.ratings) if user.ratings else 0
-                    print(
-                        f"   {i+1}. {user.username} ({user.platform}) - {avg_rating:.0f} rating - {user.total_games} games")
-
-                if len(discovered_users) > 5:
-                    print(f"   ... and {len(discovered_users) - 5} more users")
-        else:
-            print("❌ No users discovered. Try adjusting the search parameters.")
-
-    except KeyboardInterrupt:
-        logger.info("⚠️ Discovery interrupted by user")
-    except Exception as e:
-        logger.error(f"❌ Discovery failed: {e}")
-        raise
-
-
-if __name__ == "__main__":
-    main()
