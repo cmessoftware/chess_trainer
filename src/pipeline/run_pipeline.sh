@@ -316,6 +316,30 @@ generate_features() {
   echo -e "${GREEN}🏁 Feature generation completed for all sources!${NC}"
 }
 
+generate_features_with_tactics() {
+  echo -e "${CYAN}🧹 Clearing generate_features_with_tactics logs${NC}"
+  rm -rf /app/src/logs/generate_features_with_tactics*
+  
+  echo -e "${CYAN}🔄 Running integrated feature generation + tactical analysis...${NC}"
+  python /app/src/scripts/generate_features_with_tactics.py "$@"
+}
+
+estimate_tactical_features() {
+  echo -e "${CYAN}🧹 Clearing estimate_tactical_features logs${NC}"
+  rm -rf /app/src/logs/estimate_tactical_features*
+  
+  echo -e "${CYAN}⚡ Running fast lightweight tactical feature estimation...${NC}"
+  python /app/src/scripts/estimate_tactical_features.py "$@"
+}
+
+test_tactical_analysis() {
+  echo -e "${CYAN}🧹 Clearing test_tactical_analysis logs${NC}"
+  rm -rf /app/src/logs/test_tactical_analysis*
+  
+  echo -e "${CYAN}🧪 Testing and reporting tactical analysis coverage...${NC}"
+  python /app/src/scripts/test_tactical_analysis.py "$@"
+}
+
 clean_db() {
   python db/truncate_postgres_tables.py
 }
@@ -632,7 +656,7 @@ case "$1" in
     shift
     run_from_step "$1"
     ;;
-  auto_tag|analyze_tactics|generate_exercises|generate_features|clean_db|export_dataset|import_pgns|init_db|clean_cache|get_games|inspect_pgn|clean_games|inspect_pgn_zip|check_db|run_upto|clean_analysis_data|create_issues|get_random_games)
+  auto_tag|analyze_tactics|generate_exercises|generate_features|generate_features_with_tactics|estimate_tactical_features|test_tactical_analysis|clean_db|export_dataset|import_pgns|init_db|clean_cache|get_games|inspect_pgn|clean_games|inspect_pgn_zip|check_db|run_upto|clean_analysis_data|create_issues|get_random_games)
     STEP="$1"
     shift
     run_step "$STEP" "$STEP" "$@"
