@@ -1,8 +1,14 @@
-# CHESS TRAINER - Versión: v0.1.68-955732b
+# CHESS TRAINER - Versión: v0.1.70-9196e4d
 
 # ♟ chess_trainer – Analysis and Training with Elite Games
 
-This project automates the import, analysis, labeling, and training from thousands of games played by elite players (ELO >2300), combining tactical analysis with visual exploration and exercise generation.
+This project automates the import, analysis, labeling, and training from thousands of games playe## High Priority Data Pipeline Issues
+
+| Item                                                                | Status      | Priority | Issues #                                                       |
+| ------------------------------------------------------------------- | ----------- | -------- | -------------------------------------------------------------- |
+| Complete PGN capture and ZIP file processing                        | ✅ Completed | HIGH     | [#74](https://github.com/cmessoftware/chess_trainer/issues/74) |
+| Generate Stockfish features (mate_in, error_label, score_diff)      | Pending     | HIGH     | [#75](https://github.com/cmessoftware/chess_trainer/issues/75) |
+| Generate Parquet datasets by source (personal, novice, elite, fide) | Pending     | HIGH     | [#76](https://github.com/cmessoftware/chess_trainer/issues/76) | ite players (ELO >2300), combining tactical analysis with visual exploration and exercise generation. |
 
 ---
 
@@ -186,17 +192,32 @@ Once the model is trained, you can use it to make personalized recommendations t
 
     Show the player the games in which they made the most mistakes, how they could have played better, and give advice to avoid those mistakes.
 
-# 5. Summary of next steps:
+# 5. Summary of next steps (Macro Stages)
 
-- Collect game data (PGN, Chess.com API or Lichess API).
+## Current ML Workflow Progress
 
-- Preprocess the data (cleaning, transforming moves into numeric values).
+| Item                                                                   | Status      | Priority | Issues #                                                       |
+| ---------------------------------------------------------------------- | ----------- | -------- | -------------------------------------------------------------- |
+| Collect game data (PGN, Chess.com API or Lichess API)                  | Completed   | ✅        | [#72](https://github.com/cmessoftware/chess_trainer/issues/72) |
+| Get features and training data in datasets                             | Completed   | ✅        | [#73](https://github.com/cmessoftware/chess_trainer/issues/73) |
+| Preprocess the data (cleaning, transforming moves into numeric values) | In Progress | HIGH     | [#66](https://github.com/cmessoftware/chess_trainer/issues/66) |
+| Train a Machine Learning model to predict patterns or errors in games  | Pending     | HIGH     | [#67](https://github.com/cmessoftware/chess_trainer/issues/67) |
+| Evaluate the model and make adjustments if necessary                   | Pending     | HIGH     | [#68](https://github.com/cmessoftware/chess_trainer/issues/68) |
+| Implement the model in your Fast API API and generate recommendations  | Pending     | MEDIUM   | [#69](https://github.com/cmessoftware/chess_trainer/issues/69) |
 
-- Train a Machine Learning model to predict patterns or errors in games.
+## High Priority Data Pipeline Issues
 
-- Evaluate the model and make adjustments if necessary.
+| Item                                                                | Status  | Priority | Issues #                                                       |
+| ------------------------------------------------------------------- | ------- | -------- | -------------------------------------------------------------- |
+| Complete PGN capture and ZIP file processing                        | Pending | HIGH     | [#74](https://github.com/cmessoftware/chess_trainer/issues/74) |
+| Generate Stockfish features (mate_in, error_label, score_diff)      | Pending | HIGH     | [#75](https://github.com/cmessoftware/chess_trainer/issues/75) |
+| Generate Parquet datasets by source (personal, novice, elite, fide) | Pending | HIGH     | [#76](https://github.com/cmessoftware/chess_trainer/issues/76) |
 
-- Implement the model in your Django API and generate personalized recommendations for users.
+## Architecture and UI Improvements
+
+| Item                                                                | Status  | Priority | Issues #                                                       |
+| ------------------------------------------------------------------- | ------- | -------- | -------------------------------------------------------------- |
+| Refactor pages to modular architecture (UI → Services → Repository) | Pending | MEDIUM   | [#77](https://github.com/cmessoftware/chess_trainer/issues/77) |
 
 This approach will provide you with a solid foundation to integrate Machine Learning and AI into your chess project, improving both game analysis and user experience.
 
