@@ -16,11 +16,9 @@ services:
     ports:
       - "8888:8888"
     volumes:
-      - .:/chess_trainer  # Mount entire repository
-      - chess_datasets:/chess_trainer/datasets  # Shared datasets volume
-      - ./data:/chess_trainer/data  # Local data directory
-    environment:
-      - GIT_LFS_SKIP_SMUDGE=1  # Optional: skip LFS download on container start
+      - ./notebooks:/notebooks
+      - ./data:/notebooks/data
+      - chess_datasets:/notebooks/datasets # Shared volume for datasets access
 
   postgres:
     image: postgres:13
