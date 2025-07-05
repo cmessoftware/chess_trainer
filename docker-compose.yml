@@ -31,6 +31,22 @@ services:
     volumes:
       - chess_pgdata:/var/lib/postgresql/data
 
+  mlflow:
+    image: python:3.11-slim
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./mlruns:/mlflow/mlruns
+      - chess_datasets:/mlflow/data
+    working_dir: /mlflow
+    command: >
+      bash -c "
+        pip install mlflow psycopg2-binary &&
+        mlflow server --host 0.0.0.0 --port 5000 --backend-store-uri sqlite:///mlflow.db --default-artifact-root /mlflow/mlruns
+      "
+    depends_on:
+      - postgres
+
 volumes:
   chess_pgdata:
   chess_datasets: # New shared volume for Parquet datasets

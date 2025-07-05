@@ -32,5 +32,38 @@
         "tests"
     ],
     "python.testing.unittestEnabled": false,
-    "python.testing.pytestEnabled": true
+    "python.testing.pytestEnabled": true,
+    "python.defaultInterpreterPath": "/usr/local/bin/python",
+    "python.terminal.activateEnvironment": true,
+    "jupyter.notebookFileRoot": "${workspaceFolder}/notebooks",
+    "jupyter.interactiveWindow.creationMode": "perFile",
+    "files.associations": {
+        "*.ipynb": "jupyter-notebook"
+    },
+    "notebook.cellToolbarLocation": {
+        "default": "right",
+        "jupyter-notebook": "left"
+    },
+    "notebook.output.scrolling": true,
+    "notebook.output.textLineLimit": 30,
+    "ai-toolkit.enabled": true,
+    "datawrangler.enabled": true,
+    "docker.dockerComposeBuild": true,
+    "docker.dockerComposeDetached": true,
+    "terminal.integrated.defaultProfile.windows": "PowerShell",
+    "workbench.colorTheme": "Default Dark+",
+    "editor.minimap.enabled": true,
+    "editor.wordWrap": "on",
+    "files.exclude": {
+        "**/__pycache__": true,
+        "**/.pytest_cache": true,
+        "**/.mypy_cache": true,
+        "**/mlruns": false,
+        "**/.git": true
+    },
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/mlruns": true,
+        "**/.git": true
+    }
 }

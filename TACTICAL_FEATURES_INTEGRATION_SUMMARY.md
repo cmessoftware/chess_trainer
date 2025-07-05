@@ -64,13 +64,13 @@
 
 ### **Configuración por Tipo de Fuente:**
 
-| Source Type | Tactical Features Handling |
-|-------------|---------------------------|
-| `personal`  | Standard scaling, full tactical analysis |
+| Source Type | Tactical Features Handling                          |
+| ----------- | --------------------------------------------------- |
+| `personal`  | Standard scaling, full tactical analysis            |
 | `novice`    | Robust scaling (más resistente a outliers tácticos) |
-| `elite`     | Standard scaling, sin manejo de outliers |
-| `fide`      | Standard scaling, datos oficiales |
-| `stockfish` | MinMax scaling (evaluaciones acotadas) |
+| `elite`     | Standard scaling, sin manejo de outliers            |
+| `fide`      | Standard scaling, datos oficiales                   |
+| `stockfish` | MinMax scaling (evaluaciones acotadas)              |
 
 ### **Validaciones Implementadas:**
 
