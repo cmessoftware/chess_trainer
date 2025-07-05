@@ -1,0 +1,20 @@
+[
+  {
+    "title": "Aplicar estandarización de elo (campo standarized_elo)",
+    "body": "",
+    "file": "/app/VERSION_BASE_es.md",
+    "line": 368
+  },
+  {
+    "title": "Agregar campos mate_in y depth_score_diff para enriquecer modelo ML",
+    "body": "",
+    "file": "/app/VERSION_BASE_es.md",
+    "line": 369
+  },
+  {
+    "title": "Implementación SHAP en Chess para descripcion de predicciones ML.",
+    "body": "",
+    "file": "/app/VERSION_BASE_es.md",
+    "line": 370
+  }
+]

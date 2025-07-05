@@ -1,0 +1,28 @@
+[
+    {
+        "number": 74,
+        "title": "Data Collection: Complete PGN capture and ZIP file processing",
+        "priority": "high-priority",
+        "status": "completed",
+        "completion_percentage": 100,
+        "url": "https://github.com/cmessoftware/chess_trainer/issues/74"
+    },
+    {
+        "number": 75,
+        "title": "Feature Engineering: Generate Stockfish features (mate_in, error_label, score_diff)",
+        "priority": "high-priority",
+        "url": "https://github.com/cmessoftware/chess_trainer/issues/75"
+    },
+    {
+        "number": 76,
+        "title": "Data Pipeline: Generate Parquet datasets by source (personal, novice, elite, fide, stockfish)",
+        "priority": "high-priority",
+        "url": "https://github.com/cmessoftware/chess_trainer/issues/76"
+    },
+    {
+        "number": 77,
+        "title": "UI Architecture: Refactor pages to modular architecture (UI → Services → Repository → DB)",
+        "priority": "medium-priority",
+        "url": "https://github.com/cmessoftware/chess_trainer/issues/77"
+    }
+]
