@@ -316,6 +316,30 @@ generate_features() {
   echo -e "${GREEN}🏁 Feature generation completed for all sources!${NC}"
 }
 
+generate_features_with_tactics() {
+  echo -e "${CYAN}🧹 Clearing generate_features_with_tactics logs${NC}"
+  rm -rf /app/src/logs/generate_features_with_tactics*
+  
+  echo -e "${CYAN}🔄 Running integrated feature generation + tactical analysis...${NC}"
+  python /app/src/scripts/generate_features_with_tactics.py "$@"
+}
+
+estimate_tactical_features() {
+  echo -e "${CYAN}🧹 Clearing estimate_tactical_features logs${NC}"
+  rm -rf /app/src/logs/estimate_tactical_features*
+  
+  echo -e "${CYAN}⚡ Running fast lightweight tactical feature estimation...${NC}"
+  python /app/src/scripts/estimate_tactical_features.py "$@"
+}
+
+test_tactical_analysis() {
+  echo -e "${CYAN}🧹 Clearing test_tactical_analysis logs${NC}"
+  rm -rf /app/src/logs/test_tactical_analysis*
+  
+  echo -e "${CYAN}🧪 Testing and reporting tactical analysis coverage...${NC}"
+  python /app/src/scripts/test_tactical_analysis.py "$@"
+}
+
 clean_db() {
   python db/truncate_postgres_tables.py
 }
@@ -325,26 +349,188 @@ export_dataset() {
 }
 
 get_random_games() {
-  echo -e "${CYAN}📥 Importing random games from remote servers...${NC}"
-  # python scripts/generate_pgn_from_chess_servers.py "$@"
-  # Example usage:
-  python /app/src/scripts/fetch_lichess_intermediate_games.py 
-  # Validate required parameters for generate_pgn_from_chess_servers.py
+  echo -e "${CYAN}📥 Fetching random games using smart discovery algorithms...${NC}"
+  
+  # Default parameters for smart random games fetching
+  local platform="lichess"
+  local skill_level="intermediate"
+  local max_games="100"
+  local game_types="all"
+  local since_date=""
+  local output_file=""
+  local include_metadata="false"
+  
+  # Parse command line arguments
+  while [[ $# -gt 0 ]]; do
+    case $1 in
+      --platform)
+        platform="$2"
+        shift 2
+        ;;
+      --skill-level)
+        skill_level="$2"
+        shift 2
+        ;;
+      --max-games)
+        max_games="$2"
+        shift 2
+        ;;
+      --game-types)
+        game_types="$2"
+        shift 2
+        ;;
+      --since)
+        since_date="$2"
+        shift 2
+        ;;
+      --output)
+        output_file="$2"
+        shift 2
+        ;;
+      --include-metadata)
+        include_metadata="true"
+        shift
+        ;;
+      *)
+        echo -e "${YELLOW}Unknown parameter: $1${NC}"
+        shift
+        ;;
+    esac
+  done
+  
+  # Build command
+  local cmd="python /app/src/scripts/smart_random_games_fetcher.py"
+  cmd="$cmd --platform $platform"
+  cmd="$cmd --skill-level $skill_level"
+  cmd="$cmd --max-games $max_games"
+  cmd="$cmd --game-types $game_types"
+  
+  if [[ -n "$since_date" ]]; then
+    cmd="$cmd --since $since_date"
+  fi
+  
+  if [[ -n "$output_file" ]]; then
+    cmd="$cmd --output $output_file"
+  fi
+  
+  if [[ "$include_metadata" == "true" ]]; then
+    cmd="$cmd --include-metadata"
+  fi
+  
+  echo -e "${BLUE}🚀 Executing: $cmd${NC}"
+  eval "$cmd"
+  
+  if [ $? -eq 0 ]; then
+    echo -e "${GREEN}✔ Random games fetched successfully using smart discovery.${NC}"
+  else
+    echo -e "${RED}❌ Failed to fetch random games.${NC}"
+    return 1
+  fi
 }
 
 get_games() {
-  echo -e "${CYAN}📥 Importing new games from remote servers...${NC}"
-  # python scripts/generate_pgn_from_chess_servers.py "$@"
-  # Example usage:
-  python /app/src/scripts/download_games_parallel.py --server chess.com --users cmess4401 cmess1315 --since 2008-01-01
-  # Validate required parameters for generate_pgn_from_chess_servers.py
-  #TODO: Uncomment when ready9  ]
-  # if [ $# -lt 2 ]; then
-  #   echo -e "${YELLOW}Usage:${NC} $0 get_games <server> <username> [options]"
-  #   echo -e "${YELLOW}Example:${NC} $0 get_games lichess.org myuser --max-games 10"
-  #   exit 1
-  # fi
-  echo -e "${GREEN}✔ Games imported successfully.${NC}"
+  echo -e "${CYAN}📥 Importing games from remote servers...${NC}"
+  
+  # Check if using legacy or smart mode
+  local use_smart_mode="true"
+  local platform="both"
+  local max_games="500"
+  local since_date=""
+  local users_list=""
+  
+  # Parse command line arguments
+  while [[ $# -gt 0 ]]; do
+    case $1 in
+      --legacy)
+        use_smart_mode="false"
+        shift
+        ;;
+      --platform)
+        platform="$2"
+        shift 2
+        ;;
+      --max-games)
+        max_games="$2"
+        shift 2
+        ;;
+      --since)
+        since_date="$2"
+        shift 2
+        ;;
+      --users)
+        users_list="$2"
+        shift 2
+        ;;
+      --server|--users) # Legacy parameters
+        use_smart_mode="false"
+        break
+        ;;
+      *)
+        echo -e "${YELLOW}Unknown parameter: $1${NC}"
+        shift
+        ;;
+    esac
+  done
+  
+  if [[ "$use_smart_mode" == "true" ]]; then
+    echo -e "${BLUE}🧠 Using smart games fetching with heuristic user discovery...${NC}"
+    
+    # Use smart random games fetcher with balanced skill levels
+    local cmd="python /app/src/scripts/smart_random_games_fetcher.py"
+    cmd="$cmd --platform $platform"
+    cmd="$cmd --skill-level all"  # Get games from all skill levels
+    cmd="$cmd --max-games $max_games"
+    cmd="$cmd --game-types all"
+    cmd="$cmd --include-metadata"
+    
+    if [[ -n "$since_date" ]]; then
+      cmd="$cmd --since $since_date"
+    fi
+    
+    echo -e "${BLUE}🚀 Executing smart fetch: $cmd${NC}"
+    eval "$cmd"
+    
+    if [ $? -eq 0 ]; then
+      echo -e "${GREEN}✔ Games imported successfully using smart discovery.${NC}"
+    else
+      echo -e "${RED}❌ Smart fetch failed, falling back to legacy mode...${NC}"
+      use_smart_mode="false"
+    fi
+  fi
+  
+  if [[ "$use_smart_mode" == "false" ]]; then
+    echo -e "${BLUE}📡 Using legacy games download (predefined users)...${NC}"
+    
+    # Fall back to legacy parallel download
+    local legacy_cmd="python /app/src/scripts/download_games_parallel.py"
+    
+    if [[ -n "$users_list" ]]; then
+      legacy_cmd="$legacy_cmd --users $users_list"
+    fi
+    
+    if [[ -n "$since_date" ]]; then
+      legacy_cmd="$legacy_cmd --since $since_date"
+    else
+      legacy_cmd="$legacy_cmd --since 2024-01-01"  # Default since date
+    fi
+    
+    # Add default servers if not specified
+    if [[ "$*" != *"--server"* ]]; then
+      legacy_cmd="$legacy_cmd --server lichess.org chess.com"
+    else
+      legacy_cmd="$legacy_cmd $*"
+    fi
+    
+    echo -e "${BLUE}🚀 Executing legacy fetch: $legacy_cmd${NC}"
+    eval "$legacy_cmd"
+    
+    if [ $? -eq 0 ]; then
+      echo -e "${GREEN}✔ Games imported successfully using legacy method.${NC}"
+    else
+      echo -e "${RED}❌ Failed to import games.${NC}"
+      return 1
+    fi
+  fi
 }
 
 inspect_pgn() {
@@ -470,7 +656,7 @@ case "$1" in
     shift
     run_from_step "$1"
     ;;
-  auto_tag|analyze_tactics|generate_exercises|generate_features|clean_db|export_dataset|import_pgns|init_db|clean_cache|get_games|inspect_pgn|clean_games|inspect_pgn_zip|check_db|run_upto|clean_analysis_data|create_issues|get_random_games)
+  auto_tag|analyze_tactics|generate_exercises|generate_features|generate_features_with_tactics|estimate_tactical_features|test_tactical_analysis|clean_db|export_dataset|import_pgns|init_db|clean_cache|get_games|inspect_pgn|clean_games|inspect_pgn_zip|check_db|run_upto|clean_analysis_data|create_issues|get_random_games)
     STEP="$1"
     shift
     run_step "$STEP" "$STEP" "$@"
@@ -479,8 +665,39 @@ case "$1" in
     run_interactive_pipeline
     ;;
   *)
-    echo -e "${YELLOW}Usage:${NC} $0 {all | from <step> | auto_tag | analyze_tactics | generate_exercises | generate_features [args] | \
-clean_db | export_dataset | import_pgns | init_db | clean_cache | get_games | inspect_pgn | clean_games| inspect_pgn_zip| check_db| run_upto | clean_analysis_data|create_issues| get_random_games}"
+    echo -e "${YELLOW}Usage:${NC} $0 {all | from <step> | auto_tag | analyze_tactics [--method enhanced|lightweight] | generate_exercises | generate_features [args] | generate_features_with_tactics [args] | estimate_tactical_features [args] | test_tactical_analysis | \
+clean_db | export_dataset | export_unified_dataset [--type all|small|multiple] | import_pgns | init_db | clean_cache | get_games | inspect_pgn | clean_games| inspect_pgn_zip| check_db| run_upto | clean_analysis_data|create_issues| get_random_games}"
+    echo -e "${CYAN}🧠 Smart Game Fetching Commands:${NC}"
+    echo -e "  ${YELLOW}get_games${NC}                             - Smart games import with heuristic user discovery"
+    echo -e "  ${YELLOW}get_games --platform lichess${NC}          - Fetch from Lichess only using smart discovery"
+    echo -e "  ${YELLOW}get_games --platform both${NC}             - Fetch from both Lichess and Chess.com"
+    echo -e "  ${YELLOW}get_games --max-games 1000${NC}            - Limit total games to fetch"
+    echo -e "  ${YELLOW}get_games --since 2024-01-01${NC}          - Fetch games since specific date"
+    echo -e "  ${YELLOW}get_games --legacy${NC}                    - Use legacy method with predefined users"
+    echo -e "  ${YELLOW}get_random_games${NC}                      - Fetch random games using smart discovery"
+    echo -e "  ${YELLOW}get_random_games --skill-level intermediate${NC} - Target specific skill level"
+    echo -e "  ${YELLOW}get_random_games --game-types rapid blitz${NC} - Target specific game types"
+    echo -e "  ${YELLOW}get_random_games --include-metadata${NC}   - Include JSON metadata file"
+    echo -e "${CYAN}📚 New Tactical Analysis Commands:${NC}"
+    echo -e "  ${YELLOW}analyze_tactics --method enhanced${NC}     - Enhanced batch tactical analysis with tracking"
+    echo -e "  ${YELLOW}analyze_tactics --method lightweight${NC}  - Use lightweight estimation within analyze_tactics"
+    echo -e "  ${YELLOW}generate_features_with_tactics${NC}        - Integrated feature generation + tactical analysis"
+    echo -e "  ${YELLOW}estimate_tactical_features${NC}            - Fast lightweight tactical feature estimation"
+    echo -e "  ${YELLOW}test_tactical_analysis${NC}                - Test and report tactical analysis coverage"
+    echo -e "${CYAN}📚 Dataset Export Commands:${NC}"
+    echo -e "  ${YELLOW}export_dataset${NC}                        - Export each source to separate parquet files"
+    echo -e "  ${YELLOW}export_unified_dataset --type all${NC}     - Create single unified dataset from all sources"
+    echo -e "  ${YELLOW}export_unified_dataset --type small${NC}   - Create unified dataset from small sources only"
+    echo -e "  ${YELLOW}export_unified_dataset --type multiple${NC} - Create multiple unified dataset configurations"
+    echo -e "${CYAN}📝 Examples:${NC}"
+    echo -e "  ${GREEN}$0 get_games --platform both --max-games 1000 --since 2024-01-01${NC}"
+    echo -e "  ${GREEN}$0 get_random_games --platform lichess --skill-level advanced --max-games 200${NC}"
+    echo -e "  ${GREEN}$0 get_random_games --game-types rapid --include-metadata${NC}"
+    echo -e "  ${GREEN}$0 analyze_tactics --method enhanced --source personal --max-games 1000${NC}"
+    echo -e "  ${GREEN}$0 generate_features_with_tactics --source elite --max-games 500${NC}"
+    echo -e "  ${GREEN}$0 estimate_tactical_features --source personal --max-games 10000${NC}"
+    echo -e "  ${GREEN}$0 export_unified_dataset --type all${NC}"
+    echo -e "  ${GREEN}$0 export_unified_dataset --type small${NC}"
     exit 1
     ;;
 esac
