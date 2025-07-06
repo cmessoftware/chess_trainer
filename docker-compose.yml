@@ -7,7 +7,7 @@ services:
       - "8501:8501"
     volumes:
       - ./data:/app/data
-      - chess_datasets:/app/src/data # Shared volume for generated datasets
+      - chess_datasets:/app/data/shared # Shared volume for generated datasets
 
   notebooks:
     build:
@@ -18,7 +18,7 @@ services:
     volumes:
       - ./notebooks:/notebooks
       - ./data:/notebooks/data
-      - chess_datasets:/notebooks/datasets # Shared volume for datasets access
+      - chess_datasets:/notebooks/data/shared # Shared volume for datasets access
 
   postgres:
     image: postgres:13

@@ -1,0 +1,85 @@
+{
+  "profiles": [
+    {
+      "username": "queen2",
+      "platform": "lichess",
+      "ratings": {
+        "bullet": 1500,
+        "blitz": 1500,
+        "rapid": 1414,
+        "classical": 1500
+      },
+      "total_games": 1,
+      "last_seen": "2025-07-02T01:09:50.291511",
+      "profile_url": "https://lichess.org/@/queen2",
+      "discovery_date": "2025-07-02T01:09:50.291514",
+      "skill_level": "intermediate",
+      "verified": true
+    },
+    {
+      "username": "user93",
+      "platform": "lichess",
+      "ratings": {
+        "bullet": 1500,
+        "blitz": 1500,
+        "rapid": 1500,
+        "classical": 1500
+      },
+      "total_games": 0,
+      "last_seen": "2025-07-02T01:09:56.450217",
+      "profile_url": "https://lichess.org/@/user93",
+      "discovery_date": "2025-07-02T01:09:56.450220",
+      "skill_level": "intermediate",
+      "verified": true
+    },
+    {
+      "username": "pawn2009",
+      "platform": "lichess",
+      "ratings": {
+        "bullet": 1154,
+        "blitz": 1355,
+        "rapid": 1526,
+        "classical": 1704
+      },
+      "total_games": 302,
+      "last_seen": "2025-07-02T01:09:57.681793",
+      "profile_url": "https://lichess.org/@/pawn2009",
+      "discovery_date": "2025-07-02T01:09:57.681797",
+      "skill_level": "intermediate",
+      "verified": true
+    },
+    {
+      "username": "castle",
+      "platform": "lichess",
+      "ratings": {
+        "bullet": 1221,
+        "blitz": 1544,
+        "rapid": 1850,
+        "classical": 1850
+      },
+      "total_games": 106,
+      "last_seen": "2025-07-02T01:10:07.543121",
+      "profile_url": "https://lichess.org/@/castle",
+      "discovery_date": "2025-07-02T01:10:07.543124",
+      "skill_level": "intermediate",
+      "verified": true
+    },
+    {
+      "username": "blitz2020",
+      "platform": "lichess",
+      "ratings": {
+        "bullet": 1500,
+        "blitz": 1500,
+        "rapid": 1500,
+        "classical": 1500
+      },
+      "total_games": 0,
+      "last_seen": "2025-07-02T01:10:13.696141",
+      "profile_url": "https://lichess.org/@/blitz2020",
+      "discovery_date": "2025-07-02T01:10:13.696144",
+      "skill_level": "intermediate",
+      "verified": true
+    }
+  ],
+  "last_updated": "2025-07-02T01:10:13.696475"
+}

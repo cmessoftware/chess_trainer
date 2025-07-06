@@ -1,0 +1,48 @@
+{
+  "export_date": "2025-07-02T04:05:34.026764",
+  "total_users": 3,
+  "users": [
+    {
+      "username": "chess52",
+      "platform": "lichess",
+      "ratings": {
+        "bullet": 1500,
+        "blitz": 1790,
+        "rapid": 1839,
+        "classical": 1500
+      },
+      "total_games": 4,
+      "profile_url": "https://lichess.org/@/chess52",
+      "skill_level": "intermediate",
+      "discovery_date": "2025-07-02T04:05:31.540456"
+    },
+    {
+      "username": "castle1995",
+      "platform": "lichess",
+      "ratings": {
+        "bullet": 1500,
+        "blitz": 1500,
+        "rapid": 1408,
+        "classical": 1500
+      },
+      "total_games": 1,
+      "profile_url": "https://lichess.org/@/castle1995",
+      "skill_level": "intermediate",
+      "discovery_date": "2025-07-02T04:05:32.795917"
+    },
+    {
+      "username": "chesselo",
+      "platform": "lichess",
+      "ratings": {
+        "bullet": 1500,
+        "blitz": 1500,
+        "rapid": 1500,
+        "classical": 1500
+      },
+      "total_games": 0,
+      "profile_url": "https://lichess.org/@/chesselo",
+      "skill_level": "intermediate",
+      "discovery_date": "2025-07-02T04:05:34.025926"
+    }
+  ]
+}

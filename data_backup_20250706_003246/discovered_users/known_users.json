@@ -1,0 +1,77 @@
+{
+  "description": "Archivo para registrar usuarios conocidos (amigos, etc.) que serán incluidos en el discovery",
+  "version": "1.0",
+  "last_updated": "2025-07-02T20:00:00",
+  "known_users": [
+    {
+      "username": "Magnus_Carlsen_Official",
+      "platform": "lichess",
+      "description": "Magnus Carlsen - Campeón Mundial",
+      "estimated_skill": "expert",
+      "added_by": "manual",
+      "added_date": "2025-07-02T20:00:00",
+      "notes": "Cuenta oficial de Magnus Carlsen"
+    },
+    {
+      "username": "Hikaru",
+      "platform": "lichess", 
+      "description": "Hikaru Nakamura - Streamer",
+      "estimated_skill": "expert",
+      "added_by": "manual",
+      "added_date": "2025-07-02T20:00:00",
+      "notes": "Popular streamer y GM"
+    },
+    {
+      "username": "DrNykterstein",
+      "platform": "lichess",
+      "description": "Magnus Carlsen alt account",
+      "estimated_skill": "expert", 
+      "added_by": "manual",
+      "added_date": "2025-07-02T20:00:00",
+      "notes": "Cuenta alternativa de Magnus"
+    },
+    {
+      "username": "penguingm1",
+      "platform": "lichess",
+      "description": "Penguin GM - Strong player",
+      "estimated_skill": "expert",
+      "added_by": "manual", 
+      "added_date": "2025-07-02T20:00:00",
+      "notes": "Jugador fuerte conocido"
+    },
+    {
+      "username": "MagnusCarlsen",
+      "platform": "chess.com",
+      "description": "Magnus Carlsen en Chess.com",
+      "estimated_skill": "expert",
+      "added_by": "manual",
+      "added_date": "2025-07-02T20:00:00", 
+      "notes": "Cuenta de Magnus en Chess.com"
+    },
+    {
+      "username": "Hikaru",
+      "platform": "chess.com",
+      "description": "Hikaru Nakamura en Chess.com", 
+      "estimated_skill": "expert",
+      "added_by": "manual",
+      "added_date": "2025-07-02T20:00:00",
+      "notes": "Cuenta de Hikaru en Chess.com"
+    },
+    {
+      "username": "Th3_Hound",
+      "platform": "chess.com",
+      "description": "Rafa Medina Chess.com", 
+      "estimated_skill": "expert",
+      "added_by": "manual",
+      "added_date": "2025-07-02T20:00:00",
+      "notes": "Cuenta de Rafa Medina en Chess.com"
+    }
+  ],
+  "instructions": {
+    "how_to_add_users": "Agrega nuevos usuarios al array 'known_users' siguiendo el formato mostrado",
+    "fields_required": ["username", "platform", "estimated_skill"],
+    "fields_optional": ["description", "added_by", "added_date", "notes"],
+    "platforms_supported": ["lichess", "chess.com"],
+    "skill_levels": ["beginner", "intermediate", "advanced", "expert", "all"]
+  }
+}

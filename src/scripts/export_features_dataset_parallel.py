@@ -4,7 +4,7 @@ from concurrent.futures import ProcessPoolExecutor
 from db.repository.features_repository import FeaturesRepository
 
 # Constants
-EXPORT_DIR = os.environ.get("EXPORT_DIR", "/app/src/data/export")
+EXPORT_DIR = os.environ.get("EXPORT_DIR", "/app/data/export")
 SOURCES = ["personal", "novice", "elite", "stockfish", "fide"]
 
 

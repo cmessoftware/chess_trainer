@@ -1,0 +1,76 @@
+{
+  "export_date": "2025-07-02T01:10:13.700403",
+  "total_users": 5,
+  "users": [
+    {
+      "username": "queen2",
+      "platform": "lichess",
+      "ratings": {
+        "bullet": 1500,
+        "blitz": 1500,
+        "rapid": 1414,
+        "classical": 1500
+      },
+      "total_games": 1,
+      "profile_url": "https://lichess.org/@/queen2",
+      "skill_level": "intermediate",
+      "discovery_date": "2025-07-02T01:09:50.291514"
+    },
+    {
+      "username": "user93",
+      "platform": "lichess",
+      "ratings": {
+        "bullet": 1500,
+        "blitz": 1500,
+        "rapid": 1500,
+        "classical": 1500
+      },
+      "total_games": 0,
+      "profile_url": "https://lichess.org/@/user93",
+      "skill_level": "intermediate",
+      "discovery_date": "2025-07-02T01:09:56.450220"
+    },
+    {
+      "username": "pawn2009",
+      "platform": "lichess",
+      "ratings": {
+        "bullet": 1154,
+        "blitz": 1355,
+        "rapid": 1526,
+        "classical": 1704
+      },
+      "total_games": 302,
+      "profile_url": "https://lichess.org/@/pawn2009",
+      "skill_level": "intermediate",
+      "discovery_date": "2025-07-02T01:09:57.681797"
+    },
+    {
+      "username": "castle",
+      "platform": "lichess",
+      "ratings": {
+        "bullet": 1221,
+        "blitz": 1544,
+        "rapid": 1850,
+        "classical": 1850
+      },
+      "total_games": 106,
+      "profile_url": "https://lichess.org/@/castle",
+      "skill_level": "intermediate",
+      "discovery_date": "2025-07-02T01:10:07.543124"
+    },
+    {
+      "username": "blitz2020",
+      "platform": "lichess",
+      "ratings": {
+        "bullet": 1500,
+        "blitz": 1500,
+        "rapid": 1500,
+        "classical": 1500
+      },
+      "total_games": 0,
+      "profile_url": "https://lichess.org/@/blitz2020",
+      "skill_level": "intermediate",
+      "discovery_date": "2025-07-02T01:10:13.696144"
+    }
+  ]
+}
