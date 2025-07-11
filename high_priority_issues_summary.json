@@ -1,0 +1,43 @@
+[
+    {
+        "number": 74,
+        "title": "Data Collection: Complete PGN capture and ZIP file processing",
+        "priority": "high-priority",
+        "status": "completed",
+        "completion_percentage": 100,
+        "url": "https://github.com/cmessoftware/chess_trainer/issues/74"
+    },
+    {
+        "number": 75,
+        "title": "Feature Engineering: Generate Stockfish features (mate_in, error_label, score_diff)",
+        "priority": "high-priority",
+        "status": "completed",
+        "completion_percentage": 95,
+        "url": "https://github.com/cmessoftware/chess_trainer/issues/75",
+        "note": "Core features implemented, mate_in and depth_score_diff pending (Issue #80)"
+    },
+    {
+        "number": 76,
+        "title": "Data Pipeline: Generate Parquet datasets by source (personal, novice, elite, fide, stockfish)",
+        "priority": "high-priority",
+        "status": "completed",
+        "completion_percentage": 90,
+        "url": "https://github.com/cmessoftware/chess_trainer/issues/76",
+        "note": "Pipeline implemented, ELO standardization pending (Issue #21)"
+    },
+    {
+        "number": 77,
+        "title": "UI Architecture: Refactor pages to modular architecture (UI → Services → Repository → DB)",
+        "priority": "medium-priority",
+        "url": "https://github.com/cmessoftware/chess_trainer/issues/77"
+    },
+    {
+        "number": 78,
+        "title": "ML Pipeline: Implement reliable chess move prediction with MLflow tracking",
+        "priority": "high-priority",
+        "status": "completed",
+        "completion_percentage": 100,
+        "url": "https://github.com/cmessoftware/chess_trainer/issues/78",
+        "note": "Fully implemented with Random Forest model, MLflow tracking, and real-time predictions"
+    }
+]

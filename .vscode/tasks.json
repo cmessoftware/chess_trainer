@@ -1,0 +1,93 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "� ML Workflow: Initialize MLflow with PostgreSQL",
+			"type": "shell",
+			"command": "docker-compose exec mlflow python /mlflow/src/ml/init_mlflow_db.py",
+			"group": "build",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "�🚀 ML Workflow: Start MLflow Server",
+			"type": "shell",
+			"command": "docker-compose up -d mlflow",
+			"group": "build",
+			"isBackground": true,
+			"problemMatcher": []
+		},
+		{
+			"label": "📊 ML Workflow: Start All Services",
+			"type": "shell",
+			"command": "docker-compose up -d",
+			"group": "build",
+			"isBackground": true,
+			"problemMatcher": []
+		},
+		{
+			"label": "🔬 ML Workflow: Execute Training Notebook",
+			"type": "shell",
+			"command": "docker-compose exec notebooks jupyter nbconvert --execute --to notebook --inplace /notebooks/ml_workflow_integrated.ipynb",
+			"group": "test",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "🌐 ML Workflow: Open MLflow UI",
+			"type": "shell",
+			"command": "start http://localhost:5000",
+			"group": "none",
+			"isBackground": false,
+			"problemMatcher": [],
+			"windows": {
+				"command": "cmd",
+				"args": [
+					"/c",
+					"start",
+					"http://localhost:5000"
+				]
+			}
+		},
+		{
+			"label": "🔍 ML Workflow: View Docker Logs",
+			"type": "shell",
+			"command": "docker-compose logs -f mlflow",
+			"group": "none",
+			"isBackground": true,
+			"problemMatcher": []
+		},
+		{
+			"label": "🛑 ML Workflow: Stop All Services",
+			"type": "shell",
+			"command": "docker-compose down",
+			"group": "none",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "🧹 ML Workflow: Clean and Restart",
+			"type": "shell",
+			"command": "docker-compose down && docker-compose up -d",
+			"group": "build",
+			"isBackground": true,
+			"problemMatcher": []
+		},
+		{
+			"label": "🔬 ML Workflow: Test PostgreSQL Integration",
+			"type": "shell",
+			"command": "docker-compose exec mlflow python /mlflow/src/ml/test_mlflow_postgres_integration.py",
+			"group": "test",
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "🧹 ML Workflow: Cleanup SQLite File",
+			"type": "shell",
+			"command": "docker-compose exec mlflow python /mlflow/src/ml/cleanup_mlflow_sqlite.py",
+			"group": "none",
+			"isBackground": false,
+			"problemMatcher": []
+		}
+	]
+}

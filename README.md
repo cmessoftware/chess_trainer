@@ -1,4 +1,4 @@
-# CHESS TRAINER - Versión: v0.1.77-3826c87
+# CHESS TRAINER - Versión: v0.1.96-37dd218
 
 # ♟ chess_trainer – Analysis and Training with Elite Games
 
@@ -13,6 +13,13 @@ This project automates the import, analysis, labeling, and training from thousan
 - **[README (Español)](./README_es.md)** - Documentación completa del proyecto en español
 - **[Version Base (English)](./VERSION_BASE.md)** - Project overview and quick start guide
 - **[Version Base (Español)](./VERSION_BASE_es.md)** - Descripción del proyecto y guía rápida en español
+
+### Technical Documentation
+- **[MLflow PostgreSQL Integration](./docs/MLFLOW_POSTGRES_INTEGRATION.md)** - Guide for the MLflow PostgreSQL backend integration
+- **[Reliable Predictions with MLflow](./docs/PREDICCIONES_FIABLES_MLFLOW.md)** - Complete guide for making reliable chess move predictions
+- **[Docker Development Strategy](./docs/DOCKER_DEVELOPMENT_STRATEGY.md)** - Docker development workflow guide
+- **[Datasets Volumes Config](./docs/DATASETS_VOLUMES_CONFIG.md)** - Volume configuration for datasets
+- **[Git LFS Setup Guide](./docs/GIT_LFS_SETUP_GUIDE.md)** - Git Large File Storage setup guide
 
 ## Quick usage
 
@@ -188,18 +195,57 @@ Once the model is trained, you can use it to make personalized recommendations t
 
 # 5. Summary of next steps:
 
-- Collect game data (PGN, Chess.com API or Lichess API).
-
-- Preprocess the data (cleaning, transforming moves into numeric values).
+| Item                                                                   | Status        | Priority | Issues #                                                       |
+| ---------------------------------------------------------------------- | ------------- | -------- | -------------------------------------------------------------- |
+| Collect game data (PGN, Chess.com API or Lichess API)                  | ✅ Completed   | ✅        | [#72](https://github.com/cmessoftware/chess_trainer/issues/72) |
+| Get features and training data in datasets                             | ✅ Completed   | ✅        | [#73](https://github.com/cmessoftware/chess_trainer/issues/73) |
+| Preprocess the data (cleaning, transforming moves into numeric values) | ⚠️ In Progress | HIGH     | [#66](https://github.com/cmessoftware/chess_trainer/issues/66) |
+| Train a Machine Learning model to predict patterns or errors in games  | ❌ Pending     | HIGH     | [#67](https://github.com/cmessoftware/chess_trainer/issues/67) |
+| Evaluate the model and make adjustments if necessary                   | ❌ Pending     | HIGH     | [#68](https://github.com/cmessoftware/chess_trainer/issues/68) |
+| Implement the model in your Fast API API and generate recommendations  | ❌ Pending     | MEDIUM   | [#69](https://github.com/cmessoftware/chess_trainer/issues/69) |
 
 - Train a Machine Learning model to predict patterns or errors in games.
 
-- Evaluate the model and make adjustments if necessary.
+| Item                                                                | Status        | Priority | Issues #                                                       |
+| ------------------------------------------------------------------- | ------------- | -------- | -------------------------------------------------------------- |
+| Complete PGN capture and ZIP file processing                        | ⚠️ In Progress | HIGH     | [#74](https://github.com/cmessoftware/chess_trainer/issues/74) |
+| Generate Stockfish features (mate_in, error_label, score_diff)      | ⚠️ In Progress | HIGH     | [#75](https://github.com/cmessoftware/chess_trainer/issues/75) |
+| Generate Parquet datasets by source (personal, novice, elite, fide) | ⚠️ In Progress | HIGH     | [#76](https://github.com/cmessoftware/chess_trainer/issues/76) |
 
-- Implement the model in your Django API and generate personalized recommendations for users.
+## ML Pipeline Core Issues
+
+| Item                                                      | Status        | Priority | Issues #                                                       |
+| --------------------------------------------------------- | ------------- | -------- | -------------------------------------------------------------- |
+| Preprocess chess data (cleaning, transforming moves)      | ⚠️ In Progress | HIGH     | [#66](https://github.com/cmessoftware/chess_trainer/issues/66) |
+| Train Machine Learning model for chess pattern prediction | ❌ Pending     | HIGH     | [#67](https://github.com/cmessoftware/chess_trainer/issues/67) |
+| Model evaluation and performance optimization             | ❌ Pending     | HIGH     | [#68](https://github.com/cmessoftware/chess_trainer/issues/68) |
+| Implement ML model in FastAPI with recommendations        | ❌ Pending     | MEDIUM   | [#69](https://github.com/cmessoftware/chess_trainer/issues/69) |
+
+## Architecture and UI Improvements
+
+| Item                                                                | Status    | Priority | Issues #                                                       |
+| ------------------------------------------------------------------- | --------- | -------- | -------------------------------------------------------------- |
+| Refactor pages to modular architecture (UI → Services → Repository) | ❌ Pending | MEDIUM   | [#77](https://github.com/cmessoftware/chess_trainer/issues/77) |
+
+## 📚 Technical Documentation
+
+### Core ML Framework Documents:
+- **[ML Theoretical Framework](./docs/ML_THEORETICAL_FRAMEWORK.md)** - Conceptos teóricos de algoritmos ML aplicados a chess_trainer
+- **[ML Current State Analysis](./docs/ML_CURRENT_STATE_ANALYSIS.md)** - Análisis detallado del estado actual vs objetivos ML
+- **[MLflow PostgreSQL Integration](./docs/MLFLOW_POSTGRES_INTEGRATION.md)** - Configuración MLflow con PostgreSQL para tracking
+- **[Reliable Chess Predictions](./docs/PREDICCIONES_FIABLES_MLFLOW.md)** - Pipeline completo ML para predicciones fiables
+
+### Current ML Implementation Status:
+- **Issue #75**: ✅ Stockfish features extraction completed
+- **Issue #76**: ✅ Parquet datasets generation completed  
+- **Issue #78**: ✅ ML Pipeline with MLflow tracking completed
+- **Issue #21**: 🔄 ELO standardization in progress (85% complete)
+- **Issue #23**: ⏳ SHAP explainability integration pending
 
 This approach will provide you with a solid foundation to integrate Machine Learning and AI into your chess project, improving both game analysis and user experience.
 
 ## Credits
 
 Developed by cmessoftware as part of their practical work for the Data Science Diploma.
+
+Last update 07-07-2025

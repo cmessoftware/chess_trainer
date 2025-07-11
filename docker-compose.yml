@@ -14,7 +14,7 @@ services:
       context: .
       dockerfile: dockerfile.notebooks
     ports:
-      - "8888:8888"
+      - "8889:8888"
     volumes:
       - ./notebooks:/notebooks
       - ./data:/notebooks/data
@@ -30,6 +30,30 @@ services:
       - "5432:5432"
     volumes:
       - chess_pgdata:/var/lib/postgresql/data
+
+  mlflow:
+    image: python:3.11-slim
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./mlruns:/mlflow/mlruns
+      - chess_datasets:/mlflow/data
+      - ./src:/mlflow/src
+    working_dir: /mlflow
+    command: >
+      bash -c "
+        pip install mlflow psycopg2-binary sqlalchemy &&
+        mlflow server --host 0.0.0.0 --port 5000 --backend-store-uri postgresql://chess:chess_pass@postgres:5432/chess_trainer_db --default-artifact-root /mlflow/mlruns
+      "
+    environment:
+      - POSTGRES_USER=chess
+      - POSTGRES_PASSWORD=chess_pass
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=chess_trainer_db
+      - PYTHONPATH=/mlflow
+    depends_on:
+      - postgres
 
 volumes:
   chess_pgdata:
