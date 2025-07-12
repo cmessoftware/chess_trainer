@@ -7,10 +7,13 @@
     "completion_percentage": 100,
     "url": "https://github.com/cmessoftware/chess_trainer/issues/78",
     "description": "Complete implementation of reliable chess move error prediction using MLflow for experiment tracking and PostgreSQL for model persistence",
-    "dependencies": [75, 76],
+    "dependencies": [
+      75,
+      76
+    ],
     "completed_features": [
       "ChessErrorPredictor class with Random Forest optimization",
-      "Real-time prediction system with Stockfish validation", 
+      "Real-time prediction system with Stockfish validation",
       "MLflow integration with PostgreSQL backend",
       "PowerShell commands: mlinit, mltrain, mlpredict, mltest",
       "Comprehensive documentation and usage guide",
@@ -19,7 +22,12 @@
     "technical_specs": {
       "model_type": "Random Forest with GridSearch optimization",
       "accuracy_target": "85-90%",
-      "prediction_classes": ["good", "inaccuracy", "mistake", "blunder"],
+      "prediction_classes": [
+        "good",
+        "inaccuracy",
+        "mistake",
+        "blunder"
+      ],
       "features_count": 16,
       "tracking_system": "MLflow with PostgreSQL",
       "validation_method": "Cross-validation + Stockfish comparison"
@@ -33,7 +41,9 @@
     "completion_percentage": 0,
     "url": "https://github.com/cmessoftware/chess_trainer/issues/23",
     "description": "Add SHAP (SHapley Additive exPlanations) to explain chess move predictions and provide interpretable AI insights",
-    "dependencies": [78],
+    "dependencies": [
+      78
+    ],
     "planned_features": [
       "SHAP explainer integration with trained models",
       "Feature importance visualization per prediction",
@@ -41,17 +51,21 @@
       "Global feature importance dashboard",
       "Integration with MLflow for explainability tracking"
     ],
-    "references": ["Implementación SHAP en Chess para descripcion de predicciones ML"]
+    "references": [
+      "Implementación SHAP en Chess para descripcion de predicciones ML"
+    ]
   },
   {
-    "number": 21, 
+    "number": 21,
     "title": "ELO Standardization: Implement standardized_elo field across all datasets",
-    "priority": "low-priority", 
+    "priority": "low-priority",
     "status": "in-progress",
     "completion_percentage": 85,
     "url": "https://github.com/cmessoftware/chess_trainer/issues/21",
     "description": "Standardize ELO ratings across different sources (Chess.com, Lichess, FIDE) for consistent player strength analysis",
-    "dependencies": [76],
+    "dependencies": [
+      76
+    ],
     "progress": [
       "Base feature extraction implemented in features_generator.py",
       "Integration points identified in chess_error_predictor.py",
@@ -66,6 +80,8 @@
       "Update data pipeline to apply standardization",
       "Validate standardized ratings against known benchmarks"
     ],
-    "references": ["Aplicar estandarización de elo (campo standarized_elo)"]
+    "references": [
+      "Aplicar estandarización de elo (campo standarized_elo)"
+    ]
   }
 ]

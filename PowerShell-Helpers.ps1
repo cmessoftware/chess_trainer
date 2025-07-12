@@ -150,7 +150,7 @@ function Sync-ToContainer {
         [string]$Service = "notebooks"
     )
     """Sync files to container"""
-    Write-Host "📁 Syncing $LocalPath to $Service:$ContainerPath" -ForegroundColor Cyan
+    Write-Host "📁 Syncing $LocalPath to ${Service}:$ContainerPath" -ForegroundColor Cyan
     docker-compose cp $LocalPath ${Service}:$ContainerPath
     Write-Host "✅ Sync completed" -ForegroundColor Green
 }
@@ -164,7 +164,7 @@ function Sync-FromContainer {
         [string]$Service = "notebooks"
     )
     """Sync files from container"""
-    Write-Host "📁 Syncing $Service:$ContainerPath to $LocalPath" -ForegroundColor Cyan
+    Write-Host "📁 Syncing ${Service}:$ContainerPath to $LocalPath" -ForegroundColor Cyan
     docker-compose cp ${Service}:$ContainerPath $LocalPath
     Write-Host "✅ Sync completed" -ForegroundColor Green
 }
@@ -308,3 +308,36 @@ Type 'Show-ChessTrainerHelp' anytime to see this help.
 
 Write-Host "✅ Chess Trainer development helpers loaded!" -ForegroundColor Green
 Write-Host "Type 'Show-ChessTrainerHelp' for available commands." -ForegroundColor Cyan
+
+function Invoke-RealDatasetsAnalysis {
+    <#
+    .SYNOPSIS
+        🔬 Run comprehensive ML analysis on real chess datasets
+    .DESCRIPTION
+        Executes a non-destructive analysis of all available chess datasets (elite, fide, novice, personal, stockfish)
+        comparing model performance, error patterns, and ELO distributions across different player types.
+    .EXAMPLE
+        Invoke-RealDatasetsAnalysis
+    #>
+    Write-Host "🔬 Starting Real Datasets ML Analysis..." -ForegroundColor Cyan
+    
+    # Copy the analysis script to the container
+    $scriptPath = Join-Path $PSScriptRoot "src\ml\analyze_real_datasets.py"
+    if (-not (Test-Path $scriptPath)) {
+        Write-Host "❌ Analysis script not found at: $scriptPath" -ForegroundColor Red
+        return
+    }
+    
+    Write-Host "📋 Copying analysis script to notebooks container..." -ForegroundColor Yellow
+    docker cp $scriptPath chess_trainer-notebooks-1:/notebooks/analyze_real_datasets.py
+    
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host "🚀 Running comprehensive datasets analysis..." -ForegroundColor Green
+        docker-compose exec notebooks python /notebooks/analyze_real_datasets.py
+        
+        Write-Host "💾 Analysis completed! Results saved in container /tmp directory" -ForegroundColor Green
+        Write-Host "📊 Check the output above for detailed insights on each dataset type" -ForegroundColor Cyan
+    } else {
+        Write-Host "❌ Failed to copy script to container" -ForegroundColor Red
+    }
+}

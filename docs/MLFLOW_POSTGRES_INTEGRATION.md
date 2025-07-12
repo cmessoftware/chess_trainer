@@ -45,6 +45,7 @@ This document describes how the `chess_trainer` project has been configured to u
 - **Start-MLflowWithPostgres**: Start MLflow server with PostgreSQL
 - **Open-MLflowUI**: Open MLflow UI in the browser
 - **Run-MLExperiment**: Run a machine learning experiment with tracking
+- **Invoke-RealDatasetsAnalysis**: Run comprehensive ML analysis on real chess datasets
 
 ### Quick Commands
 
@@ -75,3 +76,15 @@ When developing new ML features:
 1. Always use the `ChessMLflowTracker` class from `src/ml/mlflow_utils.py` to ensure proper PostgreSQL integration
 2. For scripts that need to connect to MLflow, import and use `mlflow_repo` from `src.db.repository.mlflow_repository`
 3. Use the PowerShell helpers (Initialize-MLflow, Run-MLExperiment) for consistent workflow
+
+## Real Datasets Analysis
+
+The project includes a comprehensive analysis tool for comparing model performance across different chess datasets:
+
+- **Elite Dataset**: High-level players (Elo 2500+) - Rich error labels
+- **FIDE Dataset**: Official FIDE tournament games
+- **Novice Dataset**: Beginner players (Elo ~1200)  
+- **Personal Dataset**: Personal games from Chess.com/Lichess - Most realistic error distribution
+- **Stockfish Dataset**: Engine analysis data
+
+Use `Invoke-RealDatasetsAnalysis` or `Analyze-RealDatasets` to run the analysis.

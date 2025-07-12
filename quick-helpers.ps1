@@ -46,6 +46,28 @@ function mlinit {
     Initialize-MLflow
 }
 
+function mlanalyze {
+    """🔬 Quick ML analysis of all datasets (NON-DESTRUCTIVE)"""
+    if (-not (Ensure-ProjectDirectory)) { return }
+    Write-Host "🚀 Running ML analysis on all chess datasets..." -ForegroundColor Green
+    Write-Host "⚠️ Non-destructive mode: Only reading existing data" -ForegroundColor Yellow
+    Analyze-ChessDatasets
+}
+
+function elostd {
+    """📊 Quick ELO standardization test"""
+    if (-not (Ensure-ProjectDirectory)) { return }
+    Write-Host "📊 Testing ELO standardization..." -ForegroundColor Green
+    Test-ELOStandardization
+}
+
+function cmplevels {
+    """🎯 Compare error patterns across player levels"""
+    if (-not (Ensure-ProjectDirectory)) { return }
+    Write-Host "🎯 Comparing player level error patterns..." -ForegroundColor Green
+    Compare-PlayerLevels
+}
+
 function mlexp {
     param (
         [string]$ExperimentName = "chess_error_prediction",
@@ -574,3 +596,15 @@ function info {
 Write-Host "⚡ CHESS TRAINER OPTIMIZED COMMANDS LOADED!" -ForegroundColor Green
 Write-Host "Type 'help' for all commands or 'info' for project status" -ForegroundColor Cyan
 Write-Host "Quick start: dev | ml | j | m | a | b" -ForegroundColor Yellow
+
+# 🔬 ML Real Datasets Analysis
+function Analyze-RealDatasets {
+    <#
+    .SYNOPSIS
+        🔬 Quick analysis of real chess datasets
+    .DESCRIPTION
+        Run comprehensive ML analysis comparing elite, fide, novice, personal, and stockfish datasets
+    #>
+    Write-Host "🔬 Running Real Datasets Analysis..." -ForegroundColor Cyan
+    Invoke-RealDatasetsAnalysis
+}

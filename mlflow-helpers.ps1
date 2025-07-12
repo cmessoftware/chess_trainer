@@ -82,19 +82,6 @@ function Cleanup-MLflowSQLite {
     Write-Host "✅ Verificación y limpieza completada" -ForegroundColor Green
 }
 
-function Cleanup-MLflowSQLite {
-    """Verifica y elimina el archivo SQLite de MLflow si la migración a PostgreSQL está completa"""
-    Write-Host "🧹 Verificando y limpiando archivo SQLite de MLflow..." -ForegroundColor Blue
-    
-    # Sincronizar código actualizado
-    docker-compose cp "src/" mlflow:/mlflow/src/
-    
-    # Ejecutar script de limpieza
-    docker-compose exec mlflow python /mlflow/src/ml/cleanup_mlflow_sqlite.py
-    
-    Write-Host "✅ Verificación y limpieza completada" -ForegroundColor Green
-}
-
 function Train-ChessErrorModel {
     """Entrena el modelo de predicción de errores usando MLflow"""
     Write-Host "🎯 Entrenando modelo de predicción de errores..." -ForegroundColor Blue
@@ -127,5 +114,58 @@ function Test-ChessPrediction {
     Write-Host "✅ Predicción completada" -ForegroundColor Green
 }
 
-# Exponer comandos
-Export-ModuleMember -Function Initialize-MLflow, Start-MLflowWithPostgres, Open-MLflowUI, Run-MLExperiment, Cleanup-MLflowSQLite, Train-ChessErrorModel, Test-ChessPrediction
+function Analyze-ChessDatasets {
+    """Ejecuta análisis ML comparativo en todos los datasets reales (NO DESTRUCTIVO)"""
+    Write-Host "🔬 Iniciando análisis ML de datasets reales..." -ForegroundColor Blue
+    Write-Host "⚠️ MODO NO DESTRUCTIVO: Solo lectura de datos existentes" -ForegroundColor Yellow
+    
+    # Sincronizar código actualizado
+    docker-compose cp "src/ml/analyze_real_datasets.py" notebooks:/notebooks/
+    
+    # Asegurar que el contenedor de notebooks esté corriendo
+    Write-Host "📦 Iniciando contenedor de notebooks..." -ForegroundColor Blue
+    docker-compose up -d notebooks
+    
+    # Esperar a que esté disponible
+    Start-Sleep -Seconds 3
+    
+    # Ejecutar análisis
+    Write-Host "🚀 Ejecutando análisis comparativo..." -ForegroundColor Blue
+    docker-compose exec notebooks python /notebooks/analyze_real_datasets.py
+    
+    Write-Host "✅ Análisis completado. Revisa los resultados en el log." -ForegroundColor Green
+}
+
+function Test-ELOStandardization {
+    """Ejecuta pruebas de estandarización ELO (Issue #21)"""
+    Write-Host "📊 Ejecutando pruebas de estandarización ELO..." -ForegroundColor Blue
+    
+    # Sincronizar código actualizado
+    docker-compose cp "tests/test_elo_standardization.py" notebooks:/notebooks/
+    
+    # Asegurar que el contenedor de notebooks esté corriendo
+    docker-compose up -d notebooks
+    
+    # Esperar a que esté disponible
+    Start-Sleep -Seconds 3
+    
+    # Ejecutar pruebas
+    docker-compose exec notebooks python /notebooks/test_elo_standardization.py
+    
+    Write-Host "✅ Pruebas de ELO completadas" -ForegroundColor Green
+}
+
+function Compare-PlayerLevels {
+    """Compara patrones de error entre diferentes niveles de jugadores"""
+    Write-Host "🎯 Comparando patrones de error por nivel de jugador..." -ForegroundColor Blue
+    
+    # Ejecutar análisis de datasets
+    Analyze-ChessDatasets
+    
+    Write-Host "💡 Revisa los resultados para comparar:" -ForegroundColor Cyan
+    Write-Host "  • Elite vs Novice: Precisión del modelo" -ForegroundColor White
+    Write-Host "  • Personal vs FIDE: Distribución de errores" -ForegroundColor White  
+    Write-Host "  • Stockfish vs Humanos: Patrones tácticos" -ForegroundColor White
+    
+    Write-Host "✅ Comparación completada" -ForegroundColor Green
+}
