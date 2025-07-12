@@ -1,4 +1,4 @@
-# CHESS TRAINER - Versión: v0.1.89-0339c2e
+# CHESS TRAINER - Versión: v0.1.91-8bc8d4b
 
 # ♟ chess_trainer – Analysis and Training with Elite Games
 
