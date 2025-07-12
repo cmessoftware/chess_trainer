@@ -1,4 +1,4 @@
-# CHESS TRAINER - Versión: v0.1.93-94507b7
+# CHESS TRAINER - Versión: v0.1.95-ce21811
 
 # ♟ chess_trainer – Analysis and Training with Elite Games
 
@@ -214,11 +214,11 @@ Once the model is trained, you can use it to make personalized recommendations t
 
 ## ML Pipeline Core Issues
 
-| Item                                                      | Status        | Priority | Issues #                                                                                                                        |
-| --------------------------------------------------------- | ------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| Preprocess chess data (cleaning, transforming moves)      | ✅ Completed   | HIGH     | [#66](https://github.com/cmessoftware/chess_trainer/issues/66)                                                                  |
-| Train Machine Learning model for chess pattern prediction | ✅ Completed   | HIGH     | [#67](https://github.com/cmessoftware/chess_trainer/issues/67) → [#78](https://github.com/cmessoftware/chess_trainer/issues/78) |
-| Real datasets ML analysis and comparison                  | ✅ Completed   | HIGH     | [#21](https://github.com/cmessoftware/chess_trainer/issues/21) - ELO Standardization & Dataset Analysis                        |
+| Item                                                      | Status      | Priority | Issues #                                                                                                                        |
+| --------------------------------------------------------- | ----------- | -------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| Preprocess chess data (cleaning, transforming moves)      | ✅ Completed | HIGH     | [#66](https://github.com/cmessoftware/chess_trainer/issues/66)                                                                  |
+| Train Machine Learning model for chess pattern prediction | ✅ Completed | HIGH     | [#67](https://github.com/cmessoftware/chess_trainer/issues/67) → [#78](https://github.com/cmessoftware/chess_trainer/issues/78) |
+| Real datasets ML analysis and comparison                  | ✅ Completed | HIGH     | [#21](https://github.com/cmessoftware/chess_trainer/issues/21) - ELO Standardization & Dataset Analysis                         |
 
 ## 📊 Real Datasets Analysis
 
