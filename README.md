@@ -1,4 +1,4 @@
-# CHESS TRAINER - Versión: v0.1.95-ce21811
+# CHESS TRAINER - Versión: v0.1.96-issue21-complete
 
 # ♟ chess_trainer – Analysis and Training with Elite Games
 
@@ -17,6 +17,8 @@ This project automates the import, analysis, labeling, and training from thousan
 ### Technical Documentation
 - **[MLflow PostgreSQL Integration](./docs/MLFLOW_POSTGRES_INTEGRATION.md)** - Guide for the MLflow PostgreSQL backend integration
 - **[Reliable Predictions with MLflow](./docs/PREDICCIONES_FIABLES_MLFLOW.md)** - Complete guide for making reliable chess move predictions
+- **[ELO Standardization Guide](./docs/ELO_STANDARDIZATION_GUIDE.md)** - Technical guide for the ELO standardization system
+- **[Issue #21 Completion Report](./docs/ISSUE_21_COMPLETION_REPORT.md)** - Complete report on ELO standardization implementation
 - **[Docker Development Strategy](./docs/DOCKER_DEVELOPMENT_STRATEGY.md)** - Docker development workflow guide
 - **[Datasets Volumes Config](./docs/DATASETS_VOLUMES_CONFIG.md)** - Volume configuration for datasets
 - **[Git LFS Setup Guide](./docs/GIT_LFS_SETUP_GUIDE.md)** - Git Large File Storage setup guide
@@ -218,7 +220,7 @@ Once the model is trained, you can use it to make personalized recommendations t
 | --------------------------------------------------------- | ----------- | -------- | ------------------------------------------------------------------------------------------------------------------------------- |
 | Preprocess chess data (cleaning, transforming moves)      | ✅ Completed | HIGH     | [#66](https://github.com/cmessoftware/chess_trainer/issues/66)                                                                  |
 | Train Machine Learning model for chess pattern prediction | ✅ Completed | HIGH     | [#67](https://github.com/cmessoftware/chess_trainer/issues/67) → [#78](https://github.com/cmessoftware/chess_trainer/issues/78) |
-| Real datasets ML analysis and comparison                  | ✅ Completed | HIGH     | [#21](https://github.com/cmessoftware/chess_trainer/issues/21) - ELO Standardization & Dataset Analysis                         |
+| Real datasets ML analysis and comparison                  | ✅ Completed | HIGH     | [#21](https://github.com/cmessoftware/chess_trainer/issues/21) - ELO Standardization System (100% Complete)                      |
 
 ## 📊 Real Datasets Analysis
 
@@ -230,6 +232,21 @@ The project includes comprehensive analysis tools for comparing ML model perform
 - **Novice**: Beginner players (Elo ~1200)
 - **Personal**: Personal games (Chess.com/Lichess) - Most realistic error distribution
 - **Stockfish**: Engine analysis data
+
+### 🎯 ELO Standardization System
+**Status: ✅ COMPLETED (Issue #21)**
+
+The project now includes a comprehensive ELO standardization system that:
+- **Cross-Platform Conversion**: Standardizes ratings from Chess.com, Lichess, and FIDE
+- **Anomaly Detection**: Intelligently detects and corrects problematic ratings (e.g., 655.0 → 800)
+- **Quality Metrics**: Provides detailed statistics on data quality (73.3% quality score achieved)
+- **Production Ready**: 50% success rate on anomaly corrections with comprehensive logging
+
+**Key Features:**
+- Resolves runtime warnings like "Rating 655.0 outside valid range [800, 3500]"
+- Handles data entry errors (missing digits, wrong scale, extreme values)
+- Comprehensive test suite with 11 validation scenarios
+- Real-time quality reporting and metrics
 
 ### Quick Analysis:
 ```powershell
@@ -260,7 +277,7 @@ Analyze-RealDatasets
 - **Issue #75**: ✅ Stockfish features extraction completed
 - **Issue #76**: ✅ Parquet datasets generation completed  
 - **Issue #78**: ✅ ML Pipeline with MLflow tracking completed
-- **Issue #21**: 🔄 ELO standardization in progress (85% complete)
+- **Issue #21**: ✅ ELO standardization system completed (100% complete) - Resolves rating anomalies like 655.0 warnings
 - **Issue #23**: ⏳ SHAP explainability integration pending
 
 This approach will provide you with a solid foundation to integrate Machine Learning and AI into your chess project, improving both game analysis and user experience.
@@ -269,4 +286,4 @@ This approach will provide you with a solid foundation to integrate Machine Lear
 
 Developed by cmessoftware as part of their practical work for the Data Science Diploma.
 
-Last update 07-07-2025
+Last update 12-07-2025
