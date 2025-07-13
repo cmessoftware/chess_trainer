@@ -1,0 +1,15 @@
+{
+  "timestamp": "2025-07-13 01:04:29.764454",
+  "datasets_found": 5,
+  "main_dataset_available": true,
+  "sources_available": [
+    "personal",
+    "novice",
+    "elite",
+    "stockfish",
+    "fide"
+  ],
+  "main_dataset_rows": 2717998,
+  "main_dataset_columns": 35,
+  "main_dataset_memory_mb": 3457.3026666641235
+}

@@ -42,11 +42,11 @@ def get_filter_options():
     cursor.execute("SELECT DISTINCT opening FROM games ORDER BY opening")
     openings = [r[0] for r in cursor.fetchall() if r[0]]
 
-    cursor.execute("SELECT DISTINCT event FROM games ORDER BY event")
-    events = [r[0] for r in cursor.fetchall() if r[0]]
+    cursor.execute("SELECT DISTINCT source FROM games ORDER BY source")
+    sources = [r[0] for r in cursor.fetchall() if r[0]]
 
     conn.close()
-    return white_players, black_players, ecos, openings, events
+    return white_players, black_players, ecos, openings, sources
 
 
 # Filtros

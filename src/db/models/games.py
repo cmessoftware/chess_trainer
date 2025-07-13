@@ -10,15 +10,14 @@ class Games(Base):
 
     game_id = Column(String, primary_key=True)
     pgn = Column(String)
-    site = Column(String)
-    event = Column(String)
-    date = Column(String)
-    white_player = Column(String)
-    white_elo = Column(String)  # New: White player's Elo
-    black_player = Column(String)
-    black_elo = Column(String)  # New
-    result = Column(String)
-    eco = Column(String)              # New: ECO code
-    opening = Column(String)          # New: opening description
-    # New: PGN source --> for example, personal, novice, lichess elite, stockfish test, etc.
     source = Column(String)
+    white_player = Column(String)
+    black_player = Column(String)
+    white_elo = Column(String)
+    black_elo = Column(String)
+    result = Column(String)
+    time_control = Column(String)
+    opening = Column(String)
+    eco = Column(String)
+    date_played = Column(String)
+    created_at = Column(String)

@@ -348,6 +348,26 @@ export_dataset() {
   python /app/src/scripts/export_features_dataset_parallel.py
 }
 
+generate_combined_dataset() {
+  echo -e "${CYAN}🧹 Clearing generate_combined_dataset logs${NC}"
+  rm -rf /app/src/logs/generate_combined_dataset*
+  
+  echo -e "${CYAN}🎯 Generating optimally balanced dataset (150k games)...${NC}"
+  echo -e "${CYAN}   - Elite: 50k games${NC}"
+  echo -e "${CYAN}   - Fide: 50k games${NC}"
+  echo -e "${CYAN}   - Novice: 25k games${NC}"
+  echo -e "${CYAN}   - Personal: 25k games${NC}"
+  
+  python /app/src/scripts/generate_combined_dataset.py "$@"
+  
+  if [ $? -eq 0 ]; then
+    echo -e "${GREEN}✅ Balanced dataset generated successfully${NC}"
+  else
+    echo -e "${RED}❌ Failed to generate balanced dataset${NC}"
+    return 1
+  fi
+}
+
 get_random_games() {
   echo -e "${CYAN}📥 Fetching random games using smart discovery algorithms...${NC}"
   
@@ -613,14 +633,14 @@ run_all() {
   run_step inspect_pgn inspect_pgn
   [ $? -ne 0 ] && { echo -e "${RED}❌ Step 'inspect_pgn' failed. Stopping pipeline.${NC}"; exit 1; }
 
-  run_step generate_features generate_features
-  [ $? -ne 0 ] && { echo -e "${RED}❌ Step 'generate_features' failed. Stopping pipeline.${NC}"; exit 1; }
-
-  run_step analyze_tactics analyze_tactics
-  [ $? -ne 0 ] && { echo -e "${RED}❌ Step 'analyze_tactics' failed. Stopping pipeline.${NC}"; exit 1; }
+  run_step generate_features_with_tactics generate_features_with_tactics
+  [ $? -ne 0 ] && { echo -e "${RED}❌ Step 'generate_features_with_tactics' failed. Stopping pipeline.${NC}"; exit 1; }
 
   run_step export_dataset export_dataset 
   [ $? -ne 0 ] && { echo -e "${RED}❌ Step 'export_dataset' failed. Stopping pipeline.${NC}"; exit 1; }
+
+  run_step generate_combined_dataset generate_combined_dataset
+  [ $? -ne 0 ] && { echo -e "${RED}❌ Step 'generate_combined_dataset' failed. Stopping pipeline.${NC}"; exit 1; }
 
   run_step generate_exercises generate_exercises
   [ $? -ne 0 ] && { echo -e "${RED}❌ Step 'generate_exercises' failed. Stopping pipeline.${NC}"; exit 1; }

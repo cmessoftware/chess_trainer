@@ -2,42 +2,58 @@
 # Este script debe ser incluido desde PowerShell-Helpers.ps1
 
 function Initialize-MLflow {
-    """Inicializa MLflow con PostgreSQL"""
-    Write-Host "🔄 Inicializando MLflow con PostgreSQL..." -ForegroundColor Blue
+    """Inicializa MLflow integrado en notebooks"""
+    Write-Host "🔄 Inicializando MLflow integrado..." -ForegroundColor Blue
     
-    # Sincronizar código actualizado
-    docker-compose cp "src/" mlflow:/mlflow/src/
+    # Asegurar que notebooks esté corriendo (incluye MLflow)
+    Write-Host "📦 Iniciando contenedor de notebooks con MLflow..." -ForegroundColor Blue
+    docker-compose up -d notebooks
     
-    # Verificar la configuración de la base de datos
-    docker-compose exec mlflow python /mlflow/src/ml/init_mlflow_db.py
+    # Esperar a que los servicios estén disponibles
+    Start-Sleep -Seconds 10
     
-    # Abrir la UI de MLflow
-    Open-MLflowUI
-    
-    Write-Host "✅ MLflow inicializado correctamente" -ForegroundColor Green
+    # Verificar que MLflow esté disponible
+    $mlflowStatus = Test-MLflowAvailable
+    if ($mlflowStatus) {
+        Write-Host "✅ MLflow integrado iniciado correctamente" -ForegroundColor Green
+        Open-MLflowUI
+    }
+    else {
+        Write-Host "⚠️ MLflow tardando en iniciarse, reintentando..." -ForegroundColor Yellow
+        Start-Sleep -Seconds 5
+        Open-MLflowUI
+    }
 }
 
 function Start-MLflowWithPostgres {
-    """Inicia el servidor MLflow con PostgreSQL"""
-    Write-Host "🚀 Iniciando MLflow con PostgreSQL..." -ForegroundColor Blue
+    """Inicia MLflow integrado en notebooks"""
+    Write-Host "🚀 Iniciando MLflow integrado en notebooks..." -ForegroundColor Blue
     
-    # Detenemos el servicio si está corriendo
-    docker-compose stop mlflow
-    
-    # Iniciamos MLflow con la configuración actualizada
-    docker-compose up -d mlflow
+    # Reiniciar contenedor de notebooks (incluye MLflow)
+    docker-compose restart notebooks
     
     # Esperamos a que el servicio esté disponible
-    Start-Sleep -Seconds 5
+    Start-Sleep -Seconds 10
     
     # Verificamos si está corriendo
-    $status = docker-compose ps mlflow | Select-String "Up"
+    $status = Test-MLflowAvailable
     if ($status) {
-        Write-Host "✅ MLflow está corriendo con PostgreSQL" -ForegroundColor Green
+        Write-Host "✅ MLflow integrado está corriendo correctamente" -ForegroundColor Green
         return $true
     }
     else {
-        Write-Host "❌ Error iniciando MLflow" -ForegroundColor Red
+        Write-Host "❌ Error iniciando MLflow integrado" -ForegroundColor Red
+        return $false
+    }
+}
+
+function Test-MLflowAvailable {
+    """Verifica si MLflow está disponible"""
+    try {
+        $response = Invoke-WebRequest -Uri "http://localhost:5000/health" -UseBasicParsing -TimeoutSec 5
+        return $response.StatusCode -eq 200
+    }
+    catch {
         return $false
     }
 }
@@ -54,13 +70,14 @@ function Run-MLExperiment {
         [string]$ModelType = "RandomForest"
     )
     
-    """Ejecuta un experimento de ML con MLflow"""
+    """Ejecuta un experimento de ML con MLflow integrado"""
     Write-Host "🧪 Ejecutando experimento $ExperimentName con $ModelType..." -ForegroundColor Blue
     
-    # Sincronizar código
-    docker-compose cp "src/" notebooks:/notebooks/src/
+    # Asegurar que notebooks esté corriendo
+    docker-compose up -d notebooks
+    Start-Sleep -Seconds 5
     
-    # Ejecutar experimento
+    # Ejecutar experimento (el código ya está disponible en /notebooks/src)
     docker-compose exec -e EXPERIMENT_NAME=$ExperimentName -e MODEL_TYPE=$ModelType notebooks python /notebooks/src/ml/train_error_model.py
     
     Write-Host "✅ Experimento completado" -ForegroundColor Green
@@ -73,24 +90,22 @@ function Cleanup-MLflowSQLite {
     """Verifica y elimina el archivo SQLite de MLflow si la migración a PostgreSQL está completa"""
     Write-Host "🧹 Verificando y limpiando archivo SQLite de MLflow..." -ForegroundColor Blue
     
-    # Sincronizar código actualizado
-    docker-compose cp "src/" mlflow:/mlflow/src/
-    
-    # Ejecutar script de limpieza
-    docker-compose exec mlflow python /mlflow/src/ml/cleanup_mlflow_sqlite.py
+    # Ejecutar script de limpieza en notebooks
+    docker-compose exec notebooks python /notebooks/src/ml/cleanup_mlflow_sqlite.py
     
     Write-Host "✅ Verificación y limpieza completada" -ForegroundColor Green
 }
 
 function Train-ChessErrorModel {
-    """Entrena el modelo de predicción de errores usando MLflow"""
+    """Entrena el modelo de predicción de errores usando MLflow integrado"""
     Write-Host "🎯 Entrenando modelo de predicción de errores..." -ForegroundColor Blue
     
-    # Sincronizar código actualizado
-    docker-compose cp "src/" mlflow:/mlflow/src/
+    # Asegurar que notebooks esté corriendo
+    docker-compose up -d notebooks
+    Start-Sleep -Seconds 5
     
     # Ejecutar entrenamiento
-    docker-compose exec mlflow python /mlflow/src/ml/chess_error_predictor.py
+    docker-compose exec notebooks python /notebooks/src/ml/chess_error_predictor.py
     
     Write-Host "✅ Entrenamiento completado. Revisa MLflow UI para ver métricas" -ForegroundColor Green
     Open-MLflowUI
@@ -105,11 +120,8 @@ function Test-ChessPrediction {
     """Prueba predicción en tiempo real"""
     Write-Host "🔮 Probando predicción para jugada $Move..." -ForegroundColor Blue
     
-    # Sincronizar código
-    docker-compose cp "src/" mlflow:/mlflow/src/
-    
-    # Ejecutar predicción
-    docker-compose exec -e TEST_FEN="$FEN" -e TEST_MOVE="$Move" mlflow python /mlflow/src/ml/realtime_predictor.py
+    # Ejecutar predicción en notebooks
+    docker-compose exec -e TEST_FEN="$FEN" -e TEST_MOVE="$Move" notebooks python /notebooks/src/ml/realtime_predictor.py
     
     Write-Host "✅ Predicción completada" -ForegroundColor Green
 }

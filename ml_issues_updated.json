@@ -79,9 +79,22 @@
       "Real datasets analysis with standardized ratings"
     ],
     "technical_specs": {
-      "supported_platforms": ["Chess.com", "Lichess", "FIDE", "Unknown"],
-      "time_controls": ["bullet", "blitz", "rapid", "classical"],
-      "valid_elo_range": [800, 3500],
+      "supported_platforms": [
+        "Chess.com",
+        "Lichess",
+        "FIDE",
+        "Unknown"
+      ],
+      "time_controls": [
+        "bullet",
+        "blitz",
+        "rapid",
+        "classical"
+      ],
+      "valid_elo_range": [
+        800,
+        3500
+      ],
       "anomaly_correction": true,
       "correction_success_rate": "50%",
       "data_quality_improvement": "60-75%"
@@ -95,7 +108,7 @@
     "references": [
       "Aplicar estandarización de elo (campo standarized_elo)",
       "src/ml/elo_standardization.py",
-      "src/ml/test_elo_anomalies.py", 
+      "src/ml/test_elo_anomalies.py",
       "src/ml/complete_elo_standardization.py"
     ]
   }

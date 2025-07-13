@@ -2,17 +2,17 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"label": "� ML Workflow: Initialize MLflow with PostgreSQL",
+			"label": "🔄 ML Workflow: Initialize MLflow Integrated",
 			"type": "shell",
-			"command": "docker-compose exec mlflow python /mlflow/src/ml/init_mlflow_db.py",
+			"command": "docker-compose up -d notebooks && sleep 10 && echo 'MLflow integrado iniciado con Jupyter'",
 			"group": "build",
 			"isBackground": false,
 			"problemMatcher": []
 		},
 		{
-			"label": "�🚀 ML Workflow: Start MLflow Server",
+			"label": "🚀 ML Workflow: Start Notebooks with MLflow",
 			"type": "shell",
-			"command": "docker-compose up -d mlflow",
+			"command": "docker-compose up -d notebooks",
 			"group": "build",
 			"isBackground": true,
 			"problemMatcher": []
@@ -50,9 +50,9 @@
 			}
 		},
 		{
-			"label": "🔍 ML Workflow: View Docker Logs",
+			"label": "🔍 ML Workflow: View Notebooks Logs",
 			"type": "shell",
-			"command": "docker-compose logs -f mlflow",
+			"command": "docker-compose logs -f notebooks",
 			"group": "none",
 			"isBackground": true,
 			"problemMatcher": []
@@ -74,9 +74,9 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "🔬 ML Workflow: Test PostgreSQL Integration",
+			"label": "🔬 ML Workflow: Test MLflow Integration",
 			"type": "shell",
-			"command": "docker-compose exec mlflow python /mlflow/src/ml/test_mlflow_postgres_integration.py",
+			"command": "docker-compose exec notebooks python /notebooks/src/ml/mlflow_complete_tutorial.py",
 			"group": "test",
 			"isBackground": false,
 			"problemMatcher": []
@@ -84,7 +84,7 @@
 		{
 			"label": "🧹 ML Workflow: Cleanup SQLite File",
 			"type": "shell",
-			"command": "docker-compose exec mlflow python /mlflow/src/ml/cleanup_mlflow_sqlite.py",
+			"command": "docker-compose exec notebooks python /notebooks/src/ml/cleanup_mlflow_sqlite.py",
 			"group": "none",
 			"isBackground": false,
 			"problemMatcher": []

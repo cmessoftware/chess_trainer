@@ -151,11 +151,10 @@ def extract_features_from_game(game_text: str) -> dict:
             "white_elo": safe_int(int(headers.get("WhiteElo", 0))) if safe_int(headers.get("WhiteElo")) else None,
             "black_elo": safe_int(int(headers.get("BlackElo", 0))) if safe_int(headers.get("BlackElo")) else None,
             "result": headers.get("Result", ""),
-            "event": headers.get("Event", ""),
-            "site": headers.get("Site", ""),
-            "date": headers.get("Date", ""),
             "eco": headers.get("ECO", ""),
             "opening": headers.get("Opening", ""),
+            "time_control": headers.get("TimeControl", ""),
+            "date_played": headers.get("Date", ""),
             "pgn": game_text,
             "source": headers.get("Source", "unknown"),
         }

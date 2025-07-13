@@ -102,15 +102,42 @@ class GamesRepository:
             return row
 
     def game_exists(self, game_id: str) -> bool:
-        return self.session.query(Games).filter(Games.game_id == game_id).first() is not None
+        try:
+            from sqlalchemy import select
+            stmt = select(Games.game_id).where(Games.game_id == game_id)
+            result = self.session.execute(stmt).first()
+            return result is not None
+        except Exception as e:
+            self.session.rollback()
+            raise e
 
     def save_game(self, game_data: dict):
-        game = Games(**game_data)
-        self.session.add(game)
-        self.commit()
+        try:
+            game = Games(**game_data)
+            self.session.add(game)
+            self.session.commit()
+        except Exception as e:
+            self.session.rollback()
+            raise e
+
+    def save_games_batch(self, games_data_list: list):
+        """Save multiple games in a single transaction"""
+        try:
+            for game_data in games_data_list:
+                game = Games(**game_data)
+                self.session.add(game)
+            self.session.commit()
+            print(f"✅ Guardado lote de {len(games_data_list)} partidas")
+        except Exception as e:
+            self.session.rollback()
+            print(f"❌ Error guardando lote: {e}")
+            raise e
 
     def commit(self):
         self.session.commit()
+
+    def rollback(self):
+        self.session.rollback()
 
     def close(self):
         self.session.close()
