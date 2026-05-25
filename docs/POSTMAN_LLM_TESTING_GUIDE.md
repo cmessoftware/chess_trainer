@@ -204,7 +204,7 @@ Resultados visibles en la pestaña **Test Results** de Postman.
 
 ## 📚 Documentación Adicional
 
-- **Roadmap Técnico**: `docs/ROADMAP_INTEGRACION_LLM.md`
+- **Roadmap Técnico**: `docs/ROADMAP_TECHNICAL.md`
 - **Roadmap Funcional**: `docs/ROADMAP_FUNCTIONAL_CHESS_TRAINER.md` (FUNCIONALIDAD 3.6.1)
 - **Comparative Analysis**: `COMPARATIVE_ANALYSIS_ELO_1400_vs_2800.md`
 

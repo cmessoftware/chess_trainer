@@ -1035,7 +1035,7 @@ Usuario puede:
 ```
 
 **🔮 Evolución Post-MVP (v1.1+):**
-En versiones futuras se agregará una capa de **Motor LLM + Pattern Engine** entre el frontend y el backend para traducir análisis técnicos SHAP en feedback pedagógico adaptado por ELO. Ver [FUNCIONALIDAD 3.6.1](#funcionalidad-361-integración-con-motor-llm-para-análisis-pedagógico--post-mvp-v11) y [ROADMAP_INTEGRACION_LLM.md](ROADMAP_INTEGRACION_LLM.md).
+En versiones futuras se agregará una capa de **Motor LLM + Pattern Engine** entre el frontend y el backend para traducir análisis técnicos SHAP en feedback pedagógico adaptado por ELO. Ver [FUNCIONALIDAD 3.6.1](#funcionalidad-361-integración-con-motor-llm-para-análisis-pedagógico--post-mvp-v11) y [ROADMAP_TECHNICAL.md](ROADMAP_TECHNICAL.md).
 
 ```
 ┌─────────────────────────────────────────────────────┐
@@ -1169,7 +1169,7 @@ El MVP se considera COMPLETADO cuando:
 **Estado**: 📋 **PLANIFICADO - POST MVP v1.0**  
 **Prioridad**: ⭐⭐ **ALTA - DIFERENCIADOR COMPETITIVO**
 
-**📚 Documentación Detallada**: Ver [ROADMAP_INTEGRACION_LLM.md](ROADMAP_INTEGRACION_LLM.md)
+**📚 Documentación Detallada**: Ver [ROADMAP_TECHNICAL.md](ROADMAP_TECHNICAL.md)
 
 **🎯 Objetivo General:**
 Transformar el análisis técnico SHAP (Funcionalidad 3.6) en **feedback pedagógico adaptado al nivel ELO del jugador** mediante integración con Large Language Models (LLM), evolucionando hacia un sistema de agentes conversacionales modulares con Model Context Protocol (MCP).
