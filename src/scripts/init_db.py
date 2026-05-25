@@ -11,9 +11,9 @@ def main():
         load_dotenv()
         db_path = os.environ.get("CHESS_TRAINER_DB_URL")
         db.init_db()
-        print(f"✅ Base de datos creada correctamente en {db_path}")
+        print(f"[SUCCESS] Base de datos creada correctamente en {db_path}")
     except Exception as e:
-        print(f"❌ Error al inicializar la base de datos: {e}")
+        print(f"[ERROR] Error al inicializar la base de datos: {e}")
         exit(1)
 
 

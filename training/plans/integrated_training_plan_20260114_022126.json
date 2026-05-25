@@ -1,0 +1,46 @@
+{
+  "generated_at": "2026-01-14T02:21:26.302053",
+  "total_recommendations": 2,
+  "emergency_count": 1,
+  "estimated_total_time": 150,
+  "recommendations": [
+    {
+      "priority": "EMERGENCY",
+      "category": "Opening Survival",
+      "title": "Emergency Training: Various",
+      "description": "Critical survival issue detected: Opening Various shows critical survival rate: 0.00%",
+      "exercises": [
+        "Study defensive structures in Various",
+        "Practice 20 games with Various focusing on move 5-15",
+        "Analyze grandmaster games in Various",
+        "Complete tactical puzzles related to this opening"
+      ],
+      "estimated_time": 90,
+      "success_criteria": [
+        "Improve survival rate in Various above 50%",
+        "Complete 10 games lasting more than 20 moves",
+        "Identify key defensive moves in opening phase"
+      ],
+      "source": "survivorship_bias_emergency"
+    },
+    {
+      "priority": "MEDIUM",
+      "category": "Strategic Improvement",
+      "title": "Positional Understanding Development",
+      "description": "Advance your positional chess skills",
+      "exercises": [
+        "Study pawn structures and their characteristics",
+        "Practice piece coordination exercises",
+        "Analyze annotated grandmaster games",
+        "Complete intermediate tactical combinations"
+      ],
+      "estimated_time": 60,
+      "success_criteria": [
+        "Identify key pawn structures in your games",
+        "Improve piece coordination scores by 20%",
+        "Complete positional assessment tests"
+      ],
+      "source": "intermediate_strategy"
+    }
+  ]
+}

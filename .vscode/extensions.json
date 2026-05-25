@@ -1,0 +1,17 @@
+{
+    "recommendations": [
+        "ms-vscode.vscode-ai-toolkit",
+        "ms-toolsai.datawrangler",
+        "ms-python.python",
+        "ms-toolsai.jupyter",
+        "iterative.dvc",
+        "lutzroeder.netron",
+        "ms-vscode-remote.remote-containers",
+        "ms-vscode.remote-explorer",
+        "charliermarsh.ruff",
+        "ms-python.flake8",
+        "ms-python.black-formatter",
+        "redhat.vscode-yaml",
+        "ms-vscode.vscode-json"
+    ]
+}

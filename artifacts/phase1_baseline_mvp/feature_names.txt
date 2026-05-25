@@ -1,0 +1,9 @@
+material_balance
+score_diff
+player_color
+move_number
+has_discovered_attack
+has_fork
+has_pin
+has_skewer
+has_check

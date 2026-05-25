@@ -13,6 +13,12 @@ Usage Examples:
     # Process specific source with custom limits
     python generate_features_with_tactics.py --source elite --max-games 500
 
+    # Process games of a specific player (exact name match)
+    python generate_features_with_tactics.py --player sergio --max-games 200
+
+    # Combine filters: source + player
+    python generate_features_with_tactics.py --source personal --player magnus --max-games 100
+
     # Process with custom worker count
     python generate_features_with_tactics.py --source fide --max-games 5000 --workers 6
 
@@ -36,6 +42,7 @@ import sys
 import time
 import traceback
 import logging
+from datetime import datetime, timedelta
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -59,6 +66,15 @@ dotenv.load_dotenv()
 DB_URL = os.environ.get("CHESS_TRAINER_DB_URL")
 MAX_WORKERS = int(os.environ.get("MAX_WORKERS", 4))
 FEATURES_PER_CHUNK = int(os.environ.get("FEATURES_PER_CHUNK", 100))
+
+# Set Stockfish path if not already set
+if not os.environ.get("STOCKFISH_PATH"):
+    stockfish_path = os.path.join(os.path.dirname(__file__), "..", "..", "bin", "stockfish.exe")
+    if os.path.exists(stockfish_path):
+        os.environ["STOCKFISH_PATH"] = stockfish_path
+        print(f"Set STOCKFISH_PATH to: {stockfish_path}")
+    else:
+        print("Warning: Stockfish not found, tactical analysis may fail")
 
 # Configure logging
 logging.basicConfig(
@@ -86,7 +102,7 @@ def process_game_with_tactics(game_data):
         if not features:
             return None, f"Failed to generate features for game {game_id}"
         
-        # Generate tactical analysis
+        # Generate tactical analysis (pass game_id as second parameter)
         tactics = detect_tactics_from_game(game, game_id)
         
         return {
@@ -131,41 +147,56 @@ def process_chunk(games_chunk):
                     result, error = future.result()
                     
                     if error:
-                        logger.error(f"❌ Game {game_id}: {error}")
+                        logger.error(f"[ERROR] Game {game_id}: {error}")
                         error_count += 1
                         continue
                     
                     if not result:
-                        logger.warning(f"⚠️ No result for game {game_id}")
+                        logger.warning(f"[WARNING] No result for game {game_id}")
                         error_count += 1
                         continue
                     
                     # Save features
+                    features_saved = False
                     if result.get('features'):
-                        features_repo.save_features(result['features'])
+                        try:
+                            features_repo.save_many_features(result['features'])
+                            features_saved = True
+                        except Exception as save_error:
+                            logger.error(f"[ERROR] Failed to save features for {game_id}: {save_error}")
+                            error_count += 1
+                            continue
                         
-                    # Save tactical analysis
+                    # Update features with tactical analysis if available
                     if result.get('tactics'):
-                        tactics_repo.save_tactical_analysis(result['tactics'])
+                        try:
+                            features_repo.update_tactical_data(result['tactics'])
+                        except Exception as tact_error:
+                            logger.warning(f"[WARNING] Failed to save tactics for {game_id}: {tact_error}")
                     
-                    # Mark as processed
-                    processed_repo.mark_as_processed(game_id)
-                    
-                    processed_count += 1
-                    
-                    if processed_count % 10 == 0:
-                        logger.info(f"✅ Processed {processed_count} games in chunk")
+                    # Only mark as processed if features were successfully saved
+                    if features_saved:
+                        try:
+                            processed_repo.mark_as_processed(game_id)
+                            processed_count += 1
+                            
+                            if processed_count % 10 == 0:
+                                logger.info(f"[SUCCESS] Processed {processed_count} games in chunk")
+                        except Exception as mark_error:
+                            logger.warning(f"[WARNING] Features saved but failed to mark as processed for {game_id}: {mark_error}")
+                    else:
+                        error_count += 1
                         
                 except Exception as e:
-                    logger.error(f"❌ Error processing game {game_id}: {e}")
+                    logger.error(f"[ERROR] Error processing game {game_id}: {e}")
                     error_count += 1
         
         # Commit all changes
         session.commit()
-        logger.info(f"🎉 Chunk completed: {processed_count} processed, {error_count} errors")
+        logger.info(f"[COMPLETE] Chunk completed: {processed_count} processed, {error_count} errors")
         
     except Exception as e:
-        logger.error(f"❌ Chunk processing error: {e}")
+        logger.error(f"[ERROR] Chunk processing error: {e}")
         session.rollback()
         
     finally:
@@ -173,43 +204,68 @@ def process_chunk(games_chunk):
     
     return processed_count, error_count
 
-def get_games_to_process(source=None, max_games=1000, offset=0):
-    """Get games from database that need processing."""
+def get_games_to_process(source=None, batch_id=None, since_minutes=None, max_games=1000, offset=0, player_name=None):
+    """Get games from database that need processing.
+    
+    Args:
+        source: Filter by source (personal, elite, etc.)
+        batch_id: Filter by import batch ID
+        since_minutes: Only process games imported in last N minutes
+        max_games: Maximum number of games to process
+        offset: Offset for pagination
+        player_name: Filter by specific player name (white or black)
+    """
     Session = sessionmaker(bind=create_engine(DB_URL))
     session = Session()
     
     try:
         games_repo = GamesRepository(session_factory=lambda: session)
-        processed_repo = ProcessedFeaturesRepository(session_factory=lambda: session)
         
-        # Get processed game IDs to skip
-        processed_ids = set(processed_repo.get_all())
-        logger.info(f"📊 Found {len(processed_ids)} already processed games")
+        # Use direct SQL to get ONLY games without features (more efficient)
+        from sqlalchemy import text
+        query = """
+            SELECT g.game_id, g.pgn, g.source 
+            FROM games g
+            LEFT JOIN features f ON g.game_id = f.game_id
+            WHERE f.game_id IS NULL
+        """
         
-        # Get games from database
-        if source:
-            games = games_repo.get_games_by_source(source, limit=max_games, offset=offset)
-            logger.info(f"🎯 Found {len(games)} games from source '{source}'")
-        else:
-            games = games_repo.get_all_games(limit=max_games, offset=offset)
-            logger.info(f"🎯 Found {len(games)} total games")
+        # Add filters
+        params = {}
+        if batch_id:
+            query += " AND g.import_batch_id = :batch_id"
+            params['batch_id'] = batch_id
+        elif since_minutes:
+            since_timestamp = datetime.now() - timedelta(minutes=since_minutes)
+            query += " AND g.import_date >= :since_timestamp"
+            params['since_timestamp'] = since_timestamp
+            if source:
+                query += " AND g.source = :source"
+                params['source'] = source
+        elif source:
+            query += " AND g.source = :source"
+            params['source'] = source
         
-        # Filter out already processed games
-        unprocessed_games = []
-        for game in games:
-            game_id = game.get('id') or get_game_id(game.get('pgn', ''))
-            if game_id not in processed_ids:
-                unprocessed_games.append((
-                    game_id,
-                    game.get('pgn', ''),
-                    game.get('source', 'unknown')
-                ))
+        # Add player filter if specified (exact match)
+        if player_name:
+            query += " AND (g.white_player = :player_name OR g.black_player = :player_name)"
+            params['player_name'] = player_name
         
-        logger.info(f"📋 {len(unprocessed_games)} games need processing")
+        # Add pagination
+        query += " ORDER BY g.game_id LIMIT :limit OFFSET :offset"
+        params['limit'] = max_games
+        params['offset'] = offset
+        
+        result = session.execute(text(query), params)
+        rows = result.fetchall()
+        
+        unprocessed_games = [(row[0], row[1], row[2] or 'unknown') for row in rows]
+        logger.info(f"[QUERY] Found {len(unprocessed_games)} games WITHOUT features (offset={offset}, limit={max_games})")
+        
         return unprocessed_games
         
     except Exception as e:
-        logger.error(f"❌ Error getting games: {e}")
+        logger.error(f"[ERROR] Error getting games: {e}")
         return []
         
     finally:
@@ -227,12 +283,24 @@ Examples:
   # Process specific source
   python generate_features_with_tactics.py --source elite --max-games 500
 
+  # Process games of a specific player (exact name match)
+  python generate_features_with_tactics.py --player sergio --max-games 200
+
+  # Combine filters: source + player
+  python generate_features_with_tactics.py --source personal --player magnus --max-games 100
+
   # Process with custom workers
   python generate_features_with_tactics.py --source fide --max-games 5000 --workers 6
         """
     )
     
+    # Declare global variables first
+    global MAX_WORKERS, FEATURES_PER_CHUNK
+    
+    parser.add_argument('--batch-id', help='Filter by import batch ID (specific upload)')
+    parser.add_argument('--since-minutes', type=int, help='Only process games imported in last N minutes')
     parser.add_argument('--source', help='Filter by game source (lichess, chess.com, fide, elite, etc.)')
+    parser.add_argument('--player', help='Filter by player name (exact match, searches white and black)')
     parser.add_argument('--max-games', type=int, default=1000, help='Maximum number of games to process')
     parser.add_argument('--offset', type=int, default=0, help='Offset for pagination')
     parser.add_argument('--workers', type=int, default=MAX_WORKERS, help='Number of parallel workers')
@@ -245,12 +313,17 @@ Examples:
         logging.getLogger().setLevel(logging.DEBUG)
     
     # Update configuration
-    global MAX_WORKERS, FEATURES_PER_CHUNK
     MAX_WORKERS = args.workers
     FEATURES_PER_CHUNK = args.chunk_size
     
-    logger.info("🚀 Starting integrated feature generation + tactical analysis...")
-    logger.info(f"📋 Parameters:")
+    logger.info("Starting integrated feature generation + tactical analysis...")
+    logger.info(f"Parameters:")
+    if args.batch_id:
+        logger.info(f"   - Batch ID: {args.batch_id}")
+    if args.since_minutes:
+        logger.info(f"   - Since minutes: {args.since_minutes}")
+    if args.player:
+        logger.info(f"   - Player: {args.player}")
     logger.info(f"   - Source: {args.source or 'ALL'}")
     logger.info(f"   - Max games: {args.max_games}")
     logger.info(f"   - Workers: {MAX_WORKERS}")
@@ -262,12 +335,15 @@ Examples:
         # Get games to process
         games_to_process = get_games_to_process(
             source=args.source,
+            batch_id=getattr(args, 'batch_id', None),
+            since_minutes=getattr(args, 'since_minutes', None),
             max_games=args.max_games,
-            offset=args.offset
+            offset=args.offset,
+            player_name=getattr(args, 'player', None)
         )
         
         if not games_to_process:
-            logger.warning("⚠️ No games found to process")
+            logger.warning("[WARNING] No games found to process")
             return
         
         # Process games in chunks
@@ -279,30 +355,30 @@ Examples:
             chunk_num = i // FEATURES_PER_CHUNK + 1
             total_chunks = (len(games_to_process) + FEATURES_PER_CHUNK - 1) // FEATURES_PER_CHUNK
             
-            logger.info(f"🔄 Processing chunk {chunk_num}/{total_chunks} ({len(chunk)} games)")
+            logger.info(f"[PROCESS] Processing chunk {chunk_num}/{total_chunks} ({len(chunk)} games)")
             
             processed, errors = process_chunk(chunk)
             total_processed += processed
             total_errors += errors
             
-            logger.info(f"✅ Chunk {chunk_num} completed: {processed} processed, {errors} errors")
+            logger.info(f"[SUCCESS] Chunk {chunk_num} completed: {processed} processed, {errors} errors")
         
         # Final summary
         end_time = time.time()
         duration = end_time - start_time
         
-        logger.info(f"🎉 Processing completed!")
-        logger.info(f"📊 Summary:")
+        logger.info(f"[COMPLETE] Processing completed!")
+        logger.info(f"[SUMMARY] Summary:")
         logger.info(f"   - Total games processed: {total_processed}")
         logger.info(f"   - Total errors: {total_errors}")
         logger.info(f"   - Duration: {duration:.2f} seconds")
         logger.info(f"   - Games per second: {total_processed / duration:.2f}")
         
         if total_errors > 0:
-            logger.warning(f"⚠️ {total_errors} games had errors during processing")
+            logger.warning(f"[WARNING] {total_errors} games had errors during processing")
         
     except Exception as e:
-        logger.error(f"❌ Fatal error: {e}")
+        logger.error(f"[FATAL] Fatal error: {e}")
         traceback.print_exc()
         sys.exit(1)
 

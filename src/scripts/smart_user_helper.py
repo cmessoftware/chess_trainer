@@ -156,10 +156,10 @@ class SmartUserDiscovery:
 
                 self.user_profiles = valid_profiles
                 logger.info(
-                    f"📁 Loaded {len(valid_profiles)} cached user profiles")
+                    f"[SAVED] Loaded {len(valid_profiles)} cached user profiles")
 
             except Exception as e:
-                logger.warning(f"⚠️ Error loading cache: {e}")
+                logger.warning(f"[WARNING] Error loading cache: {e}")
 
     def _save_cache(self):
         """Save discovered users to cache."""
@@ -185,15 +185,15 @@ class SmartUserDiscovery:
             with open(self.cache_file, 'w') as f:
                 json.dump(cache_data, f, indent=2)
 
-            logger.info(f"💾 Saved {len(self.user_profiles)} profiles to cache")
+            logger.info(f"[SAVE] Saved {len(self.user_profiles)} profiles to cache")
 
         except Exception as e:
-            logger.error(f"❌ Error saving cache: {e}")
+            logger.error(f"[ERROR] Error saving cache: {e}")
 
     def _load_known_users(self):
         """Load known users from the known_users.json file."""
         if not self.known_users_file.exists():
-            logger.info("📝 Known users file not found, creating template...")
+            logger.info("[NOTE] Known users file not found, creating template...")
             return
 
         try:
@@ -228,7 +228,7 @@ class SmartUserDiscovery:
                     f"👥 Loaded {loaded_count} known users for prioritized discovery")
 
         except Exception as e:
-            logger.warning(f"⚠️ Error loading known users: {e}")
+            logger.warning(f"[WARNING] Error loading known users: {e}")
 
     def _get_skill_level_range(self, skill_level: SkillLevel) -> Tuple[int, int]:
         """Get rating range for skill level."""
@@ -252,13 +252,13 @@ class SmartUserDiscovery:
                     return response.json()
                 elif response.status_code == 429:  # Rate limited
                     wait_time = 2 ** attempt
-                    logger.warning(f"⏳ Rate limited, waiting {wait_time}s...")
+                    logger.warning(f"[RATE_LIMIT] Rate limited, waiting {wait_time}s...")
                     time.sleep(wait_time)
                 else:
-                    logger.warning(f"⚠️ HTTP {response.status_code} for {url}")
+                    logger.warning(f"[WARNING] HTTP {response.status_code} for {url}")
 
             except Exception as e:
-                logger.warning(f"⚠️ Request attempt {attempt + 1} failed: {e}")
+                logger.warning(f"[WARNING] Request attempt {attempt + 1} failed: {e}")
                 if attempt < MAX_RETRIES - 1:
                     time.sleep(2 ** attempt)
 
@@ -324,17 +324,17 @@ class SmartUserDiscovery:
     def discover_lichess_users(self, skill_level: SkillLevel, game_types: List[GameType], max_users: int) -> List[UserProfile]:
         """Discover Lichess users efficiently using real user sources."""
         logger.info(
-            f"🔍 Discovering Lichess users efficiently (skill: {skill_level.value}, max: {max_users})")
+            f"[DISCOVER] Discovering Lichess users efficiently (skill: {skill_level.value}, max: {max_users})")
 
         discovered = []
         min_rating, max_rating = self._get_skill_level_range(skill_level)
 
         # Get real users efficiently instead of random generation
-        logger.info("🚀 Using configured discovery methods...")
+        logger.info("[START] Using configured discovery methods...")
         real_usernames = self._get_usernames_by_method(
             Platform.LICHESS, max_users * 2)
 
-        logger.info(f"📋 Found {len(real_usernames)} real users to process")
+        logger.info(f"[PARAMS] Found {len(real_usernames)} real users to process")
 
         for username in real_usernames:
             if len(discovered) >= max_users:
@@ -395,29 +395,29 @@ class SmartUserDiscovery:
                 self.user_profiles.append(profile)
 
                 logger.info(
-                    f"✅ Found Lichess user: {username} (avg rating: {avg_rating:.0f})")
+                    f"[SUCCESS] Found Lichess user: {username} (avg rating: {avg_rating:.0f})")
 
             except Exception as e:
                 logger.warning(
-                    f"⚠️ Error processing Lichess user {username}: {e}")
+                    f"[WARNING] Error processing Lichess user {username}: {e}")
 
-        logger.info(f"🎯 Discovered {len(discovered)} Lichess users")
+        logger.info(f"[TARGET] Discovered {len(discovered)} Lichess users")
         return discovered
 
     def discover_chesscom_users(self, skill_level: SkillLevel, game_types: List[GameType], max_users: int) -> List[UserProfile]:
         """Discover Chess.com users efficiently using real user sources."""
         logger.info(
-            f"🔍 Discovering Chess.com users efficiently (skill: {skill_level.value}, max: {max_users})")
+            f"[DISCOVER] Discovering Chess.com users efficiently (skill: {skill_level.value}, max: {max_users})")
 
         discovered = []
         min_rating, max_rating = self._get_skill_level_range(skill_level)
 
         # Get real users efficiently instead of random generation
-        logger.info("🚀 Using configured discovery methods...")
+        logger.info("[START] Using configured discovery methods...")
         real_usernames = self._get_usernames_by_method(
             Platform.CHESS_COM, max_users * 2)
 
-        logger.info(f"📋 Found {len(real_usernames)} real users to process")
+        logger.info(f"[PARAMS] Found {len(real_usernames)} real users to process")
 
         for username in real_usernames:
             if len(discovered) >= max_users:
@@ -499,20 +499,20 @@ class SmartUserDiscovery:
                 self.user_profiles.append(profile)
 
                 logger.info(
-                    f"✅ Found Chess.com user: {username} (avg rating: {avg_rating:.0f})")
+                    f"[SUCCESS] Found Chess.com user: {username} (avg rating: {avg_rating:.0f})")
 
             except Exception as e:
                 logger.warning(
-                    f"⚠️ Error processing Chess.com user {username}: {e}")
+                    f"[WARNING] Error processing Chess.com user {username}: {e}")
 
-        logger.info(f"🎯 Discovered {len(discovered)} Chess.com users")
+        logger.info(f"[TARGET] Discovered {len(discovered)} Chess.com users")
         return discovered
 
     def discover_users(self, platform: Platform, skill_level: SkillLevel,
                        game_types: List[GameType], max_users: int) -> List[UserProfile]:
         """Main method to discover users across platforms."""
-        logger.info(f"🚀 Starting user discovery...")
-        logger.info(f"📋 Parameters:")
+        logger.info(f"[START] Starting user discovery...")
+        logger.info(f"[PARAMS] Parameters:")
         logger.info(f"   - Platform: {platform.value}")
         logger.info(f"   - Skill level: {skill_level.value}")
         logger.info(f"   - Game types: {[gt.value for gt in game_types]}")
@@ -536,7 +536,7 @@ class SmartUserDiscovery:
         self._save_cache()
 
         logger.info(
-            f"🎉 Discovery completed! Found {len(all_discovered)} total users")
+            f"[SUCCESS] Discovery completed! Found {len(all_discovered)} total users")
         return all_discovered
 
     def export_users(self, users: List[UserProfile], format: str = "json", filename: str = None):
@@ -595,11 +595,11 @@ class SmartUserDiscovery:
                         f.write(
                             f"{user.username} ({user.platform}) - Rating: {avg_rating:.0f} - Games: {user.total_games}\n")
 
-            logger.info(f"📄 Exported {len(users)} users to {filepath}")
+            logger.info(f"[FILE] Exported {len(users)} users to {filepath}")
             return filepath
 
         except Exception as e:
-            logger.error(f"❌ Error exporting users: {e}")
+            logger.error(f"[ERROR] Error exporting users: {e}")
             return None
 
     def _get_real_lichess_users_from_leaderboards(self, max_users: int = 50) -> List[str]:
@@ -631,7 +631,7 @@ class SmartUserDiscovery:
                     real_users.append(user["id"])
 
             logger.info(
-                f"📈 Got {len([u for u in real_users if len(real_users) <= max_users])} users from {board_type} leaderboard")
+                f"[STATS] Got {len([u for u in real_users if len(real_users) <= max_users])} users from {board_type} leaderboard")
 
         return real_users[:max_users]
 
@@ -743,7 +743,7 @@ class SmartUserDiscovery:
                     if username:
                         real_users.append(username)
 
-            logger.info(f"📈 Got users from Chess.com {board_type} leaderboard")
+            logger.info(f"[STATS] Got users from Chess.com {board_type} leaderboard")
 
         return real_users[:max_users]
 
@@ -805,9 +805,9 @@ class SmartUserDiscovery:
                     method_users = method(users_per_method)
                     real_users.extend(method_users)
                     logger.info(
-                        f"✅ {method.__name__}: got {len(method_users)} users")
+                        f"[SUCCESS] {method.__name__}: got {len(method_users)} users")
                 except Exception as e:
-                    logger.warning(f"⚠️ {method.__name__} failed: {e}")
+                    logger.warning(f"[WARNING] {method.__name__} failed: {e}")
 
             # Fallback to web scraping if needed
             if len(real_users) < lichess_target // 2:
@@ -817,9 +817,9 @@ class SmartUserDiscovery:
                         Platform.LICHESS, lichess_target)
                     real_users.extend(scraping_users)
                     logger.info(
-                        f"✅ Web scraping: got {len(scraping_users)} additional users")
+                        f"[SUCCESS] Web scraping: got {len(scraping_users)} additional users")
                 except Exception as e:
-                    logger.warning(f"⚠️ Web scraping fallback failed: {e}")
+                    logger.warning(f"[WARNING] Web scraping fallback failed: {e}")
 
         if platform in [Platform.CHESS_COM, Platform.BOTH]:
             chesscom_target = max_users if platform == Platform.CHESS_COM else max_users // 2
@@ -840,9 +840,9 @@ class SmartUserDiscovery:
                     method_users = method(users_per_method)
                     real_users.extend(method_users)
                     logger.info(
-                        f"✅ {method.__name__}: got {len(method_users)} users")
+                        f"[SUCCESS] {method.__name__}: got {len(method_users)} users")
                 except Exception as e:
-                    logger.warning(f"⚠️ {method.__name__} failed: {e}")
+                    logger.warning(f"[WARNING] {method.__name__} failed: {e}")
 
             # Fallback to web scraping if needed
             if (len(real_users) - current_lichess_users) < chesscom_target // 2:
@@ -853,20 +853,20 @@ class SmartUserDiscovery:
                         Platform.CHESS_COM, chesscom_target)
                     real_users.extend(scraping_users)
                     logger.info(
-                        f"✅ Web scraping: got {len(scraping_users)} additional users")
+                        f"[SUCCESS] Web scraping: got {len(scraping_users)} additional users")
                 except Exception as e:
-                    logger.warning(f"⚠️ Web scraping fallback failed: {e}")
+                    logger.warning(f"[WARNING] Web scraping fallback failed: {e}")
 
         # Remove duplicates and return
         unique_users = list(set(real_users))
-        logger.info(f"🎯 Total unique real users found: {len(unique_users)}")
+        logger.info(f"[TARGET] Total unique real users found: {len(unique_users)}")
         return unique_users[:max_users]
 
     def _get_users_via_web_scraping(self, platform: Platform, max_users: int = 50) -> List[str]:
         """Fallback method: Get users via web scraping when APIs are limited."""
         if not WEB_SCRAPING_AVAILABLE:
             logger.warning(
-                "⚠️ Web scraping not available - install beautifulsoup4 for this feature")
+                "[WARNING] Web scraping not available - install beautifulsoup4 for this feature")
             return []
 
         real_users = []
@@ -897,7 +897,7 @@ class SmartUserDiscovery:
                     f"🕷️ Web scraping got {len(real_users)} Lichess users")
 
             except Exception as e:
-                logger.warning(f"⚠️ Web scraping Lichess failed: {e}")
+                logger.warning(f"[WARNING] Web scraping Lichess failed: {e}")
 
         if platform in [Platform.CHESS_COM, Platform.BOTH]:
             try:
@@ -919,7 +919,7 @@ class SmartUserDiscovery:
                     f"🕷️ Web scraping got {len(chesscom_users)} Chess.com users")
 
             except Exception as e:
-                logger.warning(f"⚠️ Web scraping Chess.com failed: {e}")
+                logger.warning(f"[WARNING] Web scraping Chess.com failed: {e}")
 
         return real_users[:max_users]
 
@@ -927,15 +927,15 @@ class SmartUserDiscovery:
         """Get usernames using the configured discovery method."""
         if self.discovery_method == "efficient":
             logger.info(
-                "🚀 Using efficient discovery methods (leaderboards, tournaments, etc.)")
+                "[START] Using efficient discovery methods (leaderboards, tournaments, etc.)")
             return self._get_real_users_efficiently(platform, max_users)
 
         elif self.discovery_method == "random":
-            logger.info("🎲 Using random username generation method")
+            logger.info("[RANDOM] Using random username generation method")
             return self._generate_potential_usernames(max_users * 3)
 
         elif self.discovery_method == "mixed":
-            logger.info("🔄 Using mixed discovery methods")
+            logger.info("[PROCESS] Using mixed discovery methods")
             # Try efficient first, then supplement with random if needed
             efficient_users = self._get_real_users_efficiently(
                 platform, max_users // 2)
@@ -950,7 +950,7 @@ class SmartUserDiscovery:
 
         else:
             logger.warning(
-                f"⚠️ Unknown discovery method: {self.discovery_method}, using efficient")
+                f"[WARNING] Unknown discovery method: {self.discovery_method}, using efficient")
             return self._get_real_users_efficiently(platform, max_users)
 
     def get_known_usernames(self, platform: Platform, max_users: int = 100) -> List[str]:
@@ -984,7 +984,7 @@ class SmartUserDiscovery:
             return platform_users
 
         except Exception as e:
-            logger.warning(f"⚠️ Error getting known users: {e}")
+            logger.warning(f"[WARNING] Error getting known users: {e}")
             return []
 
     def add_known_user(self, username: str, platform: str, description: str = "",
@@ -1003,7 +1003,7 @@ class SmartUserDiscovery:
                 if (existing_user.get('username') == username and
                         existing_user.get('platform') == platform):
                     logger.warning(
-                        f"⚠️ User {username} on {platform} already exists in known users")
+                        f"[WARNING] User {username} on {platform} already exists in known users")
                     return False
 
             # Add new user
@@ -1024,11 +1024,11 @@ class SmartUserDiscovery:
             with open(self.known_users_file, 'w') as f:
                 json.dump(known_data, f, indent=2)
 
-            logger.info(f"✅ Added known user: {username} ({platform})")
+            logger.info(f"[SUCCESS] Added known user: {username} ({platform})")
             return True
 
         except Exception as e:
-            logger.error(f"❌ Error adding known user: {e}")
+            logger.error(f"[ERROR] Error adding known user: {e}")
             return False
 
 
@@ -1097,4 +1097,26 @@ Examples:
             )
 
             # Print summary
-            print(f"\n📊 Discovery Summary:")
+            print(f"\n[DISCOVERY] Discovery Summary:")
+            print(f"[DISCOVERY] Platform: {platform.value}")
+            print(f"[DISCOVERY] Skill Level: {skill_level.value}")
+            print(f"[DISCOVERY] Game Types: {[gt.value for gt in game_types]}")
+            print(f"[DISCOVERY] Users Found: {len(discovered_users)}")
+            print(f"[DISCOVERY] Export Path: {export_path}")
+        else:
+            print("[WARNING] No users discovered")
+            
+    except Exception as e:
+        print(f"[ERROR] Error during user discovery: {e}")
+        return 1
+        
+    return 0
+
+
+if __name__ == "__main__":
+    import sys
+    sys.exit(main())
+
+
+
+

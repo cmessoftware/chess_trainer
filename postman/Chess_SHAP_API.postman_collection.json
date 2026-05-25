@@ -1,0 +1,428 @@
+{
+    "info": {
+        "_postman_id": "chess-shap-api-collection",
+        "name": "Chess SHAP Analysis API",
+        "description": "Colección completa para testing de SHAP Analysis endpoints",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "1. Authentication",
+            "item": [
+                {
+                    "name": "Login - Get Token",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Login successful\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.environment.set(\"token\", jsonData.access_token);",
+                                    "    console.log(\"Token saved: \" + jsonData.access_token.substring(0, 20) + \"...\");",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"username\": \"admin\",\n    \"password\": \"admin123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/auth/login",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "auth",
+                                "login"
+                            ]
+                        },
+                        "description": "Autenticación y obtención de JWT token"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "2. SHAP Analysis - Query",
+            "item": [
+                {
+                    "name": "Get All SHAP Values (Game 1)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status is 200\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response is array\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData).to.be.an('array');",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Contains SHAP values\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.length).to.be.above(0);",
+                                    "    pm.expect(jsonData[0]).to.have.property('shap_value');",
+                                    "    pm.expect(jsonData[0]).to.have.property('error_label');",
+                                    "});",
+                                    "",
+                                    "// Mostrar distribución de error_labels",
+                                    "var jsonData = pm.response.json();",
+                                    "var distribution = {};",
+                                    "jsonData.forEach(item => {",
+                                    "    distribution[item.error_label] = (distribution[item.error_label] || 0) + 1;",
+                                    "});",
+                                    "console.log(\"Total SHAP values: \" + jsonData.length);",
+                                    "console.log(\"Distribution:\", distribution);"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/analysis/shap/game/5daf60d3cfe938edbe083c9bd584b6a62b27c1068d927cf3d35875479f4006bb",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "analysis",
+                                "shap",
+                                "game",
+                                "5daf60d3cfe938edbe083c9bd584b6a62b27c1068d927cf3d35875479f4006bb"
+                            ]
+                        },
+                        "description": "Obtener todos los SHAP values de un game (4,149 valores)"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get SHAP Values - Specific Move",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status is 200\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"All moves match move_number\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    jsonData.forEach(item => {",
+                                    "        pm.expect(item.move_number).to.equal(10);",
+                                    "    });",
+                                    "});",
+                                    "",
+                                    "// Mostrar top features",
+                                    "var jsonData = pm.response.json();",
+                                    "console.log(\"Features count: \" + jsonData.length);",
+                                    "var sorted = jsonData.sort((a, b) => Math.abs(b.shap_value) - Math.abs(a.shap_value));",
+                                    "console.log(\"Top features:\");",
+                                    "sorted.slice(0, 5).forEach(item => {",
+                                    "    console.log(`  ${item.feature_name}: ${item.shap_value.toFixed(4)}`);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/analysis/shap/game/5daf60d3cfe938edbe083c9bd584b6a62b27c1068d927cf3d35875479f4006bb?move_number=10",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "analysis",
+                                "shap",
+                                "game",
+                                "5daf60d3cfe938edbe083c9bd584b6a62b27c1068d927cf3d35875479f4006bb"
+                            ],
+                            "query": [
+                                {
+                                    "key": "move_number",
+                                    "value": "10"
+                                }
+                            ]
+                        },
+                        "description": "Obtener SHAP values de una jugada específica (9 features)"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get SHAP Values - Top N Features",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status is 200\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Limited to top N per move\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    var moves = {};",
+                                    "    jsonData.forEach(item => {",
+                                    "        moves[item.move_number] = (moves[item.move_number] || 0) + 1;",
+                                    "    });",
+                                    "    // Verificar que cada jugada tenga máximo 5 features",
+                                    "    Object.values(moves).forEach(count => {",
+                                    "        pm.expect(count).to.be.at.most(5);",
+                                    "    });",
+                                    "});",
+                                    "",
+                                    "var jsonData = pm.response.json();",
+                                    "var moves = {};",
+                                    "jsonData.forEach(item => {",
+                                    "    moves[item.move_number] = (moves[item.move_number] || 0) + 1;",
+                                    "});",
+                                    "console.log(\"Total SHAP values: \" + jsonData.length);",
+                                    "console.log(\"Unique moves: \" + Object.keys(moves).length);",
+                                    "console.log(\"Features per move: \" + (jsonData.length / Object.keys(moves).length));"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/analysis/shap/game/5daf60d3cfe938edbe083c9bd584b6a62b27c1068d927cf3d35875479f4006bb?top_n=5",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "analysis",
+                                "shap",
+                                "game",
+                                "5daf60d3cfe938edbe083c9bd584b6a62b27c1068d927cf3d35875479f4006bb"
+                            ],
+                            "query": [
+                                {
+                                    "key": "top_n",
+                                    "value": "5"
+                                }
+                            ]
+                        },
+                        "description": "Obtener top 5 features por cada jugada (2,305 valores)"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get SHAP Values - Game 2",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/analysis/shap/game/d42d1c3c9bd2736fbc4898a3a6cc1be2e4e239b80ff3a615f317c3077018057b",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "analysis",
+                                "shap",
+                                "game",
+                                "d42d1c3c9bd2736fbc4898a3a6cc1be2e4e239b80ff3a615f317c3077018057b"
+                            ]
+                        },
+                        "description": "Obtener SHAP values de otro game (3,789 valores)"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get SHAP Values - Game 3",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/analysis/shap/game/666cbd367dce06ea2e4901f002bd33576e65418079c579b2bb6f7b244b9f28e6",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "analysis",
+                                "shap",
+                                "game",
+                                "666cbd367dce06ea2e4901f002bd33576e65418079c579b2bb6f7b244b9f28e6"
+                            ]
+                        },
+                        "description": "Obtener SHAP values de tercer game (3,735 valores)"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "3. SHAP Analysis - Run New",
+            "item": [
+                {
+                    "name": "Run SHAP Analysis",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Analysis completed\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData).to.have.property('analysis_id');",
+                                    "    pm.expect(jsonData).to.have.property('status');",
+                                    "});",
+                                    "",
+                                    "var jsonData = pm.response.json();",
+                                    "console.log(\"Analysis ID: \" + jsonData.analysis_id);",
+                                    "console.log(\"Status: \" + jsonData.status);",
+                                    "if (jsonData.shap_values_count) {",
+                                    "    console.log(\"SHAP values created: \" + jsonData.shap_values_count);",
+                                    "}",
+                                    "if (jsonData.error_distribution) {",
+                                    "    console.log(\"Error distribution:\", jsonData.error_distribution);",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"game_id\": \"5daf60d3cfe938edbe083c9bd584b6a62b27c1068d927cf3d35875479f4006bb\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/analysis/run",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "analysis",
+                                "run"
+                            ]
+                        },
+                        "description": "Ejecutar nuevo análisis SHAP en un game"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "4. Health Check",
+            "item": [
+                {
+                    "name": "API Docs",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/docs",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "docs"
+                            ]
+                        },
+                        "description": "Abrir documentación interactiva de la API"
+                    },
+                    "response": []
+                }
+            ]
+        }
+    ],
+    "event": [
+        {
+            "listen": "prerequest",
+            "script": {
+                "type": "text/javascript",
+                "exec": [
+                    ""
+                ]
+            }
+        },
+        {
+            "listen": "test",
+            "script": {
+                "type": "text/javascript",
+                "exec": [
+                    ""
+                ]
+            }
+        }
+    ],
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:8000",
+            "type": "string"
+        },
+        {
+            "key": "token",
+            "value": "",
+            "type": "string"
+        }
+    ]
+}

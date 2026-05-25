@@ -1,0 +1,146 @@
+2026-03-15 14:25:36,252 - __main__ - INFO - Initializing AI Coach Pipeline...
+2026-03-15 14:25:36,253 - ai_coach.rag.chess_rag - INFO - Inicializando ChessRAG con modelo all-MiniLM-L6-v2
+2026-03-15 14:25:36,587 - ai_coach.rag.chess_rag - INFO - Cargando modelo de embeddings...
+2026-03-15 14:25:36,589 - sentence_transformers.SentenceTransformer - INFO - Use pytorch device_name: cpu
+2026-03-15 14:25:36,589 - sentence_transformers.SentenceTransformer - INFO - Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2026-03-15 14:26:59,027 - ai_coach.rag.chess_rag - INFO - Modelo all-MiniLM-L6-v2 cargado
+2026-03-15 14:26:59,054 - ai_coach.rag.chess_rag - INFO - Colecci¾n 'chess_knowledge' cargada con 10253 documentos
+2026-03-15 14:26:59,054 - __main__ - INFO - \u2705 AI Coach Pipeline initialized successfully
+2026-03-15 14:26:59,054 - __main__ - INFO -    Database: postgresql://chess:chess_pass@localhost:5432/chess_trainer_db
+2026-03-15 14:26:59,069 - __main__ - INFO -    RAG documents: 10253
+2026-03-15 14:26:59,070 - __main__ - INFO - 
+======================================================================
+2026-03-15 14:26:59,070 - __main__ - INFO - \U0001f3af ANALYZING GAME: b73806ebf5c0d72a70c000aa1c77854a7e0a57c0aa60edcc69de7cc29f0d93fb
+2026-03-15 14:26:59,070 - __main__ - INFO - ======================================================================
+
+2026-03-15 14:26:59,070 - __main__ - INFO - \U0001f4ca Step 1: Fetching game features from database...
+2026-03-15 14:26:59,082 - __main__ - INFO -    Filtering for WHITE player only
+Traceback (most recent call last):
+  File "C:\Users\sergiosal\miniforge3\envs\chess_trainer\Lib\site-packages\sqlalchemy\engine\base.py", line 143, in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\sergiosal\miniforge3\envs\chess_trainer\Lib\site-packages\sqlalchemy\engine\base.py", line 3309, in raw_connection
+    return self.pool.connect()
+           ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\sergiosal\miniforge3\envs\chess_trainer\Lib\site-packages\sqlalchemy\pool\base.py", line 447, in connect
+    return _ConnectionFairy._checkout(self)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\sergiosal\miniforge3\envs\chess_trainer\Lib\site-packages\sqlalchemy\pool\base.py", line 1264, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "C:\Users\sergiosal\miniforge3\envs\chess_trainer\Lib\site-packages\sqlalchemy\pool\base.py", line 711, in checkout
+    rec = pool._do_get()
+  File "C:\Users\sergiosal\miniforge3\envs\chess_trainer\Lib\site-packages\sqlalchemy\pool\impl.py", line 177, in _do_get
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\sergiosal\miniforge3\envs\chess_trainer\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Users\sergiosal\miniforge3\envs\chess_trainer\Lib\site-packages\sqlalchemy\pool\impl.py", line 175, in _do_get
+    return self._create_connection()
+           ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\sergiosal\miniforge3\envs\chess_trainer\Lib\site-packages\sqlalchemy\pool\base.py", line 388, in _create_connection
+    return _ConnectionRecord(self)
+  File "C:\Users\sergiosal\miniforge3\envs\chess_trainer\Lib\site-packages\sqlalchemy\pool\base.py", line 673, in __init__
+    self.__connect()
+    ~~~~~~~~~~~~~~^^
+  File "C:\Users\sergiosal\miniforge3\envs\chess_trainer\Lib\site-packages\sqlalchemy\pool\base.py", line 899, in __connect
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\sergiosal\miniforge3\envs\chess_trainer\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Users\sergiosal\miniforge3\envs\chess_trainer\Lib\site-packages\sqlalchemy\pool\base.py", line 895, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\sergiosal\miniforge3\envs\chess_trainer\Lib\site-packages\sqlalchemy\engine\create.py", line 661, in connect
+    return dialect.connect(*cargs, **cparams)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sergiosal\miniforge3\envs\chess_trainer\Lib\site-packages\sqlalchemy\engine\default.py", line 630, in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sergiosal\miniforge3\envs\chess_trainer\Lib\site-packages\psycopg2\__init__.py", line 135, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: Connection refused (0x0000274D/10061)
+	Is the server running on that host and accepting TCP/IP connections?
+connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused (0x0000274D/10061)
+	Is the server running on that host and accepting TCP/IP connections?
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\sergiosal\source\repos\chess_trainer\test_coach_pipeline.py", line 469, in <module>
+    main()
+    ~~~~^^
+  File "C:\Users\sergiosal\source\repos\chess_trainer\test_coach_pipeline.py", line 460, in main
+    report = coach.analyze_game(game_id)
+  File "C:\Users\sergiosal\source\repos\chess_trainer\test_coach_pipeline.py", line 114, in analyze_game
+    features_df = self._fetch_game_features(game_id)
+  File "C:\Users\sergiosal\source\repos\chess_trainer\test_coach_pipeline.py", line 172, in _fetch_game_features
+    features = pd.read_sql(query.statement, self.session.bind)
+  File "C:\Users\sergiosal\miniforge3\envs\chess_trainer\Lib\site-packages\pandas\io\sql.py", line 706, in read_sql
+    with pandasSQL_builder(con) as pandas_sql:
+         ~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\sergiosal\miniforge3\envs\chess_trainer\Lib\site-packages\pandas\io\sql.py", line 908, in pandasSQL_builder
+    return SQLDatabase(con, schema, need_transaction)
+  File "C:\Users\sergiosal\miniforge3\envs\chess_trainer\Lib\site-packages\pandas\io\sql.py", line 1648, in __init__
+    con = self.exit_stack.enter_context(con.connect())
+                                        ~~~~~~~~~~~^^
+  File "C:\Users\sergiosal\miniforge3\envs\chess_trainer\Lib\site-packages\sqlalchemy\engine\base.py", line 3285, in connect
+    return self._connection_cls(self)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\sergiosal\miniforge3\envs\chess_trainer\Lib\site-packages\sqlalchemy\engine\base.py", line 145, in __init__
+    Connection._handle_dbapi_exception_noconnection(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        err, dialect, engine
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\sergiosal\miniforge3\envs\chess_trainer\Lib\site-packages\sqlalchemy\engine\base.py", line 2448, in _handle_dbapi_exception_noconnection
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\sergiosal\miniforge3\envs\chess_trainer\Lib\site-packages\sqlalchemy\engine\base.py", line 143, in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\sergiosal\miniforge3\envs\chess_trainer\Lib\site-packages\sqlalchemy\engine\base.py", line 3309, in raw_connection
+    return self.pool.connect()
+           ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\sergiosal\miniforge3\envs\chess_trainer\Lib\site-packages\sqlalchemy\pool\base.py", line 447, in connect
+    return _ConnectionFairy._checkout(self)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\sergiosal\miniforge3\envs\chess_trainer\Lib\site-packages\sqlalchemy\pool\base.py", line 1264, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "C:\Users\sergiosal\miniforge3\envs\chess_trainer\Lib\site-packages\sqlalchemy\pool\base.py", line 711, in checkout
+    rec = pool._do_get()
+  File "C:\Users\sergiosal\miniforge3\envs\chess_trainer\Lib\site-packages\sqlalchemy\pool\impl.py", line 177, in _do_get
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\sergiosal\miniforge3\envs\chess_trainer\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Users\sergiosal\miniforge3\envs\chess_trainer\Lib\site-packages\sqlalchemy\pool\impl.py", line 175, in _do_get
+    return self._create_connection()
+           ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\sergiosal\miniforge3\envs\chess_trainer\Lib\site-packages\sqlalchemy\pool\base.py", line 388, in _create_connection
+    return _ConnectionRecord(self)
+  File "C:\Users\sergiosal\miniforge3\envs\chess_trainer\Lib\site-packages\sqlalchemy\pool\base.py", line 673, in __init__
+    self.__connect()
+    ~~~~~~~~~~~~~~^^
+  File "C:\Users\sergiosal\miniforge3\envs\chess_trainer\Lib\site-packages\sqlalchemy\pool\base.py", line 899, in __connect
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\sergiosal\miniforge3\envs\chess_trainer\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Users\sergiosal\miniforge3\envs\chess_trainer\Lib\site-packages\sqlalchemy\pool\base.py", line 895, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Users\sergiosal\miniforge3\envs\chess_trainer\Lib\site-packages\sqlalchemy\engine\create.py", line 661, in connect
+    return dialect.connect(*cargs, **cparams)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sergiosal\miniforge3\envs\chess_trainer\Lib\site-packages\sqlalchemy\engine\default.py", line 630, in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sergiosal\miniforge3\envs\chess_trainer\Lib\site-packages\psycopg2\__init__.py", line 135, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) connection to server at "localhost" (::1), port 5432 failed: Connection refused (0x0000274D/10061)
+	Is the server running on that host and accepting TCP/IP connections?
+connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused (0x0000274D/10061)
+	Is the server running on that host and accepting TCP/IP connections?
+
+(Background on this error at: https://sqlalche.me/e/20/e3q8)

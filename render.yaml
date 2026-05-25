@@ -1,0 +1,71 @@
+# Render Blueprint - Chess Trainer AI Coach
+# https://render.com/docs/blueprint-spec
+
+services:
+  # PostgreSQL Database
+  - type: pserv
+    name: chess-trainer-db
+    env: docker
+    plan: standard # Required for persistent storage
+    dockerfilePath: ./dockerfile.postgres
+    envVars:
+      - key: POSTGRES_DB
+        value: chess_trainer
+      - key: POSTGRES_USER
+        generateValue: true
+      - key: POSTGRES_PASSWORD
+        generateValue: true
+    disk:
+      name: postgres-data
+      mountPath: /var/lib/postgresql/data
+      sizeGB: 10
+
+  # Main Application + AI Coach + Ollama
+  - type: web
+    name: chess-trainer-ai-coach
+    env: docker
+    dockerfilePath: ./dockerfile.render
+    plan: pro # Required: Minimum 8GB RAM for LLM
+    healthCheckPath: /health
+    envVars:
+      - key: CHESS_TRAINER_DB_URL
+        fromDatabase:
+          name: chess-trainer-db
+          property: connectionString
+      - key: OLLAMA_MODEL
+        value: llama3.1:8b
+      - key: WORKERS
+        value: 2
+      - key: PORT
+        value: 8000
+      - key: PYTHONUNBUFFERED
+        value: 1
+    disk:
+      name: ollama-models
+      mountPath: /app/models
+      sizeGB: 10 # For LLM models storage
+
+  # Optional: MLflow Tracking Server
+  - type: web
+    name: chess-trainer-mlflow
+    env: docker
+    plan: starter
+    dockerfilePath: ./dockerfile.notebooks
+    healthCheckPath: /
+    envVars:
+      - key: MLFLOW_BACKEND_STORE_URI
+        fromDatabase:
+          name: chess-trainer-db
+          property: connectionString
+      - key: MLFLOW_DEFAULT_ARTIFACT_ROOT
+        value: /app/mlartifacts
+    disk:
+      name: mlflow-artifacts
+      mountPath: /app/mlartifacts
+      sizeGB: 5
+
+databases:
+  - name: chess-trainer-db
+    databaseName: chess_trainer
+    plan: standard # $7/month
+    ipAllowList: [] # Allow all (or restrict to your IPs)

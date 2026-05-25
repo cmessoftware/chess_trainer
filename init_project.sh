@@ -51,9 +51,9 @@ cat <<EOL > run_pipeline.sh
 #!/bin/bash
 
 # Ejecutar el pipeline completo
-python tag_games.py
-python analyze_errors_from_games.py
-python generate_exercises_from_elite.py
+python src/scripts/tag_games.py
+python src/scripts/analyze_errors_from_games.py
+python src/scripts/generate_exercises_from_elite.py
 pytest tests/
 EOL
 chmod +x run_pipeline.sh

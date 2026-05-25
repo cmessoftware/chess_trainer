@@ -1,0 +1,34 @@
+{
+  "generated_at": "2026-01-14T20:33:15.523995",
+  "system_status": {
+    "latest_exercise_plan": true,
+    "latest_training_plan": true,
+    "total_exercises": 4,
+    "estimated_total_time": 140
+  },
+  "file_counts": {
+    "training/exercises": {
+      "json_files": 2,
+      "total_files": 2
+    },
+    "training/plans": {
+      "json_files": 10,
+      "total_files": 10
+    },
+    "training/resources": {
+      "json_files": 0,
+      "total_files": 0
+    }
+  },
+  "resource_validation": {
+    "valid": 1,
+    "invalid": 2
+  },
+  "disk_usage": {
+    "total_bytes": 19464,
+    "total_mb": 0.02
+  },
+  "recommendations": [
+    "Some resource links are invalid. Check and update URLs"
+  ]
+}

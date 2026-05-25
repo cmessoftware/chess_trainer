@@ -1,0 +1,61 @@
+
+🎯 CHESS TRAINER - REPORTE PERSONALIZADO
+========================================
+
+👤 Jugador: shypo0o0o0rchi
+📅 Fecha: 2026-01-13 23:07
+🎮 Partidas analizadas: 240
+📊 ELO promedio: 2472
+🎓 Nivel estimado: EXPERT
+
+📈 ANÁLISIS DE ERRORES
+----------------------
+• Blunders: 0.4%
+• Mistakes: 23.8%  
+• Inaccuracies: 18.8%
+• Good moves: 57.1%
+
+🚨 Tasa de errores críticos: 24.2%
+
+🎯 ÁREAS PRIORITARIAS
+--------------------
+1. Mejorar visión táctica
+   Target: Reducir 30%
+
+
+📚 PLAN DE ENTRENAMIENTO
+-----------------------
+⏱️ Tiempo semanal: 6 horas
+
+📅 HORARIO SEMANAL:
+• Monday: tactical_puzzles (0.8h)
+• Tuesday: opening_study (0.8h)
+• Wednesday: game_analysis (1.1h)
+• Thursday: endgame_practice (0.8h)
+• Friday: blunder_check (0.8h)
+• Saturday: playing_practice (1.5h)
+• Sunday: review_week (0.4h)
+
+🎯 EJERCICIOS RECOMENDADOS:
+• Problemas tácticos variados: 15 por día
+• Reconocimiento de patrones: 10 por día
+• Combinaciones complejas: 5 por día
+
+
+📊 SEGUIMIENTO DE PROGRESO
+--------------------------
+Periodo de evaluación: 4 semanas
+
+Objetivos de reducción:
+• good: 57.1% → 23.4%
+• mistake: 23.8% → 15.2%
+• inaccuracy: 18.8% → 9.6%
+• blunder: 0.4% → 0.3%
+
+
+🔬 CONTEXTO TÉCNICO
+------------------
+Sistema basado en análisis de 1.000 F1-score
+Embeddings con coherencia 0.569
+
+Generado por Chess Trainer Phase 5 - Adaptive Tutor

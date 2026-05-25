@@ -21,7 +21,7 @@ def collect_pgn_files_by_source():
     for source in SOURCES:
         source_path = BASE_DIR / source
         if not source_path.exists():
-            print(f"⚠️ No se encontró la carpeta de la fuente: {source_path}")
+            print(f"[WARNING] No se encontró la carpeta de la fuente: {source_path}")
             continue
 
         file_list = []
@@ -63,41 +63,68 @@ def import_balanced_games():
             print(f"📦 Procesando archivo {file_path.name} de fuente {source}")
 
             imported = 0
+            games_batch = []
+            
             try:
                 for filename, pgn_io in extract_pgn_files(str(file_path)):
                     while True:
-                        game = chess.pgn.read_game(pgn_io)
-                        if game is None:
-                            break
+                        try:
+                            game = chess.pgn.read_game(pgn_io)
+                            if game is None:
+                                break
 
-                        pgn_str = str(game)
-                        game_data = extract_features_from_game(pgn_str)
-                        game_data["source"] = source
+                            pgn_str = str(game)
+                            game_data = extract_features_from_game(pgn_str)
+                            game_data["source"] = source
 
-                        print(
-                            f"🔍 Procesando partida: {game_data['game_id']}, source: {game_data['source']}, pgn: {game_data['pgn'][:50]}...")
-
-                        if not repo.game_exists(game_data["game_id"]):
-                            repo.save_game(game_data)
-                            imported += 1
-                            total_imported += 1
-                        else:
                             print(
-                                f"⚠️ Partida ya existe: {game_data['game_id']} - {game_data['pgn'][:50]}...")
+                                f"[DISCOVER] Procesando partida: {game_data['game_id']}, source: {game_data['source']}, pgn: {game_data['pgn'][:50]}...")
 
-                        if imported >= BLOCK_SIZE:
-                            break
+                            if not repo.game_exists(game_data["game_id"]):
+                                games_batch.append(game_data)
+                                imported += 1
+                                total_imported += 1
+                                
+                                # Batch insert every 100 games
+                                if len(games_batch) >= 100:
+                                    try:
+                                        repo.save_games_batch(games_batch)
+                                        games_batch = []
+                                    except Exception as batch_error:
+                                        print(f"[ERROR] Error guardando lote: {batch_error}")
+                                        repo.rollback()
+                                        games_batch = []
+                            else:
+                                print(
+                                    f"[WARNING] Partida ya existe: {game_data['game_id']} - {game_data['pgn'][:50]}...")
+
+                            if imported >= BLOCK_SIZE:
+                                break
+                        except Exception as game_error:
+                            print(f"[ERROR] Error procesando partida individual: {game_error}")
+                            continue
+                            
                     pgn_io.close()
                     if imported >= BLOCK_SIZE:
                         break
+                        
+                # Save any remaining games in the batch
+                if games_batch:
+                    try:
+                        repo.save_games_batch(games_batch)
+                    except Exception as batch_error:
+                        print(f"[ERROR] Error guardando lote final: {batch_error}")
+                        repo.rollback()
+                        
             except Exception as e:
                 print(
-                    f"❌ Error procesando {file_path}: {e}\n{traceback.format_exc()}")
+                    f"[ERROR] Error procesando {file_path}: {e}\n{traceback.format_exc()}")
+                # Roll back the current transaction
+                repo.rollback()
 
             print(
-                f"✅ {imported} partidas importadas de {source} (archivo {file_path.name})")
+                f"[SUCCESS] {imported} partidas importadas de {source} (archivo {file_path.name})")
 
-    repo.commit()
     repo.close()
     print(
         f"🏁 Importación completa. Total partidas importadas: {total_imported}")
@@ -105,3 +132,4 @@ def import_balanced_games():
 
 if __name__ == "__main__":
     import_balanced_games()
+

@@ -3,10 +3,14 @@
 import os
 import traceback
 import chess
+import chess.engine
 import dotenv
 env = dotenv.load_dotenv()
 
-STOCKFISH_PATH = os.environ.get("STOCKFISH_PATH")
+# Use the local stockfish binary with absolute path
+project_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+default_stockfish_path = os.path.join(project_root, "bin", "stockfish.exe")
+STOCKFISH_PATH = os.environ.get("STOCKFISH_PATH", default_stockfish_path)
 
 # MIGRATED-TODO: Analizar donde usar este analisis, si en el juego o en el ejercicio
 
@@ -68,7 +72,7 @@ def get_evaluation(fen, depth=10, multipv=1):
                     "alternatives": [parse_info(i, turn) for i in info[1:]]
                 } if multipv > 1 else {"best": parse_info(info, turn), "alternatives": []}
     except Exception as e:
-        print(f"❌ Error al obtener evaluación: {e} - {traceback.format_exc()}")
+        print(f"[ERROR] Error al obtener evaluación: {e} - {traceback.format_exc()}")
         if e.__cause__:
             print(f"Caused by: {e.__cause__}")
         return {"best": {"type": "error", "value": None, "mate_in": None}, "alternatives": []}
@@ -153,7 +157,7 @@ def convert_pov_score(score: chess.engine.PovScore) -> dict:
                 "mate_in": None
             }
     except Exception as e:
-        print(f"❌ Error al convertir PovScore: {e}")
+        print(f"[ERROR] Error al convertir PovScore: {e}")
         return {
             "type": "unknown",
             "value": None,

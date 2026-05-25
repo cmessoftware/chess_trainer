@@ -1,192 +1,170 @@
-# 🔮 Guía de Predicciones Fiables con MLflow
+# Predicciones Fiables con MLflow - Chess Trainer
 
-## ✅ Estado Actual: LISTO PARA PREDICCIONES
+## Objetivo
 
-Tu proyecto **chess_trainer** ya está completamente preparado para hacer predicciones fiables usando MLflow. Aquí tienes el procedimiento completo:
+Este documento describe cómo hacer predicciones fiables de errores de ajedrez utilizando MLflow para el tracking y gestión de modelos.
 
-## 🚀 Procedimiento Completo para Hacer Predicciones
+## Arquitectura del Sistema
 
-### 1. Inicializar el Sistema MLflow
-
-```powershell
-# Opción A: Comando rápido
-mlinit
-
-# Opción B: Comando completo
-Initialize-MLflow
+```
+Datos → Feature Engineering → Modelos ML → MLflow → Predicciones
 ```
 
-### 2. Entrenar el Modelo de Predicción
+## Pipeline de Predicciones
 
-```powershell
-# Opción A: Comando rápido
-mltrain
-
-# Opción B: Comando completo
-Train-ChessErrorModel
-```
-
-**Este comando:**
-- Carga todos los datos de features desde PostgreSQL
-- Entrena un modelo Random Forest optimizado
-- Registra el modelo en MLflow con todas las métricas
-- Guarda el modelo para uso en producción
-
-### 3. Hacer Predicciones en Tiempo Real
-
-#### 3.1 Predicción de una Jugada Específica
-
-```powershell
-# Predecir apertura e2e4 desde posición inicial
-mlpredict -FEN "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1" -Move "e2e4"
-
-# Predecir una jugada específica
-mlpredict -FEN "r1bqkb1r/pppp1ppp/2n2n2/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4" -Move "d2d3"
-```
-
-#### 3.2 Desde Python (Uso Programático)
+### 1. Preparación de Datos
 
 ```python
-# En un notebook o script Python
-from src.ml.realtime_predictor import RealTimeChessPredictor
+from src.ml.chess_error_predictor import ChessErrorPredictor
 
 # Inicializar predictor
-predictor = RealTimeChessPredictor()
-predictor.setup_engine()
+predictor = ChessErrorPredictor()
 
-# Analizar una jugada
-result = predictor.analyze_position(
-    fen="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-    move_uci="e2e4"
-)
-
-print(f"Predicción: {result['predicted_error']}")
-print(f"Confianza: {result['confidence']:.4f}")
+# Cargar datos
+data = predictor.load_training_data()
 ```
 
-### 4. Analizar Partidas Completas
+### 2. Entrenamiento del Modelo
 
 ```python
-# Analizar todas las jugadas de una partida
-pgn = '''
-[Event "Sample Game"]
-[White "Player1"]
-[Black "Player2"]
+# Entrenar modelo baseline
+model = predictor.train_baseline_model()
 
-1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 4. Ba4 Nf6 5. O-O Be7
-'''
-
-game_analysis = predictor.analyze_game_moves(pgn, max_moves=10)
-print(f"Precisión del modelo: {game_analysis['game_statistics']['prediction_accuracy']:.4f}")
+# Evaluar modelo
+metrics = predictor.evaluate_model(model)
+print(f"F1 Score: {metrics['f1_macro']}")
 ```
 
-## 📊 Verificar Resultados en MLflow UI
+### 3. Registro en MLflow
 
-```powershell
-# Abrir MLflow UI para ver experimentos y métricas
-Open-MLflowUI
-# O usar el comando rápido:
-# Start-Process "http://localhost:5000"
+```python
+import mlflow
+import mlflow.sklearn
+
+with mlflow.start_run():
+    # Log parámetros
+    mlflow.log_param("model_type", "LogisticRegression")
+    mlflow.log_param("regularization", "L2")
+    
+    # Log métricas
+    mlflow.log_metric("f1_macro", metrics['f1_macro'])
+    mlflow.log_metric("accuracy", metrics['accuracy'])
+    
+    # Log modelo
+    mlflow.sklearn.log_model(
+        model, 
+        "chess_error_classifier",
+        registered_model_name="ChessErrorPredictor"
+    )
 ```
 
-En la UI podrás ver:
-- **Experimentos**: Historial de entrenamientos
-- **Métricas**: Accuracy, F1-score, precision, recall
-- **Parámetros**: Hiperparámetros del modelo
-- **Modelos**: Versiones registradas y sus performance
-- **Artifacts**: Archivos del modelo para descarga
+### 4. Hacer Predicciones
 
-## 🎯 Tipos de Predicciones Disponibles
+```python
+# Cargar modelo desde MLflow
+model_uri = "models:/ChessErrorPredictor/Production"
+model = mlflow.sklearn.load_model(model_uri)
 
-### 1. Clasificación de Errores
-- **good**: Jugada buena (≤50 centipawns de diferencia)
-- **inaccuracy**: Imprecisión (51-150 centipawns)
-- **mistake**: Error (151-500 centipawns)
-- **blunder**: Error grave (>500 centipawns)
+# Hacer predicción
+features = predictor.extract_features(game)
+prediction = model.predict_proba(features)
 
-### 2. Confianza de Predicción
-- Valor entre 0.0 y 1.0
-- >0.8: Alta confianza
-- 0.6-0.8: Confianza media
-- <0.6: Baja confianza
-
-### 3. Comparación con Stockfish
-El sistema compara automáticamente las predicciones del modelo con la evaluación real de Stockfish para validar la precisión.
-
-## 🔧 Comandos de Mantenimiento
-
-```powershell
-# Probar la integración MLflow + PostgreSQL
-mltest
-
-# Limpiar archivo SQLite antiguo (solo la primera vez)
-mlclean
-
-# Ver estado de los servicios
-Show-ChessTrainerStatus
-
-# Reiniciar todos los servicios si hay problemas
-Restart-ChessTrainer
+print(f"Error Label: {prediction['label']}")
+print(f"Confidence: {prediction['confidence']:.2f}")
 ```
 
-## 📈 Métricas de Performance Esperadas
+## Métricas de Evaluación
 
-Con los datos actuales del proyecto, deberías obtener:
+### Métricas Principales
 
-- **Accuracy**: ~85-90% en clasificación de errores
-- **F1-Score**: ~0.82-0.88 (weighted average)
-- **Precision**: Alta para "blunder" y "good", media para "mistake"
-- **Recall**: Balanceado entre todas las clases
+1. **F1 Macro**: Métrica principal para clases desbalanceadas
+2. **Matriz de Confusión**: Análisis detallado de errores
+3. **Calibración**: Confiabilidad de las probabilidades
 
-## 🚨 Troubleshooting
+### Criterios de Calidad
 
-### Problema: "Modelo no encontrado"
-```powershell
-# Asegúrate de entrenar primero
-mltrain
+- **F1 Macro > 0.70**: Baseline mínimo aceptable
+- **Confusión grave < 5%**: Entre `good` y `blunder`
+- **Calibración ECE < 0.1**: Probabilidades bien calibradas
+
+## Monitoreo de Modelos
+
+### Tracking de Experimentos
+
+```python
+# Configurar experimento
+mlflow.set_experiment("chess_error_classification")
+
+# Crear run con tags
+with mlflow.start_run() as run:
+    mlflow.set_tag("phase", "1")
+    mlflow.set_tag("model_type", "baseline")
+    mlflow.set_tag("data_version", "v1.0")
 ```
 
-### Problema: "PostgreSQL connection failed"
-```powershell
-# Reiniciar servicios
-Restart-ChessTrainer
-# Esperar 30 segundos y probar
-mlinit
+### Model Registry
+
+```python
+# Promoción de modelo
+client = mlflow.tracking.MlflowClient()
+
+# Transición a Production
+client.transition_model_version_stage(
+    name="ChessErrorPredictor",
+    version=1,
+    stage="Production"
+)
 ```
 
-### Problema: "Stockfish not found"
-- Verificar que Stockfish esté instalado en el contenedor
-- El análisis funcionará sin Stockfish, pero sin comparación real
+## Validación de Predicciones
 
-## 🎓 Casos de Uso Recomendados
+### Tests de Consistencia
 
-### 1. **Análisis de Partidas Propias**
-Cargar tus partidas en PGN y analizar todos los errores automáticamente.
+1. **Sanity Checks**: Predicciones básicas coherentes
+2. **Regression Tests**: Comparación con versiones anteriores
+3. **A/B Testing**: Evaluación en producción
 
-### 2. **Entrenamiento Táctico**
-Identificar qué tipos de posiciones te causan más errores.
+### Ejemplo de Validación
 
-### 3. **Validación de Análisis**
-Comparar análisis manual con predicciones automáticas.
+```python
+def validate_predictions(model, test_data):
+    predictions = model.predict(test_data)
+    
+    # Test 1: No predicciones imposibles
+    assert all(p in ['good', 'inaccuracy', 'mistake', 'blunder'] for p in predictions)
+    
+    # Test 2: Distribución esperada
+    good_ratio = sum(p == 'good' for p in predictions) / len(predictions)
+    assert 0.3 <= good_ratio <= 0.7  # Entre 30-70% jugadas buenas
+    
+    return True
+```
 
-### 4. **Desarrollo de Modelos**
-Usar como base para entrenar modelos más específicos.
+## Deployment
 
-## 🔮 ¿Qué Hace el Sistema tan Fiable?
+### Serving del Modelo
 
-1. **Datos Reales**: Basado en miles de partidas de élite analizadas con Stockfish
-2. **Features Ricas**: 16+ características por jugada (material, movilidad, fase, etc.)
-3. **Modelo Optimizado**: Random Forest con hiperparámetros optimizados vía GridSearch
-4. **Validación Cruzada**: Modelo validado con k-fold CV
-5. **Tracking Completo**: MLflow registra todo para reproducibilidad
-6. **PostgreSQL**: Base de datos robusta para persistencia
+```bash
+# Servir modelo con MLflow
+mlflow models serve -m "models:/ChessErrorPredictor/Production" -p 5001
+```
 
-## ✅ Confirmación Final
+### API Integration
 
-Tu sistema está **100% listo** para predicciones fiables. Solo necesitas:
+```python
+import requests
 
-1. Ejecutar `mlinit` (una vez)
-2. Ejecutar `mltrain` (entrenar modelo)
-3. Usar `mlpredict` para predicciones
+# Hacer predicción via API
+response = requests.post(
+    "http://localhost:5001/invocations",
+    json={"instances": features.tolist()}
+)
 
-¡El pipeline completo está implementado y funcionando! 🚀
+prediction = response.json()
+```
+
+## Referencias
+
+- [Chess Error Predictor](../src/ml/chess_error_predictor.py)
+- [MLflow Utils](../src/ml/mlflow_utils.py)
+- [Roadmap Técnico](ROADMAP_TECHNICAL.md)

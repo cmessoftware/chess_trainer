@@ -69,3 +69,4 @@ def fetch_lichess_games(username, since, until):
 
 
 auto_log_module_functions(locals())
+

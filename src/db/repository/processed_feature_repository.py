@@ -39,6 +39,10 @@ class ProcessedFeaturesRepository:
         self.session.add(new_entry)
         self.session.commit()
 
+    def mark_as_processed(self, game_id: str):
+        """Mark a game as processed by saving its game_id"""
+        self.save_processed_hash(game_id)
+
     def save_many_processed_features(self, game_ids: list[str]):
         if not game_ids:
             return
@@ -56,11 +60,11 @@ class ProcessedFeaturesRepository:
             inserted = result.rowcount
             skipped = len(rows) - inserted
             logger.info(
-                f"✅ Procesados insertados: {inserted}, ⏭️ Duplicados ignorados: {skipped}")
+                f"[OK] Procesados insertados: {inserted}, [SKIP] Duplicados ignorados: {skipped}")
 
         except Exception as e:
             session.rollback()
-            logger.error(f"❌ Error al insertar procesados en lote: {e}")
+            logger.error(f"[ERROR] Error al insertar procesados en lote: {e}")
             raise e
         finally:
             session.close()

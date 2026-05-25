@@ -1,0 +1,41 @@
+🎯 CHESS TRAINER - REPORTE CALIBRADO
+=====================================
+
+👤 Jugador: New-9f312c8
+📅 Fecha: 2026-01-13 23:17
+🎮 Partidas analizadas: 290
+📊 ELO estimado: 3200
+🎓 Nivel: ENGINE
+✅ DATOS REALES
+
+📈 ANÁLISIS DE ERRORES (CALIBRADO)
+---------------------------------
+• Blunders: 1.2%
+• Mistakes: 10.7%  
+• Inaccuracies: 34.8%
+• Good moves: 53.2%
+
+🚨 Errores críticos: 1.2%
+📏 Criterio: solo blunders flagrantes
+
+🎯 COMPARACIÓN CON NIVEL ESPERADO
+--------------------------------
+Blunders: 1.2% (esperado: 0.1%)
+Mistakes: 10.7% (esperado: 2.0%)
+Good moves: 53.2% (esperado: 90.0%)
+
+✅ DENTRO DEL RANGO ESPERADO
+
+📚 RECOMENDACIONES ESPECÍFICAS
+-----------------------------
+• Análisis de variantes profundas
+• Preparación de aperturas específicas
+• Finales teóricos avanzados
+
+🔬 CONTEXTO TÉCNICO
+------------------
+Calibración aplicada para nivel ENGINE
+Rango ELO objetivo: 3000+
+Movimientos analizados: 16209
+
+Generado por Chess Trainer - Diagnóstico Calibrado

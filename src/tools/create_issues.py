@@ -7,6 +7,7 @@ import tempfile
 import subprocess
 import json
 import dotenv
+
 # Cargar variables de entorno desde .env
 dotenv.load_dotenv()
 
@@ -15,10 +16,10 @@ TODO_PATTERN = re.compile(r"#\s*TODO\s*[:\-]?\s*(.*)", re.IGNORECASE)
 MIGRATED_TAG = "#MIGRATED-TODO"
 GITHUB_OWNER = "cmessoftware"
 PROJECT_NUMBER = 11  # Número del proyecto
-PROJECT_NODE_ID = "PVT_kwHOBgXmV84A8H76"  # ID del proyecto en GitHub
+PROJECT_NODE_ID = "xx"  # ID del proyecto en GitHub
 GITHUB_REPO = "chess_trainer"
 # IDs de campos y valores ya detectados
-STATUS_FIELD_ID = "PVTSSF_lAHOBgXmV84A8H76zgwN2EU"
+STATUS_FIELD_ID = "xx"
 STATUS_BACKLOG_ID = "f75ad846"
 # No tenés Roadmap, podemos dejarlo igual o agregar ese valor en GitHub
 STATUS_ROADMAP_ID = "f75ad846"
@@ -29,7 +30,7 @@ STATUS_OPTIONS = {
     "Ready": "e18bf179",
     "In progress": "47fc9ee4",
     "In review": "aba860b9",
-    "Done": "98236657"
+    "Done": "98236657",
 }
 
 
@@ -42,10 +43,18 @@ def get_project_item_id(issue_number, max_retries=5, delay=3):
     issue_url = f"https://github.com/{GITHUB_OWNER}/{GITHUB_REPO}/issues/{issue_number}"
 
     for attempt in range(max_retries):
-        result = run_gh([
-            "gh", "project", "item-list",
-            str(PROJECT_NUMBER), "--owner", GITHUB_OWNER, "--format", "json"
-        ])
+        result = run_gh(
+            [
+                "gh",
+                "project",
+                "item-list",
+                str(PROJECT_NUMBER),
+                "--owner",
+                GITHUB_OWNER,
+                "--format",
+                "json",
+            ]
+        )
         # print(f"DEBUG salida item-list (intento {attempt+1}):\n{result}")
 
         items_json = json.loads(result)
@@ -58,7 +67,10 @@ def get_project_item_id(issue_number, max_retries=5, delay=3):
                 return item["id"]
 
         print(
-            f"⏳ Item no encontrado aún. Esperando {delay} segundos...", end="", flush=True)
+            f"⏳ Item no encontrado aún. Esperando {delay} segundos...",
+            end="",
+            flush=True,
+        )
 
         # Simular progreso visual
         for _ in range(delay * 2):
@@ -67,11 +79,12 @@ def get_project_item_id(issue_number, max_retries=5, delay=3):
         print()
 
     raise ValueError(
-        f"❌ Item no encontrado en el proyecto para issue_url {issue_url} después de {max_retries} intentos")
+        f"❌ Item no encontrado en el proyecto para issue_url {issue_url} después de {max_retries} intentos"
+    )
 
 
 def update_issue_status(item_id, status_option_id):
-    mutation = f'''
+    mutation = f"""
     mutation {{
       updateProjectV2ItemFieldValue(
         input: {{
@@ -86,16 +99,17 @@ def update_issue_status(item_id, status_option_id):
         }}
       }}
     }}
-    '''
+    """
     result = subprocess.run(
         ["gh", "api", "graphql", "-f", f"query={mutation}"],
-        capture_output=True, text=True
+        capture_output=True,
+        text=True,
     )
     if result.returncode == 0:
         print(f"✅ Status del item {item_id} actualizado correctamente")
     else:
-        print(
-            f"❌ Error al actualizar status del item {item_id}: {result.stderr}")
+        print(f"❌ Error al actualizar status del item {item_id}: {result.stderr}")
+
 
 # def update_issue_status(issue_id, status_value_name):
 #     try:
@@ -118,17 +132,28 @@ def update_issue_status(item_id, status_option_id):
 def add_issue_to_project(issue_number, labels=[]):
     issue_url = f"https://github.com/{GITHUB_OWNER}/{GITHUB_REPO}/issues/{issue_number}"
 
-    run_gh([
-        "gh", "project", "item-add", str(PROJECT_NUMBER),
-        "--url", issue_url,
-        "--owner", GITHUB_OWNER
-    ])
+    run_gh(
+        [
+            "gh",
+            "project",
+            "item-add",
+            str(PROJECT_NUMBER),
+            "--url",
+            issue_url,
+            "--owner",
+            GITHUB_OWNER,
+        ]
+    )
     print(f"✅ Issue {issue_number} agregado al proyecto")
 
     # Definir status según etiquetas
     # status_id = STATUS_ROADMAP_ID if "low-priority" in labels else STATUS_BACKLOG_ID
     item_id = get_project_item_id(issue_number)
-    status_id = STATUS_OPTIONS["Backlog"] if "low-priority" in labels else STATUS_OPTIONS["Ready"]
+    status_id = (
+        STATUS_OPTIONS["Backlog"]
+        if "low-priority" in labels
+        else STATUS_OPTIONS["Ready"]
+    )
     update_issue_status(item_id, status_id)
 
     # update_issue_status(item_id, status_id)
@@ -154,11 +179,13 @@ def add_issue_to_project(issue_number, labels=[]):
 
 def get_issue_id(issue_number):
     result = subprocess.run(
-        ["gh", "api",
-            f"repos/{GITHUB_OWNER}/{GITHUB_REPO}/issues/{issue_number}"],
-        capture_output=True, text=True, check=True
+        ["gh", "api", f"repos/{GITHUB_OWNER}/{GITHUB_REPO}/issues/{issue_number}"],
+        capture_output=True,
+        text=True,
+        check=True,
     )
     return json.loads(result.stdout)["node_id"]
+
 
 # def get_issue_id(issue_number):
 #     cmd = ["gh", "api", f"GITHUB_REPOs/{GITHUB_OWNER}/{GITHUB_REPO}/issues/{issue_number}"]
@@ -176,7 +203,7 @@ def get_priority_from_issue(issue_number: int) -> str | None:
             ["gh", "api", f"GITHUB_REPOs/{GITHUB_REPO}/issues/{issue_number}"],
             capture_output=True,
             check=True,
-            text=True
+            text=True,
         )
         data = json.loads(result.stdout)
         labels = [label["name"] for label in data.get("labels", [])]
@@ -194,9 +221,9 @@ def find_todos(base_path="."):
     todos = []
     for root, _, files in os.walk(base_path):
         for file in files:
-            if file.endswith(('.py', '.js', '.ts', '.html', '.css', '.md')):
+            if file.endswith((".py", ".js", ".ts", ".html", ".css", ".md")):
                 full_path = os.path.join(root, file)
-                with open(full_path, 'r', encoding='utf-8') as f:
+                with open(full_path, "r", encoding="utf-8") as f:
                     lines = f.readlines()
                 modified = False
                 for i, line in enumerate(lines):
@@ -214,19 +241,20 @@ def find_todos(base_path="."):
                         print(f"\n🔎 {full_path}:{i+1} → {title}")
                         body = input("📝 Descripción opcional: ")
 
-                        todos.append({
-                            "title": title,
-                            "body": body,
-                            "file": full_path,
-                            "line": i + 1
-                        })
+                        todos.append(
+                            {
+                                "title": title,
+                                "body": body,
+                                "file": full_path,
+                                "line": i + 1,
+                            }
+                        )
 
                         modified = True
 
                 if modified:
-                    print(
-                        f"✏️ Actualizando {full_path} con los TODOs encontrados...")
-                    with open(full_path, 'w', encoding='utf-8') as f:
+                    print(f"✏️ Actualizando {full_path} con los TODOs encontrados...")
+                    with open(full_path, "w", encoding="utf-8") as f:
                         f.writelines(lines)
 
     return todos
@@ -234,9 +262,12 @@ def find_todos(base_path="."):
 
 def get_GITHUB_REPO():
     try:
-        url = subprocess.check_output(
-            ["git", "config", "--get", "remote.origin.url"]).decode().strip()
-        return re.sub(r'.*github.com[/:](.*)\.git', r'\1', url)
+        url = (
+            subprocess.check_output(["git", "config", "--get", "remote.origin.url"])
+            .decode()
+            .strip()
+        )
+        return re.sub(r".*github.com[/:](.*)\.git", r"\1", url)
     except Exception:
         print("❌ No se pudo detectar el GITHUB_REPOsitorio GitHub.")
         exit(1)
@@ -245,7 +276,8 @@ def get_GITHUB_REPO():
 def label_exists(GITHUB_REPO, label):
     try:
         output = subprocess.check_output(
-            ["gh", "label", "list", "--repo", GITHUB_REPO]).decode()
+            ["gh", "label", "list", "--repo", GITHUB_REPO]
+        ).decode()
         return any(line.startswith(label) for line in output.splitlines())
     except Exception:
         return False
@@ -253,7 +285,14 @@ def label_exists(GITHUB_REPO, label):
 
 def ask_with_default(prompt, default="n"):
     value = input(f"{prompt} ({default}/s): ").strip().lower()
-    return value == "s" or value == "yes" or value == "y" or value == "" or value == "si" and default.lower() in ["s", "yes", "y", "si"]
+    return (
+        value == "s"
+        or value == "yes"
+        or value == "y"
+        or value == ""
+        or value == "si"
+        and default.lower() in ["s", "yes", "y", "si"]
+    )
 
 
 def edit_with_vim(default_title, default_body):
@@ -277,16 +316,23 @@ def edit_with_vim(default_title, default_body):
 def ensure_label_exists(GITHUB_REPO, label):
     try:
         output = subprocess.check_output(
-            ["gh", "label", "list", "--repo", GITHUB_REPO],
-            text=True
+            ["gh", "label", "list", "--repo", GITHUB_REPO], text=True
         )
         labels = [line.split()[0] for line in output.splitlines()]
         if label not in labels:
             print(f"🏷️ Creando etiqueta '{label}'...")
             subprocess.run(
-                ["gh", "label", "create", label,
-                    "--repo", GITHUB_REPO, "--color", "BFD4F2"],
-                check=True
+                [
+                    "gh",
+                    "label",
+                    "create",
+                    label,
+                    "--repo",
+                    GITHUB_REPO,
+                    "--color",
+                    "BFD4F2",
+                ],
+                check=True,
             )
     except subprocess.CalledProcessError as e:
         print(f"❌ Error al validar o crear etiqueta '{label}': {e}")
@@ -309,8 +355,17 @@ def create_issue(GITHUB_REPO, title, body, labels=None, priority=None):
         if not body.strip():
             body = "Tarea generada automáticamente."
 
-        cmd = ["gh", "issue", "create", "--repo",
-               GITHUB_REPO, "--title", title, "--body", body]
+        cmd = [
+            "gh",
+            "issue",
+            "create",
+            "--repo",
+            GITHUB_REPO,
+            "--title",
+            title,
+            "--body",
+            body,
+        ]
 
         # Unificar todas las etiquetas
         all_labels = labels or []
@@ -325,16 +380,14 @@ def create_issue(GITHUB_REPO, title, body, labels=None, priority=None):
             labels_str = ",".join(all_labels)
             cmd += ["--label", labels_str]
 
-        result = subprocess.run(
-            cmd, capture_output=True, text=True, check=True)
+        result = subprocess.run(cmd, capture_output=True, text=True, check=True)
 
         output = result.stdout.strip()
         print(f"🔗 Salida gh:\n{output}")
 
-        match = re.search(r'/issues/(\d+)', output)
+        match = re.search(r"/issues/(\d+)", output)
         if not match:
-            raise ValueError(
-                "No se pudo extraer el número del issue de la salida")
+            raise ValueError("No se pudo extraer el número del issue de la salida")
 
         issue_number = int(match.group(1))
         issue_id = get_issue_id(issue_number)
@@ -380,7 +433,8 @@ def create_issues(issues, interactive=True):
                         print("✍️ Descripción por defecto detectada:")
                         print(f"\n{default_body}\n")
                         print(
-                            "➡️ Presioná Enter para usarla o escribí una nueva (Ctrl+D para terminar):")
+                            "➡️ Presioná Enter para usarla o escribí una nueva (Ctrl+D para terminar):"
+                        )
                     else:
                         print("✍️ Escribí la descripción (Ctrl+D para terminar):")
 
@@ -401,10 +455,7 @@ def create_issues(issues, interactive=True):
         body += f"\n\n{context}"
         print(f"\n📝 Creando issue: {title}")
         issue_number, issue_id = create_issue(
-            GITHUB_REPO,
-            title,
-            body,
-            labels=["low-priority"]
+            GITHUB_REPO, title, body, labels=["low-priority"]
         )
         print(f"Issue creado #{issue_number}:{title} con ID {issue_id}")
         print(f"🔗 Creando backlog: {title}")
@@ -417,34 +468,41 @@ def create_issues(issues, interactive=True):
 
 def mark_todo_as_migrated(file_path, line_number):
     try:
-        with open(file_path, 'r', encoding='utf-8') as f:
+        with open(file_path, "r", encoding="utf-8") as f:
             lines = f.readlines()
 
         if line_number - 1 >= len(lines):
             print(
-                f"⚠️ Línea {line_number} fuera de rango en {file_path}, no se actualiza.")
+                f"⚠️ Línea {line_number} fuera de rango en {file_path}, no se actualiza."
+            )
             return
 
-        timestamp = int(__import__('time').time())
+        timestamp = int(__import__("time").time())
         migrated_tag = f"#MIGRATED-TODO-{timestamp}"
 
-        lines[line_number - 1] = re.sub(r"#\s*TODO", migrated_tag,
-                                        lines[line_number - 1], count=1, flags=re.IGNORECASE)
+        lines[line_number - 1] = re.sub(
+            r"#\s*TODO",
+            migrated_tag,
+            lines[line_number - 1],
+            count=1,
+            flags=re.IGNORECASE,
+        )
 
-        with open(file_path, 'w', encoding='utf-8') as f:
+        with open(file_path, "w", encoding="utf-8") as f:
             f.writelines(lines)
 
         print(f"✏️ TODO en {file_path}:{line_number} marcado como migrado.")
     except Exception as e:
-        print(
-            f"❌ Error al marcar TODO como migrado en {file_path}:{line_number}: {e}")
+        print(f"❌ Error al marcar TODO como migrado en {file_path}:{line_number}: {e}")
 
 
 def gh_login():
     try:
         subprocess.run(["gh", "auth", "status"], check=True)
     except subprocess.CalledProcessError:
-        print("⚠️ No estás autenticado en GitHub CLI. Por favor, ejecuta 'gh auth login' para autenticarte.")
+        print(
+            "⚠️ No estás autenticado en GitHub CLI. Por favor, ejecuta 'gh auth login' para autenticarte."
+        )
         exit(1)
 
 
@@ -457,7 +515,7 @@ def main(auto):
     print(f"\n🔍 Se encontraron {len(issues)} TODOs.")
     for i, issue in enumerate(issues, 1):
         print(f"{i}. {issue['title']} ({issue['file']}:{issue['line']})")
-        if issue['body']:
+        if issue["body"]:
             print(f"   {issue['body']}")
 
     if not issues:

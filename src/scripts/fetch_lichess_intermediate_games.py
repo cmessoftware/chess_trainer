@@ -52,7 +52,7 @@ def fetch_lichess_intermediate_games(target_count: int = 10000, max_per_user: in
     """Descarga partidas de usuarios rapid entre 1700 y 2000 ELO"""
     games = []
     tried_users: Set[str] = set()
-    pbar = tqdm(total=target_count, desc="⏳ Descargando partidas intermedias")
+    pbar = tqdm(total=target_count, desc="[RATE_LIMIT] Descargando partidas intermedias")
 
     while len(games) < target_count:
         username = get_random_lichess_user()
@@ -74,7 +74,7 @@ def fetch_lichess_intermediate_games(target_count: int = 10000, max_per_user: in
             games.extend(user_games)
             pbar.update(len(user_games))
             print(
-                f"✅ {username} ({rapid_rating}) ➜ {len(user_games)} partidas acumuladas: {len(games)}")
+                f"[SUCCESS] {username} ({rapid_rating}) ➜ {len(user_games)} partidas acumuladas: {len(games)}")
 
         time.sleep(1)
 
@@ -88,3 +88,4 @@ if __name__ == "__main__":
         f.write("\n\n".join(games))
     print(
         f"Guardadas {len(games)} partidas en 'intermediate_lichess_games.pgn'")
+

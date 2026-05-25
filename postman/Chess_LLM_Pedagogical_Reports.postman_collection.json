@@ -1,0 +1,618 @@
+{
+    "info": {
+        "_postman_id": "chess-llm-pedagogical-collection",
+        "name": "Chess LLM Pedagogical Reports API",
+        "description": "FUNCIONALIDAD 3.6.1 - Fase 1: LLM Pedagógico MVP\n\nColección para testing de endpoints de generación de informes pedagógicos con GPT-4.\n\n**Características:**\n- Adaptación automática por ELO del jugador\n- Interpretación de análisis SHAP en lenguaje pedagógico\n- Informes en formato Markdown con 5 secciones\n- Tracking de tokens y costos\n- Procesamiento batch para múltiples partidas\n\n**Requisitos:**\n1. OPENAI_API_KEY configurada en .env\n2. Cuenta OpenAI con billing activo ($5 mínimo)\n3. API chess_trainer ejecutándose (puerto 8000)\n4. Usuario admin/admin123 creado\n\n**Costos estimados (GPT-4):**\n- Análisis individual: ~2,500 tokens → $0.10\n- Batch de 10 partidas: ~25,000 tokens → $1.00",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "1. Authentication",
+            "item": [
+                {
+                    "name": "Login - Get Token",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Login successful\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.environment.set(\"token\", jsonData.access_token);",
+                                    "    pm.environment.set(\"username\", jsonData.user.username);",
+                                    "    console.log(\"✅ Token saved: \" + jsonData.access_token.substring(0, 20) + \"...\");",
+                                    "    console.log(\"✅ Username: \" + jsonData.user.username);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"username\": \"{{admin_username}}\",\n    \"password\": \"{{admin_password}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/auth/login",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "auth",
+                                "login"
+                            ]
+                        },
+                        "description": "Autenticación y obtención de JWT token para acceder a endpoints protegidos"
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "2. LLM Reports - Individual",
+            "item": [
+                {
+                    "name": "Generate Report - ELO 1400 (Beginner)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status is 200\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response has required fields\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData).to.have.property('analysis_id');",
+                                    "    pm.expect(jsonData).to.have.property('game_id');",
+                                    "    pm.expect(jsonData).to.have.property('player_elo');",
+                                    "    pm.expect(jsonData).to.have.property('report');",
+                                    "    pm.expect(jsonData).to.have.property('tokens_used');",
+                                    "    pm.expect(jsonData).to.have.property('model');",
+                                    "    pm.expect(jsonData).to.have.property('cost_estimate_usd');",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Report is in Markdown format\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.report).to.include('# ');",
+                                    "    pm.expect(jsonData.report).to.include('##');",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Tokens usage is tracked\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.tokens_used).to.have.property('prompt');",
+                                    "    pm.expect(jsonData.tokens_used).to.have.property('completion');",
+                                    "    pm.expect(jsonData.tokens_used).to.have.property('total');",
+                                    "    pm.expect(jsonData.tokens_used.total).to.be.above(0);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Cost is estimated\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.cost_estimate_usd).to.be.a('number');",
+                                    "    pm.expect(jsonData.cost_estimate_usd).to.be.above(0);",
+                                    "});",
+                                    "",
+                                    "// Log results",
+                                    "var jsonData = pm.response.json();",
+                                    "console.log(\"\\n\" + \"=\".repeat(60));",
+                                    "console.log(\"🧠 INFORME LLM GENERADO - ELO 1400 (Beginner)\");",
+                                    "console.log(\"=\".repeat(60));",
+                                    "console.log(\"Analysis ID: \" + jsonData.analysis_id);",
+                                    "console.log(\"Game ID: \" + jsonData.game_id);",
+                                    "console.log(\"Player ELO: \" + jsonData.player_elo);",
+                                    "console.log(\"Model: \" + jsonData.model);",
+                                    "console.log(\"Tokens - Prompt: \" + jsonData.tokens_used.prompt);",
+                                    "console.log(\"Tokens - Completion: \" + jsonData.tokens_used.completion);",
+                                    "console.log(\"Tokens - Total: \" + jsonData.tokens_used.total);",
+                                    "console.log(\"Cost: $\" + jsonData.cost_estimate_usd.toFixed(4));",
+                                    "console.log(\"=\".repeat(60));",
+                                    "console.log(\"\\n📄 REPORT PREVIEW (first 500 chars):\");",
+                                    "console.log(jsonData.report.substring(0, 500) + \"...\");",
+                                    "console.log(\"=\".repeat(60));"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"game_id\": \"{{game_id_beginner}}\",\n    \"player_elo\": 1400,\n    \"player_color\": \"white\",\n    \"analysis_id\": null,\n    \"username\": \"{{username}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/analysis/generate-llm-report",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "analysis",
+                                "generate-llm-report"
+                            ]
+                        },
+                        "description": "Genera informe pedagógico para jugador principiante (ELO 1400).\n\n**Enfoque para ELO <1700:**\n- Material y tácticas básicas\n- Desarrollo de piezas\n- Control del centro\n- Lenguaje simple y directo\n- Severidad: Only majors (errors ≥ 1.5 pawns)\n\n**Si analysis_id es null:** Ejecuta análisis ML + SHAP automáticamente"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Generate Report - ELO 1800 (Intermediate)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status is 200\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Report contains intermediate concepts\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    // Verificar que el informe tiene contenido sustancial",
+                                    "    pm.expect(jsonData.report.length).to.be.above(500);",
+                                    "});",
+                                    "",
+                                    "// Log results",
+                                    "var jsonData = pm.response.json();",
+                                    "console.log(\"\\n🧠 INFORME LLM - ELO 1800 (Intermediate)\");",
+                                    "console.log(\"Tokens: \" + jsonData.tokens_used.total);",
+                                    "console.log(\"Cost: $\" + jsonData.cost_estimate_usd.toFixed(4));"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"game_id\": \"{{game_id_intermediate}}\",\n    \"player_elo\": 1800,\n    \"analysis_id\": null,\n    \"username\": \"{{username}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/analysis/generate-llm-report",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "analysis",
+                                "generate-llm-report"
+                            ]
+                        },
+                        "description": "Genera informe pedagógico para jugador intermedio (ELO 1800).\n\n**Enfoque para ELO 1700-2100:**\n- Estructura de peones\n- Planes posicionales\n- Profilaxis\n- Coordinación de piezas\n- Lenguaje técnico moderado\n- Severidad: Moderado (errors ≥ 1.0 pawns)"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Generate Report - ELO 2200 (Advanced)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status is 200\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Report contains advanced concepts\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.report.length).to.be.above(500);",
+                                    "});",
+                                    "",
+                                    "// Log results",
+                                    "var jsonData = pm.response.json();",
+                                    "console.log(\"\\n🧠 INFORME LLM - ELO 2200 (Advanced)\");",
+                                    "console.log(\"Tokens: \" + jsonData.tokens_used.total);",
+                                    "console.log(\"Cost: $\" + jsonData.cost_estimate_usd.toFixed(4));"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"game_id\": \"{{game_id_advanced}}\",\n    \"player_elo\": 2200,\n    \"analysis_id\": null,\n    \"username\": \"{{username}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/analysis/generate-llm-report",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "analysis",
+                                "generate-llm-report"
+                            ]
+                        },
+                        "description": "Genera informe pedagógico para jugador avanzado (ELO 2200+).\n\n**Enfoque para ELO 2100+:**\n- Optimización fina de evaluación\n- Precisión en cálculos dinámicos\n- Sutilezas posicionales\n- Detalles de finales técnicos\n- Lenguaje técnico completo\n- Severidad: Estricto (errors ≥ 0.5 pawns)"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Generate Report - With Existing Analysis ID",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status is 200\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Uses existing analysis\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.analysis_id).to.equal(parseInt(pm.environment.get(\"existing_analysis_id\")));",
+                                    "});",
+                                    "",
+                                    "// Log results",
+                                    "var jsonData = pm.response.json();",
+                                    "console.log(\"\\n🧠 INFORME LLM - Using Existing Analysis\");",
+                                    "console.log(\"Analysis ID reused: \" + jsonData.analysis_id);",
+                                    "console.log(\"Cost: $\" + jsonData.cost_estimate_usd.toFixed(4));"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"game_id\": \"{{game_id_beginner}}\",\n    \"player_elo\": 1400,\n    \"analysis_id\": {{existing_analysis_id}},\n    \"username\": \"{{username}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/analysis/generate-llm-report",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "analysis",
+                                "generate-llm-report"
+                            ]
+                        },
+                        "description": "Reutiliza un análisis ML existente para generar informe.\n\n**Ventaja:** Ahorra tiempo de cómputo y backend resources.\n**Caso de uso:** Regenerar informe con diferente ELO, o después de ajustar prompts."
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "3. LLM Reports - Batch",
+            "item": [
+                {
+                    "name": "Generate Batch Reports - 3 Games",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status is 200\", function () {",
+                                    "    pm.response.to.have.status(200);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Response has summary\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData).to.have.property('total_games');",
+                                    "    pm.expect(jsonData).to.have.property('successful');",
+                                    "    pm.expect(jsonData).to.have.property('failed');",
+                                    "    pm.expect(jsonData).to.have.property('total_cost_usd');",
+                                    "    pm.expect(jsonData).to.have.property('total_tokens');",
+                                    "    pm.expect(jsonData).to.have.property('reports');",
+                                    "});",
+                                    "",
+                                    "pm.test(\"All games processed\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.total_games).to.equal(3);",
+                                    "    pm.expect(jsonData.reports).to.be.an('array');",
+                                    "    pm.expect(jsonData.reports.length).to.equal(3);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Cost is tracked for batch\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.total_cost_usd).to.be.above(0);",
+                                    "    pm.expect(jsonData.total_tokens).to.be.above(0);",
+                                    "});",
+                                    "",
+                                    "// Log batch summary",
+                                    "var jsonData = pm.response.json();",
+                                    "console.log(\"\\n\" + \"=\".repeat(60));",
+                                    "console.log(\"🧠 BATCH LLM REPORTS - SUMMARY\");",
+                                    "console.log(\"=\".repeat(60));",
+                                    "console.log(\"Total Games: \" + jsonData.total_games);",
+                                    "console.log(\"Successful: \" + jsonData.successful);",
+                                    "console.log(\"Failed: \" + jsonData.failed);",
+                                    "console.log(\"Total Tokens: \" + jsonData.total_tokens);",
+                                    "console.log(\"Total Cost: $\" + jsonData.total_cost_usd.toFixed(4));",
+                                    "console.log(\"Avg Cost per Game: $\" + (jsonData.total_cost_usd / jsonData.total_games).toFixed(4));",
+                                    "console.log(\"=\".repeat(60));",
+                                    "",
+                                    "// Log individual reports",
+                                    "jsonData.reports.forEach((report, index) => {",
+                                    "    console.log(\"\\n📄 Report #\" + (index + 1) + \":\");",
+                                    "    if (report.error) {",
+                                    "        console.log(\"  ❌ Error: \" + report.error);",
+                                    "    } else {",
+                                    "        console.log(\"  ✅ Game ID: \" + report.game_id);",
+                                    "        console.log(\"  Analysis ID: \" + report.analysis_id);",
+                                    "        console.log(\"  Tokens: \" + report.tokens_used.total);",
+                                    "        console.log(\"  Cost: $\" + report.cost_estimate_usd.toFixed(4));",
+                                    "    }",
+                                    "});",
+                                    "console.log(\"\\n\" + \"=\".repeat(60));"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"game_ids\": [\n        \"{{game_id_beginner}}\",\n        \"{{game_id_intermediate}}\",\n        \"{{game_id_advanced}}\"\n    ],\n    \"player_elo\": 1600\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/analysis/generate-batch-llm-reports",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "analysis",
+                                "generate-batch-llm-reports"
+                            ]
+                        },
+                        "description": "Genera informes pedagógicos para múltiples partidas en batch.\n\n**Características:**\n- Procesamiento secuencial (evita rate limits de OpenAI)\n- Tracking de costos agregados\n- Manejo de errores individuales\n- Reportes de progreso\n\n**Caso de uso:** Análisis de múltiples juegos de un mismo jugador para identificar patrones recurrentes.\n\n**Nota:** Para >10 games, considerar procesamiento asíncrono o por lotes."
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "4. Error Handling",
+            "item": [
+                {
+                    "name": "Invalid Game ID",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status is 404 or 500\", function () {",
+                                    "    pm.expect(pm.response.code).to.be.oneOf([404, 500]);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Error message provided\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData).to.have.property('detail');",
+                                    "});",
+                                    "",
+                                    "console.log(\"\\n❌ Expected error: \" + pm.response.json().detail);"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"game_id\": \"invalid-game-id-12345\",\n    \"player_elo\": 1500,\n    \"analysis_id\": null,\n    \"username\": \"{{username}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/analysis/generate-llm-report",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "analysis",
+                                "generate-llm-report"
+                            ]
+                        },
+                        "description": "Prueba manejo de errores con game_id inexistente"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Missing API Key",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status is 500\", function () {",
+                                    "    pm.response.to.have.status(500);",
+                                    "});",
+                                    "",
+                                    "pm.test(\"Error mentions API key\", function () {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.expect(jsonData.detail.toLowerCase()).to.include('api');",
+                                    "});",
+                                    "",
+                                    "console.log(\"\\n❌ Expected error (API key not configured): \" + pm.response.json().detail);"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"game_id\": \"{{game_id_beginner}}\",\n    \"player_elo\": 1500,\n    \"analysis_id\": null,\n    \"username\": \"{{username}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/analysis/generate-llm-report",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "analysis",
+                                "generate-llm-report"
+                            ]
+                        },
+                        "description": "Prueba error cuando OPENAI_API_KEY no está configurada.\n\n**Nota:** Este test solo fallará si la API key no está en .env"
+                    },
+                    "response": []
+                }
+            ]
+        }
+    ],
+    "event": [
+        {
+            "listen": "prerequest",
+            "script": {
+                "type": "text/javascript",
+                "exec": [
+                    "// Pre-request script global",
+                    "console.log(\"🧠 LLM Pedagogical Reports API - Pre-request\");",
+                    "console.log(\"Base URL: \" + pm.environment.get(\"base_url\"));",
+                    "console.log(\"Token: \" + (pm.environment.get(\"token\") ? \"Set\" : \"Not set (run Login first)\"));"
+                ]
+            }
+        },
+        {
+            "listen": "test",
+            "script": {
+                "type": "text/javascript",
+                "exec": [
+                    "// Global test script"
+                ]
+            }
+        }
+    ],
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:8000",
+            "type": "string"
+        }
+    ]
+}

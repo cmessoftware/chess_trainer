@@ -1,244 +1,205 @@
-# ELO Standardization Guide - Issue #21
+# ELO Standardization Guide
 
-## 📋 Overview
+## Overview
 
-The ELO standardization system converts ratings from different chess platforms (Lichess, Chess.com) to a unified FIDE-like scale, enabling consistent analysis across platforms.
+This guide describes the ELO standardization system implemented in Chess Trainer to normalize player ratings across different sources and time periods.
 
-## 🎯 Problem Solved
+## Problem Statement
 
-Different chess platforms use different rating scales:
-- **Lichess**: Typically 100-150 points higher than FIDE
-- **Chess.com**: Closer to FIDE but with slight inflation
-- **FIDE**: Official standard but limited to tournament play
+Chess ratings come from different sources:
+- **Lichess**: Typically higher ratings
+- **Chess.com**: More conservative ratings  
+- **FIDE**: Official ratings, often lower
+- **Historical games**: Rating inflation over time
 
-## 🔧 Implementation
+## Solution: ELO Standardization
 
-### Core Features
+### Standardization Formula
 
-#### 1. Platform Detection
 ```python
-# Automatic detection from 'site' field
-lichess.org → lichess conversion
-chess.com → chess.com conversion
+standardized_elo = ((original_elo - source_mean) / source_std) * target_std + target_mean
 ```
 
-#### 2. Conversion Algorithms
+### Parameters by Source
+
 ```python
-# Lichess to FIDE-like
-standardized_elo = (lichess_elo * 0.92) - 100
-
-# Chess.com to FIDE-like  
-standardized_elo = (chesscom_elo * 1.02) + 50
+STANDARDIZATION_PARAMS = {
+    'lichess': {'mean': 1500, 'std': 350, 'target_mean': 1400, 'target_std': 300},
+    'chess_com': {'mean': 1200, 'std': 280, 'target_mean': 1400, 'target_std': 300},
+    'fide': {'mean': 1800, 'std': 200, 'target_mean': 1400, 'target_std': 300},
+    'personal': {'mean': 1350, 'std': 250, 'target_mean': 1400, 'target_std': 300}
+}
 ```
 
-#### 3. Derived Features
-- `standardized_elo`: Average of converted white_elo and black_elo
-- `elo_difference`: Absolute difference between players
-- `elo_category`: Skill level classification
+## Implementation
 
-## 📊 Usage Examples
+### Database Schema
 
-### Basic Usage
+```sql
+ALTER TABLE games ADD COLUMN elo_standardized INTEGER;
+ALTER TABLE games ADD COLUMN opponent_elo_standardized INTEGER;
+```
+
+### Python Implementation
+
 ```python
-from modules.ml_preprocessing import ChessMLPreprocessor
-
-# Load your chess data
-df = pd.read_csv('games.csv')  # Must have: white_elo, black_elo, site
-
-# Initialize preprocessor
-preprocessor = ChessMLPreprocessor()
-
-# Apply ELO standardization
-df_standardized = preprocessor.standardize_elo(df, source_type="personal")
-
-# Check results
-print(df_standardized[['white_elo', 'black_elo', 'standardized_elo']].head())
+class EloStandardizer:
+    def __init__(self):
+        self.params = STANDARDIZATION_PARAMS
+    
+    def standardize_elo(self, elo: int, source: str) -> int:
+        """Standardize ELO rating based on source"""
+        if source not in self.params:
+            return elo
+        
+        params = self.params[source]
+        standardized = (
+            (elo - params['mean']) / params['std']
+        ) * params['target_std'] + params['target_mean']
+        
+        return max(800, min(2800, int(standardized)))  # Clamp to reasonable range
 ```
 
-### Integration with ML Pipeline
+### Batch Update Script
+
 ```python
-# Full preprocessing pipeline
-preprocessor = ChessMLPreprocessor()
+#!/usr/bin/env python3
 
-# Apply ELO standardization + other preprocessing
-df_ml_ready = preprocessor.transform(df, source_type="personal")
+from src.modules.elo_standardization import EloStandardizer
+from src.db.repository.games_repository import GamesRepository
 
-# Use in ML model
-features = ['standardized_elo', 'elo_difference', 'score_diff', ...]
-X = df_ml_ready[features]
-y = df_ml_ready['error_label']
+def update_standardized_elos():
+    standardizer = EloStandardizer()
+    repo = GamesRepository()
+    
+    games = repo.get_all_games()
+    
+    for game in games:
+        # Standardize player ELO
+        std_elo = standardizer.standardize_elo(
+            game.elo, 
+            game.source or 'personal'
+        )
+        
+        # Standardize opponent ELO
+        std_opp_elo = standardizer.standardize_elo(
+            game.opponent_elo, 
+            game.source or 'personal'
+        )
+        
+        # Update database
+        repo.update_standardized_elos(
+            game.id, 
+            std_elo, 
+            std_opp_elo
+        )
 ```
 
-## 📈 Validation Results
+## Validation
 
-### Benchmark Tests (100% Success Rate)
-```
-✅ Lichess 1500 → FIDE-like 1280 (expected ~1280)
-✅ Lichess 2000 → FIDE-like 1740 (expected ~1740)  
-✅ Chess.com 1500 → FIDE-like 1580 (expected ~1580)
-✅ Chess.com 2000 → FIDE-like 2090 (expected ~2090)
-```
+### Distribution Analysis
 
-### Feature Creation
-```
-✅ standardized_elo: Created successfully
-✅ elo_difference: Created successfully
-✅ elo_category: 5 categories (beginner→master)
-```
-
-## 🔧 Technical Details
-
-### Conversion Parameters
 ```python
-elo_conversion_params = {
-    "lichess_to_fide": {
-        "intercept": -100,    # Lichess inflation correction
-        "slope": 0.92,        # Rating compression adjustment
-        "min_elo": 800,       # Minimum valid rating
-        "max_elo": 2800       # Maximum valid rating
-    },
-    "chesscom_to_fide": {
-        "intercept": 50,      # Minor adjustment
-        "slope": 1.02,        # Slight inflation correction
-        "min_elo": 600,       # Minimum valid rating
-        "max_elo": 2700       # Maximum valid rating
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+def plot_elo_distributions(games_df):
+    fig, axes = plt.subplots(2, 2, figsize=(15, 10))
+    
+    # Original ELOs by source
+    sns.boxplot(data=games_df, x='source', y='elo', ax=axes[0,0])
+    axes[0,0].set_title('Original ELO Distribution by Source')
+    
+    # Standardized ELOs by source
+    sns.boxplot(data=games_df, x='source', y='elo_standardized', ax=axes[0,1])
+    axes[0,1].set_title('Standardized ELO Distribution by Source')
+    
+    # Before/after histograms
+    games_df['elo'].hist(ax=axes[1,0], alpha=0.7, label='Original')
+    games_df['elo_standardized'].hist(ax=axes[1,1], alpha=0.7, label='Standardized')
+    
+    plt.tight_layout()
+    plt.show()
+```
+
+### Quality Metrics
+
+```python
+def calculate_standardization_metrics(df):
+    metrics = {}
+    
+    for source in df['source'].unique():
+        source_data = df[df['source'] == source]
+        
+        metrics[source] = {
+            'original_mean': source_data['elo'].mean(),
+            'original_std': source_data['elo'].std(),
+            'standardized_mean': source_data['elo_standardized'].mean(),
+            'standardized_std': source_data['elo_standardized'].std(),
+            'count': len(source_data)
+        }
+    
+    return metrics
+```
+
+## Usage in ML Pipeline
+
+### Feature Engineering
+
+```python
+def extract_elo_features(game):
+    features = {
+        'player_elo_std': game.elo_standardized,
+        'opponent_elo_std': game.opponent_elo_standardized,
+        'elo_difference_std': game.elo_standardized - game.opponent_elo_standardized,
+        'elo_tier': get_elo_tier(game.elo_standardized)
     }
-}
+    return features
+
+def get_elo_tier(elo):
+    if elo < 1000: return 'beginner'
+    elif elo < 1300: return 'novice'
+    elif elo < 1600: return 'intermediate'
+    elif elo < 1900: return 'advanced'
+    elif elo < 2200: return 'expert'
+    else: return 'master'
 ```
 
-### ELO Categories
+### Model Training
+
 ```python
-bins = [0, 1200, 1600, 2000, 2400, 3000]
-labels = ["beginner", "intermediate", "advanced", "expert", "master"]
+# Use standardized ELOs for consistent training
+X = features_df[['player_elo_std', 'opponent_elo_std', 'elo_difference_std', ...]]
+y = features_df['error_label']
+
+model = LogisticRegression()
+model.fit(X, y)
 ```
 
-## 🚀 Performance
+## Monitoring
 
-- ✅ **Vectorized operations**: Handles large datasets efficiently
-- ✅ **Memory optimized**: Minimal memory overhead
-- ✅ **Fast execution**: ~1000 games/second typical performance
+### Drift Detection
 
-## 🛡️ Error Handling
-
-### Missing Platform Information
 ```python
-# Default fallback to Chess.com conversion if site is missing
-if pd.isna(site) or site == '':
-    platform = 'chesscom'  # Conservative default
+def detect_elo_drift(recent_games, historical_mean=1400, threshold=50):
+    recent_mean = recent_games['elo_standardized'].mean()
+    drift = abs(recent_mean - historical_mean)
+    
+    if drift > threshold:
+        print(f"⚠️ ELO drift detected: {drift:.1f} points")
+        return True
+    return False
 ```
 
-### Invalid Ratings
-```python
-# Automatic clipping to valid ranges
-converted_elo = np.clip(converted_elo, min_elo, max_elo)
-```
+### Update Frequency
 
-### Missing ELO Data
-```python
-# Graceful handling of missing ratings
-if 'white_elo' not in df.columns or 'black_elo' not in df.columns:
-    logger.warning("ELO columns missing, skipping standardization")
-    return df
-```
+- **Initial setup**: Run full standardization
+- **Daily updates**: Standardize new games
+- **Monthly review**: Check for parameter drift
+- **Quarterly analysis**: Update standardization parameters
 
-## 📊 Integration Points
+## References
 
-### With ML Pipeline
-- ✅ **ChessMLPreprocessor**: Integrated in main preprocessing class
-- ✅ **Feature engineering**: Used in derived feature creation
-- ✅ **MLflow tracking**: Compatible with experiment tracking
-
-### With Data Sources
-- ✅ **Personal games**: Mixed platform support
-- ✅ **Elite games**: High-level cross-platform consistency
-- ✅ **Novice games**: Beginner-level normalization
-- ✅ **FIDE games**: Pass-through (already standardized)
-
-## 🧪 Testing
-
-### Automated Tests
-```bash
-# Run ELO standardization tests
-python test_elo_standardization.py
-
-# Expected output:
-# ✅ ELO Conversion Algorithms: PASSED
-# ✅ Standardized ELO Creation: PASSED  
-# ✅ Benchmark Validation: PASSED (100%)
-```
-
-### Manual Validation
-```python
-# Test with your own data
-test_data = {
-    'white_elo': [1500, 2000, 1800],
-    'black_elo': [1600, 1900, 1700], 
-    'site': ['lichess.org', 'chess.com', 'lichess.org']
-}
-
-df_test = pd.DataFrame(test_data)
-result = preprocessor.standardize_elo(df_test)
-print(result[['white_elo', 'black_elo', 'standardized_elo']])
-```
-
-## 📚 Research Background
-
-### Conversion Formula Sources
-- **Lichess adjustment**: Based on community analysis of cross-platform player comparisons
-- **Chess.com adjustment**: Derived from FIDE vs Chess.com rating correlations
-- **Validation data**: Comparison with known dual-platform players
-
-### Validation Methodology
-- Cross-platform player analysis
-- Statistical correlation studies
-- Community feedback validation
-
-## 🔄 Future Improvements
-
-### Planned Enhancements
-- [ ] Dynamic conversion parameters based on rating range
-- [ ] Time-period adjustments for rating inflation
-- [ ] Additional platform support (Chess24, FICS, etc.)
-- [ ] Machine learning-based conversion refinement
-
-### Advanced Features
-- [ ] Confidence intervals for conversions
-- [ ] Rating trajectory analysis
-- [ ] Cross-platform performance prediction
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-#### "Platform not detected"
-```python
-# Solution: Manually specify platform
-df_result = preprocessor.standardize_elo(df, platform_override='lichess')
-```
-
-#### "Extreme rating values"
-```python
-# Check for outliers before processing
-print(df[['white_elo', 'black_elo']].describe())
-# Values outside 600-3000 range may indicate data quality issues
-```
-
-#### "Categories not created"
-```python
-# Ensure both white_elo and black_elo are present
-assert 'white_elo' in df.columns and 'black_elo' in df.columns
-```
-
-## 📞 Support
-
-For issues or questions about ELO standardization:
-1. Check this documentation first
-2. Run the test suite: `python test_elo_standardization.py`
-3. Verify your data format matches expected schema
-4. Check MLflow logs for debugging information
-
----
-
-**Last updated**: July 12, 2025  
-**Version**: 1.0.0  
-**Status**: ✅ Production Ready
+- [ELO Standardization Implementation](../src/modules/elo_standardization.py)
+- [Games Repository](../src/db/repository/games_repository.py)
+- [Feature Engineering Guide](../notebooks/4-chess_trainer_analysis_extended_eda.ipynb)

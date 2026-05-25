@@ -1,0 +1,27 @@
+graph TB
+    subgraph "Frontend Layer"
+        A[React + Vite App]
+        B[Chess.js + ChessBoard.js]
+        C[JWT Authentication]
+        D[Role-Based Components]
+    end
+    
+    subgraph "API Layer"
+        E[FastAPI Services]
+        F[JWT Middleware]
+        G[Role Authorization]
+    end
+    
+    subgraph "Backend Layer" 
+        H[Existing ML Pipeline]
+        I[PostgreSQL Database]
+        J[Stockfish Engine]
+    end
+    
+    A --> E
+    B --> E
+    C --> F
+    D --> G
+    E --> H
+    E --> I
+    E --> J

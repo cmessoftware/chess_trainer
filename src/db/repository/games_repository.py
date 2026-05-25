@@ -4,6 +4,7 @@ from io import StringIO
 import os
 import chess
 import dotenv
+from datetime import datetime
 from sqlalchemy import select, not_
 from db.models.games import Games  # You must have this model defined
 from db.session import get_session  # Function that returns a SQLAlchemy session
@@ -38,7 +39,9 @@ class GamesRepository:
             # self.db_utils.print_sql_query(stmt, engine)
             return games
 
-    def get_games_by_pagination_not_analyzed(self, analyzed_hashes: set, offset: int = 0, limit: int = 10, source: str = None):
+    def get_games_by_pagination_not_analyzed(
+        self, analyzed_hashes: set, offset: int = 0, limit: int = 10, source: str = None
+    ):
         """
         Returns games whose ID (hash) is not in analyzed_hashes, paginated, optionally filtered by source.
         """
@@ -70,7 +73,8 @@ class GamesRepository:
             try:
                 if analyzed_hashes:
                     stmt = select(Games.pgn).where(
-                        not_(Games.game_id.in_(analyzed_hashes)))
+                        not_(Games.game_id.in_(analyzed_hashes))
+                    )
                 else:
                     stmt = select(Games.pgn)
                 games_rows = session.execute(stmt).scalars().all()
@@ -95,22 +99,64 @@ class GamesRepository:
 
     def get_game_by_id(self, game_id):
         with self.session_factory() as session:
-            row = session.execute(
-                select(Games.game_id, Games.pgn).where(
-                    Games.game_id == game_id)
-            ).scalar().first()
+            row = (
+                session.execute(
+                    select(Games.game_id, Games.pgn).where(Games.game_id == game_id)
+                )
+                .scalar()
+                .first()
+            )
             return row
 
     def game_exists(self, game_id: str) -> bool:
-        return self.session.query(Games).filter(Games.game_id == game_id).first() is not None
+        try:
+            from sqlalchemy import select
+
+            stmt = select(Games.game_id).where(Games.game_id == game_id)
+            result = self.session.execute(stmt).first()
+            return result is not None
+        except Exception as e:
+            self.session.rollback()
+            raise e
 
     def save_game(self, game_data: dict):
-        game = Games(**game_data)
-        self.session.add(game)
-        self.commit()
+        try:
+            game = Games(**game_data)
+            self.session.add(game)
+            self.session.commit()
+        except Exception as e:
+            self.session.rollback()
+            raise e
+
+    def save_games_batch(self, games_data_list: list):
+        """Save multiple games in a single transaction"""
+        try:
+            for game_data in games_data_list:
+                game = Games(**game_data)
+                self.session.add(game)
+            self.session.commit()
+            print(f"✅ Guardado lote de {len(games_data_list)} partidas")
+        except Exception as e:
+            self.session.rollback()
+            print(f"❌ Error guardando lote: {e}")
+            raise e
+
+    def save_game(self, game_data: dict):
+        """Save a single game"""
+        try:
+            game = Games(**game_data)
+            self.session.add(game)
+            return game
+        except Exception as e:
+            self.session.rollback()
+            print(f"❌ Error guardando partida: {e}")
+            raise e
 
     def commit(self):
         self.session.commit()
+
+    def rollback(self):
+        self.session.rollback()
 
     def close(self):
         self.session.close()
@@ -138,3 +184,59 @@ class GamesRepository:
             stmt = select(Games).where(Games.game_id == game_id)
             result = session.execute(stmt).first()
             return result is not None
+
+    def get_games_by_source(self, source: str, limit: int = 100, offset: int = 0):
+        """
+        Returns Games objects filtered by source with pagination.
+        :param source: Source to filter by (elite, fide, personal, etc.)
+        :param limit: Maximum number of games to return.
+        :param offset: Number of games to skip.
+        :return: List of Games objects.
+        """
+        with self.session_factory() as session:
+            stmt = (
+                select(Games).where(Games.source == source).offset(offset).limit(limit)
+            )
+            games = session.execute(stmt).scalars().all()
+            return games
+
+    def get_games_by_batch(self, batch_id: str, limit: int = 1000, offset: int = 0):
+        """
+        Returns Games objects filtered by import_batch_id.
+        :param batch_id: UUID of the import batch.
+        :param limit: Maximum number of games to return.
+        :param offset: Number of games to skip.
+        :return: List of Games objects.
+        """
+        with self.session_factory() as session:
+            stmt = (
+                select(Games)
+                .where(Games.import_batch_id == batch_id)
+                .offset(offset)
+                .limit(limit)
+            )
+            games = session.execute(stmt).scalars().all()
+            return games
+
+    def get_games_since_timestamp(
+        self,
+        since_timestamp: datetime,
+        source: str = None,
+        limit: int = 1000,
+        offset: int = 0,
+    ):
+        """
+        Returns Games objects imported after a specific timestamp.
+        :param since_timestamp: Only return games with created_at >= this timestamp.
+        :param source: Optional source filter.
+        :param limit: Maximum number of games to return.
+        :param offset: Number of games to skip.
+        :return: List of Games objects.
+        """
+        with self.session_factory() as session:
+            stmt = select(Games).where(Games.created_at >= since_timestamp.isoformat())
+            if source:
+                stmt = stmt.where(Games.source == source)
+            stmt = stmt.offset(offset).limit(limit)
+            games = session.execute(stmt).scalars().all()
+            return games

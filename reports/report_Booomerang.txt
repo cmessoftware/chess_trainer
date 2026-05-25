@@ -1,0 +1,66 @@
+
+🎯 CHESS TRAINER - REPORTE PERSONALIZADO
+========================================
+
+👤 Jugador: Booomerang
+📅 Fecha: 2026-01-13 23:07
+🎮 Partidas analizadas: 251
+📊 ELO promedio: 2603
+🎓 Nivel estimado: EXPERT
+
+📈 ANÁLISIS DE ERRORES
+----------------------
+• Blunders: 7.2%
+• Mistakes: 6.8%  
+• Inaccuracies: 32.3%
+• Good moves: 53.8%
+
+🚨 Tasa de errores críticos: 13.9%
+
+🎯 ÁREAS PRIORITARIAS
+--------------------
+1. Reducir errores graves
+   Target: Reducir 50%
+
+2. Desarrollar comprensión posicional
+   Target: Reducir 20%
+
+
+📚 PLAN DE ENTRENAMIENTO
+-----------------------
+⏱️ Tiempo semanal: 4 horas
+
+📅 HORARIO SEMANAL:
+• Monday: tactical_puzzles (0.5h)
+• Tuesday: opening_study (0.5h)
+• Wednesday: game_analysis (0.8h)
+• Thursday: endgame_practice (0.5h)
+• Friday: blunder_check (0.5h)
+• Saturday: playing_practice (1.0h)
+• Sunday: review_week (0.2h)
+
+🎯 EJERCICIOS RECOMENDADOS:
+• Verificar jugadas antes de mover: 10 por día
+• Árbol de cálculo sistemático: 5 por día
+• Identificar momentos críticos: 3 por día
+• Evaluación posicional: 8 por día
+• Formular planes: 5 por día
+
+
+📊 SEGUIMIENTO DE PROGRESO
+--------------------------
+Periodo de evaluación: 4 semanas
+
+Objetivos de reducción:
+• good: 53.8% → 22.0%
+• inaccuracy: 32.3% → 16.5%
+• blunder: 7.2% → 5.7%
+• mistake: 6.8% → 4.3%
+
+
+🔬 CONTEXTO TÉCNICO
+------------------
+Sistema basado en análisis de 1.000 F1-score
+Embeddings con coherencia 0.569
+
+Generado por Chess Trainer Phase 5 - Adaptive Tutor

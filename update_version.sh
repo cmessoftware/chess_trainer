@@ -2,7 +2,7 @@
 # update_version.sh - Manual version update script
 
 # Get current version from hook logic
-BASE_TAG="v0.1"
+BASE_TAG="v0.2"
 N=$(git rev-list --count ${BASE_TAG}..HEAD)
 HASH=$(git rev-parse --short HEAD)
 VERSION="${BASE_TAG}.${N}-${HASH}"

@@ -1,0 +1,122 @@
+{
+  "generated_at": "2026-01-14T20:20:29.465974",
+  "user_ids": [
+    "cmess4401",
+    "cmess1315"
+  ],
+  "total_exercises": 4,
+  "estimated_total_time": 140,
+  "lichess_study_url": null,
+  "error_patterns": {
+    "blunder": 1966,
+    "good": 6755,
+    "inaccuracy": 2137,
+    "mistake": 3186
+  },
+  "exercises_by_type": {
+    "tactical": [
+      {
+        "title": "Anti-Blunder Training: Piece Safety Check",
+        "description": "You have 1966 blunders recorded. Practice the 'piece safety scan' before every move.",
+        "exercise_type": "tactics",
+        "position_fen": null,
+        "lichess_study_url": "https://lichess.org/study/hanging-pieces",
+        "specific_moves": [
+          "Before each move: 1) Check all your pieces for attacks, 2) Check opponent's threats, 3) Only then make your move"
+        ],
+        "success_criteria": "Complete 50 'Piece Safety' puzzles with 95%+ accuracy",
+        "time_estimate": 30,
+        "difficulty_level": "fundamental",
+        "source_game_id": null
+      }
+    ],
+    "position_analysis": [
+      {
+        "title": "Strategic Calculation Training",
+        "description": "You have 3186 strategic mistakes. Focus on deeper position evaluation.",
+        "exercise_type": "position_analysis",
+        "position_fen": null,
+        "lichess_study_url": null,
+        "specific_moves": [
+          "Use 'candidate move' method: find 3 candidate moves, calculate 3 moves deep for each",
+          "Practice positions with material imbalances",
+          "Study pawn structure advantages/disadvantages"
+        ],
+        "success_criteria": "Improve position evaluation accuracy by 25%",
+        "time_estimate": 45,
+        "difficulty_level": "intermediate",
+        "source_game_id": null
+      }
+    ],
+    "lichess_studies": [
+      {
+        "title": "Tactical Vision: Find the Hanging Pieces",
+        "description": "Custom puzzle set focusing on detecting undefended pieces",
+        "exercise_type": "lichess_study",
+        "position_fen": null,
+        "lichess_study_url": "https://lichess.org/training/coordinate",
+        "specific_moves": [
+          "Solve 20 'Hanging Pieces' puzzles daily",
+          "Focus on knight forks, discovered attacks, pins",
+          "Time limit: 30 seconds per puzzle maximum"
+        ],
+        "success_criteria": "Achieve 90%+ accuracy on hanging piece puzzles",
+        "time_estimate": 25,
+        "difficulty_level": "intermediate",
+        "source_game_id": null
+      },
+      {
+        "title": "Endgame Conversion Practice",
+        "description": "Many mistakes happen in endgames. Master the fundamentals.",
+        "exercise_type": "lichess_study",
+        "position_fen": null,
+        "lichess_study_url": "https://lichess.org/study/endgame-fundamentals",
+        "specific_moves": [
+          "Master King + Queen vs King (under 20 moves)",
+          "Master King + Rook vs King (under 25 moves)",
+          "Practice Rook + Pawn vs Rook positions",
+          "Study opposition in King + Pawn endgames"
+        ],
+        "success_criteria": "Win all basic endgames in under maximum moves",
+        "time_estimate": 40,
+        "difficulty_level": "intermediate",
+        "source_game_id": null
+      }
+    ],
+    "game_reviews": []
+  },
+  "concrete_actions": [
+    "\ud83d\udea8 IMMEDIATE ACTION: Complete anti-blunder training (30 min daily)",
+    "\ud83d\udcf1 DAILY: Solve 20 tactical puzzles on Lichess (15 min)",
+    "\ud83d\udcca WEEKLY: Analyze 5 of your problematic positions (2 hours)",
+    "\ud83d\udcda WEEKLY: Complete assigned Lichess studies (1 hour)"
+  ],
+  "weekly_schedule": {
+    "Monday": [
+      "Tactical puzzles (15 min)",
+      "Game analysis (30 min)"
+    ],
+    "Tuesday": [
+      "Endgame practice (20 min)",
+      "Position review (25 min)"
+    ],
+    "Wednesday": [
+      "Tactical puzzles (15 min)",
+      "Opening review (30 min)"
+    ],
+    "Thursday": [
+      "Strategic exercises (25 min)",
+      "Game analysis (20 min)"
+    ],
+    "Friday": [
+      "Tactical puzzles (15 min)",
+      "Weakness training (30 min)"
+    ],
+    "Saturday": [
+      "Comprehensive review (60 min)"
+    ],
+    "Sunday": [
+      "Rest or light tactical puzzles (15 min)"
+    ]
+  }
+}

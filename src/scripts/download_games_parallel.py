@@ -5,9 +5,9 @@ import traceback
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from modules.fetch_games import fetch_chesscom_games, fetch_lichess_games
 
-GAME_PERSONAL_DIR = "/app/src/data/games/personal"
-GAME_NOVICE_DIR = "/app/src/data/games/novice"
-GAME_DIR = "/app/src/data/games"
+GAME_PERSONAL_DIR = "src/data/games/personal"
+GAME_NOVICE_DIR = "src/data/games/novice"
+GAME_DIR = "src/data/games"
 
 MY_USERNAMES = ["cmess4401", "cmess1315"]
 NOVICES_USERNAMES = [
@@ -49,7 +49,7 @@ def fetch_games_for_users_chunk(server, users_chunk, since, until, max_games):
                     novice_games.extend(games)
 
         except Exception as e:
-            print(f"❌ Error fetching for {user} on {server}: {e}")
+            print(f"[ERROR] Error fetching for {user} on {server}: {e}")
     return personal_games, novice_games
 
 
@@ -74,14 +74,14 @@ def main():
                             help="Output PGN filename")
         args = parser.parse_args()
 
-        print(f"📥 Arguments: {args}")
+        print(f"[DOWNLOAD] Arguments: {args}")
 
         if args.since > args.until:
             raise ValueError("'since' date cannot be after 'until' date.")
 
         args.users = USERS if not args.users else args.users
         max_games = args.max_games_per_games
-        user_chunks = list(chunk_list(args.users, 4))  # 👈 chunk size ajustable
+        user_chunks = list(chunk_list(args.users, 4))  # chunk size ajustable
 
         all_novice_games = []
         all_personal_games = []
@@ -98,8 +98,8 @@ def main():
                     all_personal_games.extend(personal)
                     all_novice_games.extend(novice)
 
-        print(f"✅ Total novice games fetched: {len(all_novice_games)}")
-        print(f"✅ Total personal games fetched: {len(all_personal_games)}")
+        print(f"[SUCCESS] Total novice games fetched: {len(all_novice_games)}")
+        print(f"[SUCCESS] Total personal games fetched: {len(all_personal_games)}")
 
         if args.output is None:
             joined_servers = "_".join(args.server)
@@ -107,7 +107,7 @@ def main():
 
         if not all_personal_games and not all_novice_games:
             print(
-                f"⚠️ No games found for users in date range {args.since} to {args.until}.")
+                f"[WARNING] No games found for users in date range {args.since} to {args.until}.")
             return
 
         if all_novice_games:
@@ -117,7 +117,7 @@ def main():
                 for pgn in all_novice_games:
                     f.write(pgn.strip() + "\n\n")
             print(
-                f"📁 Saved {len(all_novice_games)} novice games to {novice_game_path}")
+                f"[SAVED] Saved {len(all_novice_games)} novice games to {novice_game_path}")
 
         if all_personal_games:
             os.makedirs(GAME_PERSONAL_DIR, exist_ok=True)
@@ -126,9 +126,9 @@ def main():
                 for pgn in all_personal_games:
                     f.write(pgn.strip() + "\n\n")
             print(
-                f"📁 Saved {len(all_personal_games)} personal games to {personal_game_path}")
+                f"[SAVED] Saved {len(all_personal_games)} personal games to {personal_game_path}")
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print(f"[ERROR] Error: {e}")
         traceback.print_exc()
         if e.__cause__:
             print(f"Caused by: {e.__cause__}")

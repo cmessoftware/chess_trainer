@@ -130,10 +130,10 @@ class SmartGamesFetcher:
                 self.known_game_ids.update([row[0] for row in existing_ids])
                 conn.close()
                 logger.info(
-                    f"📊 Loaded {len(self.known_game_ids)} existing game IDs from database")
+                    f"[LOADED] Loaded {len(self.known_game_ids)} existing game IDs from database")
         except Exception as e:
             logger.warning(
-                f"⚠️ Could not load existing games from database: {e}")
+                f"[WARNING] Could not load existing games from database: {e}")
 
     def _generate_game_id(self, pgn_text: str) -> str:
         """Generate a unique game ID from PGN content."""
@@ -151,13 +151,13 @@ class SmartGamesFetcher:
                     return response
                 elif response.status_code == 429:  # Rate limited
                     wait_time = 2 ** attempt
-                    logger.warning(f"⏳ Rate limited, waiting {wait_time}s...")
+                    logger.warning(f"[RATE_LIMIT] Rate limited, waiting {wait_time}s...")
                     time.sleep(wait_time)
                 else:
-                    logger.warning(f"⚠️ HTTP {response.status_code} for {url}")
+                    logger.warning(f"[WARNING] HTTP {response.status_code} for {url}")
 
             except Exception as e:
-                logger.warning(f"⚠️ Request attempt {attempt + 1} failed: {e}")
+                logger.warning(f"[WARNING] Request attempt {attempt + 1} failed: {e}")
                 if attempt < max_retries - 1:
                     time.sleep(2 ** attempt)
 
@@ -244,13 +244,13 @@ class SmartGamesFetcher:
             return metadata
 
         except Exception as e:
-            logger.warning(f"⚠️ Error parsing PGN: {e}")
+            logger.warning(f"[WARNING] Error parsing PGN: {e}")
             return None
 
     def _fetch_lichess_games(self, username: str, max_games: int, since_date: Optional[str] = None) -> List[GameMetadata]:
         """Fetch games from Lichess for a specific user."""
         logger.debug(
-            f"🔍 Fetching Lichess games for {username} (max: {max_games})")
+            f"[FETCH] Fetching Lichess games for {username} (max: {max_games})")
 
         games = []
         params = {
@@ -267,7 +267,7 @@ class SmartGamesFetcher:
                     since_date, "%Y-%m-%d").timestamp()) * 1000
                 params["since"] = since_ts
             except ValueError:
-                logger.warning(f"⚠️ Invalid date format: {since_date}")
+                logger.warning(f"[WARNING] Invalid date format: {since_date}")
 
         url = f"https://lichess.org/api/games/user/{username}"
         response = self._make_request_with_retry(url, params)
@@ -298,15 +298,15 @@ class SmartGamesFetcher:
 
         except Exception as e:
             logger.warning(
-                f"⚠️ Error processing Lichess games for {username}: {e}")
+                f"[WARNING] Error processing Lichess games for {username}: {e}")
 
-        logger.debug(f"✅ Fetched {len(games)} Lichess games for {username}")
+        logger.debug(f"[SUCCESS] Fetched {len(games)} Lichess games for {username}")
         return games
 
     def _fetch_chesscom_games(self, username: str, max_games: int, since_date: Optional[str] = None) -> List[GameMetadata]:
         """Fetch games from Chess.com for a specific user."""
         logger.debug(
-            f"🔍 Fetching Chess.com games for {username} (max: {max_games})")
+            f"[FETCH] Fetching Chess.com games for {username} (max: {max_games})")
 
         games = []
 
@@ -339,7 +339,7 @@ class SmartGamesFetcher:
                                 continue
                     archives = filtered_archives
                 except ValueError:
-                    logger.warning(f"⚠️ Invalid date format: {since_date}")
+                    logger.warning(f"[WARNING] Invalid date format: {since_date}")
 
             # Sort archives (most recent first) and limit
             archives = sorted(archives, reverse=True)[:12]  # Max 12 months
@@ -374,9 +374,9 @@ class SmartGamesFetcher:
 
         except Exception as e:
             logger.warning(
-                f"⚠️ Error processing Chess.com games for {username}: {e}")
+                f"[WARNING] Error processing Chess.com games for {username}: {e}")
 
-        logger.debug(f"✅ Fetched {len(games)} Chess.com games for {username}")
+        logger.debug(f"[SUCCESS] Fetched {len(games)} Chess.com games for {username}")
         return games
 
     def _fetch_games_for_user(self, user_profile: UserProfile, max_games_per_user: int,
@@ -388,11 +388,11 @@ class SmartGamesFetcher:
             elif user_profile.platform == "chess.com":
                 return self._fetch_chesscom_games(user_profile.username, max_games_per_user, since_date)
             else:
-                logger.warning(f"⚠️ Unknown platform: {user_profile.platform}")
+                logger.warning(f"[WARNING] Unknown platform: {user_profile.platform}")
                 return []
         except Exception as e:
             logger.warning(
-                f"⚠️ Error fetching games for {user_profile.username}: {e}")
+                f"[WARNING] Error fetching games for {user_profile.username}: {e}")
             return []
 
     def fetch_random_games(self, platform: Platform, skill_level: SkillLevel,
@@ -400,8 +400,8 @@ class SmartGamesFetcher:
                            since_date: Optional[str] = None,
                            users_file: Optional[str] = None) -> List[GameMetadata]:
         """Main method to fetch random games using smart discovery."""
-        logger.info(f"🚀 Starting smart random games fetching...")
-        logger.info(f"📋 Parameters:")
+        logger.info(f"[START] Starting smart random games fetching...")
+        logger.info(f"[PARAMS] Parameters:")
         logger.info(f"   - Platform: {platform.value}")
         logger.info(f"   - Skill level: {skill_level.value}")
         logger.info(f"   - Game types: {[gt.value for gt in game_types]}")
@@ -411,7 +411,7 @@ class SmartGamesFetcher:
 
         # Step 1: Get user profiles
         if users_file and Path(users_file).exists():
-            logger.info(f"📂 Loading users from file: {users_file}")
+            logger.info(f"[LOADING] Loading users from file: {users_file}")
             try:
                 with open(users_file, 'r') as f:
                     users_data = json.load(f)
@@ -432,13 +432,13 @@ class SmartGamesFetcher:
                     )
                     user_profiles.append(profile)
 
-                logger.info(f"✅ Loaded {len(user_profiles)} users from file")
+                logger.info(f"[SUCCESS] Loaded {len(user_profiles)} users from file")
 
             except Exception as e:
-                logger.error(f"❌ Error loading users file: {e}")
+                logger.error(f"[ERROR] Error loading users file: {e}")
                 return []
         else:
-            logger.info(f"🔍 Discovering users automatically...")
+            logger.info(f"[DISCOVER] Discovering users automatically...")
             # Discover more users than needed to have options
             discovery_target = max(50, min(200, max_games // 5))
             user_profiles = self.user_discovery.discover_users(
@@ -449,13 +449,13 @@ class SmartGamesFetcher:
             )
 
             if not user_profiles:
-                logger.error("❌ No users discovered. Cannot fetch games.")
+                logger.error("[ERROR] No users discovered. Cannot fetch games.")
                 return []
 
         # Step 2: Calculate games per user
         max_games_per_user = max(1, min(20, max_games // len(user_profiles)))
         logger.info(
-            f"🎯 Targeting {max_games_per_user} games per user from {len(user_profiles)} users")
+            f"[TARGET] Targeting {max_games_per_user} games per user from {len(user_profiles)} users")
 
         # Step 3: Shuffle users for random sampling
         random.shuffle(user_profiles)
@@ -479,17 +479,17 @@ class SmartGamesFetcher:
 
                     if user_games:
                         logger.info(
-                            f"✅ {user.username} ({user.platform}): {len(user_games)} games")
+                            f"[SUCCESS] {user.username} ({user.platform}): {len(user_games)} games")
 
                     # Stop if we have enough games
                     if len(all_games) >= max_games:
                         logger.info(
-                            f"🎯 Target reached! Collected {len(all_games)} games")
+                            f"[TARGET] Target reached! Collected {len(all_games)} games")
                         break
 
                 except Exception as e:
                     logger.warning(
-                        f"⚠️ Failed to fetch games for {user.username}: {e}")
+                        f"[WARNING] Failed to fetch games for {user.username}: {e}")
 
         # Step 5: Final filtering and shuffling
         random.shuffle(all_games)
@@ -497,7 +497,7 @@ class SmartGamesFetcher:
 
         self.fetched_games.extend(final_games)
 
-        logger.info(f"🎉 Successfully fetched {len(final_games)} random games!")
+        logger.info(f"[SUCCESS] Successfully fetched {len(final_games)} random games!")
         return final_games
 
     def save_games(self, games: List[GameMetadata], output_file: str, include_metadata: bool = True):
@@ -519,7 +519,7 @@ class SmartGamesFetcher:
                 else:
                     ignored_games.append(game)
                     logger.debug(
-                        f"🚫 Ignoring game {game.game_id} with avg rating {avg_rating:.0f} (below 1200)")
+                        f"[SKIP] Ignoring game {game.game_id} with avg rating {avg_rating:.0f} (below 1200)")
 
             saved_paths = []
             total_saved = 0
@@ -534,7 +534,7 @@ class SmartGamesFetcher:
                     saved_paths.append(saved_path)
                     total_saved += len(novice_games)
                     logger.info(
-                        f"📁 Saved {len(novice_games)} novice games (1200-2000 ELO) to {saved_path}")
+                        f"[SAVED] Saved {len(novice_games)} novice games (1200-2000 ELO) to {saved_path}")
 
             # Save elite games
             if elite_games:
@@ -546,10 +546,10 @@ class SmartGamesFetcher:
                     saved_paths.append(saved_path)
                     total_saved += len(elite_games)
                     logger.info(
-                        f"📁 Saved {len(elite_games)} elite games (>2000 ELO) to {saved_path}")
+                        f"[SAVED] Saved {len(elite_games)} elite games (>2000 ELO) to {saved_path}")
 
             # Summary
-            logger.info(f"📊 Classification summary:")
+            logger.info(f"[SUMMARY] Classification summary:")
             logger.info(f"   - Novice games (1200-2000): {len(novice_games)}")
             logger.info(f"   - Elite games (>2000): {len(elite_games)}")
             logger.info(f"   - Ignored games (<1200): {len(ignored_games)}")
@@ -558,7 +558,7 @@ class SmartGamesFetcher:
             return saved_paths[0] if saved_paths else None
 
         except Exception as e:
-            logger.error(f"❌ Error saving games: {e}")
+            logger.error(f"[ERROR] Error saving games: {e}")
             return None
 
     def _save_games_to_file(self, games: List[GameMetadata], output_file: str, include_metadata: bool = True):
@@ -600,7 +600,7 @@ class SmartGamesFetcher:
             return output_path
 
         except Exception as e:
-            logger.error(f"❌ Error saving games to {output_file}: {e}")
+            logger.error(f"[ERROR] Error saving games to {output_file}: {e}")
             return None
 
     def _get_output_directory_by_elo(self, avg_rating: float) -> str:
@@ -703,7 +703,7 @@ Examples:
             )
 
             # Print summary
-            print(f"\n📊 Fetching Summary:")
+            print(f"\n[SUMMARY] Fetching Summary:")
             print(f"   - Total games fetched: {len(games)}")
             print(
                 f"   - Platforms: {', '.join(set(g.platform for g in games))}")
@@ -714,7 +714,7 @@ Examples:
             print(f"   - Output file: {output_path}")
 
             # Show sample games
-            print(f"\n🎮 Sample fetched games:")
+            print(f"\n[SAMPLE] Sample fetched games:")
             for i, game in enumerate(games[:5]):
                 avg_rating = (
                     game.white_rating + game.black_rating) // 2 if game.white_rating > 0 and game.black_rating > 0 else 0
@@ -725,14 +725,15 @@ Examples:
                 print(f"   ... and {len(games) - 5} more games")
 
         else:
-            print("❌ No games fetched. Try adjusting the search parameters.")
+            print("[ERROR] No games fetched. Try adjusting the search parameters.")
 
     except KeyboardInterrupt:
-        logger.info("⚠️ Fetching interrupted by user")
+        logger.info("[WARNING] Fetching interrupted by user")
     except Exception as e:
-        logger.error(f"❌ Game fetching failed: {e}")
+        logger.error(f"[ERROR] Game fetching failed: {e}")
         raise
 
 
 if __name__ == "__main__":
     main()
+

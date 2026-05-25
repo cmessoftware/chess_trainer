@@ -1,0 +1,28 @@
+{
+  "generated_at": "2026-01-14T20:10:33.982275",
+  "total_recommendations": 1,
+  "emergency_count": 0,
+  "estimated_total_time": 150,
+  "recommendations": [
+    {
+      "priority": "MEDIUM",
+      "category": "Advanced Performance Analysis",
+      "title": "Breakthrough Training for Experienced Player",
+      "description": "With 4242 games under your belt, focus on advanced concepts to break through your current 47.1% plateau.",
+      "exercises": [
+        "Deep analysis: spend 2 hours analyzing every loss from your last 50 games",
+        "Study grandmaster games in your favorite openings (at least 20 games per opening)",
+        "Focus on complex endgames: Rook+Pawn vs Rook, opposite-colored bishops",
+        "Practice advanced tactics: X-ray attacks, deflection, interference patterns",
+        "Work on positional understanding: weak squares, pawn chains, piece coordination"
+      ],
+      "estimated_time": 150,
+      "success_criteria": [
+        "Identify and fix your top 3 recurring strategic mistakes",
+        "Master 5 advanced endgame positions",
+        "Achieve rating improvement of 100+ points in next 6 months"
+      ],
+      "source": "data_analysis_experienced_4242"
+    }
+  ]
+}

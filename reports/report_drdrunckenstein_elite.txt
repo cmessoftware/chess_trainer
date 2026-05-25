@@ -1,0 +1,42 @@
+🎯 CHESS TRAINER - REPORTE CALIBRADO
+=====================================
+
+👤 Jugador: drdrunckenstein
+📅 Fecha: 2026-01-13 23:17
+🎮 Partidas analizadas: 2
+📊 ELO estimado: 2400
+🎓 Nivel: ELITE
+✅ DATOS REALES
+
+📈 ANÁLISIS DE ERRORES (CALIBRADO)
+---------------------------------
+• Blunders: 0.0%
+• Mistakes: 8.8%  
+• Inaccuracies: 10.7%
+• Good moves: 80.5%
+
+🚨 Errores críticos: 0.0%
+📏 Criterio: blunders únicamente
+
+🎯 COMPARACIÓN CON NIVEL ESPERADO
+--------------------------------
+Blunders: 0.0% (esperado: 0.5%)
+Mistakes: 8.8% (esperado: 8.0%)
+Good moves: 80.5% (esperado: 75.0%)
+
+✅ DENTRO DEL RANGO ESPERADO
+
+📚 RECOMENDACIONES ESPECÍFICAS
+-----------------------------
+• Foco principal: Optimización fina
+• Táctica: Combinaciones complejas
+• Estrategia: Planes a largo plazo
+• Objetivo: Mantener blunders <1%
+
+🔬 CONTEXTO TÉCNICO
+------------------
+Calibración aplicada para nivel ELITE
+Rango ELO objetivo: 2200-2600
+Movimientos analizados: 123
+
+Generado por Chess Trainer - Diagnóstico Calibrado

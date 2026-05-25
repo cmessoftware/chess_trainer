@@ -69,7 +69,7 @@ def parse_and_save_pgn(pgn_path, db_url=DB_PATH_URL, max_games=None):
                         break
         repo.commit()
         repo.close()
-        print(f"✅ {count} games imported.")
+        print(f"[OK] {count} games imported.")
     except Exception as e:
         print(f"❌ Error processing PGN: {e}\n{traceback.format_exc()}")
         if e.__cause__:

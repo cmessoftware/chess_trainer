@@ -29,7 +29,7 @@ def count_games_in_pgn(file_like):
     """Cuenta la cantidad de partidas PGN en un archivo ya abierto (modo texto)."""
     count = 0
     while True:
-        show_spinner_message("🔍 Counting games in pgn files...")
+        show_spinner_message("Counting games in pgn files...")
         try:
             game = chess.pgn.read_game(file_like)
             if game is None:

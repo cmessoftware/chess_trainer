@@ -1,0 +1,42 @@
+🎯 CHESS TRAINER - REPORTE CALIBRADO
+=====================================
+
+👤 Jugador: cmess1315
+📅 Fecha: 2026-01-13 23:20
+🎮 Partidas analizadas: 156
+📊 ELO estimado: 1400
+🎓 Nivel: INTERMEDIATE
+⚠️ DATOS SIMULADOS
+
+📈 ANÁLISIS DE ERRORES (CALIBRADO)
+---------------------------------
+• Blunders: 2.1%
+• Mistakes: 15.3%  
+• Inaccuracies: 22.7%
+• Good moves: 59.9%
+
+🚨 Errores críticos: 6.7%
+📏 Criterio: blunders únicamente
+
+🎯 COMPARACIÓN CON NIVEL ESPERADO
+--------------------------------
+Blunders: 2.1% (esperado: 3.0%)
+Mistakes: 15.3% (esperado: 18.0%)
+Good moves: 59.9% (esperado: 60.0%)
+
+✅ DENTRO DEL RANGO ESPERADO
+
+📚 RECOMENDACIONES ESPECÍFICAS
+-----------------------------
+• Foco principal: Reducir mistakes posicionales
+• Táctica: Problemas de 2-3 jugadas
+• Estrategia: Principios básicos
+• Objetivo: Aumentar good moves a >65%
+
+🔬 CONTEXTO TÉCNICO
+------------------
+Calibración aplicada para nivel INTERMEDIATE
+Rango ELO objetivo: 1200-1600
+Movimientos analizados: 1847
+
+Generado por Chess Trainer - Diagnóstico Calibrado

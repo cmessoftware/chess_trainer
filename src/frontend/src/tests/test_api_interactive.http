@@ -1,0 +1,40 @@
+### 🧪 Chess Trainer API Interactive Tests
+
+# Set base URL
+@baseUrl = http://127.0.0.1:8000
+
+### 📋 Test 1: Get All Games
+GET {{baseUrl}}/chess/games
+Content-Type: application/json
+
+###
+
+### 🔍 Test 2: Search Games (cmess user)
+GET {{baseUrl}}/chess/games?search=cmess&page=1&page_size=10
+Content-Type: application/json
+
+###
+
+### 📊 Test 3: Get Sources Dropdown
+GET {{baseUrl}}/chess/games/sources
+Content-Type: application/json
+
+###
+
+### 🎯 Test 4: Search by Source
+GET {{baseUrl}}/chess/games?source=elite&page=1&page_size=5
+Content-Type: application/json
+
+###
+
+### 🔍 Test 5: Combined Search
+GET {{baseUrl}}/chess/games?search=cmess&source=elite&page=1&page_size=3
+Content-Type: application/json
+
+###
+
+### 📈 Test 6: Health Check
+GET {{baseUrl}}/health
+Content-Type: application/json
+
+###
