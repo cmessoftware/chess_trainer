@@ -1,111 +1,71 @@
-# AI Engineering Course — Portable Setup (SQLite)
+# AI Engineering Course (ChessInsightAI)
 
-This folder contains the three course notebooks and a migration script so the
-course can be run **without a running ChessTrainer PostgreSQL service**.
+Este directorio contiene el material del curso de AI Engineering alineado con
+`docs/courses/ai_enginner_roadmap`.
 
----
+## Flujo principal (recomendado): PostgreSQL + pipeline real
 
-## Quick-start
+El curso reutiliza la infraestructura del proyecto:
 
-### 1 — One-time migration (requires PostgreSQL access)
+- extracción de features existente en `src/scripts/`
+- base de datos PostgreSQL (`features`, `games`)
+- seguimiento de experimentos con MLflow
+- entorno conda recomendado: `chess_trainer`
 
-> Skip this step if you already have `course_data.sqlite` in this folder.
+### Notebooks v1 disponibles
 
-Set the connection variable and run the migration script:
+| # | Archivo | Módulo |
+|---|---------|--------|
+| 1 | `01_architecture_overview.ipynb` | Foundations |
+| 2 | `02_run_feature_pipeline.ipynb` | Data Pipeline |
+| 3 | `03_dataset_builder.ipynb` | Dataset Generation |
+
+### Curso base 00–12
+
+Se agregó la estructura `docs/courses/ai_engineer_course/` con módulos:
+
+- `00_foundations`
+- `01_data_pipeline`
+- `02_dataset_generation`
+- `03_feature_analysis`
+- `04_machine_learning`
+- `05_model_evaluation`
+- `06_llm_explanations`
+- `07_rag_system`
+- `08_ai_agents_phase1`
+- `09_ai_system_architecture`
+- `10_production_ai`
+- `11_capstone`
+- `12_phase2_agentic_system`
+
+Incluye componentes iniciales clave:
+
+- `data_access/features_repository.py`
+- `dataset/build_training_dataset.py`
+- scripts/notebooks base para módulos 3–12
+
+## Construcción de dataset de entrenamiento
+
+`dataset/build_training_dataset.py` construye dataset supervisado desde `features`
+con target `error_label` y clases:
+
+- `good`
+- `inaccuracy`
+- `mistake`
+- `blunder`
+
+Ejemplo:
 
 ```bash
-# Bash / macOS / Linux
-export CHESS_TRAINER_DB_URL="postgresql://chess:chess_pass@localhost:5432/chess_trainer_db"
-python docs/courses/migrate_to_sqlite.py
-
-# Windows PowerShell
-$env:CHESS_TRAINER_DB_URL = "postgresql://chess:chess_pass@localhost:5432/chess_trainer_db"
-python docs/courses/migrate_to_sqlite.py
+conda activate chess_trainer
+python docs/courses/ai_engineer_course/dataset/build_training_dataset.py \
+  --db-url "$CHESS_TRAINER_DB_URL" \
+  --output docs/courses/ai_engineer_course/dataset/training_dataset.parquet
 ```
 
-The script extracts all games of player **cmess1315** and the related feature
-rows, then writes them to `docs/courses/course_data.sqlite`.
+## Nota sobre `migrate_to_sqlite.py`
 
-Run `python docs/courses/migrate_to_sqlite.py --help` for all options.
+`docs/courses/migrate_to_sqlite.py` se mantiene como **utilidad auxiliar** para
+escenarios educativos/portables de notebooks.
 
-### 2 — Open the notebooks
-
-```bash
-cd docs/courses
-jupyter notebook
-```
-
-Open notebooks in order:
-
-| # | File | Topic |
-|---|------|-------|
-| 1 | `01_architecture_overview.ipynb` | Architecture & environment check |
-| 2 | `02_run_feature_pipeline.ipynb`  | Feature pipeline & data verification |
-| 3 | `03_dataset_builder.ipynb`       | Dataset building & ML preparation |
-
----
-
-## Required PostgreSQL environment variables (migration only)
-
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `CHESS_TRAINER_DB_URL` | Full PostgreSQL DSN | `postgresql://chess:chess_pass@localhost:5432/chess_trainer_db` |
-
-These are **only needed once** to run `migrate_to_sqlite.py`.  
-After that the notebooks use only the local SQLite file.
-
----
-
-## Generated SQLite file
-
-| Detail | Value |
-|--------|-------|
-| Default path | `docs/courses/course_data.sqlite` |
-| Tables | `games`, `features` |
-| Player | `cmess1315` |
-
-The notebooks locate the file via a path relative to the notebook directory:
-
-```python
-from pathlib import Path
-SQLITE_DB = Path(__file__).parent / "course_data.sqlite"   # scripts
-# or inside a notebook cell:
-SQLITE_DB = Path(".") / "course_data.sqlite"
-```
-
----
-
-## Migration script options
-
-```
-python migrate_to_sqlite.py [--pg-url PG_URL] [--player PLAYER] [--output OUTPUT]
-
-Options:
-  --pg-url   PostgreSQL connection URL (overrides CHESS_TRAINER_DB_URL)
-  --player   Player username to export  (default: cmess1315)
-  --output   Path for the SQLite output (default: course_data.sqlite next to this script)
-```
-
-The script is **idempotent** — running it again replaces the data cleanly.
-
----
-
-## How the notebooks connect to SQLite
-
-```python
-import sqlite3, pandas as pd
-from pathlib import Path
-
-SQLITE_DB = Path(".").resolve() / "course_data.sqlite"
-conn = sqlite3.connect(str(SQLITE_DB))
-df = pd.read_sql("SELECT * FROM features LIMIT 10", conn)
-conn.close()
-```
-
----
-
-## Adding `course_data.sqlite` to `.gitignore`
-
-The SQLite file can be large and contains personal game data.  
-It is excluded from the repository via `.gitignore` and must be generated
-locally with the migration script.
+No reemplaza el flujo principal del proyecto, que sigue siendo PostgreSQL.
