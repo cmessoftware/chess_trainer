@@ -1,5 +1,3 @@
-# CHESS TRAINER - Versión: v0.1.122-259c8fd
-
 # CHESSINSIGHTAI - Versión: v0.1.108-4c28cb4
 
 # ♟ chessinsightai – Analysis and Training with Elite Games
