@@ -1,32 +1,33 @@
-# AI Engineering Course — Portable Setup (SQLite)
+# AI Engineering Course — Portable Setup (SQLAlchemy + SQLite default)
 
-This folder contains the three course notebooks and a migration script so the
-course can be run **without a running ChessTrainer PostgreSQL service**.
+This folder contains the course notebooks, a notebook-friendly helper, and the migration script required to keep the course **portable by default**.
+
+- **Default runtime:** SQLite (`docs/courses/course_data.sqlite`)
+- **Portable access layer:** SQLAlchemy
+- **Optional backend:** PostgreSQL, only through configuration
+- **First preparation step:** migrate/export the source data from PostgreSQL into SQLite
 
 ---
 
 ## Quick-start
 
-### 1 — One-time migration (requires PostgreSQL access)
+### 1 — One-time migration from PostgreSQL to SQLite
 
 > Skip this step if you already have `course_data.sqlite` in this folder.
 
-Set the connection variable and run the migration script:
+Set the source connection variable and run the migration script:
 
 ```bash
 # Bash / macOS / Linux
-export CHESS_TRAINER_DB_URL="postgresql://chess:chess_pass@localhost:5432/chess_trainer_db"
+export CHESS_TRAINER_DB_URL="postgresql://user:PASSWORD@localhost:5432/chess_trainer_db"
 python docs/courses/migrate_to_sqlite.py
 
 # Windows PowerShell
-$env:CHESS_TRAINER_DB_URL = "postgresql://chess:chess_pass@localhost:5432/chess_trainer_db"
+$env:CHESS_TRAINER_DB_URL = "postgresql://user:PASSWORD@localhost:5432/chess_trainer_db"
 python docs/courses/migrate_to_sqlite.py
 ```
 
-The script extracts all games of player **cmess1315** and the related feature
-rows, then writes them to `docs/courses/course_data.sqlite`.
-
-Run `python docs/courses/migrate_to_sqlite.py --help` for all options.
+The script copies the `games` and `features` rows for player **cmess1315** into `docs/courses/course_data.sqlite`. This SQLite file is the default runtime for the course notebooks and dataset builder.
 
 ### 2 — Open the notebooks
 
@@ -40,72 +41,104 @@ Open notebooks in order:
 | # | File | Topic |
 |---|------|-------|
 | 1 | `01_architecture_overview.ipynb` | Architecture & environment check |
-| 2 | `02_run_feature_pipeline.ipynb`  | Feature pipeline & data verification |
+| 2 | `02_run_feature_pipeline.ipynb`  | Migration + feature pipeline verification |
 | 3 | `03_dataset_builder.ipynb`       | Dataset building & ML preparation |
 
 ---
 
-## Required PostgreSQL environment variables (migration only)
+## Course database configuration
 
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `CHESS_TRAINER_DB_URL` | Full PostgreSQL DSN | `postgresql://chess:chess_pass@localhost:5432/chess_trainer_db` |
+The course code resolves the database in this order:
 
-These are **only needed once** to run `migrate_to_sqlite.py`.  
-After that the notebooks use only the local SQLite file.
+1. explicit `db_url` argument
+2. `CHESS_COURSE_DB_URL` environment variable
+3. local SQLite file `docs/courses/course_data.sqlite`
+
+### Default SQLite runtime
+
+No extra configuration is required for the portable path. The helper and the dataset builder automatically use:
+
+```
+sqlite:///.../docs/courses/course_data.sqlite
+```
+
+### Optional PostgreSQL override
+
+If you want the notebooks/helper to query PostgreSQL directly, set:
+
+```bash
+export CHESS_COURSE_DB_URL="postgresql://user:PASSWORD@localhost:5432/chess_trainer_db"
+```
+
+This is optional and should not be required for the normal course flow.
 
 ---
 
-## Generated SQLite file
+## Notebook helper
 
-| Detail | Value |
-|--------|-------|
-| Default path | `docs/courses/course_data.sqlite` |
-| Tables | `games`, `features` |
-| Player | `cmess1315` |
-
-The notebooks locate the file via a path relative to the notebook directory:
+Import the helper directly from the notebook directory:
 
 ```python
-from pathlib import Path
-SQLITE_DB = Path(__file__).parent / "course_data.sqlite"   # scripts
-# or inside a notebook cell:
-SQLITE_DB = Path(".") / "course_data.sqlite"
+from notebook_data_helper import CourseDataHelper
+
+course_data = CourseDataHelper()  # SQLite by default
+features_df = course_data.load_features(limit=10)
+games_df = course_data.load_games(limit=10)
+label_df = course_data.error_label_distribution()
 ```
 
----
-
-## Migration script options
-
-```
-python migrate_to_sqlite.py [--pg-url PG_URL] [--player PLAYER] [--output OUTPUT]
-
-Options:
-  --pg-url   PostgreSQL connection URL (overrides CHESS_TRAINER_DB_URL)
-  --player   Player username to export  (default: cmess1315)
-  --output   Path for the SQLite output (default: course_data.sqlite next to this script)
-```
-
-The script is **idempotent** — running it again replaces the data cleanly.
-
----
-
-## How the notebooks connect to SQLite
+You can also override the backend explicitly:
 
 ```python
-import sqlite3, pandas as pd
-from pathlib import Path
+from notebook_data_helper import CourseDataHelper
 
-SQLITE_DB = Path(".").resolve() / "course_data.sqlite"
-conn = sqlite3.connect(str(SQLITE_DB))
-df = pd.read_sql("SELECT * FROM features LIMIT 10", conn)
-conn.close()
+course_data = CourseDataHelper(
+    "postgresql://user:PASSWORD@localhost:5432/chess_trainer_db"
+)
 ```
+
+---
+
+## Dataset builder
+
+The portable dataset builder uses the same SQLAlchemy repository layer and keeps `error_label` as the target with the course classes:
+
+- `good`
+- `inaccuracy`
+- `mistake`
+- `blunder`
+
+CLI usage:
+
+```bash
+python docs/courses/dataset/build_training_dataset.py
+python docs/courses/dataset/build_training_dataset.py --db-url postgresql://...
+python docs/courses/dataset/build_training_dataset.py --output data/datasets/course_training_dataset.csv
+```
+
+By default it writes to `data/datasets/course_training_dataset.parquet`.
+
+---
+
+## Files introduced for the portable course flow
+
+- `docs/courses/data_access/features_repository.py` — SQLAlchemy repository for `games` and `features`
+- `docs/courses/data_access/notebook_data_helper.py` — reusable notebook helper
+- `docs/courses/notebook_data_helper.py` — convenience import for notebooks
+- `docs/courses/dataset/build_training_dataset.py` — training dataset builder on top of the shared repository
+- `docs/courses/migrate_to_sqlite.py` — PostgreSQL → SQLite export step
+
+---
+
+## Why this keeps the course portable
+
+- The default execution path no longer requires a running PostgreSQL service.
+- PostgreSQL remains available, but only as a configurable backend or export source.
+- The shared SQLAlchemy layer avoids hardcoding engine-specific access code in notebooks and scripts.
 
 ---
 
 ## Adding `course_data.sqlite` to `.gitignore`
 
 The SQLite file can be large and contains personal game data.  
-It is excluded from the repository via `.gitignore` and must be generated
-locally with the migration script.
+It is excluded from the repository via `.gitignore` and must be generated locally with the migration script.
