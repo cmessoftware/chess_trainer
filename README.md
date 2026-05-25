@@ -27,6 +27,12 @@ This project automates the import, analysis, labeling, and training from thousan
 - **Alembic** - Database migrations
 - **PGN parsing** - Chess game format processing
 
+### 🤖 AI Chess Coach
+- **Ollama + LangChain** - Local LLM server for coaching report generation
+- **ChromaDB + SentenceTransformers** - Vector database (RAG) for chess knowledge retrieval
+- **Orchestrated Architecture** - Planner / Executor / Memory / Critic / Explainer pipeline
+- **FeatureSummarizer** - Converts ML features into human-readable coaching prompts
+
 ---
 
 ## 📚 Documentation Index
@@ -61,6 +67,15 @@ This project automates the import, analysis, labeling, and training from thousan
 - **[Training System Complete](./docs/TRAINING_SYSTEM_COMPLETE.md)** - Complete training resources management system
 - **[Custom Studies Tutorial](./docs/TUTORIAL_ESTUDIOS_PERSONALIZADOS.md)** - Tutorial for creating personalized chess studies
 - **[Datasets Report](./docs/DATASETS_REPORT.md)** - Comprehensive analysis of available chess datasets
+
+### 🤖 AI Chess Coach Documentation
+- **[AI Coach Roadmap](./docs/0-ai_chess_coach_roadmap.md)** - Vision and roadmap for the AI coaching system
+- **[AI Coach Module Spec](./docs/2-ai_chess_coach_module_spec.md)** - Technical module specification
+- **[RAG Design](./docs/1-ai_chess_coach_rag_design.md)** - ChromaDB + SentenceTransformers RAG design
+- **[Structured Output](./docs/4-ai_chess_coach_structured_output.md)** - JSON schema validation for coaching output
+- **[Orchestrated Architecture](./docs/ChessTrainer%20%E2%80%94%20Arquitectura%20Orquestada%20(Planner%20,%20Executor,%20Critic%20,%20Memory).md)** - Planner/Executor/Critic/Memory architecture
+- **[Player Pattern Analysis](./docs/6-ai_chess_coach_patterm_analysis.md)** - Player error patterns and clustering
+- **[Player Style Analysis](./docs/7-ai_chess_coach_player_style_analysis.md)** - Playing style classification system
 
 ## 🚀 Quick Start
 
@@ -150,6 +165,39 @@ src/api/
 ├── services/         # Business logic services
 ├── middleware/       # Custom middleware
 └── main.py          # FastAPI application entry point
+```
+
+### 🤖 AI Chess Coach Architecture (Orchestrated)
+```
+src/ai_coach/
+├── feature_summarizer.py           # ✅ ML features → human-readable text
+├── rag/
+│   ├── chess_rag.py                # ✅ ChromaDB + SentenceTransformers RAG system
+│   └── pdf_processor.py            # ✅ PDF chess book ingestion
+├── orchestrated/                   # ✅ Orchestrated analysis pipeline (v0.1.108+)
+│   ├── schemas.py                  # ✅ Pydantic schemas (AnalysisOptions, Plan, Result…)
+│   ├── planner_service.py          # ✅ Decides WHAT to analyze (critical move detection)
+│   ├── executor_service.py         # ✅ Produces EVIDENCE (engine + ML + RAG async)
+│   └── memory_service.py           # ✅ Persists results (dual-write v2.0 + v1.0)
+└── llm/
+    └── (coaching_llm.py)           # ⏳ LLM coaching report generation (next phase)
+```
+
+**Orchestrated Pipeline Flow:**
+```
+PGN Input
+   │
+   ▼
+PlannerService  ──▶  Identifies critical moves (eval swing, blunders, tactics)
+   │
+   ▼
+ExecutorService ──▶  Engine analysis + Feature extraction + ML (parallel) + RAG
+   │
+   ▼
+MemoryService   ──▶  Persists move_analyses + player_patterns (PostgreSQL)
+   │
+   ▼
+(ExplainerService) ──▶  LLM coaching report (⏳ next phase)
 ```
 
 ### 🔄 Data Flow:
@@ -302,15 +350,24 @@ Once the model is trained, you can use it to make personalized recommendations t
 
 | Fase       | Componente                            | Estado        | Completitud         | Prioridad | Próximos Pasos                  |
 | ---------- | ------------------------------------- | ------------- | ------------------- | --------- | ------------------------------- |
-| **Fase 1** | Clasificación de errores (ML Clásico) | 🟡 En Progreso | 85%                 | 🔴 CRÍTICA | Completar etiquetado + baseline |
+| **Fase 1** | Clasificación de errores (ML Clásico) | ✅ Completado  | 95%                 | 🔴 CRÍTICA | Consolidar en MLflow            |
 |            | - Etiquetado táctico de features      | ✅             | 100% (328K records) | 🔴         | ✅ Completado                    |
-|            | - Logistic Regression L2/L1           | 🏃             | 90%                 | 🔴         | ⏳ Ejecutando ahora              |
+|            | - Logistic Regression L2/L1           | ✅             | 100%                | 🔴         | ✅ F1=0.890                      |
 |            | - RandomForest baseline               | ✅             | 90%                 | 🔴         | Consolidar en MLflow            |
-|            | - Métricas F1 + Confusion Matrix      | 🏃             | 80%                 | 🔴         | ⏳ Generando resultados          |
+|            | - Métricas F1 + Confusion Matrix      | ✅             | 90%                 | 🔴         | ✅ Resultados disponibles        |
 | **Fase 2** | Deep Learning Tabular (MLP)           | 🔵 Pendiente   | 0%                  | 🔵         | Esperar resultados Fase 1       |
 | **Fase 3** | Análisis Temporal (Errores en cadena) | 🔵 Pendiente   | 0%                  | 🟡         | Features temporales             |
 | **Fase 4** | Embeddings y Similitud                | 🔵 Pendiente   | 0%                  | 🟢         | Clustering por ELO              |
-| **Fase 5** | Tutor Adaptativo y Reportes           | 🟡 Diseño      | 5%                  | 🔴         | API + Reportes PDF              |
+| **Fase 5** | Tutor Adaptativo – AI Chess Coach     | 🟡 En Progreso | 45%                 | 🔴         | ExplainerService + API endpoint |
+|            | - FeatureSummarizer                   | ✅             | 100%                | 🔴         | ✅ Completado                    |
+|            | - RAG (ChromaDB + SentenceTransformers)| ✅            | 100%                | 🔴         | ✅ chess_rag.py + pdf_processor  |
+|            | - Orchestrated Architecture (Fase 0)  | ✅             | 100%                | 🔴         | ✅ Docs completas (v0.1.103)     |
+|            | - PlannerService                      | ✅             | 100%                | 🔴         | ✅ Completado (v0.1.108)         |
+|            | - ExecutorService                     | ✅             | 100%                | 🔴         | ✅ Completado (v0.1.108)         |
+|            | - MemoryService                       | ✅             | 100%                | 🔴         | ✅ Completado (v0.1.108)         |
+|            | - CoachingLLM (ExplainerService)      | ⏳             | 0%                  | 🔴         | Integrar Ollama + LangChain     |
+|            | - API endpoint /ai-coach/             | ❌ Pendiente   | 0%                  | 🔴         | FastAPI router                  |
+|            | - Frontend React components           | ❌ Pendiente   | 0%                  | 🟡         | CoachingReport.tsx              |
 | **Fase 6** | Human-in-the-Loop                     | 🔵 Planeado    | 0%                  | 🔵         | Futuro (B2B)                    |
 
 ### Leyenda de Estados:
@@ -428,6 +485,9 @@ Once the model is trained, you can use it to make personalized recommendations t
 | **Chess Engine**     | Stockfish 17 + NNUE       | ✅ Operativo   | 17      | Análisis táctico   |
 | **Containerization** | Docker + Compose          | ✅ Operativo   | -       | PostgreSQL activo  |
 | **ML Framework**     | scikit-learn              | ✅ Configurado | 1.7.1   | Phase 1 completado |
+| **RAG System**       | ChromaDB + SentenceTransformers | ✅ Implementado | latest | chess_rag.py listo |
+| **AI Orchestration** | Planner/Executor/Memory   | ✅ Implementado | v0.1.108 | Clean Architecture |
+| **LLM Local**        | Ollama + LangChain        | ⏳ Pendiente   | -       | coaching_llm.py    |
 
 ---
 
@@ -435,19 +495,21 @@ Once the model is trained, you can use it to make personalized recommendations t
 
 ### Corto Plazo (1 mes)
 - ✅ Dataset 100% etiquetado (328,283 records)
-- 🏃 Baseline ML con F1 > 0.70 (actual: 0.890)
+- ✅ Baseline ML con F1 > 0.70 (actual: 0.890)
 - ✅ Confusión grave < 5% (actual: 0.0%)
-- ⏳ Pipeline reproducible
+- ✅ Orchestrated Architecture implementada (Planner + Executor + Memory)
+- ✅ RAG System operativo (ChromaDB + SentenceTransformers)
 
 ### Mediano Plazo (3 meses)
-- ⏳ API de recomendaciones funcionando
+- ⏳ ExplainerService (LLM coaching via Ollama)
+- ⏳ API endpoint /ai-coach/ en FastAPI
 - ⏳ Generación de reportes PDF
 - ⏳ Sistema de clustering operativo
 - ⏳ Análisis temporal implementado
 
 ### Largo Plazo (6 meses)
-- 🔵 Tutor adaptativo completo
-- 🔵 Embeddings para similitud
+- 🔵 Tutor adaptativo completo (frontend React integrado)
+- 🔵 Embeddings para similitud entre partidas
 - 🔵 Sistema de mejora continua
 - 🔵 Human-in-the-loop básico
 
@@ -502,19 +564,25 @@ docker-compose up -d postgres  # Start PostgreSQL
 ## 📈 Visualización de Progreso
 
 ```
-Fase 1: Clasificación ML  ████████████████▓▓▓▓ 85% (F1: 0.890 ✅)
-Fase 2: Deep Learning     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  0%
-Fase 3: Análisis Temporal ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  0%
-Fase 4: Embeddings        ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  0%
-Fase 5: Tutor Adaptativo  █▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  5%
-Fase 6: Human-in-Loop     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  0%
+Fase 1: Clasificación ML       ███████████████████░ 95% (F1: 0.890 ✅)
+Fase 2: Deep Learning          ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  0%
+Fase 3: Análisis Temporal      ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  0%
+Fase 4: Embeddings             ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  0%
+Fase 5: AI Chess Coach         █████████▓▓▓▓▓▓▓▓▓▓▓ 45% (Orchestration ✅, LLM ⏳)
+  └─ FeatureSummarizer         ████████████████████ 100% ✅
+  └─ RAG System                ████████████████████ 100% ✅
+  └─ Planner/Executor/Memory   ████████████████████ 100% ✅
+  └─ CoachingLLM (Explainer)   ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓   0% ⏳
+  └─ API /ai-coach/            ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓   0% ⏳
+  └─ Frontend React            ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓   0% ⏳
+Fase 6: Human-in-Loop          ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  0%
 
-Infraestructura          ███████████████████░ 95%
-Pipeline de Datos        ████████████████████ 100% (328K records)
-Documentación            ███████████████░░░░░ 75%
-Aplicación Final         █████░░░░░░░░░░░░░░░ 25%
+Infraestructura                ████████████████████ 100%
+Pipeline de Datos              ████████████████████ 100% (328K records)
+Documentación                  █████████████████░░░  85%
+Aplicación Final               ████████░░░░░░░░░░░░  40%
 
-PROGRESO GENERAL:        ████████████░░░░░░░░ 62%
+PROGRESO GENERAL:              ████████████░░░░░░░░  65%
 ```
 
 ---
@@ -540,19 +608,21 @@ PROGRESO GENERAL:        ████████████░░░░░░�
 
 #### En Progreso (🟡)
 - #77: UI Architecture Refactor 🟡 40%
-- #NEW-2: Baseline Phase 1 🏃 En ejecución (F1: 0.890)
+- #86: Arquitectura Orquestada Fase 1 ✅ Completado (v0.1.108)
+- #87: CriticService ⏳ Pendiente
+- #88: ExplainerService (LLM) ⏳ Pendiente
 
 #### Propuestos (Ver [PROPOSED_ML_ISSUES.md](./docs/PROPOSED_ML_ISSUES.md))
 - #NEW-1: ✅ Completado (328K records)
-- #NEW-2: 🏃 Ejecutando ahora
+- #NEW-2: ✅ Completado (F1: 0.890)
 - #NEW-3: ✅ Completado (doc teórico)
 - #NEW-4 a #NEW-10: Pendientes
 
 ---
 
-**Última actualización:** 4 de Febrero de 2026 19:10  
-**Versión:** v0.1.111-03b0772  
-**Estado ML:** 🏃 Phase 1 Baseline ejecutando (Logistic L2: F1=0.890 ✅)  
+**Última actualización:** 25 de Mayo de 2026  
+**Versión:** v0.1.138-fda75dc  
+**Estado ML:** ✅ Phase 1 completado (F1=0.890) | 🟡 AI Coach – Orchestration ✅, LLM ⏳  
 **Análisis completo:** [ML_PROJECT_STATE_ANALYSIS.md](./docs/ML_PROJECT_STATE_ANALYSIS.md)
 
 ## 📊 Real Datasets Analysis
@@ -653,5 +723,5 @@ This project is developed for educational and research purposes.
 
 ---
 
-**Last Updated**: January 2025 - Version v0.1.107  
-**Tech Stack**: React 19 + TypeScript + Vite + FastAPI + PostgreSQL + MLflow + Docker
+**Last Updated**: May 2026 - Version v0.1.138-fda75dc  
+**Tech Stack**: React 19 + TypeScript + Vite + FastAPI + PostgreSQL + MLflow + Docker + ChromaDB + Ollama
