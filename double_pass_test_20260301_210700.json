@@ -1,0 +1,34 @@
+{
+  "metadata": {
+    "game_id": "aec7f86c250f0248fa65d9e1c5a320609ebe04ceaa09a0da601855bc404b71eb",
+    "player_color": "white",
+    "timestamp": "20260301_210700",
+    "architecture": "v2_double_pass"
+  },
+  "structured_analysis": {
+    "decisive_move_used": 33,
+    "error_type": "accumulated",
+    "material_loss_claimed": false,
+    "opening_problem_detected": false,
+    "middlegame_problem_detected": false,
+    "endgame_problem_detected": false,
+    "key_moves_explained": [
+      33,
+      33
+    ],
+    "confidence": 1.0
+  },
+  "report": "## 📊 Diagnóstico\nEl movimiento decisivo que determinó el resultado de la partida fue el #33. A pesar de ser etiquetado como un error, este movimiento fue crucial para que lograras la victoria. Este error acumulado no se debió a una pérdida material sino a un error estratégico que, afortunadamente, tu oponente no pudo explotar.\n\n## 🎯 Acciones Concretas\n1. **Movimiento #33**: Este movimiento fue crucial, pero fue un error estratégico. En el futuro, es importante que consideres todas las respuestas posibles de tu oponente antes de hacer un movimiento tan crítico. \n\n2. **Movimiento #8 y #6**: Estos movimientos fueron etiquetados como errores. Parece que estás luchando con la coordinación de tus piezas en la fase temprana del juego. Recuerda, el desarrollo efectivo de tus piezas es fundamental para establecer una fuerte presencia en el tablero.\n\n3. **Movimientos #15 y #23**: Estos movimientos fueron inexactos. No comprometieron tu posición en gran medida, pero hay margen para mejorar. Recuerda mantener la iniciativa y controlar el centro del tablero para dar a tus piezas mayor alcance y flexibilidad.\n\n## ✅ Fortaleza Detectada\nA pesar de los errores cometidos, has demostrado una gran habilidad para mantener la calma y seguir adelante con tu estrategia. Tu capacidad para adaptarte y seguir adelante, incluso después de cometer errores, es una fortaleza importante. Continúa trabajando en tus habilidades tácticas y estratégicas, y verás un aumento en tu calificación de ELO. ¡Bien jugado!",
+  "validations": [
+    "❌ INCOHERENCIA: JSON dice material_loss=false pero narrativa menciona pérdida material",
+    "✅ Movimiento decisivo #33 mencionado en narrativa",
+    "✅ Movimiento clave #33 mencionado",
+    "✅ Movimiento clave #33 mencionado",
+    "✅ Apertura coherente: JSON=False"
+  ],
+  "summary": {
+    "passed": 4,
+    "warnings": 0,
+    "failed": 1
+  }
+}

@@ -1,0 +1,28 @@
+# AI Chess Coach Requirements
+# Instalación: conda activate chess_trainer && pip install -r requirements_ai_coach.txt
+
+# === RAG System (Phase 3) ===
+sentence-transformers==3.3.1    # Embeddings para RAG
+chromadb==0.5.23                # Vector database
+pypdf2==3.0.1                   # PDF extraction
+pdfplumber==0.11.4              # Advanced PDF parsing
+tiktoken==0.8.0                 # Token counting
+
+# === LLM Integration (Phase 4) ===
+langchain==0.3.13               # LLM framework
+langchain-community==0.3.13     # Community integrations
+langchain-ollama==0.3.0         # Ollama integration
+httpx==0.28.1                   # Async HTTP client
+
+# === OCR Support (for scanned PDFs) ===
+pytesseract==0.3.10             # Tesseract OCR wrapper
+pdf2image==1.17.0               # Convert PDF pages to images
+pillow==10.4.0                  # Image processing
+
+# === Structured Output (Phase 5) ===
+# pydantic >= 2.0 (already in requirements.txt)
+# jsonschema (already in requirements.txt)
+
+# === Optional Enhancement ===
+python-docx==1.1.2              # DOCX support for chess books
+openpyxl==3.1.5                 # Excel support for training data

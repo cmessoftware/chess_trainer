@@ -4,7 +4,7 @@ from concurrent.futures import ProcessPoolExecutor
 from db.repository.features_repository import FeaturesRepository
 
 # Constants
-EXPORT_DIR = os.environ.get("EXPORT_DIR", "/app/src/data/export")
+EXPORT_DIR = os.environ.get("EXPORT_DIR", "src\\data\\export")
 SOURCES = ["personal", "novice", "elite", "stockfish", "fide"]
 
 
@@ -22,7 +22,7 @@ def export_features_to_dataset(
     Exports a subset of the `features` table to a Parquet file,
     applying optional filters by player, opening, ELO, and game limit.
     """
-    print("🔄 Exporting features dataset...")
+    print("[INFO] Exporting features dataset...")
     print(f"Applied filters:  ")
     print(f"  - Source: {source}")
     print(f"  - Opening: {opening if opening else 'All'}")
@@ -44,38 +44,38 @@ def export_features_to_dataset(
     )
 
     if df is None:
-        print("⚠️ No data found with those filters.")
+        print("[WARNING] No data found with those filters.")
         return
 
-    print(f"🔄 Total features found: {len(df)}")
+    print(f"[INFO] Total features found: {len(df)}")
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
     if file_type == "parquet":
         output_path = output_path + ".parquet"
-        print(f"🔄 Exporting to Parquet at {output_path}")
+        print(f"[INFO] Exporting to Parquet at {output_path}")
         df.to_parquet(output_path, index=False)
     elif file_type == "csv":
         output_path = output_path + ".csv"
         df.to_csv(output_path, index=False)
 
     print(
-        f"✅ Exported {len(df)} rows ({df['game_id'].nunique()} games) to {output_path}")
+        f"[SUCCESS] Exported {len(df)} rows ({df['game_id'].nunique()} games) to {output_path}")
 
 
 def export_features_for_source(source: str):
     output_path = Path(EXPORT_DIR) / source / "features"
-    print(f"🔄 Exporting features for source: {source} to {output_path}")
+    print(f"[INFO] Exporting features for source: {source} to {output_path}")
     export_features_to_dataset(source=source, output_path=str(
         output_path), file_type="parquet")
 
 
 def export_all_sources_parallel():
-    print("🔄 Exporting features by source in parallel...")
+    print("[INFO] Exporting features by source in parallel...")
     print(f"Export directory: {EXPORT_DIR}")
     print(f"Sources: {SOURCES}")
     with ProcessPoolExecutor() as executor:
         executor.map(export_features_for_source, SOURCES)
-    print("✅ Parallel export by source completed.")
+    print("[SUCCESS] Parallel export by source completed.")
 
 
 if __name__ == "__main__":

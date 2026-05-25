@@ -97,7 +97,7 @@ class FeaturesRepository:
         }
 
     def save_many_features(self, feature_rows: list[dict]):
-        print(f"🔍 Saving {len(feature_rows)} features...")
+        print(f"Saving {len(feature_rows)} features...")
 
         # MIGRATED-TODO: Este fragmento de código debería estar en un método publico de la capa de servicios.
         if not isinstance(feature_rows, list):
@@ -128,9 +128,9 @@ class FeaturesRepository:
             return
         # FIN TODO
 
-        print(f"🔍 Inserting {len(unique_rows)} unique features...")
+        print(f"Inserting {len(unique_rows)} unique features...")
         # Log first 5 for debugging
-        # print(f"🔍 Unique rows: {unique_rows[:5]}...")
+        # print(f"Unique rows: {unique_rows[:5]}...")
 
         try:
             with self.session_factory() as session:
@@ -140,7 +140,7 @@ class FeaturesRepository:
                 result = session.execute(stmt)
                 session.commit()
                 logger.info(
-                    f"✅ Inserted {result.rowcount} rows. Skipped {len(unique_rows) - result.rowcount}.")
+                    f"SUCCESS: Inserted {result.rowcount} rows. Skipped {len(unique_rows) - result.rowcount}.")
         except Exception as e:
             session.rollback()
             logger.error(f"❌ Error al insertar features: {e}")
@@ -158,7 +158,7 @@ class FeaturesRepository:
             print(f"⚠️ No tags to update for game {game_id}")
             return
         print(
-            f"🔍 Updating {len(tags_df)} tags and score_diff for game {game_id}")
+            f"Updating {len(tags_df)} tags and score_diff for game {game_id}")
 
         updated_count = 0
         skipped = 0
@@ -166,7 +166,7 @@ class FeaturesRepository:
         with self.session_factory() as session:
             try:
                 print(
-                    f"🔍 Processing tags for game {game_id}...tags_df: {tags_df.head(3)}")
+                    f"Processing tags for game {game_id}...tags_df: {tags_df.head(3)}")
                 for _, row in tags_df.iterrows():
                     move_number = int(row.get("move_number", -1))
                     player_color = row.get("player_color")
@@ -174,7 +174,7 @@ class FeaturesRepository:
                     score_diff = row.get("score_diff")
                     error_label = row.get("error_label", None)
                     print(
-                        f"🔍 Processing row: move_number={move_number}, player_color={player_color}, tag={tag}, score_diff={score_diff}")
+                        f"Processing row: move_number={move_number}, player_color={player_color}, tag={tag}, score_diff={score_diff}")
 
                     if isinstance(player_color, str):
                         player_color = 1 if "white" else 0
@@ -229,7 +229,7 @@ class FeaturesRepository:
                     updated_count += 1
 
                 session.commit()
-                print(f"✅ {updated_count} tags updated for game {game_id}")
+                print(f"SUCCESS: {updated_count} tags updated for game {game_id}")
                 if skipped:
                     print(
                         f"⏭️ {skipped} moves skipped because they do not exist in the features table")
@@ -261,7 +261,7 @@ class FeaturesRepository:
         Exporta un archivo Parquet con los features filtrados por ELO, jugador, apertura y
         límite de cantidad de partidas completas (no por jugadas).
         """
-        print(f"🔍 Exportando dataset filtrado a {output_path}...")
+        print(f"Exportando dataset filtrado a {output_path}...")
 
         try:
             with self.session_factory() as session:
@@ -331,9 +331,9 @@ class FeaturesRepository:
                     Features.is_stockfish_test,
                     Features.num_moves,
                     Features.error_label,
-                    Games.site,
-                    Games.event,
-                    Games.date,
+                    Games.source,
+                    Games.date_played,
+                    Games.time_control,
                     Games.white_player,
                     Games.black_player,
                     Games.white_elo,
@@ -351,3 +351,143 @@ class FeaturesRepository:
         except Exception as e:
             print(f"❌ Error exportando dataset filtrado: {e}")
             raise
+
+    def update_tactical_data(self, tactical_data):
+        """
+        Update existing features with tactical analysis data.
+        tactical_data should be a list of dictionaries with tactical information.
+        """
+        if not tactical_data:
+            return
+        
+        updated_count = 0
+        
+        try:
+            with self.session_factory() as session:
+                for tactic in tactical_data:
+                    game_id = tactic.get('game_id')
+                    move_number = tactic.get('move_number')
+                    
+                    if not game_id or not move_number:
+                        continue
+                    
+                    # Find existing feature record
+                    feature_record = session.query(Features).filter_by(
+                        game_id=game_id, 
+                        move_number=move_number
+                    ).first()
+                    
+                    if feature_record:
+                        # Update with tactical information
+                        if tactic.get('error_label'):
+                            feature_record.error_label = tactic.get('error_label')
+                        
+                        if tactic.get('score_diff') is not None:
+                            feature_record.score_diff = tactic.get('score_diff')
+                        
+                        # Add tactical tag to existing tags
+                        current_tags = feature_record.tags or []
+                        if isinstance(current_tags, str):
+                            current_tags = []
+                        
+                        tactical_tag = tactic.get('tag')
+                        if tactical_tag and tactical_tag not in current_tags:
+                            current_tags.append(tactical_tag)
+                            feature_record.tags = current_tags
+                        
+                        updated_count += 1
+                
+                session.commit()
+                logger.info(f"Updated {updated_count} features with tactical data")
+                
+        except Exception as e:
+            logger.error(f"Error updating tactical data: {e}")
+            session.rollback()
+            raise
+
+    def get_by_game_and_move(self, game_id, move_number):
+        """
+        Get a feature record by game_id and move_number.
+        """
+        try:
+            with self.session_factory() as session:
+                return session.query(Features).filter_by(
+                    game_id=game_id, 
+                    move_number=move_number
+                ).first()
+        except Exception as e:
+            logger.error(f"Error getting feature by game and move: {e}")
+            return None
+
+    def update_tactical_data_single(self, feature_id, tactical_data):
+        """
+        Update a single feature record with tactical data.
+        """
+        try:
+            with self.session_factory() as session:
+                feature = session.query(Features).filter_by(id=feature_id).first()
+                
+                if feature:
+                    # Update tactical information
+                    if tactical_data.get('error_label'):
+                        feature.error_label = tactical_data.get('error_label')
+                    
+                    if tactical_data.get('score_diff') is not None:
+                        feature.score_diff = tactical_data.get('score_diff')
+                    
+                    # Add tactical tag to existing tags
+                    current_tags = feature.tags or []
+                    if isinstance(current_tags, str):
+                        current_tags = []
+                    
+                    tactical_tag = tactical_data.get('tag')
+                    if tactical_tag and tactical_tag not in current_tags:
+                        current_tags.append(tactical_tag)
+                        feature.tags = current_tags
+                    
+                    session.commit()
+                    return True
+                    
+        except Exception as e:
+            logger.error(f"Error updating single tactical data: {e}")
+            return False
+
+    def update_feature_by_composite_key(self, game_id, move_number, player_color, tactical_data):
+        """
+        Update a feature record using composite key (game_id, move_number, player_color).
+        """
+        try:
+            with self.session_factory() as session:
+                feature = session.query(Features).filter_by(
+                    game_id=game_id, 
+                    move_number=move_number,
+                    player_color=player_color
+                ).first()
+                
+                if feature:
+                    # Update tactical information
+                    if tactical_data.get('error_label'):
+                        feature.error_label = tactical_data.get('error_label')
+                    
+                    if tactical_data.get('score_diff') is not None:
+                        feature.score_diff = tactical_data.get('score_diff')
+                    
+                    # Add tactical tag to existing tags
+                    current_tags = feature.tags or []
+                    if isinstance(current_tags, str):
+                        current_tags = []
+                    
+                    tactical_tag = tactical_data.get('tag')
+                    if tactical_tag and tactical_tag not in current_tags:
+                        current_tags.append(tactical_tag)
+                        feature.tags = current_tags
+                    
+                    session.commit()
+                    return True
+                else:
+                    logger.warning(f"No feature found for game {game_id}, move {move_number}, color {player_color}")
+                    return False
+                    
+        except Exception as e:
+            logger.error(f"Error updating feature by composite key: {e}")
+            return False

@@ -1,0 +1,253 @@
+{
+    "info": {
+        "_postman_id": "chess-shap-regenerator",
+        "name": "Chess SHAP - Regenerador Automático",
+        "description": "Regenera SHAP values con player_color para 6 partidas verificadas",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "1. Login",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test('✅ Login successful', function () {",
+                            "    pm.response.to.have.status(200);",
+                            "    var jsonData = pm.response.json();",
+                            "    pm.environment.set('token', jsonData.access_token);",
+                            "    console.log('✅ Token guardado');",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"username\": \"admin\",\n    \"password\": \"admin123\"\n}"
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/auth/login",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "auth",
+                        "login"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "2. REGENERAR SHAP - Auto Loop",
+            "event": [
+                {
+                    "listen": "prerequest",
+                    "script": {
+                        "exec": [
+                            "// Leer game_ids del environment (game_id_1, game_id_2, etc.)",
+                            "if (!pm.environment.get('regen_game_ids')) {",
+                            "    const gameIds = [];",
+                            "    let i = 1;",
+                            "    while (pm.environment.get(`game_id_${i}`)) {",
+                            "        gameIds.push(pm.environment.get(`game_id_${i}`));",
+                            "        i++;",
+                            "    }",
+                            "    ",
+                            "    if (gameIds.length === 0) {",
+                            "        console.error('❌ No se encontraron game_ids en el environment');",
+                            "        console.log('💡 Configura: game_id_1, game_id_2, etc. en el environment');",
+                            "        throw new Error('No game_ids found');",
+                            "    }",
+                            "    ",
+                            "    pm.environment.set('regen_game_ids', JSON.stringify(gameIds));",
+                            "    pm.environment.set('regen_current_index', '0');",
+                            "    console.log('🔄 INICIANDO REGENERACIÓN AUTOMÁTICA');",
+                            "    console.log(`📋 Total de partidas encontradas: ${gameIds.length}\\n`);",
+                            "}",
+                            "",
+                            "const allGameIds = JSON.parse(pm.environment.get('regen_game_ids'));",
+                            "const currentIndex = parseInt(pm.environment.get('regen_current_index'));",
+                            "const currentGameId = allGameIds[currentIndex];",
+                            "",
+                            "// Configurar game_id para el body",
+                            "pm.environment.set('current_game_id', currentGameId);",
+                            "",
+                            "console.log('='.repeat(80));",
+                            "console.log(`🎯 GAME ${currentIndex + 1}/${allGameIds.length}`);",
+                            "console.log(`   ID: ${currentGameId.substring(0, 50)}...`);",
+                            "console.log(`   Generando SHAP con player_color...`);"
+                        ],
+                        "type": "text/javascript"
+                    }
+                },
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "const allGameIds = JSON.parse(pm.environment.get('regen_game_ids'));",
+                            "const currentIndex = parseInt(pm.environment.get('regen_current_index'));",
+                            "",
+                            "pm.test('✅ SHAP generado', function () {",
+                            "    pm.response.to.have.status(200);",
+                            "});",
+                            "",
+                            "if (pm.response.code === 200) {",
+                            "    const data = pm.response.json();",
+                            "    console.log(`   ✅ Analysis ID: ${data.analysis_id}`);",
+                            "    console.log(`   ✅ Status: ${data.status}`);",
+                            "    console.log(`   💾 SHAP values guardados con player_color`);",
+                            "} else {",
+                            "    console.log(`   ❌ ERROR: ${pm.response.text()}`);",
+                            "}",
+                            "",
+                            "console.log('='.repeat(80) + '\\n');",
+                            "",
+                            "// Continuar con siguiente game",
+                            "if (currentIndex + 1 < allGameIds.length) {",
+                            "    pm.environment.set('regen_current_index', (currentIndex + 1).toString());",
+                            "    ",
+                            "    // Auto-ejecutar siguiente en 2 segundos",
+                            "    setTimeout(() => {",
+                            "        postman.setNextRequest(pm.info.requestName);",
+                            "    }, 2000);",
+                            "} else {",
+                            "    console.log('\\n🎉 ¡REGENERACIÓN COMPLETA!');",
+                            "    console.log(`✅ ${allGameIds.length} partidas procesadas`);",
+                            "    console.log('✅ Todos los SHAP values tienen player_color\\n');",
+                            "    ",
+                            "    // Limpiar variables",
+                            "    pm.environment.unset('regen_game_ids');",
+                            "    pm.environment.unset('regen_current_index');",
+                            "    pm.environment.unset('current_game_id');",
+                            "    ",
+                            "    postman.setNextRequest(null);",
+                            "}"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}"
+                    },
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"game_id\": \"{{current_game_id}}\",\n    \"username\": \"admin\"\n}"
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/analysis/run",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "analysis",
+                        "run"
+                    ]
+                },
+                "description": "Genera SHAP values con move_san, move_uci, fen, y player_color"
+            },
+            "response": []
+        },
+        {
+            "name": "3. Verificar Campos Nuevos",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test('✅ Respuesta OK', function () {",
+                            "    pm.response.to.have.status(200);",
+                            "});",
+                            "",
+                            "const data = pm.response.json();",
+                            "",
+                            "if (data.length > 0) {",
+                            "    const first = data[0];",
+                            "    ",
+                            "    console.log('🔍 VERIFICACIÓN DE CAMPOS NUEVOS:\\n');",
+                            "    ",
+                            "    pm.test('✅ player_color presente', () => {",
+                            "        pm.expect(first.player_color).to.not.be.null;",
+                            "        console.log(`   player_color: ${first.player_color}`);",
+                            "    });",
+                            "    ",
+                            "    pm.test('✅ move_san presente', () => {",
+                            "        pm.expect(first.move_san).to.not.be.null;",
+                            "        console.log(`   move_san: ${first.move_san}`);",
+                            "    });",
+                            "    ",
+                            "    pm.test('✅ move_uci presente', () => {",
+                            "        pm.expect(first.move_uci).to.not.be.null;",
+                            "        console.log(`   move_uci: ${first.move_uci}`);",
+                            "    });",
+                            "    ",
+                            "    pm.test('✅ fen presente', () => {",
+                            "        pm.expect(first.fen).to.not.be.null;",
+                            "        console.log(`   fen: ${first.fen.substring(0, 40)}...`);",
+                            "    });",
+                            "    ",
+                            "    console.log('\\n✅ ¡Todos los campos nuevos presentes!');",
+                            "} else {",
+                            "    console.log('⚠️  Sin SHAP values para verificar');",
+                            "}"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}"
+                    }
+                ],
+                "url": {
+                    "raw": "{{base_url}}/api/analysis/shap/game/{{current_game_id}}?move_number=1",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "analysis",
+                        "shap",
+                        "game",
+                        "{{current_game_id}}"
+                    ],
+                    "query": [
+                        {
+                            "key": "move_number",
+                            "value": "1"
+                        }
+                    ]
+                },
+                "description": "Verifica que los campos nuevos estén poblados"
+            },
+            "response": []
+        }
+    ]
+}

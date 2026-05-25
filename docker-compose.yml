@@ -1,25 +1,4 @@
 services:
-  chess_trainer:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "8501:8501"
-    volumes:
-      - ./data:/app/data
-      - chess_datasets:/app/src/data # Shared volume for generated datasets
-
-  notebooks:
-    build:
-      context: .
-      dockerfile: dockerfile.notebooks
-    ports:
-      - "8889:8888"
-    volumes:
-      - ./notebooks:/notebooks
-      - ./data:/notebooks/data
-      - chess_datasets:/notebooks/datasets # Shared volume for datasets access
-
   postgres:
     image: postgres:13
     environment:
@@ -30,31 +9,32 @@ services:
       - "5432:5432"
     volumes:
       - chess_pgdata:/var/lib/postgresql/data
+    networks:
+      - chess_network
 
-  mlflow:
-    image: python:3.11-slim
+  ollama:
+    image: ollama/ollama:latest
+    container_name: chess_trainer_ollama
     ports:
-      - "5000:5000"
+      - "11434:11434"
     volumes:
-      - ./mlruns:/mlflow/mlruns
-      - chess_datasets:/mlflow/data
-      - ./src:/mlflow/src
-    working_dir: /mlflow
-    command: >
-      bash -c "
-        pip install mlflow psycopg2-binary sqlalchemy &&
-        mlflow server --host 0.0.0.0 --port 5000 --backend-store-uri postgresql://chess:chess_pass@postgres:5432/chess_trainer_db --default-artifact-root /mlflow/mlruns
-      "
+      - ollama_data:/root/.ollama
     environment:
-      - POSTGRES_USER=chess
-      - POSTGRES_PASSWORD=chess_pass
-      - POSTGRES_HOST=postgres
-      - POSTGRES_PORT=5432
-      - POSTGRES_DB=chess_trainer_db
-      - PYTHONPATH=/mlflow
-    depends_on:
-      - postgres
+      - OLLAMA_HOST=0.0.0.0
+    networks:
+      - chess_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
 volumes:
   chess_pgdata:
-  chess_datasets: # New shared volume for Parquet datasets
+  ollama_data:
+
+networks:
+  chess_network:
+    driver: bridge

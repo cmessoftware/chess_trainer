@@ -1,0 +1,19 @@
+{
+  "error": true,
+  "message": "(psycopg2.OperationalError) could not translate host name \"postgres\" to address: Name or service not known\n\n(Background on this error at: https://sqlalche.me/e/20/e3q8)",
+  "dataset_overview": {
+    "total_games": 0
+  },
+  "early_defeats": [],
+  "mate_patterns": [],
+  "opening_survival": {},
+  "catastrophic_errors": {},
+  "alerts": [],
+  "emergency_plan": {
+    "critical_priorities": [],
+    "requires_immediate_attention": false
+  },
+  "recommendations": [
+    "Analysis failed: (psycopg2.OperationalError) could not translate host name \"postgres\" to address: Name or service not known\n\n(Background on this error at: https://sqlalche.me/e/20/e3q8)"
+  ]
+}

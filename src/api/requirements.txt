@@ -1,0 +1,19 @@
+# Dependencias para la API FastAPI
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-multipart==0.0.6
+pydantic==2.9.0
+
+# Ajedrez
+python-chess==1.999
+
+# Base de datos (psycopg compatible con Python 3.13)
+psycopg[binary,pool]==3.3.2
+sqlalchemy==2.0.23
+alembic==1.13.1
+
+# Utilidades
+python-dotenv==1.0.0
+loguru==0.7.2

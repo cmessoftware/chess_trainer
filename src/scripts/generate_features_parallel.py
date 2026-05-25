@@ -45,12 +45,15 @@ import chess
 import chess.pgn
 from sqlalchemy import create_engine, MetaData
 from sqlalchemy.orm import sessionmaker
+
+# Add src to path for imports
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
 from modules.pgn_utils import get_game_id, is_valid_pgn
 from modules.features_generator import generate_features_from_game
 from db.repository.features_repository import FeaturesRepository
 from db.repository.games_repository import GamesRepository
 from db.repository.processed_feature_repository import ProcessedFeaturesRepository
-from db.repository.games_repository import GamesRepository
 
 # Load environment variables
 import dotenv

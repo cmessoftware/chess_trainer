@@ -45,3 +45,35 @@ class Analyzed_tacticalsRepository:
             new_record = Analyzed_tacticals(game_id=game_id)
             session.add(new_record)
             session.commit()
+
+    def save_tactical_analysis(self, tactical_data):
+        """
+        Save tactical analysis data to the database.
+        tactical_data should be a list of dictionaries with tactical information.
+        """
+        if not tactical_data:
+            return
+        
+        try:
+            with self.session_factory() as session:
+                for tactic in tactical_data:
+                    # Create Analyzed_tacticals object
+                    tactical_record = Analyzed_tacticals(
+                        game_id=tactic.get('game_id'),
+                        move_number=tactic.get('move_number'),
+                        fen=tactic.get('fen'),
+                        move_uci=tactic.get('move'),
+                        tag=tactic.get('tag'),
+                        error_label=tactic.get('error_label'),
+                        score_diff=tactic.get('score_diff'),
+                        player_color=tactic.get('player_color')
+                    )
+                    session.add(tactical_record)
+                
+                session.commit()
+                logger.info(f"Saved {len(tactical_data)} tactical analysis records")
+                
+        except Exception as e:
+            logger.error(f"Error saving tactical analysis: {e}")
+            session.rollback()
+            raise

@@ -13,13 +13,13 @@
 **BEFORE**:
 - `README.md` - Short project description and quick start
 - `VERSION_BASE.md` - Comprehensive documentation  
-- `README_es.md` - Short project description and quick start (Spanish)
+- Spanish root README - Short project description and quick start
 - `VERSION_BASE_es.md` - Comprehensive documentation (Spanish)
 
 **AFTER**:
 - `README.md` - **Comprehensive project documentation** (main entry point)
 - `VERSION_BASE.md` - **Quick start guide and project overview**
-- `README_es.md` - Removed from the active documentation structure
+- Spanish root README - Removed from the active documentation structure
 - `VERSION_BASE_es.md` - **Quick start guide and project overview** (Spanish)
 
 ### 2. Docker Management Unification

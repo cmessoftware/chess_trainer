@@ -21,7 +21,7 @@ handler = RotatingFileHandler(
 )
 
 formatter = logging.Formatter(
-    "📘 [%(asctime)s] %(levelname)s - %(message)s",
+    "[NOTEBOOK] [%(asctime)s] %(levelname)s - %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S"
 )
 handler.setFormatter(formatter)
@@ -34,16 +34,16 @@ logger.propagate = False  # Prevent duplicates if there are other global handler
 def log_function_call(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
-        logger.info(f"🔍 Llamando: {func.__name__}({args}, {kwargs})")
+        logger.info(f"[DISCOVER] Llamando: {func.__name__}({args}, {kwargs})")
         try:
             result = func(*args, **kwargs)
             if result is None or isinstance(result, (int, float, str, bool)):
-                logger.info(f"✅ Resultado de {func.__name__}: {result}")
+                logger.info(f"[SUCCESS] Resultado de {func.__name__}: {result}")
             else:
-                logger.info(f"✅ Resultado de {func.__name__}: Objeto complejo")
+                logger.info(f"[SUCCESS] Resultado de {func.__name__}: Objeto complejo")
             return result
         except Exception as e:
-            logger.exception(f"❌ Excepción en {func.__name__}: {e}")
+            logger.exception(f"[ERROR] Excepción en {func.__name__}: {e}")
             raise
     return wrapper
 
@@ -67,6 +67,9 @@ def auto_logger_execution_time(func):
             return result
         except Exception as e:
             duration = round(time.time() - start_time, 2)
-            print(f"❌ {name} failed after {duration} seconds. Error: {e}")
+            print(f"[ERROR] {name} failed after {duration} seconds. Error: {e}")
             raise
     return wrapper
+
+
+

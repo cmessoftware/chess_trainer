@@ -5,6 +5,45 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.1.138] - 2026-05-25
+
+### Added
+- **🎓 AI Engineering Course** (PR #95) - New learning material in `docs/courses/`:
+  - AI Engineer roadmap with phase-by-phase learning plan
+  - Three Jupyter notebooks: architecture overview, feature pipeline, dataset builder
+  - SQLite migration script for portable course data
+- **📊 Course Data Access Layer** (PR #97, #98) - Portable SQLAlchemy-based data layer:
+  - `docs/courses/data_access/features_repository.py` - SQLAlchemy repository with SQLite default and optional PostgreSQL via `CHESS_COURSE_DB_URL`
+  - `docs/courses/data_access/notebook_data_helper.py` - Helper utilities for notebooks
+  - `docs/courses/dataset/build_training_dataset.py` - Standalone dataset builder module
+  - `tests/docs_courses/test_course_data_access.py` - Test suite for data access layer
+  - `tests/docs_courses/test_build_training_dataset.py` - Test suite for dataset builder
+- **🗺️ AI Chess Coach Roadmap** (PR #98) - Phase 1–2 feature list at `docs/ai_chess_coach/roadmap/02-phase-1-2-feature-list.md`
+- **📚 ML Theory & Analysis Docs** (PR #93) - New documentation organized by category:
+  - `docs/ml_theory/ML_THEORETICAL_FRAMEWORK.md`
+  - `docs/ml_analysis/ML_CURRENT_STATE_ANALYSIS.md`, `PAGES_ARCHITECTURE_ANALYSIS.md`, `ISSUE_21_COMPLETION_REPORT.md`
+  - `docs/devops/DATASETS_VOLUMES_CONFIG.md`, `DOCKER_DEVELOPMENT_STRATEGY.md`, `MLFLOW_POSTGRES_INTEGRATION.md`
+- **🔧 Copilot Instructions** (PR #94) - `.github/copilot-instructions.md` with project conventions
+- **📋 Tesseract Setup Guide** - `INSTALL_TESSERACT_GUIDE.md` for OCR prerequisites
+
+### Changed
+- **🏷️ Project Renamed** (PR #93) - Project renamed from ChessTrainer to **CHESSINSIGHTAI** in README and description
+- **📁 Docs Reorganization** (PR #99) - AI Coach and OCR docs moved into `docs/ai_chess_coach/`:
+  - `AI_CHESS_COACH_TESTING_GUIDE.md`, `AI_COACH_CHECKLIST.md`, `AI_COACH_IMPLEMENTATION_GUIDE.md`, `AI_COACH_QUICKSTART.md`, `OCR_SETUP_GUIDE.md`
+- **📓 Course Notebooks Updated** (PR #97, #98) - Notebooks aligned to use new portable data layer and normalized entry points
+- **🗄️ Alembic Migrations** (PR #94) - Added multiple new schema migrations: batch tracking, users table, SHAP analysis tables, views, and merge heads
+
+### Fixed
+- **📐 Course README Placeholders** (PR #97) - Normalized script entry points and clarified placeholder values
+
+### Technical Details
+- **Version**: v0.1.138
+- **PRs merged**: #93, #94, #95, #97, #98, #99
+- **Branch**: `main`
+- **Date range**: 2026-05-17 to 2026-05-25
+
+---
+
 ## [v0.1.103] - 2026-03-26
 
 ### Added
@@ -141,8 +180,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - **Documentation Structure Enhancement** - Comprehensive documentation improvements addressing issue #62
-- **Localized Documentation Updates** - Historical v0.1.43 context: Spanish versions for major documentation files at that time included:
+- **Spanish Language Documentation** - Complete Spanish versions for all major documentation files:
   - `src/architecture_es.md` - System architecture diagram and explanations in Spanish
+  - `tests/README.md` - Complete testing guide with runner documentation in Spanish
   - `DATASETS_VOLUMES_CONFIG_es.md` - Docker volumes configuration for dataset sharing in Spanish
 - **Documentation Index** - Organized navigation structure replacing requirements sections in both VERSION_BASE files
 - **Docker Installation References** - Clear references to automatic dependency installation via:

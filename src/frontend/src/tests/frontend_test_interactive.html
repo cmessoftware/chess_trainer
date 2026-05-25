@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 Chess Trainer Frontend Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #1e1e1e;
+            color: #fff;
+        }
+
+        .test-section {
+            background: #2d2d2d;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid #444;
+        }
+
+        button {
+            background: #007acc;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #005a9e;
+        }
+
+        pre {
+            background: #000;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            border: 1px solid #333;
+        }
+
+        .status {
+            padding: 5px 10px;
+            border-radius: 4px;
+            margin: 5px 0;
+        }
+
+        .success {
+            background: #2d5f2d;
+        }
+
+        .error {
+            background: #5f2d2d;
+        }
+
+        .info {
+            background: #2d4d5f;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🧪 Chess Trainer Frontend Interactive Test</h1>
+
+    <div class="test-section">
+        <h2>🔧 API Configuration Test</h2>
+        <button onclick="testAPIConfig()">Test API Config</button>
+        <div id="api-config-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🎯 Direct API Tests</h2>
+        <button onclick="testDirectAPI()">Test Sources API</button>
+        <button onclick="testGamesAPI()">Test Games API</button>
+        <button onclick="testSearchAPI()">Test Search API</button>
+        <div id="direct-api-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🌐 Frontend Services Test</h2>
+        <button onclick="testFrontendServices()">Test Frontend Services</button>
+        <div id="frontend-services-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>📊 Network Analysis</h2>
+        <button onclick="analyzeNetwork()">Analyze Network Requests</button>
+        <div id="network-analysis-result"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://127.0.0.1:8000';
+
+        function log(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            const div = document.createElement('div');
+            div.className = `status ${type}`;
+            div.innerHTML = `<strong>${new Date().toLocaleTimeString()}:</strong> ${message}`;
+            element.appendChild(div);
+        }
+
+        function logJSON(elementId, data, title = 'Response') {
+            const element = document.getElementById(elementId);
+            const pre = document.createElement('pre');
+            pre.textContent = `${title}:\n${JSON.stringify(data, null, 2)}`;
+            element.appendChild(pre);
+        }
+
+        function clearResults(elementId) {
+            document.getElementById(elementId).innerHTML = '';
+        }
+
+        async function testAPIConfig() {
+            clearResults('api-config-result');
+            log('api-config-result', '🔍 Testing API Configuration...', 'info');
+
+            const config = {
+                baseURL: API_BASE,
+                timeout: 10000,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            };
+
+            log('api-config-result', `Base URL: ${config.baseURL}`, 'info');
+            logJSON('api-config-result', config, 'API Config');
+        }
+
+        async function testDirectAPI() {
+            clearResults('direct-api-result');
+            log('direct-api-result', '🎯 Testing Direct API Calls...', 'info');
+
+            try {
+                // Test Sources
+                log('direct-api-result', 'Testing /chess/games/sources...', 'info');
+                const sourcesResponse = await fetch(`${API_BASE}/chess/games/sources`);
+                const sourcesData = await sourcesResponse.json();
+                log('direct-api-result', `Sources API: ${sourcesResponse.status}`, 'success');
+                logJSON('direct-api-result', sourcesData, 'Sources Response');
+
+                // Test Games
+                log('direct-api-result', 'Testing /chess/games...', 'info');
+                const gamesResponse = await fetch(`${API_BASE}/chess/games?page=1&page_size=3`);
+                const gamesData = await gamesResponse.json();
+                log('direct-api-result', `Games API: ${gamesResponse.status}`, 'success');
+                logJSON('direct-api-result', gamesData, 'Games Response');
+
+            } catch (error) {
+                log('direct-api-result', `Error: ${error.message}`, 'error');
+                logJSON('direct-api-result', error, 'Error Details');
+            }
+        }
+
+        async function testSearchAPI() {
+            clearResults('direct-api-result');
+            log('direct-api-result', '🔍 Testing Search API...', 'info');
+
+            try {
+                const searchUrl = `${API_BASE}/chess/games?search=cmess&page=1&page_size=5`;
+                log('direct-api-result', `URL: ${searchUrl}`, 'info');
+
+                const response = await fetch(searchUrl);
+                const data = await response.json();
+
+                log('direct-api-result', `Search API: ${response.status}`, 'success');
+                log('direct-api-result', `Found ${data.total || 0} games`, 'info');
+                logJSON('direct-api-result', data, 'Search Response');
+
+            } catch (error) {
+                log('direct-api-result', `Search Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testFrontendServices() {
+            clearResults('frontend-services-result');
+            log('frontend-services-result', '🌐 Testing Frontend Services...', 'info');
+
+            // Simulate frontend service calls
+            try {
+                log('frontend-services-result', 'Simulating games.js service...', 'info');
+
+                const apiService = {
+                    get: async (url) => {
+                        const fullUrl = `${API_BASE}${url}`;
+                        log('frontend-services-result', `Calling: ${fullUrl}`, 'info');
+                        const response = await fetch(fullUrl);
+                        return await response.json();
+                    }
+                };
+
+                // Test getGameSources
+                const sources = await apiService.get('/chess/games/sources');
+                log('frontend-services-result', `Sources loaded: ${sources.length || 0}`, 'success');
+                logJSON('frontend-services-result', sources, 'Sources from Service');
+
+                // Test getGamesList
+                const games = await apiService.get('/chess/games?search=cmess&page=1&page_size=3');
+                log('frontend-services-result', `Games loaded: ${games.total || 0}`, 'success');
+                logJSON('frontend-services-result', games, 'Games from Service');
+
+            } catch (error) {
+                log('frontend-services-result', `Service Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function analyzeNetwork() {
+            clearResults('network-analysis-result');
+            log('network-analysis-result', '📊 Analyzing Network...', 'info');
+
+            // Check if we can reach the API
+            try {
+                const healthCheck = await fetch(`${API_BASE}/health`);
+                if (healthCheck.ok) {
+                    log('network-analysis-result', '✅ API Server is reachable', 'success');
+                } else {
+                    log('network-analysis-result', `⚠️ API Server returned: ${healthCheck.status}`, 'error');
+                }
+            } catch (error) {
+                log('network-analysis-result', `❌ Cannot reach API: ${error.message}`, 'error');
+            }
+
+            // Check CORS
+            log('network-analysis-result', '🔍 Checking CORS configuration...', 'info');
+            log('network-analysis-result', `Origin: ${window.location.origin}`, 'info');
+            log('network-analysis-result', `Target: ${API_BASE}`, 'info');
+
+            // Performance test
+            const start = performance.now();
+            try {
+                await fetch(`${API_BASE}/chess/games/sources`);
+                const end = performance.now();
+                log('network-analysis-result', `⚡ API response time: ${Math.round(end - start)}ms`, 'success');
+            } catch (error) {
+                log('network-analysis-result', `⏱️ Performance test failed: ${error.message}`, 'error');
+            }
+        }
+    </script>
+</body>
+
+</html>

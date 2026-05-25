@@ -5,9 +5,9 @@ FROM python:3.11-slim
 
 WORKDIR /notebooks
 
-# Instalación de herramientas necesarias, GitHub CLI y limpieza en un solo RUN
+# Instalación de herramientas necesarias, GitHub CLI, netcat y limpieza en un solo RUN
 RUN apt-get update && \
-    apt-get install -y stockfish vim git git-lfs curl gnupg && \
+    apt-get install -y stockfish vim git git-lfs curl gnupg netcat-traditional && \
     git lfs install && \
     curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | gpg --dearmor -o /usr/share/keyrings/githubcli-archive-keyring.gpg && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null && \
@@ -23,10 +23,14 @@ RUN pip install --no-cache-dir -r requirements_keras_tf_clean.txt && \
     pip install --upgrade pip
 
 # Configuración de rutas
-ENV PYTHONPATH=/app/src
+ENV PYTHONPATH=/notebooks/src
 
-# Exposición de puerto Jupyter
-EXPOSE 8888
+# Exposición de puertos Jupyter y MLflow
+EXPOSE 8888 5000
 
-# Comando por defecto: levanta JupyterLab
-CMD ["jupyter", "lab", "--ip=0.0.0.0", "--allow-root", "--no-browser"]
+# Copiar script de inicio
+COPY notebooks/start_services.sh /start_services.sh
+RUN chmod +x /start_services.sh
+
+# Comando por defecto: levanta MLflow + JupyterLab
+CMD ["/start_services.sh"]

@@ -1,0 +1,56 @@
+# Dockerfile for Render Deployment - Chess Trainer AI Coach
+# Optimizado para producción con Ollama + LLM models
+
+FROM python:3.11-slim-bullseye
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    git \
+    build-essential \
+    postgresql-client \
+    libpq-dev \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Ollama
+RUN curl -fsSL https://ollama.com/install.sh | sh
+
+# Set working directory
+WORKDIR /app
+
+# Copy requirements first (for caching)
+COPY requirements.txt requirements_ai_coach.txt ./
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt && \
+    pip install --no-cache-dir -r requirements_ai_coach.txt
+
+# Copy application code
+COPY . .
+
+# Create necessary directories
+RUN mkdir -p \
+    data/chess_books/raw \
+    data/chess_books/processed \
+    data/vectorstore \
+    logs \
+    mlruns \
+    mlartifacts
+
+# Environment variables
+ENV PYTHONUNBUFFERED=1
+ENV OLLAMA_HOST=0.0.0.0:11434
+ENV OLLAMA_MODELS=/app/models
+
+# Create models directory with proper permissions
+RUN mkdir -p /app/models && chmod 777 /app/models
+
+# Expose ports
+EXPOSE 8000 11434
+
+# Startup script
+COPY deployment/render_startup.sh /app/startup.sh
+RUN chmod +x /app/startup.sh
+
+CMD ["/app/startup.sh"]

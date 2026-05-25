@@ -1,0 +1,195 @@
+{
+    "info": {
+        "_postman_id": "chess-shap-iterator",
+        "name": "Chess SHAP - Iterador de Partidas",
+        "description": "Request que itera sobre todos los game_ids del environment y obtiene sus SHAP values",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "1. Login",
+            "event": [
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test(\"Login successful\", function () {",
+                            "    pm.response.to.have.status(200);",
+                            "    var jsonData = pm.response.json();",
+                            "    pm.environment.set(\"token\", jsonData.access_token);",
+                            "    console.log(\"✅ Token saved\");",
+                            "});"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"username\": \"admin\",\n    \"password\": \"admin123\"\n}"
+                },
+                "url": {
+                    "raw": "{{base_url}}/api/auth/login",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "auth",
+                        "login"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "2. Obtener SHAP de TODAS las partidas",
+            "event": [
+                {
+                    "listen": "prerequest",
+                    "script": {
+                        "exec": [
+                            "// Obtener todos los game_ids del environment",
+                            "const gameIds = [];",
+                            "let i = 1;",
+                            "while (pm.environment.get(`game_id_${i}`)) {",
+                            "    gameIds.push(pm.environment.get(`game_id_${i}`));",
+                            "    i++;",
+                            "}",
+                            "",
+                            "// Guardar para uso en el test",
+                            "pm.environment.set('all_game_ids', JSON.stringify(gameIds));",
+                            "pm.environment.set('current_game_index', '0');",
+                            "",
+                            "console.log(`📋 Total de partidas a procesar: ${gameIds.length}`);"
+                        ],
+                        "type": "text/javascript"
+                    }
+                },
+                {
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "// Obtener lista de game_ids",
+                            "const gameIds = JSON.parse(pm.environment.get('all_game_ids'));",
+                            "const currentIndex = parseInt(pm.environment.get('current_game_index'));",
+                            "const currentGameId = gameIds[currentIndex];",
+                            "",
+                            "// Validar respuesta actual",
+                            "pm.test(`✅ Status 200 para game ${currentIndex + 1}`, function () {",
+                            "    pm.response.to.have.status(200);",
+                            "});",
+                            "",
+                            "if (pm.response.code === 200) {",
+                            "    const data = pm.response.json();",
+                            "    ",
+                            "    // Mostrar stats",
+                            "    console.log(`\\n${'='.repeat(80)}`);",
+                            "    console.log(`Partida ${currentIndex + 1}/${gameIds.length}`);",
+                            "    console.log(`Game ID: ${currentGameId.substring(0, 40)}...`);",
+                            "    console.log(`SHAP values obtenidos: ${data.length}`);",
+                            "    ",
+                            "    if (data.length > 0) {",
+                            "        // Calcular distribución de error_labels",
+                            "        const distribution = {};",
+                            "        data.forEach(item => {",
+                            "            distribution[item.error_label] = (distribution[item.error_label] || 0) + 1;",
+                            "        });",
+                            "        ",
+                            "        console.log('\\n📊 Distribución de error_labels:');",
+                            "        Object.entries(distribution)",
+                            "            .sort((a, b) => b[1] - a[1])",
+                            "            .forEach(([label, count]) => {",
+                            "                const pct = ((count / data.length) * 100).toFixed(1);",
+                            "                console.log(`   ${label.padEnd(15)} ${count.toString().padStart(5)} (${pct.padStart(5)}%)`);",
+                            "            });",
+                            "        ",
+                            "        // Top 5 features con mayor impacto absoluto",
+                            "        const sorted = data.sort((a, b) => Math.abs(b.shap_value) - Math.abs(a.shap_value));",
+                            "        console.log('\\n🎯 Top 5 features (mayor impacto SHAP):');",
+                            "        sorted.slice(0, 5).forEach(item => {",
+                            "            console.log(`   Move ${item.move_number}: ${item.feature_name.padEnd(25)} SHAP=${item.shap_value.toFixed(4)}`);",
+                            "        });",
+                            "    }",
+                            "    ",
+                            "    console.log(`${'='.repeat(80)}\\n`);",
+                            "}",
+                            "",
+                            "// Continuar con el siguiente game_id si existe",
+                            "if (currentIndex + 1 < gameIds.length) {",
+                            "    pm.environment.set('current_game_index', (currentIndex + 1).toString());",
+                            "    ",
+                            "    // Construir nueva URL para el siguiente request",
+                            "    const nextGameId = gameIds[currentIndex + 1];",
+                            "    const nextUrl = `${pm.environment.get('base_url')}/api/analysis/shap/game/${nextGameId}`;",
+                            "    pm.environment.set('next_request_url', nextUrl);",
+                            "    ",
+                            "    // Auto-ejecutar siguiente request",
+                            "    setTimeout(() => {",
+                            "        postman.setNextRequest(pm.info.requestName);",
+                            "    }, 1000); // 1 segundo de pausa entre requests",
+                            "} else {",
+                            "    console.log('\\n🎉 ¡TODAS LAS PARTIDAS PROCESADAS!');",
+                            "    console.log(`Total: ${gameIds.length} partidas consultadas\\n`);",
+                            "    postman.setNextRequest(null); // Detener iteración",
+                            "}"
+                        ],
+                        "type": "text/javascript"
+                    }
+                }
+            ],
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}"
+                    }
+                ],
+                "url": {
+                    "raw": "{{base_url}}/api/analysis/shap/game/{{game_id_1}}",
+                    "host": [
+                        "{{base_url}}"
+                    ],
+                    "path": [
+                        "api",
+                        "analysis",
+                        "shap",
+                        "game",
+                        "{{game_id_1}}"
+                    ]
+                },
+                "description": "Este request se ejecutará automáticamente para cada game_id del environment"
+            },
+            "response": []
+        }
+    ],
+    "event": [
+        {
+            "listen": "prerequest",
+            "script": {
+                "type": "text/javascript",
+                "exec": [
+                    ""
+                ]
+            }
+        },
+        {
+            "listen": "test",
+            "script": {
+                "type": "text/javascript",
+                "exec": [
+                    ""
+                ]
+            }
+        }
+    ]
+}

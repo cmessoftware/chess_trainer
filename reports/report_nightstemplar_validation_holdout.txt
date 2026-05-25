@@ -1,0 +1,42 @@
+🎯 CHESS TRAINER - REPORTE CALIBRADO
+=====================================
+
+👤 Jugador: nightstemplar
+📅 Fecha: 2026-01-13 23:17
+🎮 Partidas analizadas: 1
+📊 ELO estimado: 1400
+🎓 Nivel: INTERMEDIATE
+✅ DATOS REALES
+
+📈 ANÁLISIS DE ERRORES (CALIBRADO)
+---------------------------------
+• Blunders: 0.0%
+• Mistakes: 0.0%  
+• Inaccuracies: 9.4%
+• Good moves: 90.6%
+
+🚨 Errores críticos: 0.0%
+📏 Criterio: blunders únicamente
+
+🎯 COMPARACIÓN CON NIVEL ESPERADO
+--------------------------------
+Blunders: 0.0% (esperado: 3.0%)
+Mistakes: 0.0% (esperado: 18.0%)
+Good moves: 90.6% (esperado: 60.0%)
+
+⚠️ FUERA DEL RANGO ESPERADO
+
+📚 RECOMENDACIONES ESPECÍFICAS
+-----------------------------
+• Foco principal: Reducir mistakes posicionales
+• Táctica: Problemas de 2-3 jugadas
+• Estrategia: Principios básicos
+• Objetivo: Aumentar good moves a >65%
+
+🔬 CONTEXTO TÉCNICO
+------------------
+Calibración aplicada para nivel INTERMEDIATE
+Rango ELO objetivo: 1200-1600
+Movimientos analizados: 64
+
+Generado por Chess Trainer - Diagnóstico Calibrado

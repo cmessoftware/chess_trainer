@@ -1,0 +1,42 @@
+🎯 CHESS TRAINER - REPORTE CALIBRADO
+=====================================
+
+👤 Jugador: ameriken
+📅 Fecha: 2026-01-13 23:17
+🎮 Partidas analizadas: 5
+📊 ELO estimado: 1000
+🎓 Nivel: NOVICE
+✅ DATOS REALES
+
+📈 ANÁLISIS DE ERRORES (CALIBRADO)
+---------------------------------
+• Blunders: 1.7%
+• Mistakes: 2.2%  
+• Inaccuracies: 14.4%
+• Good moves: 81.8%
+
+🚨 Errores críticos: 2.3%
+📏 Criterio: blunders + mistakes graves
+
+🎯 COMPARACIÓN CON NIVEL ESPERADO
+--------------------------------
+Blunders: 1.7% (esperado: 8.0%)
+Mistakes: 2.2% (esperado: 25.0%)
+Good moves: 81.8% (esperado: 45.0%)
+
+⚠️ FUERA DEL RANGO ESPERADO
+
+📚 RECOMENDACIONES ESPECÍFICAS
+-----------------------------
+• Foco principal: Evitar blunders básicos
+• Táctica: Problemas de 1-2 jugadas
+• Tiempo: 20 min táctica diaria
+• Objetivo: Reducir blunders a <5%
+
+🔬 CONTEXTO TÉCNICO
+------------------
+Calibración aplicada para nivel NOVICE
+Rango ELO objetivo: 800-1200
+Movimientos analizados: 181
+
+Generado por Chess Trainer - Diagnóstico Calibrado

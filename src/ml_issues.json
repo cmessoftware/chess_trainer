@@ -1,0 +1,18 @@
+[
+    {
+        "title": "Integrar MLflow en todos los pipelines y scripts de entrenamiento",
+        "body": "Trackear experimentos, métricas, parámetros y artefactos de todos los modelos y pipelines de ML. Documentar el uso de MLflow Projects y reproducibilidad."
+    },
+    {
+        "title": "Implementar recomendaciones automáticas post-partida para el usuario",
+        "body": "Desarrollar lógica para analizar partidas y sugerir mejoras tácticas, estratégicas y de estudio personalizadas. Integrar recomendaciones en el API FastAPI y la UI."
+    },
+    {
+        "title": "Implementar clustering y análisis de datasets de usuarios similares",
+        "body": "Desarrollar segmentación de jugadores por nivel y estilo. Generar insights grupales y sugerencias de estudio a partir de clusters de partidas."
+    },
+    {
+        "title": "Generar reportes PDF personalizados con fortalezas, debilidades y sugerencias",
+        "body": "Definir métricas y visualizaciones clave. Implementar generación automática de reportes PDF con análisis por etapa del juego, color, aperturas y recomendaciones."
+    }
+]

@@ -1,5 +1,5 @@
-from db.database import engine
-from db.models import Base  # Asegurate que __init__.py en models los importe
+from src.api.database import engine
+from src.api.models.database_models import Base
 from dotenv import load_dotenv
 import sys
 import os
@@ -10,14 +10,13 @@ from sqlalchemy import pool
 
 from alembic import context
 
-# 👇 Ruta al src
-sys.path.insert(0, os.path.abspath(
-    os.path.join(os.path.dirname(__file__), '..', 'src')))
+# Add the project root to Python path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-# 👇 Cargar dotenv si hace falta
+# Load environment variables
 load_dotenv()
 
-# 🔁 Importar tu Base y modelos
+# Import your Base and models
 
 # Config Alembic
 config = context.config
@@ -49,10 +48,7 @@ def run_migrations_online():
         poolclass=pool.NullPool,
     )
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection,
-            target_metadata=target_metadata
-        )
+        context.configure(connection=connection, target_metadata=target_metadata)
         with context.begin_transaction():
             context.run_migrations()
 

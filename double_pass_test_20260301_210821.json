@@ -1,0 +1,34 @@
+{
+  "metadata": {
+    "game_id": "aec7f86c250f0248fa65d9e1c5a320609ebe04ceaa09a0da601855bc404b71eb",
+    "player_color": "white",
+    "timestamp": "20260301_210821",
+    "architecture": "v2_double_pass"
+  },
+  "structured_analysis": {
+    "decisive_move_used": 33,
+    "error_type": "accumulated",
+    "material_loss_claimed": false,
+    "opening_problem_detected": false,
+    "middlegame_problem_detected": false,
+    "endgame_problem_detected": false,
+    "key_moves_explained": [
+      33,
+      33
+    ],
+    "confidence": 1.0
+  },
+  "report": "## 📊 Diagnóstico\n\nEn tu partida reciente, el movimiento #33 fue decisivo para obtener la victoria. A pesar de que este movimiento fue clasificado como un error, el tipo de error fue acumulativo, lo que indica que no fue un error único, sino el resultado de varios movimientos anteriores. Esto demuestra que, a pesar de los errores ocasionados, supiste mantener la iniciativa y hacer buen uso de la coordinación de tus piezas.\n\n## 🎯 Acciones Concretas\n\n1. **Reflexiona sobre tus errores acumulativos.** No siempre el error más grande es un movimiento individual. En tu caso, el error en el movimiento #33 fue el resultado de decisiones anteriores. En tus próximas partidas, trata de pensar en el panorama general en lugar de centrarte solo en el movimiento inmediato.\n\n2. **Practica tácticas intermedias.** Tu movimiento decisivo #33 demostró que tienes un buen entendimiento de las tácticas intermedias. Sin embargo, siempre hay espacio para mejorar. Enfócate en practicar diferentes tipos de tácticas y cómo pueden influir en el desarrollo de la partida.\n\n3. **Desarrolla una estrategia de juego sólida.** El hecho de que hayas podido ganar a pesar de los errores acumulativos sugiere que tienes una buena estrategia de juego. Continúa trabajando en el desarrollo de tus piezas y mantén la iniciativa para mejorar aún más tu juego.\n\n## ✅ Fortaleza Detectada\n\nUna de tus mayores fortalezas es tu capacidad para mantener la iniciativa a pesar de los errores. Esto se demostró en el movimiento #33, donde a pesar de ser clasificado como un error, te permitió tomar ventaja y finalmente ganar la partida. Esto indica que eres capaz de adaptarte a la situación del juego y tomar decisiones que benefician tu posición en el tablero.",
+  "validations": [
+    "✅ Material loss coherente: JSON=False, Narrativa menciona=No",
+    "✅ Movimiento decisivo #33 mencionado en narrativa",
+    "✅ Movimiento clave #33 mencionado",
+    "✅ Movimiento clave #33 mencionado",
+    "✅ Apertura coherente: JSON=False"
+  ],
+  "summary": {
+    "passed": 5,
+    "warnings": 0,
+    "failed": 0
+  }
+}

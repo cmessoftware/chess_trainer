@@ -9,7 +9,7 @@ def detect_tags_from_game(pgn):
     if not game:
         return tags
 
-    show_spinner_message("🔍 Detecting tags...")
+    show_spinner_message("Detecting tags...")
 
     board = game.board()
     move_count = 0

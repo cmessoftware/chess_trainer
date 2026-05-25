@@ -6,8 +6,9 @@ ChessInsightAI is a chess analysis and training project focused on importing gam
 
 ### Main entry points
 - **[Main README](./README.md)** - Project overview, setup, roadmap, and documentation hub
-- **[Version Base (English)](./VERSION_BASE.md)** - Quick start and condensed project summary
-- **[Version Base (Spanish)](./VERSION_BASE_es.md)** - Spanish quick start and overview
+- **[Changelog](./docs/CHANGELOG.md)** - Project version history and release notes
+- **[Version Base](./docs/VERSION_BASE.md)** - Quick start and condensed project summary
+- **[Technical Roadmap](./docs/ROADMAP_TECHNICAL.md)** - Current roadmap and implementation phases
 - **[Tests Guide](./tests/README.md)** - Test runner usage and test-suite structure
 - **[Architecture Notes](./src/architecture.md)** - Source-level architecture overview
 
@@ -22,6 +23,13 @@ ChessInsightAI is a chess analysis and training project focused on importing gam
 - **[ML Theoretical Framework](./docs/ML_THEORETICAL_FRAMEWORK.md)** - Core ML concepts applied to chess data in this repository
 - **[ML Current State Analysis](./docs/ML_CURRENT_STATE_ANALYSIS.md)** - What exists today versus what is still planned
 
+## Tech stack
+
+- **Frontend:** React, TypeScript, Vite, Material UI
+- **Backend:** FastAPI, PostgreSQL, Alembic
+- **ML and analysis:** Python, MLflow, Stockfish, notebook-based experimentation
+- **AI coaching direction:** LangChain, local LLM workflows, retrieval and orchestration modules
+
 ## Current capabilities
 
 - Import games from external sources and local PGN collections
@@ -35,12 +43,14 @@ ChessInsightAI is a chess analysis and training project focused on importing gam
 
 | Area | Purpose | Current status |
 | --- | --- | --- |
+| `src/frontend/` | React frontend and chess UI work | Implemented |
+| `src/api/` | FastAPI backend and API-facing services | Implemented |
 | `src/modules/` | PGN parsing, feature engineering, tagging, reporting, and utility modules | Implemented |
 | `src/scripts/` | Operational scripts for downloads, feature generation, training data, and CLI workflows | Implemented |
 | `src/ml/` | MLflow setup, ELO standardization, dataset analysis, training utilities, and prediction helpers | Implemented |
 | `src/services/` | Service wrappers for uploads, studies, and integration logic | Implemented |
-| `src/ai_coach/` | Early coaching-oriented package structure | Partial / evolving |
-| `docs/` | Technical and theoretical documentation | Being consolidated |
+| `src/ai_coach/` | Coaching-oriented package structure and orchestration work | Partial / evolving |
+| `docs/` | Technical and theoretical documentation | Implemented and expanding |
 | `tests/` | Automated tests and test runner utilities | Implemented, environment-dependent |
 
 ## Quick start
@@ -62,12 +72,14 @@ docker-compose up -d
 
 ### Local development
 ```bash
-# Main application entry point
-streamlit run app.py
+# Frontend
+cd src/frontend
+npm install
+npm run dev
 
-# Pipeline entry point
-cd src/pipeline
-./run_pipeline.sh interactive
+# Backend
+cd src/api
+python -m uvicorn main:app --reload --port 8000
 ```
 
 ## Testing

@@ -19,18 +19,18 @@ def is_valid_pgn(pgn_text: str) -> Tuple[bool, chess.pgn.Game]:
         parsed_game = chess.pgn.read_game(io.StringIO(pgn_text))
 
         if not parsed_game or not isinstance(parsed_game, chess.pgn.Game):
-            print("⚠️ Could not parse PGN or it is not a valid Game.")
+            print("Could not parse PGN or it is not a valid Game.")
             return False, None
 
         headers = parsed_game.headers
         critical_headers = ["Event", "Site",
                             "Date", "White", "Black", "Result"]
         if not all(h in headers and headers[h].strip() for h in critical_headers):
-            print(f"⚠️ Missing critical headers in the game: {headers}")
+            print(f"Missing critical headers in the game: {headers}")
             return False, None
         return True, parsed_game
     except Exception as e:
-        print(f"⚠️ Error validating PGN: {e}")
+        print(f"Error validating PGN: {e}")
         return False, None
 
 
@@ -122,7 +122,7 @@ def parse_games_from_orm(orm_games):
             if game is not None:
                 parsed.append((g.game_id, game))
         except Exception as e:
-            print(f"⚠️ Error parsing game_id={g.game_id}: {e}")
+            print(f"Error parsing game_id={g.game_id}: {e}")
     return parsed
 
 
@@ -143,7 +143,7 @@ def pgn_str_to_game(pgn_str: str) -> chess.pgn.Game:
     try:
         return chess.pgn.read_game(io.StringIO(pgn_str))
     except Exception as e:
-        print(f"⚠️ Error parsing PGN string: {e}")
+        print(f"Error parsing PGN string: {e}")
         return None
 
 def get_game_id(game):
@@ -156,7 +156,7 @@ def get_game_id(game):
         import hashlib
         return hashlib.sha256(pgn_str.encode("utf-8")).hexdigest()
     except Exception as e:
-        print(f"⚠️ Error getting game ID: {e}")
+        print(f"Error getting game ID: {e}")
         if e.__cause__:
             print(f"   Cause: {e.__cause__}")
         return None
@@ -170,7 +170,7 @@ def load_all_games_from_dir(directory):
         games = load_multiple_games_from_file(pgn_path)
         all_games.extend(games)
 
-    print(f"🔍 Loaded {len(all_games)} games from {directory}")
+    print(f"Loaded {len(all_games)} games from {directory}")
     return all_games
 
 # 🧠 Compatibility with the old name

@@ -1,0 +1,25 @@
+{
+  "user_ids": [
+    "cmess4401",
+    "cmess1315"
+  ],
+  "plan_generated": "2026-01-14T20:20:29.465974",
+  "total_exercises": 4,
+  "estimated_total_time": 140,
+  "progress_tracking": {
+    "completed_exercises": 0,
+    "total_time_spent": 0,
+    "current_week": 1,
+    "exercises_by_status": {
+      "not_started": 4,
+      "in_progress": 0,
+      "completed": 0
+    }
+  },
+  "weekly_goals": {},
+  "performance_metrics": {
+    "tactical_accuracy": 0.0,
+    "problem_solving_speed": 0.0,
+    "consistency_score": 0.0
+  }
+}

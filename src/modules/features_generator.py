@@ -1,4 +1,5 @@
 import chess
+from datetime import datetime
 
 from modules.feature_engineering import is_center_controlled, is_pawn_endgame
 from modules.pgn_utils import get_game_id
@@ -62,6 +63,7 @@ def extract_features_from_position(board, move):
         "is_low_mobility": is_low_mobility,
         "is_center_controlled": int(is_center_controlled(board, player_color)),
         "is_pawn_endgame": is_pawn_endgame(board),
+        "created_at": datetime.utcnow(),
     }
 
 
@@ -118,7 +120,7 @@ def generate_features_from_game(game, game_id=None, is_stockfish_test=False):
         try:
             board = chess.Board(fen)
         except Exception as e:
-            print(f"⚠️ FEN inválido en headers: {fen} -> {e}")
+            print(f"FEN invalido en headers: {fen} -> {e}")
             return []
     else:
         board = chess.Board()
@@ -128,7 +130,7 @@ def generate_features_from_game(game, game_id=None, is_stockfish_test=False):
 
     for move in game.mainline_moves():
         if not board.is_legal(move):
-            print(f"⚠️ Movimiento ilegal: {move} en {board.fen()}")
+            print(f"Movimiento ilegal: {move} en {board.fen()}")
             return []
 
         try:
@@ -149,7 +151,7 @@ def generate_features_from_game(game, game_id=None, is_stockfish_test=False):
             rows.append(row)
             board.push(move)
         except Exception as e:
-            print(f"⚠️ Error inesperado con {move}: {e}")
+            print(f"Error inesperado con {move}: {e}")
             return []
 
     return rows

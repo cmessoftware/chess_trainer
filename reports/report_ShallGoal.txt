@@ -1,0 +1,55 @@
+
+🎯 CHESS TRAINER - REPORTE PERSONALIZADO
+========================================
+
+👤 Jugador: ShallGoal
+📅 Fecha: 2026-01-13 23:07
+🎮 Partidas analizadas: 273
+📊 ELO promedio: 2497
+🎓 Nivel estimado: EXPERT
+
+📈 ANÁLISIS DE ERRORES
+----------------------
+• Blunders: 3.3%
+• Mistakes: 11.0%  
+• Inaccuracies: 16.5%
+• Good moves: 69.2%
+
+🚨 Tasa de errores críticos: 14.3%
+
+🎯 ÁREAS PRIORITARIAS
+--------------------
+
+📚 PLAN DE ENTRENAMIENTO
+-----------------------
+⏱️ Tiempo semanal: 4 horas
+
+📅 HORARIO SEMANAL:
+• Monday: tactical_puzzles (0.5h)
+• Tuesday: opening_study (0.5h)
+• Wednesday: game_analysis (0.8h)
+• Thursday: endgame_practice (0.5h)
+• Friday: blunder_check (0.5h)
+• Saturday: playing_practice (1.0h)
+• Sunday: review_week (0.2h)
+
+🎯 EJERCICIOS RECOMENDADOS:
+
+
+📊 SEGUIMIENTO DE PROGRESO
+--------------------------
+Periodo de evaluación: 4 semanas
+
+Objetivos de reducción:
+• good: 69.2% → 28.4%
+• inaccuracy: 16.5% → 8.4%
+• mistake: 11.0% → 7.0%
+• blunder: 3.3% → 2.6%
+
+
+🔬 CONTEXTO TÉCNICO
+------------------
+Sistema basado en análisis de 1.000 F1-score
+Embeddings con coherencia 0.569
+
+Generado por Chess Trainer Phase 5 - Adaptive Tutor

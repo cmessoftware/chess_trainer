@@ -2,9 +2,9 @@ import os
 import requests
 from bs4 import BeautifulSoup
 
-HTML_FILE = "/app/src/data/chess_mentor.html"
+HTML_FILE = "chess_mentor.html"
 LINKS_FILE = "pgn_links.txt"
-DEST_FOLDER = "/app/src/data/games/fide"
+DEST_FOLDER = "..\\..\\src\\data\\games\\fide"
 
 # 1. Crear la carpeta de destino si no existe
 os.makedirs(DEST_FOLDER, exist_ok=True)

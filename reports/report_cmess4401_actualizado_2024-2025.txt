@@ -1,0 +1,71 @@
+🎯 CHESS TRAINER - REPORTE ACTUALIZADO 2024-2025
+================================================
+
+👤 Jugador: cmess4401
+📅 Fecha de análisis: 2026-01-13 23:31
+🎮 Total partidas: 3,489
+📊 Partidas analizadas: 5,458 features de 3,489 partidas
+📈 ELO promedio: 1413
+🎓 Nivel: INTERMEDIATE
+📅 Período: 2024.01.02 → 2025.02.05
+✅ DATOS REALES (2 AÑOS DE HISTORIAL)
+
+📈 ANÁLISIS DE ERRORES (DATOS REALES)
+====================================
+• Blunders: 16.5% (899 movimientos)
+• Mistakes: 18.8% (1,024 movimientos)
+• Inaccuracies: 13.6% (743 movimientos)
+• Good moves: 51.2% (2,792 movimientos)
+
+🚨 Errores críticos: 24.0%
+📏 Criterio para INTERMEDIATE: blunders únicamente
+
+🎯 COMPARACIÓN CON NIVEL ESPERADO
+================================
+Blunders: 16.5% (esperado: 3.0%)
+Mistakes: 18.8% (esperado: 18.0%)
+
+⚠️ BLUNDERS FUERA DEL RANGO ESPERADO
+✅ MISTAKES DENTRO DEL RANGO
+
+📊 ESTADÍSTICAS DETALLADAS
+=========================
+• Total de partidas en BD: 3,489
+• Features generadas: 5,458  
+• Features etiquetadas: 5,458
+• Cobertura de análisis: 100.0%
+• Promedio features/partida: 1.6
+
+📚 RECOMENDACIONES ESPECÍFICAS PARA INTERMEDIATE
+==================================================
+• Foco: Consolidar fundamentos tácticos y estratégicos
+• Táctica: Problemas de 2-3 jugadas diarios
+• Estrategia: Principios básicos de evaluación posicional
+• Aperturas: 2-3 sistemas principales por color
+• Objetivo principal: Blunders < 4%, aumentar good moves > 65%
+• Tiempo sugerido: 5-8 horas/semana
+
+
+🎯 PLAN DE MEJORA PERSONALIZADO
+=============================
+Basado en 5,458 jugadas analizadas:
+
+1. **Prioridad ALTA**: Reducir blunders críticos
+2. **Prioridad MEDIA**: Optimizar mistakes posicionales
+3. **Prioridad BAJA**: Incrementar porcentaje de good moves
+
+📈 EVOLUCIÓN TEMPORAL RECOMENDADA
+================================
+Próximos 3 meses:
+• Objetivo blunders: 16.5% → 13.2%
+• Objetivo mistakes: 18.8% → 16.9%
+• Objetivo good moves: 51.2% → 56.3%
+
+🔬 CONTEXTO TÉCNICO
+==================
+• Dataset: 3,489 partidas desde enero 2024
+• Análisis: 5,458 jugadas etiquetadas con Stockfish
+• Metodología: Clasificación ML con calibración por nivel ELO
+• Última actualización: 2026-01-13
+
+Generado por Chess Trainer - Análisis de Datos Reales 2024-2025
