@@ -1,0 +1,5 @@
+{
+    "ClientId": "REEMPLAZAR_CON_TU_CLIENT_ID.apps.googleusercontent.com",
+    "ClientSecret": "REEMPLAZAR_CON_TU_CLIENT_SECRET",
+    "RedirectUri": "http://localhost:8080/callback"
+}

@@ -7,6 +7,11 @@ __pycache__/
 node_modules/
 **/node_modules/
 
+# Secret files
+.env
+google_token.json
+*google_calendar.config.json
+
 #pgn games
 *.pgn
 stockfish*
@@ -174,6 +179,7 @@ celerybeat.pid
 # Environments
 .env
 .venv
+docs/ai_theory/google_calendar.config.json
 env/
 venv/
 ENV/
