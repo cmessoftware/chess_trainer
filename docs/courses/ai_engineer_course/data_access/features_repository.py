@@ -71,7 +71,15 @@ class FeaturesRepository:
                 f.tags,
                 g.opening,
                 g.eco,
-                COALESCE(NULLIF(g.white_elo, ''), NULLIF(g.black_elo, '')) AS elo
+                -- Prefer elo matching move side (player_color), then fallback to any non-empty elo.
+                COALESCE(
+                    CASE
+                        WHEN f.player_color = 1 THEN NULLIF(g.white_elo, '')
+                        WHEN f.player_color = 0 THEN NULLIF(g.black_elo, '')
+                    END,
+                    NULLIF(g.white_elo, ''),
+                    NULLIF(g.black_elo, '')
+                ) AS elo
             FROM {self._table('features')} f
             LEFT JOIN {self._table('games')} g ON g.game_id = f.game_id
             WHERE {' AND '.join(where)}

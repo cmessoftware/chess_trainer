@@ -51,12 +51,15 @@ def build_training_dataset(features_df: pd.DataFrame, labels: Iterable[str] = TA
     df = df[df["error_label"].isin(labels)]
 
     if df.empty:
-        raise ValueError("No rows matched expected target classes: good, inaccuracy, mistake, blunder")
+        raise ValueError(f"No rows matched expected target classes: {', '.join(labels)}")
 
+    medians = {}
     for col in NUMERIC_FEATURES:
         if col in df.columns:
             df[col] = pd.to_numeric(df[col], errors="coerce")
-            df[col] = df[col].fillna(df[col].median() if not df[col].dropna().empty else 0)
+            if col not in medians:
+                medians[col] = df[col].median() if not df[col].dropna().empty else 0
+            df[col] = df[col].fillna(medians[col])
 
     for col in CATEGORICAL_FEATURES:
         if col in df.columns:
