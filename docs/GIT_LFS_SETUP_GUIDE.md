@@ -8,7 +8,7 @@ Git Large File Storage (LFS) is essential for the Chess Trainer project due to l
 
 Chess Trainer handles large files:
 - **📊 Datasets**: Parquet files (>100MB)
-- **🤖 ML Models**: Trained models (>50MB) 
+- **🤖 ML Models**: Trained models (>50MB)
 - **🖼️ Images**: Architecture diagrams, plots
 - **📁 Artifacts**: Compressed PGN archives
 
@@ -285,7 +285,7 @@ git lfs install
 
 # Track file types
 $fileTypes = @(
-    "*.parquet", "*.pkl", "*.joblib", "*.h5", 
+    "*.parquet", "*.pkl", "*.joblib", "*.h5",
     "*.zip", "*.tar.gz", "*.jpg", "*.png", "*.pdf"
 )
 
@@ -380,16 +380,16 @@ jobs:
     - uses: actions/checkout@v3
       with:
         lfs: true
-    
+
     - name: Setup Python
       uses: actions/setup-python@v3
       with:
         python-version: '3.11'
-    
+
     - name: Install dependencies
       run: |
         pip install -r requirements.txt
-    
+
     - name: Run tests
       run: |
         python -m pytest tests/
@@ -440,16 +440,16 @@ import subprocess
 import json
 
 def get_lfs_info():
-    result = subprocess.run(['git', 'lfs', 'fsck'], 
+    result = subprocess.run(['git', 'lfs', 'fsck'],
                           capture_output=True, text=True)
-    
+
     info = {
-        'total_files': len(subprocess.run(['git', 'lfs', 'ls-files'], 
+        'total_files': len(subprocess.run(['git', 'lfs', 'ls-files'],
                           capture_output=True, text=True).stdout.strip().split('\n')),
-        'git_dir_size': subprocess.run(['du', '-sh', '.git/'], 
+        'git_dir_size': subprocess.run(['du', '-sh', '.git/'],
                        capture_output=True, text=True).stdout.split()[0]
     }
-    
+
     return info
 
 if __name__ == '__main__':
@@ -461,11 +461,10 @@ if __name__ == '__main__':
 
 - [Git LFS Documentation](https://git-lfs.github.io/)
 - [GitHub LFS Guide](https://docs.github.com/en/repositories/working-with-files/managing-large-files)
-- [Project Setup Script](../scripts/setup_lfs.ps1)
 - [LFS Configuration](../.gitattributes)
 
 ---
 
-**Document Version**: 1.0  
-**Last Updated**: December 29, 2025  
+**Document Version**: 1.0
+**Last Updated**: December 29, 2025
 **Maintained by**: Chess Trainer Development Team
