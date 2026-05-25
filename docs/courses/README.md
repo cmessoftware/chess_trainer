@@ -19,11 +19,11 @@ Set the source connection variable and run the migration script:
 
 ```bash
 # Bash / macOS / Linux
-export CHESS_TRAINER_DB_URL="******localhost:5432/chess_trainer_db"
+export CHESS_TRAINER_DB_URL="postgresql://user:<password>@localhost:5432/chess_trainer_db"
 python docs/courses/migrate_to_sqlite.py
 
 # Windows PowerShell
-$env:CHESS_TRAINER_DB_URL = "******localhost:5432/chess_trainer_db"
+$env:CHESS_TRAINER_DB_URL = "postgresql://user:<password>@localhost:5432/chess_trainer_db"
 python docs/courses/migrate_to_sqlite.py
 ```
 
@@ -67,7 +67,7 @@ sqlite:///.../docs/courses/course_data.sqlite
 If you want the notebooks/helper to query PostgreSQL directly, set:
 
 ```bash
-export CHESS_COURSE_DB_URL="******localhost:5432/chess_trainer_db"
+export CHESS_COURSE_DB_URL="postgresql://user:<password>@localhost:5432/chess_trainer_db"
 ```
 
 This is optional and should not be required for the normal course flow.
@@ -93,7 +93,7 @@ You can also override the backend explicitly:
 from notebook_data_helper import CourseDataHelper
 
 course_data = CourseDataHelper(
-    "******localhost:5432/chess_trainer_db"
+    "postgresql://user:<password>@localhost:5432/chess_trainer_db"
 )
 ```
 
