@@ -7,6 +7,12 @@ __pycache__/
 node_modules/
 **/node_modules/
 
+# Secret files
+.env
+google-credentials.json
+google_token.json
+google_calendar.config.json
+
 #pgn games
 *.pgn
 stockfish*
