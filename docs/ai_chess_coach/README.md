@@ -1,8 +1,20 @@
 # AI Chess Coach - Technical Documentation
 
+## Overview
+
+This directory contains the active technical documentation for the **ChessInsightAI** AI Chess Coach project.
+
+The documentation has been reorganized into domain-based sections so implementation, roadmap, testing, operations, observability, and research stay clearly separated.
+
 ## Documentation Structure
 
-This folder contains the complete technical documentation for **ChessInsightAI** (AI Chess Coach project). It is organized into three main sections:
+- [`architecture/`](architecture/) — high-level architecture, dependency maps, and migration guidance
+- [`modules/`](modules/) — module taxonomy, labels, aliases, and implementation-domain references
+- [`roadmap/`](roadmap/) — phased delivery planning and future work sequencing
+- [`testing/`](testing/) — testing strategy and release quality gates
+- [`devops/`](devops/) — delivery, deployment, rollback, and operational constraints
+- [`observability/`](observability/) — metrics, logging, alerting, and traceability strategy
+- [`research/`](research/) — research boundaries and experiment-to-production promotion rules
 
 ## OpenSpec Workflow
 
@@ -29,149 +41,71 @@ Definition of Done for requirement changes:
 - `openspec validate <change-name>` MUST pass before implementation starts.
 - No implementation should start without an active OpenSpec change.
 
-### 📖 1. Overview
-High-level introductory documentation.
+## Recommended Reading
 
-**File**:
-- [`00-architecture-overview.md`](2-architecture/modules/00-architecture-overview.md) — Architecture overview, 5-layer design, and key components
+### Getting Started
+1. [`architecture/03-consolidated-architecture.md`](architecture/03-consolidated-architecture.md) — consolidated system view and logical flow
+2. [`architecture/01-folder-structure.md`](architecture/01-folder-structure.md) — target documentation tree and domain taxonomy
+3. [`modules/01-module-taxonomy.md`](modules/01-module-taxonomy.md) — implementation domains and submodules
 
-### 🏛️ 2. Architecture (`2-architecture/`)
-Technical guides for specific components and pipelines.
+### Planning and Delivery
+1. [`roadmap/01-phase-roadmap.md`](roadmap/01-phase-roadmap.md) — phased roadmap and exit criteria
+2. [`testing/01-testing-strategy.md`](testing/01-testing-strategy.md) — test pyramid, mandatory gates, and release gates
+3. [`devops/01-delivery-rules.md`](devops/01-delivery-rules.md) — deployment, rollback, and CI/CD requirements
 
-**Files**:
-- [`05-ml-pipeline-and-playstyle.md`](2-architecture/modules/05-ml-pipeline-and-playstyle.md) — PGN parsing, feature extraction, ML pipeline, and playstyle analysis
+### Architecture and Governance
+1. [`architecture/04-module-dependencies.md`](architecture/04-module-dependencies.md) — dependency relationships between domains
+2. [`modules/02-label-taxonomy.md`](modules/02-label-taxonomy.md) — issue label taxonomy
+3. [`modules/03-technical-aliases.md`](modules/03-technical-aliases.md) — stable technical aliases and mandatory issue metadata
+4. [`observability/01-observability-strategy.md`](observability/01-observability-strategy.md) — metrics and alerting strategy
+5. [`research/01-research-boundary.md`](research/01-research-boundary.md) — separation between experimentation and production
 
-### 🔧 3. Specifications (`3-specs/`)
-Formal technical system specifications.
+## Core Architecture Principles
 
-**Files**:
-- [`00_system_spec.md`](3-specs/00_system_spec.md) — Specs 00-04: ETL, PGN parsing, feature extraction, ML classification, orchestrated architecture
-- [`04-orchestration-planner-executor-critic-memory.md`](2-architecture/modules/04-orchestration-planner-executor-critic-memory.md) — Detailed description of Planner, Executor, Critic, and Memory services
+- **LLM never decides.**
+- **LLM only explains grounded evidence.**
+- Stockfish, ML, RAG, and validation rules are evidence sources with distinct responsibilities.
+- Higher-level layers must not bypass orchestration safeguards.
+- Research artifacts must remain isolated from production implementation documentation.
 
----
+## Logical Flow
 
-## Recommended Reading (By Level)
-
-### Beginner
-1. **What problem does ChessInsightAI solve?** → [`00-architecture-overview.md`](2-architecture/modules/00-architecture-overview.md) (first sections)
-2. **How does the pipeline work?** → [`05-ml-pipeline-and-playstyle.md`](2-architecture/modules/05-ml-pipeline-and-playstyle.md) (PGN parsing and ETL pipeline sections)
-
-### Intermediate
-1. **I am implementing a new feature** → [`00_system_spec.md`](3-specs/00_system_spec.md) (Spec 02)
-2. **Understand the 5-layer architecture** → [`00-architecture-overview.md`](2-architecture/modules/00-architecture-overview.md) (full document)
-3. **I need to train the ML model** → [`00_system_spec.md`](3-specs/00_system_spec.md) (Spec 03)
-
-### Advanced
-1. **I am working on Planner/Executor** → [`04-orchestration-planner-executor-critic-memory.md`](2-architecture/modules/04-orchestration-planner-executor-critic-memory.md) (Components 1-4)
-2. **I need to debug inconsistencies** → [`00_system_spec.md`](3-specs/00_system_spec.md) (Spec 00 - Traceability)
-3. **I want to optimize the pipeline** → [`04-orchestration-planner-executor-critic-memory.md`](2-architecture/modules/04-orchestration-planner-executor-critic-memory.md) (Metrics and observability)
-
----
-
-## Key Concepts
-
-### System ETL Pipeline
-```
-PGN → Parser → FEN + Moves → Stockfish Analysis → Feature Extraction → ML Classification → LLM explanation
+```text
+PGN -> Core Engine -> ML Evaluation -> Orchestration Planner -> Executor -> Critic Validation -> RAG Retrieval -> LLM Explanation -> API/UI Report
 ```
 
-### The 16 Model Features
-| # | Feature | Type |
-|:--|:--------|:-----|
-| 1-15 | Positional features (material, mobility, etc.) | int/bool |
-| 16 | `score_diff` (engine evaluation) | float |
+## Implementation Domains
 
-### Error Classification (Labels)
-| Label | score_diff (cp) | Description |
-|:---------|:--|:--|
-| `good` | [0, 30) | Correct move |
-| `inaccuracy` | [30, 80) | Inaccuracy |
-| `mistake` | [80, 200) | Significant error |
-| `blunder` | [200, ∞) | Severe error |
-
-### The 5 Architecture Layers
-1. **Presentation** (React) — Port 8501
-2. **API** (FastAPI)
-3. **Orchestration** (Planner → Executor → Critic → Memory)
-4. **Processing** (ML, RAG, Engine)
-5. **Data** (PostgreSQL, PGN files, Vectorstore)
-
----
-
-## Related Code Modules
-
-| Module | Location | Responsibility |
-|:-------|:----------|:--|
-| PGN Parsing | `src/modules/pgn_utils.py` | Parse PGN files |
-| Feature Extraction | `src/modules/features_generator.py` | Extract 16 features |
-| ML Pipeline | `src/ml/chess_error_predictor.py` | Train + predict |
-| Orchestration | `src/ai_coach/orchestrated/` | Planner, Executor, Critic, Memory |
-| API | `src/pages/` | FastAPI endpoints |
-
----
-
-## Critical Dependencies
-
-- **python-chess** — PGN and FEN parsing
-- **Stockfish 15+** — Evaluation engine
-- **scikit-learn** — ML models
-- **MLflow** — Experiment tracking
-- **PostgreSQL** — Database
-- **pydantic** — Type validation
-
----
-
-## Frequently Asked Questions
-
-### How is score_diff calculated?
+```text
+01-core-engine
+02-ml
+03-orchestration
+04-rag-llm
+05-api
+06-ui
+07-observability
+08-devops
+09-testing
+10-research
 ```
-score_diff = |eval_stockfish(best_move) - eval_stockfish(played_move)|
-```
-In centipawns (1/100 of a pawn).
 
-### Why RandomForest instead of neural networks?
-- Interpretability with SHAP
-- Fast training
-- No normalization required
-- Handles imbalanced data well
+## Governance Rules
 
-### How is the LLM integrated?
-The LLM receives orchestrated analysis outputs (Engine + ML + RAG) and generates pedagogical explanations. **The LLM never makes technical decisions**.
+- Every module must map to roadmap phases and issue labels.
+- Each submodule must have one technical owner and one backup owner.
+- Every issue must include domain, type, priority, and status labels.
+- Issues should also include alias, domain, phase, and owner where applicable.
+- No phase is complete until testing, observability, and rollback criteria are satisfied.
 
-### What does "ground truth" mean in the Stockfish context?
-Stockfish evaluation is the objective truth baseline in chess. ML predictions are trained to **match that baseline**, not to predict human moves.
+## Migration Status
 
----
+The documentation structure replaces older references under legacy paths.
 
-## Pending Items and TODOs
+For migration details, see:
+- [`architecture/02-document-migration-plan.md`](architecture/02-document-migration-plan.md)
 
-- [ ] Add full traceability (trace_id, feature_set_id, etc.)
-- [ ] Include model_version in ML predictions
-- [ ] Tests for edge cases (castling, promotion, en passant)
-- [ ] SHAP explainability documentation
-- [ ] Deployment guide (Docker + PostgreSQL + MLflow)
+## Notes
 
----
-
-## Authors and Contributors
-
-- **ChessInsightAI Team**
-- Technical documentation: Modules 01-04 (AI Chess Coach)
-- Last updated: April 2026
-
----
-
-## License
-
-MIT License - See LICENSE at repository root.
-
----
-
-## Useful Links
-
-- [Official PGN specification](https://www.chessclub.com/chessclub/resources/pgn/)
-- [python-chess documentation](https://python-chess.readthedocs.io/)
-- [MLflow Documentation](https://mlflow.org/docs/latest/index.html)
-- [Stockfish Docs](https://github.com/official-stockfish/Stockfish)
-
-
+- Legacy material under `obsoletes-specs` should be treated as reference-only.
+- Active documentation should link only to the new structure under `docs/ai_chess_coach/`.
+- New documents should include roadmap, testing, and rollback sections where applicable.

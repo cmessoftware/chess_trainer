@@ -141,9 +141,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - **Documentation Structure Enhancement** - Comprehensive documentation improvements addressing issue #62
-- **Spanish Language Documentation** - Complete Spanish versions for all major documentation files:
+- **Localized Documentation Updates** - Historical v0.1.43 context: Spanish versions for major documentation files at that time included:
   - `src/architecture_es.md` - System architecture diagram and explanations in Spanish
-  - `tests/README_es.md` - Complete testing guide with runner documentation in Spanish
   - `DATASETS_VOLUMES_CONFIG_es.md` - Docker volumes configuration for dataset sharing in Spanish
 - **Documentation Index** - Organized navigation structure replacing requirements sections in both VERSION_BASE files
 - **Docker Installation References** - Clear references to automatic dependency installation via:

@@ -19,7 +19,7 @@
 **AFTER**:
 - `README.md` - **Comprehensive project documentation** (main entry point)
 - `VERSION_BASE.md` - **Quick start guide and project overview**
-- `README_es.md` - **Comprehensive project documentation** (Spanish main entry point)  
+- `README_es.md` - Removed from the active documentation structure
 - `VERSION_BASE_es.md` - **Quick start guide and project overview** (Spanish)
 
 ### 2. Docker Management Unification
@@ -56,10 +56,12 @@
 
 ## 📁 FINAL PROJECT STRUCTURE
 
+*Historical snapshot captured when this summary was written.*
+
+
 ```
 chessinsightai/
-├── README.md                    # 📖 MAIN COMPREHENSIVE DOCUMENTATION
-├── README_es.md                 # 📖 DOCUMENTACIÓN PRINCIPAL COMPLETA  
+├── README.md                    # 📖 PROJECT OVERVIEW AND DOCUMENTATION HUB
 ├── VERSION_BASE.md              # 🚀 QUICK START GUIDE
 ├── VERSION_BASE_es.md           # 🚀 GUÍA RÁPIDA
 ├── build_up_clean_all.ps1       # 🐳 UNIFIED DOCKER MANAGEMENT (Windows)
@@ -108,7 +110,7 @@ chessinsightai/
 | Category           | Action      | Files Affected                                 | Status     |
 | ------------------ | ----------- | ---------------------------------------------- | ---------- |
 | Documentation      | Reorganized | README.md, VERSION_BASE.md                     | ✅ Complete |
-| Documentation      | Reorganized | README_es.md, VERSION_BASE_es.md               | ✅ Complete |
+| Documentation      | Reorganized | README.md, VERSION_BASE_es.md               | ✅ Complete |
 | Cross-references   | Updated     | All .md files                                  | ✅ Complete |
 | Docker Scripts     | Unified     | build_up_clean_all.ps1                         | ✅ Enhanced |
 | Docker Scripts     | Removed     | build_app.sh, build_notebooks.sh, run_tests.sh | ✅ Deleted  |
@@ -138,7 +140,7 @@ chessinsightai/
 # Verify documentation structure
 Get-Content README.md | Select-Object -First 10
 Get-Content VERSION_BASE.md | Select-Object -First 10
-Get-Content README_es.md | Select-Object -First 10
+Get-Content README.md | Select-Object -First 10
 Get-Content VERSION_BASE_es.md | Select-Object -First 10
 
 # Check version consistency  

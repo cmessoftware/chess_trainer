@@ -257,8 +257,8 @@ docker-compose exec notebooks git lfs status
 ## 🔗 Documentación Relacionada
 
 - [Configuración de Volúmenes de Datasets](./DATASETS_VOLUMES_CONFIG_es.md)
-- [Configuración de Desarrollo](./README_es.md#configuración-docker-recomendado)
-- [Configuración de Docker](./README_es.md#configuración-manual-de-docker)
+- [Configuración de Desarrollo](./README.md#configuración-docker-recomendado)
+- [Configuración de Docker](./README.md#configuración-manual-de-docker)
 
 ---
 
