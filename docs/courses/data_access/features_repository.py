@@ -203,7 +203,7 @@ class CourseFeaturesRepository:
         if not self.has_table(FEATURES_TABLE.name):
             return pd.DataFrame(columns=requested_columns)
 
-        if game_ids is not None and len(game_ids) == 0:
+        if game_ids is not None and not game_ids:
             return pd.DataFrame(columns=requested_columns)
 
         stmt = select(*_selected_columns(FEATURES_TABLE, columns))
