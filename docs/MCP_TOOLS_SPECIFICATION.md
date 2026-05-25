@@ -394,7 +394,7 @@ shap_tool = Tool(
 
 ## Referencias
 
-- **Roadmap principal:** `ROADMAP_INTEGRACION_LLM.md` (Sección 6.2)
+- **Roadmap principal:** `ROADMAP_TECHNICAL.md` (Sección 6.2)
 - **OpenAI Function Calling:** https://platform.openai.com/docs/guides/function-calling
 - **Model Context Protocol:** https://spec.modelcontextprotocol.io/
 - **LangChain Tools:** https://python.langchain.com/docs/modules/agents/tools/

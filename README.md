@@ -40,9 +40,7 @@ This project automates the import, analysis, labeling, and training from thousan
 ### Core Documentation
 - **[Changelog](./docs/CHANGELOG.md)** - Complete project changelog with version history
 - **[Main README](./README.md)** - Complete project documentation (this file)  
-- **[README (Español)](./docs/README_es.md)** - Documentación completa del proyecto en español
 - **[Version Base (English)](./docs/VERSION_BASE.md)** - Project overview and quick start guide
-- **[Version Base (Español)](./docs/VERSION_BASE_es.md)** - Descripción del proyecto y guía rápida en español
 - **[Technical Roadmap](./docs/ROADMAP_TECHNICAL.md)** - 6-phase development roadmap with current status
 - **[Frontend Roadmap](./docs/ROADMAP_FRONT_CHESS_TRAINER.md)** - React frontend development roadmap
 
@@ -56,16 +54,13 @@ This project automates the import, analysis, labeling, and training from thousan
 - **[Git LFS Setup Guide](./docs/GIT_LFS_SETUP_GUIDE.md)** - Git Large File Storage setup guide
 
 ### Development & Setup Guides
-- **[Ejecutar Entorno DEV](./docs/EJECUTAR_ENTORNO_DEV.md)** - Guía completa para configurar entorno de desarrollo
 - **[Feature Enhancement Guide](./docs/GENERATE_FEATURES_ENHANCEMENT.md)** - Guide for chess feature generation improvements
 - **[Architecture Improvement Update](./docs/ARCHITECTURE_IMPROVEMENT_UPDATE.md)** - Latest architecture improvements and updates
 - **[Postman Runner Guide](./docs/POSTMAN_RUNNER_GUIDE.md)** - API testing with Postman automation
 - **[Task Completion Summary](./docs/TASK_COMPLETION_SUMMARY.md)** - Project milestones and completion status
 
 ### Training & Studies System
-- **[Complete PGN Studies System](./docs/ESTUDIOS_PGN_SISTEMA_COMPLETO.md)** - Sistema completo de estudios PGN y análisis
 - **[Training System Complete](./docs/TRAINING_SYSTEM_COMPLETE.md)** - Complete training resources management system
-- **[Custom Studies Tutorial](./docs/TUTORIAL_ESTUDIOS_PERSONALIZADOS.md)** - Tutorial for creating personalized chess studies
 - **[Datasets Report](./docs/DATASETS_REPORT.md)** - Comprehensive analysis of available chess datasets
 
 ### 🤖 AI Chess Coach Documentation
@@ -73,7 +68,6 @@ This project automates the import, analysis, labeling, and training from thousan
 - **[AI Coach Module Spec](./docs/2-ai_chess_coach_module_spec.md)** - Technical module specification
 - **[RAG Design](./docs/1-ai_chess_coach_rag_design.md)** - ChromaDB + SentenceTransformers RAG design
 - **[Structured Output](./docs/4-ai_chess_coach_structured_output.md)** - JSON schema validation for coaching output
-- **[Orchestrated Architecture](./docs/ChessTrainer%20%E2%80%94%20Arquitectura%20Orquestada%20(Planner%20,%20Executor,%20Critic%20,%20Memory).md)** - Planner/Executor/Critic/Memory architecture
 - **[Player Pattern Analysis](./docs/6-ai_chess_coach_patterm_analysis.md)** - Player error patterns and clustering
 - **[Player Style Analysis](./docs/7-ai_chess_coach_player_style_analysis.md)** - Playing style classification system
 
