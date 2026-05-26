@@ -33,7 +33,11 @@
 #>
 [CmdletBinding(SupportsShouldProcess)]
 param(
+<<<<<<< HEAD
     [datetime]$PlanStartDate = [datetime]"2026-05-18",
+=======
+    [datetime]$PlanStartDate = [datetime]"2026-06-01",
+>>>>>>> b74bc16d0273bb4d110e2735bd194eaecc81c39c
     [string]$CalendarId = "primary",
     [switch]$DryRun
 )
