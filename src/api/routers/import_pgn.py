@@ -8,11 +8,11 @@ from fastapi import (
     UploadFile,
     File,
     Form,
+    Body,
     HTTPException,
     BackgroundTasks,
     Request,
 )
-from fastapi.responses import JSONResponse
 from typing import List, Optional
 import os
 import uuid
@@ -29,6 +29,17 @@ import sys
 sys.path.append(str(Path(__file__).parent.parent.parent))
 
 from scripts.import_personal_pgn import import_personal_pgn
+from models.schemas import (
+    PgnUploadResponse,
+    PgnUploadJobStatus,
+    PgnUploadsListResponse,
+    PgnBatchImportRequest,
+    PgnBatchImportResponse,
+    PgnPreviewResponse,
+    PgnImportHistoryResponse,
+    PgnImportStatsResponse,
+    PersonalPgnImportResponse,
+)
 
 router = APIRouter(prefix="/api", tags=["import"])
 
@@ -46,7 +57,7 @@ upload_jobs = {}
 import_jobs = {}
 
 
-@router.post("/upload/pgn")
+@router.post("/upload/pgn", response_model=PgnUploadResponse)
 async def upload_pgn_file(
     request: Request,
     file: UploadFile = File(...),
@@ -98,21 +109,21 @@ async def upload_pgn_file(
             "estimated_games": estimate_games_in_file(file_path, len(content)),
         }
 
-        return JSONResponse(
-            {
-                "jobId": job_id,
-                "filename": file.filename,
-                "size": len(content),
-                "status": "uploaded",
-                "estimatedGames": upload_jobs[job_id]["estimated_games"],
-            }
-        )
+        return {
+            "jobId": job_id,
+            "filename": file.filename,
+            "size": len(content),
+            "status": "uploaded",
+            "estimatedGames": upload_jobs[job_id]["estimated_games"],
+        }
 
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/upload/status/{job_id}")
+@router.get("/upload/status/{job_id}", response_model=PgnUploadJobStatus)
 async def get_upload_status(job_id: str):
     """
     Obtener estado de un job de upload
@@ -120,27 +131,39 @@ async def get_upload_status(job_id: str):
     if job_id not in upload_jobs:
         raise HTTPException(status_code=404, detail="Job no encontrado")
 
-    return JSONResponse(upload_jobs[job_id])
+    return upload_jobs[job_id]
 
 
-@router.get("/upload/list")
+@router.get("/upload/list", response_model=PgnUploadsListResponse)
 async def list_uploads():
     """
     Listar todos los uploads disponibles
     """
-    return JSONResponse(
-        {"uploads": list(upload_jobs.values()), "total": len(upload_jobs)}
-    )
+    return {"uploads": list(upload_jobs.values()), "total": len(upload_jobs)}
 
 
-@router.post("/import/pgn/batch")
+@router.post("/import/pgn/batch", response_model=PgnBatchImportResponse)
 async def start_batch_import(
-    background_tasks: BackgroundTasks, file_ids: List[str], source: str = "personal"
+    background_tasks: BackgroundTasks,
+    payload: Optional[PgnBatchImportRequest] = Body(default=None),
+    file_ids: Optional[List[str]] = None,
+    source: str = "personal",
 ):
     """
     Iniciar importación masiva usando el script import_pgns_parallel.py
     """
     try:
+        # Compatibilidad: soporta request body tipado y parámetros legacy.
+        if payload is not None:
+            file_ids = payload.fileIds
+            source = payload.source
+
+        if not file_ids:
+            raise HTTPException(
+                status_code=400,
+                detail="Debe indicar fileIds en body o file_ids en parámetros",
+            )
+
         # Validar que todos los archivos existen
         valid_files = []
         for file_id in file_ids:
@@ -179,20 +202,20 @@ async def start_batch_import(
             process_import_job, import_job_id, valid_files, source
         )
 
-        return JSONResponse(
-            {
-                "jobId": import_job_id,
-                "status": "queued",
-                "totalFiles": len(valid_files),
-                "estimatedGames": import_jobs[import_job_id]["estimated_games"],
-            }
-        )
+        return {
+            "jobId": import_job_id,
+            "status": "queued",
+            "totalFiles": len(valid_files),
+            "estimatedGames": import_jobs[import_job_id]["estimated_games"],
+        }
 
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/import/preview/{job_id}")
+@router.get("/import/preview/{job_id}", response_model=PgnPreviewResponse)
 async def get_preview(job_id: str, limit: int = 10):
     """
     Obtener preview de partidas de un archivo
@@ -214,9 +237,7 @@ async def get_preview(job_id: str, limit: int = 10):
             # Para archivos comprimidos, simular preview
             games = generate_mock_preview(limit)
 
-        return JSONResponse(
-            {"games": games, "total_shown": len(games), "filename": job["filename"]}
-        )
+        return {"games": games, "total_shown": len(games), "filename": job["filename"]}
 
     except Exception as e:
         raise HTTPException(
@@ -224,7 +245,7 @@ async def get_preview(job_id: str, limit: int = 10):
         )
 
 
-@router.get("/import/history")
+@router.get("/import/history", response_model=PgnImportHistoryResponse)
 async def get_import_history(page: int = 1, limit: int = 20):
     """
     Obtener historial de importaciones
@@ -251,21 +272,21 @@ async def get_import_history(page: int = 1, limit: int = 20):
         end = start + limit
         paginated_jobs = all_jobs[start:end]
 
-        return JSONResponse(
-            {
-                "jobs": paginated_jobs,
-                "total": len(all_jobs),
-                "page": page,
-                "limit": limit,
-                "totalPages": (len(all_jobs) + limit - 1) // limit,
-            }
-        )
+        return {
+            "jobs": paginated_jobs,
+            "total": len(all_jobs),
+            "page": page,
+            "limit": limit,
+            "totalPages": (len(all_jobs) + limit - 1) // limit,
+        }
 
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/import/stats")
+@router.get("/import/stats", response_model=PgnImportStatsResponse)
 async def get_import_stats():
     """
     Obtener estadísticas de importación
@@ -288,33 +309,33 @@ async def get_import_stats():
             job.get("imported_games", 0) for job in import_jobs.values()
         )
 
-        return JSONResponse(
-            {
-                "uploads": {
-                    "total": total_uploads,
-                    "completed": completed_uploads,
-                    "success_rate": (
-                        (completed_uploads / total_uploads * 100)
-                        if total_uploads > 0
-                        else 0
-                    ),
-                },
-                "imports": {
-                    "total": total_imports,
-                    "completed": completed_imports,
-                    "success_rate": (
-                        (completed_imports / total_imports * 100)
-                        if total_imports > 0
-                        else 0
-                    ),
-                },
-                "games": {
-                    "estimated": total_estimated_games,
-                    "imported": total_imported_games,
-                },
-            }
-        )
+        return {
+            "uploads": {
+                "total": total_uploads,
+                "completed": completed_uploads,
+                "success_rate": (
+                    (completed_uploads / total_uploads * 100)
+                    if total_uploads > 0
+                    else 0
+                ),
+            },
+            "imports": {
+                "total": total_imports,
+                "completed": completed_imports,
+                "success_rate": (
+                    (completed_imports / total_imports * 100)
+                    if total_imports > 0
+                    else 0
+                ),
+            },
+            "games": {
+                "estimated": total_estimated_games,
+                "imported": total_imported_games,
+            },
+        }
 
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -463,7 +484,7 @@ async def process_import_job(import_job_id: str, files: List[dict], source: str)
         print(f"Error en job {import_job_id}: {e}")
 
 
-@router.post("/import/pgn/personal")
+@router.post("/import/pgn/personal", response_model=PersonalPgnImportResponse)
 async def import_personal_pgn_endpoint(
     request: Request,
     file: UploadFile = File(...),
@@ -504,18 +525,18 @@ async def import_personal_pgn_endpoint(
         # Limpiar archivo temporal
         temp_file.unlink()
 
-        return JSONResponse(
-            {
-                "success": True,
-                "filename": file.filename,
-                "imported": result["imported"],
-                "skipped": result["skipped"],
-                "batch_id": result["batch_id"],  # CRÍTICO: retornar batch_id
-                "username": username,
-                "message": f"Se importaron {result['imported']} partidas correctamente",
-            }
-        )
+        return {
+            "success": True,
+            "filename": file.filename,
+            "imported": result["imported"],
+            "skipped": result["skipped"],
+            "batch_id": result["batch_id"],  # CRÍTICO: retornar batch_id
+            "username": username,
+            "message": f"Se importaron {result['imported']} partidas correctamente",
+        }
 
+    except HTTPException:
+        raise
     except Exception as e:
         # Limpiar archivo si existe
         if "temp_file" in locals() and temp_file.exists():
