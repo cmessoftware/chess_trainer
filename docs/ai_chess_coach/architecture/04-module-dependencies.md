@@ -4,21 +4,20 @@
 
 ```mermaid
 graph TD
-CE[01-core-engine] --> ML[02-ml]
-CE --> OR[03-orchestration]
-ML --> OR
-OR --> RL[04-rag-llm]
-RL --> API[05-api]
-API --> UI[06-ui]
-OR --> OB[07-observability]
-API --> OB
-OR --> DV[08-devops]
-OB --> DV
-CE --> TS[09-testing]
-ML --> TS
-OR --> TS
-RL --> TS
-TS --> RS[10-research]
+CA[core-analysis] --> CO[core-orchestration]
+CA --> CK[core-knowledge]
+CO --> CK
+CK --> CC[core-contracts]
+CC --> API[ext-api-fastapi]
+CC --> UI[ext-ui]
+CC --> BATCH[batch and external clients]
+CO --> OBS[ext-observability]
+API --> OBS
+CO --> DEV[ext-devops]
+CA --> TEST[ext-testing]
+CO --> TEST
+CK --> TEST
+TEST --> RES[ext-research]
 ```
 
 ## Policy
@@ -26,3 +25,4 @@ TS --> RS[10-research]
 - Higher-level domains cannot bypass critical validation in orchestration.
 - RAG/LLM can consume evidence but cannot mutate engine truth.
 - Testing dependencies are mandatory before phase closure.
+- Extension layers must only depend on stable core contracts, never on core internal state.

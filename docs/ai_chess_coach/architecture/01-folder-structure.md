@@ -24,16 +24,16 @@ docs/
 ## Domain Taxonomy (Implementation Domains)
 
 ```text
-01-core-engine
-02-ml
-03-orchestration
-04-rag-llm
-05-api
-06-ui
-07-observability
-08-devops
-09-testing
-10-research
+core-analysis
+core-orchestration
+core-knowledge
+core-contracts
+ext-api-fastapi
+ext-ui
+ext-observability
+ext-devops
+ext-testing
+ext-research
 ```
 
 ## Design Rules
