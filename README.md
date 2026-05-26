@@ -1,3 +1,5 @@
+# CHESS TRAINER - Versión: v0.1.225-9ef408b
+
 # chessinsightai
 
 ChessInsightAI is a chess analysis and training project focused on importing games, enriching them with engine and tactical signals, building machine-learning datasets, and preparing recommendation workflows for future coaching features.
