@@ -7,7 +7,7 @@
 
 ## Pendientes para cierre de Phase 1
 
-- [ ] Definir modelos tipados PGN request/response/status en schemas API.
+- [x] Definir modelos tipados PGN request/response/status en schemas API.
 - [ ] Estandarizar respuestas de error para upload/import PGN.
 - [ ] Definir criterio de estabilidad para pipeline minimo de analisis.
 - [ ] Implementar validacion de contenido PGN mas alla de extension.
