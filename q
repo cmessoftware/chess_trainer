@@ -1,0 +1,2745 @@
+[33mcommit 33bfc82bf5d297f7386c6941384f8e02492613fb[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeature/acc_course_unified_docs[m[33m, [m[1;31mgitea/feature/acc_course_unified_docs[m[33m)[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Fri May 29 14:04:30 2026 -0300
+
+    chore: clean old no structured files (before using sopen spec)
+
+[33mcommit f66ae0468fd000e9ca41ff672dc354b7066627a6[m[33m ([m[1;31mgitea/feature/ai_chess_coach_phase01[m[33m, [m[1;32mfeature/ai_chess_coach_phase01[m[33m)[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Tue May 26 20:31:31 2026 -0300
+
+    feat(api): complete FEAT-1 with typed PGN contracts
+
+[33mcommit 8bee2615d4ea05cdfb13c341f1208951c1ee54ea[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Tue May 26 19:11:58 2026 -0300
+
+    docs(ai_chess_coach): add phase-01 openspec and gitea issue automation
+
+[33mcommit 62e9d52c20ca24971be26cdf22da05ff8b12605f[m[33m ([m[1;31mgitea/feature/clean_documentation[m[33m, [m[1;32mfeature/clean_documentation[m[33m)[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Tue May 26 16:41:32 2026 -0300
+
+    chore: clean documentation. Document new archeture topology
+
+[33mcommit 76e039c2cab6c75db5c09dfd0bf12f78d8ee35dc[m[33m ([m[1;32mmain[m[33m)[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Tue May 26 13:25:50 2026 -0300
+
+    test: direct push protection
+
+[33mcommit 9ec47261ac7d81e1e0f72df8d4cc43aa13a245b5[m
+Merge: 3cf2e8e 9f5b911
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Tue May 26 09:21:56 2026 -0300
+
+    Merge gitea/main into origin/main for remote sync
+
+[33mcommit 9f5b911de18e0e16de6b8f0bd0e0e488a51b606c[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Mon May 25 22:08:28 2026 -0300
+
+    auto-update version to v0.1.145-77d00be
+
+[33mcommit 77d00be74c49aa93ea29e3083f34ca91f4c9a765[m
+Merge: 80520d4 b74bc16
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Mon May 25 22:08:13 2026 -0300
+
+    Merge branch 'main' of http://localhost:3001/ChessInsightai/chessinsightai
+    
+    # Conflicts:
+    #       README.md
+    #       VERSION
+    #       docs/ai_theory/load_plan_to_google_calendar.ps1
+
+[33mcommit 3cf2e8edc262d2733644a4ba497211699cb4ac2b[m
+Merge: c78dfd5 7004f6b
+Author: CMES Software (by Sergio Salanitri) <101049943+cmessoftware@users.noreply.github.com>
+Date:   Mon May 25 19:40:00 2026 -0300
+
+    Merge pull request #107 from cmessoftware/copilot/remove-readme-es-and-links
+    
+    Copilot/remove readme es and links
+
+[33mcommit 80520d405a70ae83c442133cae7ea7935f964c22[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Mon May 25 19:38:08 2026 -0300
+
+    chore: versioning
+
+[33mcommit 137997219494b1b29ad3de66c56956248cfc0ecc[m
+Merge: d7cb132 d3a632f
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Mon May 25 19:37:35 2026 -0300
+
+    Merge branch 'copilot/remove-readme-es-and-links' of https://github.com/cmessoftware/chessinsightai
+
+[33mcommit 7004f6bc5df7ab9a21dfc9d6da6a33f287f0e183[m
+Merge: d3a632f c78dfd5
+Author: copilot-swe-agent[bot] <198982749+Copilot@users.noreply.github.com>
+Date:   Mon May 25 22:36:01 2026 +0000
+
+    Merge origin/main into copilot/remove-readme-es-and-links
+
+[33mcommit d7cb132324915af3d1f7cb76f8c65b769a7ff43b[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Mon May 25 19:35:31 2026 -0300
+
+    chore:versioning
+
+[33mcommit 4d713aa9d6b13c111fc83c4106c6d78c220c81a3[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Mon May 25 19:34:01 2026 -0300
+
+    chore: avoind google calendar secret in .gitconfig
+
+[33mcommit c78dfd53623caf92466fa715351e7ebd244abdca[m
+Merge: 13e2b8e 8161b98
+Author: CMES Software (by Sergio Salanitri) <101049943+cmessoftware@users.noreply.github.com>
+Date:   Mon May 25 19:19:08 2026 -0300
+
+    Merge pull request #106 from cmessoftware/copilot/delete-sh-and-txt-files
+    
+    Delete .sh and non-requirements .txt files from project root
+
+[33mcommit 13e2b8e060a0303afa2c5ad99477278efddc5167[m
+Merge: 4225d37 1ef6466
+Author: CMES Software (by Sergio Salanitri) <101049943+cmessoftware@users.noreply.github.com>
+Date:   Mon May 25 19:18:32 2026 -0300
+
+    Merge pull request #105 from cmessoftware/copilot/create-md-files-roadmap-items
+    
+    Copilot/create md files roadmap items
+
+[33mcommit 4225d37096fc87930e983095742769800ca321c0[m
+Merge: 79bc2bc acbbe7b
+Author: CMES Software (by Sergio Salanitri) <101049943+cmessoftware@users.noreply.github.com>
+Date:   Mon May 25 19:17:08 2026 -0300
+
+    Merge pull request #103 from cmessoftware/copilot/remove-spanish-documentation
+    
+    Remove Spanish-only documentation and normalize doc links to English sources
+
+[33mcommit 79bc2bc1f259c9ab2f4e5638d70f90fbd949ad92[m
+Merge: fece66a 87f07bb
+Author: CMES Software (by Sergio Salanitri) <101049943+cmessoftware@users.noreply.github.com>
+Date:   Mon May 25 19:10:34 2026 -0300
+
+    Merge pull request #104 from cmessoftware/feature/ai-engineer-course-plan
+    
+    Feature/ai engineer course plan
+
+[33mcommit 87f07bb424da2960c62d737df11c26a7f4e83130[m
+Merge: 7d0ce41 fece66a
+Author: CMES Software (by Sergio Salanitri) <101049943+cmessoftware@users.noreply.github.com>
+Date:   Mon May 25 19:10:04 2026 -0300
+
+    Merge branch 'main' into feature/ai-engineer-course-plan
+
+[33mcommit 7d0ce41d272414829c4f25659a803f9d93b55d4e[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Mon May 25 19:02:34 2026 -0300
+
+    chore: ai engineer plan sin secrets
+
+[33mcommit acbbe7bad1bb2ce3a9cb827a0d8810a4cb657c7f[m
+Author: copilot-swe-agent[bot] <198982749+Copilot@users.noreply.github.com>
+Date:   Mon May 25 05:37:29 2026 +0000
+
+    Remove Spanish documentation files and update links
+
+[33mcommit 8ef4302c1708aee529dae67d211926ccc3a07a18[m
+Author: copilot-swe-agent[bot] <198982749+Copilot@users.noreply.github.com>
+Date:   Mon May 25 05:32:11 2026 +0000
+
+    Initial plan
+
+[33mcommit fece66a71bece4bebd098cfcb119024e9b0aa9e2[m
+Merge: e7cf9bc 330cff4
+Author: CMES Software (by Sergio Salanitri) <101049943+cmessoftware@users.noreply.github.com>
+Date:   Mon May 25 02:28:40 2026 -0300
+
+    Merge pull request #102 from cmessoftware/copilot/update-readme-with-project-status
+    
+    docs: update README.md with current project state including ai_chess_coach module (v0.1.138)
+
+[33mcommit e7cf9bc8d2a097b5106fbb4651b363f6c480b32e[m
+Merge: 688bf9a 7db7d32
+Author: CMES Software (by Sergio Salanitri) <101049943+cmessoftware@users.noreply.github.com>
+Date:   Mon May 25 02:25:35 2026 -0300
+
+    Merge pull request #101 from cmessoftware/copilot/update-changelog
+    
+    chore: update changelog with recent PRs #93–#99 (v0.1.138)
+
+[33mcommit 8161b98e1bd686807a5e1c483a9de4ae8e1414f0[m
+Author: copilot-swe-agent[bot] <198982749+Copilot@users.noreply.github.com>
+Date:   Mon May 25 05:25:02 2026 +0000
+
+    Delete .sh and non-requirements .txt files from project root
+
+[33mcommit 330cff42c09d30638f3f8b275db4ccb9d8ee7306[m
+Author: copilot-swe-agent[bot] <198982749+Copilot@users.noreply.github.com>
+Date:   Mon May 25 05:20:34 2026 +0000
+
+    docs: update README.md with current project state including ai_chess_coach module v0.1.138
+
+[33mcommit 7db7d3239185b953f24eb842514b4a8038ac52d6[m
+Author: copilot-swe-agent[bot] <198982749+Copilot@users.noreply.github.com>
+Date:   Mon May 25 05:20:09 2026 +0000
+
+    chore: update changelog with recent PRs #93-#99 (v0.1.138)
+
+[33mcommit 688bf9acd565995d9717f2a5762358df65768340[m
+Merge: 7007526 ea621cb
+Author: CMES Software (by Sergio Salanitri) <101049943+cmessoftware@users.noreply.github.com>
+Date:   Mon May 25 02:19:08 2026 -0300
+
+    Merge pull request #100 from cmessoftware/copilot/move-scripts-to-src-scripts
+    
+    Reorganize root-level scripts and trim stale docs
+
+[33mcommit ea621cbc34ba0e4b639a151d2e830d72b71f61ba[m[33m ([m[1;31morigin/copilot/move-scripts-to-src-scripts[m[33m)[m
+Author: copilot-swe-agent[bot] <198982749+Copilot@users.noreply.github.com>
+Date:   Mon May 25 05:16:39 2026 +0000
+
+    Move py/ps1 scripts to src/scripts; remove extra .md files from root
+
+[33mcommit 7007526915af555fb15302852c7cf2076f4c084b[m
+Merge: 2f5ef8a 559c04b
+Author: CMES Software (by Sergio Salanitri) <101049943+cmessoftware@users.noreply.github.com>
+Date:   Mon May 25 01:57:22 2026 -0300
+
+    Merge pull request #99 from cmessoftware/copilot/move-docs-ai-ocr-files
+    
+    Move AI and OCR docs into ai_chess_coach folder
+
+[33mcommit 2f5ef8a3c62bb29dc58a88573b9c0eb5c6b35d59[m
+Merge: 15decd9 68d2f1e
+Author: CMES Software (by Sergio Salanitri) <101049943+cmessoftware@users.noreply.github.com>
+Date:   Mon May 25 01:48:53 2026 -0300
+
+    Merge pull request #98 from cmessoftware/feature/docs_new_order
+    
+    Feature/docs new order
+
+[33mcommit 68d2f1e208eb3d266a3c2e6db0884d4443a90857[m
+Merge: 7dd63ca 6c84101
+Author: CMES Software (by Sergio Salanitri) <101049943+cmessoftware@users.noreply.github.com>
+Date:   Mon May 25 01:44:42 2026 -0300
+
+    Merge pull request #97 from cmessoftware/copilot/fix-course-implementation-specification
+    
+    Refactor course data layer to SQLAlchemy with SQLite default portability
+
+[33mcommit 6c84101f690d4738ff19274feb86113ff8e228c4[m[33m ([m[1;31morigin/copilot/fix-course-implementation-specification[m[33m)[m
+Author: copilot-swe-agent[bot] <198982749+Copilot@users.noreply.github.com>
+Date:   Mon May 25 03:44:58 2026 +0000
+
+    Normalize course README placeholders
+
+[33mcommit 88e076c1a148efae81eafeefd491c15e03c72f18[m
+Author: copilot-swe-agent[bot] <198982749+Copilot@users.noreply.github.com>
+Date:   Mon May 25 03:44:00 2026 +0000
+
+    Align course script entrypoints
+
+[33mcommit d4d66bf2a0cfe8730ed2453e5875a440235c3d8d[m
+Author: copilot-swe-agent[bot] <198982749+Copilot@users.noreply.github.com>
+Date:   Mon May 25 03:43:14 2026 +0000
+
+    Clarify course README placeholders
+
+[33mcommit baf965aca0272f90ae43168363787b519c9ddc27[m
+Author: copilot-swe-agent[bot] <198982749+Copilot@users.noreply.github.com>
+Date:   Mon May 25 03:41:45 2026 +0000
+
+    Polish course repository checks
+
+[33mcommit 94b2a201d4f843d02191386a685e129b18e5573a[m
+Author: copilot-swe-agent[bot] <198982749+Copilot@users.noreply.github.com>
+Date:   Mon May 25 03:40:17 2026 +0000
+
+    Refactor portable course data layer
+
+[33mcommit 7b621cbe446de1e081c20e50ea65db21c1058cf4[m
+Author: copilot-swe-agent[bot] <198982749+Copilot@users.noreply.github.com>
+Date:   Mon May 25 03:30:21 2026 +0000
+
+    Initial plan
+
+[33mcommit 1ef64666afab688f4ea70693ec15cd5935a0369f[m
+Author: copilot-swe-agent[bot] <198982749+Copilot@users.noreply.github.com>
+Date:   Mon May 25 02:05:28 2026 +0000
+
+    docs: link phase roadmap task files
+
+[33mcommit 4ac5558248ef2294c10f1f577b7a7f612ce7a408[m
+Author: copilot-swe-agent[bot] <198982749+Copilot@users.noreply.github.com>
+Date:   Mon May 25 02:05:10 2026 +0000
+
+    docs: add roadmap phase task files
+
+[33mcommit 7dd63ca23cb3ea511bbff07443cb1dc1063051a2[m
+Author: CMES Software (by Sergio Salanitri) <101049943+cmessoftware@users.noreply.github.com>
+Date:   Sun May 24 22:46:37 2026 -0300
+
+    Add roadmap feature list for first two phases
+
+[33mcommit 559c04b964ceb667c43c28cd2d8f523aa1ec3af8[m
+Author: copilot-swe-agent[bot] <198982749+Copilot@users.noreply.github.com>
+Date:   Mon May 25 01:35:19 2026 +0000
+
+    Move AI and OCR docs into ai_chess_coach folder
+
+[33mcommit 15decd9a6c3acca0055064d52c2157247ade8886[m
+Merge: 5eeb6a9 b4bec89
+Author: CMES Software (by Sergio Salanitri) <101049943+cmessoftware@users.noreply.github.com>
+Date:   Sun May 24 21:00:12 2026 -0300
+
+    Merge pull request #95 from cmessoftware/feature/ai_engineer_course
+    
+    Add AI Engineering course roadmap and initial notebooks
+
+[33mcommit 34122d09420f725accec440d7d4735886d38ad7e[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Mon May 18 11:43:40 2026 -0300
+
+    chore: change load plan scrpit init date
+
+[33mcommit b74bc16d0273bb4d110e2735bd194eaecc81c39c[m
+Merge: ed0aeec 29b004b
+Author: tech_lead <teach@smartfi.local>
+Date:   Sun May 17 19:29:12 2026 +0000
+
+    Merge pull request 'chore: expand Ai Enginner training plan with Microsoft Generative AI course items' (#53) from feature/ai-engineer-course-plan into main
+    
+    Reviewed-on: http://localhost:3001/ChessInsightai/chessinsightai/pulls/53
+
+[33mcommit 29b004bb9a19c44a1f32413c707d8c3d6b92d458[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sun May 17 16:20:46 2026 -0300
+
+    chore: versioning
+
+[33mcommit 6073bb560056620a6577661c717b0df82194aab9[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sun May 17 16:06:18 2026 -0300
+
+    chore: expand Ai Enginner training plan with Microsoft Generative AI course items
+
+[33mcommit 5eeb6a9a49840950efa2e30f6afb18307c2f0798[m
+Merge: 5ef87d6 69f7f8f
+Author: CMES Software (by Sergio Salanitri) <101049943+cmessoftware@users.noreply.github.com>
+Date:   Sun May 17 15:54:08 2026 -0300
+
+    Merge pull request #94 from cmessoftware/feature/frontend-sprint1-database-browser
+    
+    Feature/frontend sprint1 database browser
+
+[33mcommit 69f7f8f68e31d2b563e703d4681901cc2a7bbc80[m[33m ([m[1;31morigin/feature/frontend-sprint1-database-browser[m[33m)[m
+Merge: 435c9ce 5ef87d6
+Author: copilot-swe-agent[bot] <198982749+Copilot@users.noreply.github.com>
+Date:   Sun May 17 05:07:56 2026 +0000
+
+    Merge origin/main into feature/frontend-sprint1-database-browser
+    
+    Co-authored-by: cmessoftware <101049943+cmessoftware@users.noreply.github.com>
+
+[33mcommit 5ef87d62ea8ea01aaf996279c68b85cd31e7fe8d[m[33m ([m[1;31morigin/copilot/resolve-merge-conflicts[m[33m)[m
+Author: CMES Software (by Sergio Salanitri) <101049943+cmessoftware@users.noreply.github.com>
+Date:   Sun May 17 01:29:20 2026 -0300
+
+    Shorten pages architecture analysis and add recommended API endpoint table
+
+[33mcommit f42b8dd7c103a6172f20187b2167c4d4323794f9[m
+Author: CMES Software (by Sergio Salanitri) <101049943+cmessoftware@users.noreply.github.com>
+Date:   Sun May 17 01:25:56 2026 -0300
+
+    Update pages architecture analysis based on existing React migration state and revise issues list
+
+[33mcommit 90f6e67cb6c41ffb446eb7b71ab1f488a8628785[m
+Merge: 9aa58b9 9b77e8b
+Author: CMES Software (by Sergio Salanitri) <101049943+cmessoftware@users.noreply.github.com>
+Date:   Sun May 17 01:02:22 2026 -0300
+
+    Merge pull request #93 from cmessoftware/copilot/create-docs-ml-theory-and-analysis
+    
+    Copilot/create docs ml theory and analysis
+
+[33mcommit 9b77e8b5b0f06685d8659bf9b883cf435c91f2c0[m
+Author: CMES Software (by Sergio Salanitri) <101049943+cmessoftware@users.noreply.github.com>
+Date:   Sun May 17 00:55:58 2026 -0300
+
+    Rename project to CHESSINSIGHTAI and update description
+    
+    Updated project name and description in README.
+
+[33mcommit 31847928526dff9ffa279cb28cfc4a6f60267de4[m
+Author: copilot-swe-agent[bot] <198982749+Copilot@users.noreply.github.com>
+Date:   Sun May 17 02:45:45 2026 +0000
+
+    Add ml_theory, ml_analysis, and devops docs folders with migrated files
+    
+    Agent-Logs-Url: https://github.com/cmessoftware/chessinsightai/sessions/4ad1bccd-442b-496a-b775-0bed9861c870
+    
+    Co-authored-by: cmessoftware <101049943+cmessoftware@users.noreply.github.com>
+
+[33mcommit d3a632f3c96a3600c2561a64e98fd1f06f5f4e70[m
+Author: copilot-swe-agent[bot] <198982749+Copilot@users.noreply.github.com>
+Date:   Sun May 17 00:45:29 2026 +0000
+
+    Clarify historical documentation context
+    
+    Agent-Logs-Url: https://github.com/cmessoftware/chessinsightai/sessions/39c3d4c0-c145-427a-9e73-5cd5a1b26e67
+    
+    Co-authored-by: cmessoftware <101049943+cmessoftware@users.noreply.github.com>
+
+[33mcommit a549cf10dec0a9c123e5e943f3febff2fb07cbde[m
+Author: copilot-swe-agent[bot] <198982749+Copilot@users.noreply.github.com>
+Date:   Sun May 17 00:44:41 2026 +0000
+
+    Resolve final documentation review notes
+    
+    Agent-Logs-Url: https://github.com/cmessoftware/chessinsightai/sessions/39c3d4c0-c145-427a-9e73-5cd5a1b26e67
+    
+    Co-authored-by: cmessoftware <101049943+cmessoftware@users.noreply.github.com>
+
+[33mcommit b22dd364ab692bc31637ed7da8b06c41b46a0051[m
+Author: copilot-swe-agent[bot] <198982749+Copilot@users.noreply.github.com>
+Date:   Sun May 17 00:44:01 2026 +0000
+
+    Fix remaining historical README_es notes
+    
+    Agent-Logs-Url: https://github.com/cmessoftware/chessinsightai/sessions/39c3d4c0-c145-427a-9e73-5cd5a1b26e67
+    
+    Co-authored-by: cmessoftware <101049943+cmessoftware@users.noreply.github.com>
+
+[33mcommit e782e179dedebddf3bcd97ffd21aa992ef4b6909[m
+Author: copilot-swe-agent[bot] <198982749+Copilot@users.noreply.github.com>
+Date:   Sun May 17 00:43:11 2026 +0000
+
+    Clarify active testing guide note
+    
+    Agent-Logs-Url: https://github.com/cmessoftware/chessinsightai/sessions/39c3d4c0-c145-427a-9e73-5cd5a1b26e67
+    
+    Co-authored-by: cmessoftware <101049943+cmessoftware@users.noreply.github.com>
+
+[33mcommit 7e685da928a94543459cd2f9aac47a55394b2a77[m
+Author: copilot-swe-agent[bot] <198982749+Copilot@users.noreply.github.com>
+Date:   Sun May 17 00:42:37 2026 +0000
+
+    Refine changelog documentation bullets
+    
+    Agent-Logs-Url: https://github.com/cmessoftware/chessinsightai/sessions/39c3d4c0-c145-427a-9e73-5cd5a1b26e67
+    
+    Co-authored-by: cmessoftware <101049943+cmessoftware@users.noreply.github.com>
+
+[33mcommit 9506fc23810a080c897769878e276d5e26892e15[m
+Author: copilot-swe-agent[bot] <198982749+Copilot@users.noreply.github.com>
+Date:   Sun May 17 00:42:02 2026 +0000
+
+    Clarify changelog localization note
+    
+    Agent-Logs-Url: https://github.com/cmessoftware/chessinsightai/sessions/39c3d4c0-c145-427a-9e73-5cd5a1b26e67
+    
+    Co-authored-by: cmessoftware <101049943+cmessoftware@users.noreply.github.com>
+
+[33mcommit f4d196e2a9dcd07ff50fae09bb6cb28f0657e591[m
+Author: copilot-swe-agent[bot] <198982749+Copilot@users.noreply.github.com>
+Date:   Sun May 17 00:41:23 2026 +0000
+
+    Polish historical documentation references
+    
+    Agent-Logs-Url: https://github.com/cmessoftware/chessinsightai/sessions/39c3d4c0-c145-427a-9e73-5cd5a1b26e67
+    
+    Co-authored-by: cmessoftware <101049943+cmessoftware@users.noreply.github.com>
+
+[33mcommit 59afc8d6a4d59f4c45e827f411069dabb8aadf7d[m
+Author: copilot-swe-agent[bot] <198982749+Copilot@users.noreply.github.com>
+Date:   Sun May 17 00:39:50 2026 +0000
+
+    Update README and add missing docs
+    
+    Agent-Logs-Url: https://github.com/cmessoftware/chessinsightai/sessions/39c3d4c0-c145-427a-9e73-5cd5a1b26e67
+    
+    Co-authored-by: cmessoftware <101049943+cmessoftware@users.noreply.github.com>
+
+[33mcommit 9aa58b9e35cb87b02945c559ea5fe9d721d1ed56[m[33m ([m[1;31morigin/feature/readme_improvement[m[33m)[m
+Author: CMES Software (by Sergio Salanitri) <101049943+cmessoftware@users.noreply.github.com>
+Date:   Sat May 16 02:15:48 2026 -0300
+
+    docs: adapt AI Chess Coach README to new documentation structure
+
+[33mcommit ab463ba451bf80d299496ecb5bd1011234f1a6e0[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sat May 16 01:50:23 2026 -0300
+
+    chore: versioning
+
+[33mcommit 2927e9ba362e7748bcddd0028d5a3afcc1ff11c3[m
+Merge: e4584fa ed0aeec
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sat May 16 01:50:04 2026 -0300
+
+    Merge branch 'main' of http://localhost:3001/ChessInsightai/chessinsightai into feature/arquitectura-orquestada-fase0-documentacion
+
+[33mcommit e4584fa33ea540b1fc0f47ffe0a5fd3284e052b9[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sat May 16 01:49:25 2026 -0300
+
+    chore: versioning
+
+[33mcommit ed0aeec70fd11d47fadf85d2c42810b1a99a501c[m
+Merge: b1ed10b 20c464c
+Author: tech_lead <teach@smartfi.local>
+Date:   Sat May 16 04:46:24 2026 +0000
+
+    Merge pull request 'Reingenieria de documentos de arquitectura' (#52) from feature/arquitectura-orquestada-fase0-documentacion into main
+    
+    Reviewed-on: http://localhost:3001/ChessInsightai/chessinsightai/pulls/52
+
+[33mcommit 20c464c45d9d4c2c079a37f3453d50a6dc06bdcb[m[33m ([m[1;31mgitea/feature/arquitectura-orquestada-fase0-documentacion[m[33m)[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sat May 16 01:42:20 2026 -0300
+
+    chore:reingenieria de documntos de arquitectura
+
+[33mcommit 259c8fd3f5a77e7b1e0f72bfc3bbe6b150e16b85[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sat May 16 01:15:31 2026 -0300
+
+    Update path references in migration plan
+
+[33mcommit cbd40d083bad9f512751b01c575fdeafba4b8127[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sat May 16 01:14:34 2026 -0300
+
+    Relocate docs to ai_chess_coach
+
+[33mcommit d826fa6d82c35a0ad4417172bc00e78c4278376b[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sat May 16 01:11:29 2026 -0300
+
+    Add new documentation structure (architecture, modules, roadmap, testing, devops, observability, research)
+
+[33mcommit 11306acc8dda1b8375ca79d17fe6a7f4423d598c[m[33m ([m[1;31mgitea/feature/fase0-spec-analysis[m[33m)[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Fri May 15 23:05:13 2026 -0300
+
+    Generación de documentos en base a documentos macro de arquitectura orquestada.
+    Traducción al inglés de esos documentos.
+    Orden en carpeta ml_analysis de los documentos de la fase de ML (aka ChessTrainer)
+
+[33mcommit b1ed10bfaaadfc5bfc8cdfd66e121cb13b3d3be8[m
+Merge: d954fd3 76488e4
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Fri May 15 16:43:52 2026 -0300
+
+    Merge branch 'feature/arquitectura-orquestada-fase1-planner-executor'
+
+[33mcommit 76488e46f49621ee21132ef7bd62759a21bb280b[m[33m ([m[1;31mgitea/feature/arquitectura-orquestada-fase1-planner-executor[m[33m)[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Wed May 13 14:28:12 2026 -0300
+
+    chore: script para cerrar issues de gitea
+
+[33mcommit ad16113e17006c0e70afa81e1a98072034d2d3ef[m[33m ([m[1;31morigin/feature/arquitectura-orquestada-fase1-planner-executor[m[33m)[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Tue May 12 16:45:36 2026 -0300
+
+    baseline: estado actual antes de integracion gitea
+
+[33mcommit d954fd3b8f66a606e4532ad70ab5ee3738731f65[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Tue May 12 15:54:33 2026 -0300
+
+    Ignore node_modules
+
+[33mcommit 918548a9cc46aa89bc066179f4f965314c9cf1b6[m
+Merge: 145faa0 db40aeb
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Tue May 12 15:56:26 2026 -0300
+
+    Merge gitea/main into main to align histories
+
+[33mcommit c882891fa0ead3aeaf8429739644cddf32eebbde[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Tue May 12 15:54:33 2026 -0300
+
+    Ignore node_modules
+
+[33mcommit db40aeb15f01f4237da51ea6d55f6074f6796fef[m
+Author: tech_lead <teach@smartfi.local>
+Date:   Tue May 12 18:27:06 2026 +0000
+
+    Initial commit
+
+[33mcommit b4bec894df31baf963828f3bd8295342c9baf91b[m
+Merge: 0af3e59 58e0139
+Author: CMES Software (by Sergio Salanitri) <101049943+cmessoftware@users.noreply.github.com>
+Date:   Sun Apr 12 12:36:26 2026 -0300
+
+    Merge pull request #92 from cmessoftware/copilot/add-migration-script-to-course
+    
+    Add portable SQLite course setup: migrate cmess1315 games from PostgreSQL
+
+[33mcommit 58e013946ebd061dd82ec54208228056a441f78d[m
+Author: copilot-swe-agent[bot] <198982749+Copilot@users.noreply.github.com>
+Date:   Sun Apr 12 15:21:55 2026 +0000
+
+    Add SQLite migration script, update course notebooks 1/2/3, add README
+    
+    Agent-Logs-Url: https://github.com/cmessoftware/chessinsightai/sessions/6eea88bd-0370-4e40-81ff-96e634f96482
+    
+    Co-authored-by: cmessoftware <101049943+cmessoftware@users.noreply.github.com>
+
+[33mcommit a864076285001e9f82946724078f2f15c7faf75b[m
+Author: copilot-swe-agent[bot] <198982749+Copilot@users.noreply.github.com>
+Date:   Sun Apr 12 15:16:30 2026 +0000
+
+    Initial plan
+
+[33mcommit 0af3e59e62eb8df46a0e7b9117d8037e10b322f1[m
+Merge: d4cdd3c fb053d9
+Author: CMES Software (by Sergio Salanitri) <101049943+cmessoftware@users.noreply.github.com>
+Date:   Sun Apr 12 11:51:08 2026 -0300
+
+    Merge pull request #91 from cmessoftware/copilot/featureai-engineer-course-v1
+    
+    feat: add v1 AI Engineer Course — first 3 notebooks in docs/courses/
+
+[33mcommit fb053d9ae26cc2da38a3f25484904ab7a9d0edf1[m
+Author: copilot-swe-agent[bot] <198982749+Copilot@users.noreply.github.com>
+Date:   Sun Apr 12 14:45:17 2026 +0000
+
+    feat: add v1 AI engineer course notebooks (modules 00-02) in docs/courses
+    
+    Agent-Logs-Url: https://github.com/cmessoftware/chessinsightai/sessions/bb4e0f58-6315-467f-8b2a-50a00bdb17c3
+    
+    Co-authored-by: cmessoftware <101049943+cmessoftware@users.noreply.github.com>
+
+[33mcommit 71444e4e434b4df29da74f7647b9273e1793e999[m
+Author: copilot-swe-agent[bot] <198982749+Copilot@users.noreply.github.com>
+Date:   Sun Apr 12 14:40:39 2026 +0000
+
+    Initial plan
+
+[33mcommit d4cdd3c9d93bb18efd86d54485c052356202b1d2[m[33m ([m[1;31morigin/feature/ai_engineer_course_v1[m[33m)[m
+Author: CMES Software (by Sergio Salanitri) <101049943+cmessoftware@users.noreply.github.com>
+Date:   Sat Apr 11 22:50:59 2026 -0300
+
+    Add AI Engineering course roadmap based on ChessTrainer
+    
+    El curso de AI Engineering se basa en ChessTrainer y reutiliza la infraestructura existente. Incluye módulos sobre pipelines de datos, generación de datasets, análisis de características, aprendizaje automático y arquitectura de sistemas.
+
+[33mcommit 99a7482953ec1d81a56c5159e4078b68ed69f125[m
+Author: CMES Software (by Sergio Salanitri) <101049943+cmessoftware@users.noreply.github.com>
+Date:   Sat Apr 11 22:49:02 2026 -0300
+
+    Create ai_enginner_roadmap
+    
+    AI Enginner course based in chess trainer
+
+[33mcommit 1a9d162e07394900d5fdec8a022450cedc9c3630[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Mon Mar 30 14:50:37 2026 -0300
+
+    borrador ppt del curso
+
+[33mcommit 487a5e02cf7d4e41fcc528226b255415cab11a4b[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Mon Mar 30 13:47:47 2026 -0300
+
+    feat(course): add 6-module mini course explaining ChessInsightAI architecture
+    
+    - 01: Architecture overview (layers, ETL pipeline, orchestration)
+    - 02: PGN parsing & feature extraction (16 features)
+    - 03: ML pipeline (RandomForest, GradientBoosting, MLflow)
+    - 04: Orchestrated architecture (Planner/Executor/Critic/Memory)
+    - 05: RAG & explainability (vectorstore, SHAP)
+    - 06: Visualization & frontend (Streamlit dashboards)
+
+[33mcommit 122320892f6ff80a3d9d9e56579fd93e39b7295c[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Thu Mar 26 12:59:57 2026 -0300
+
+    chore: auto-update version to v0.1.108-4c28cb4
+
+[33mcommit 4c28cb4db723878c0a3e8b62671d184f50393599[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Thu Mar 26 12:59:45 2026 -0300
+
+    feat(fase-1): Implementar ExecutorService y MemoryService
+    
+    - ExecutorService funcional:
+      * Orquesta análisis desde múltiples fuentes (Engine, Features, ML, RAG)
+      * Paraleliza ML + RAG con asyncio.gather()
+      * Ejecuta Engine → Features secuencialmente (dependencia)
+      * Placeholders para integración real con servicios existentes
+      * Soporte para Computer Vision (opcional)
+    
+    - MemoryService con dual write:
+      * Guarda move_analyses en tabla v2.0 con 30+ campos
+      * Actualiza player_patterns con estadísticas agregadas
+      * Feature flags: ENABLE_DUAL_WRITE, PREFER_VERSION
+      * Calcula error_distribution, frequent_tactics, weak_phases
+      * Upsert con ON CONFLICT para patrones
+      * get_player_patterns() con lookback configurable
+    
+    - Todas las interfaces son asíncronas (async/await)
+    - Logging detallado para debugging
+    - Manejo robusto de errores con try/except
+    
+    Issue: #86
+
+[33mcommit edf77478d6ab671f21d4ea2838de47042c268764[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Thu Mar 26 12:51:41 2026 -0300
+
+    feat(fase-1): Implementar migración Alembic y PlannerService
+    
+    - Migración d65ac6f4b42a: Tablas move_analyses y player_patterns
+      * move_analyses: Análisis detallado con ML, RAG y Critic (25 columnas)
+      * player_patterns: Patrones agregados por jugador (11 columnas)
+      * Indices optimizados para queries frecuentes
+      * Constraints de validación (confidence, scores)
+    
+    - Schemas completos con Pydantic:
+      * AnalysisOptions, AnalysisPlan, ExecutionResult
+      * CriticResult, EnrichedResult, AnalysisReport
+      * PlayerPatterns, MLPrediction, RAGContext
+      * Validadores personalizados
+    
+    - PlannerService funcional:
+      * Identifica jugadas críticas (eval swing, material, tactics)
+      * Asigna prioridades (high/medium/low)
+      * Soporta 4 focus_modes (critical/full/tactical/positional)
+      * Determina modos de análisis (engine/features/ml/rag/cv)
+    
+    Issue: #86
+
+[33mcommit 3ac545e3c3f8d74f9efd3f07582f0e05c41f21c0[m[33m ([m[1;31morigin/feature/arquitectura-orquestada-fase0-documentacion[m[33m)[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Thu Mar 26 11:49:56 2026 -0300
+
+    chore: auto-update version to v0.1.105-a974c29
+
+[33mcommit a974c2910e6cabbb41a56e0f86b60a095f13fbbf[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Thu Mar 26 11:07:27 2026 -0300
+
+    docs(changelog): Agregar entrada v0.1.103 - Fase 0 Arquitectura Orquestada completada
+
+[33mcommit b2c60c8db7130db8fef910ca71a3e3cb918a60c4[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Thu Mar 26 10:54:59 2026 -0300
+
+    chore: auto-update version to v0.1.103-87be084
+
+[33mcommit 87be084bbb1bc55fdec7375ebcb4cf6b988718d6[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Thu Mar 26 10:49:05 2026 -0300
+
+    docs(fase-0): Ajustes finales a diagramas y README
+
+[33mcommit 58538fc1e059bc23b99900a789b268a0f80d0a65[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Wed Mar 25 22:50:45 2026 -0300
+
+    auto-update version to v0.1.101-f678c97
+
+[33mcommit f678c9759ed49aad62c0a040fd6dcc15837c2f15[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Wed Mar 25 22:50:27 2026 -0300
+
+    feat(fase-0): Agregar 10 diagramas de arquitectura con Mermaid
+    
+    - Diagrama de componentes (alto nivel)
+    - Diagrama de secuencia (AnalyzeGameUseCase completo)
+    - Diagrama de flujo de datos
+    - Diagrama de schema de base de datos (ERD)
+    - Diagrama de despliegue (Docker containers)
+    - Diagrama de estados del Critic
+    - Diagrama de ciclo de vida de análisis
+    - Diagrama de migración de DB (5 fases)
+    - Diagrama de dependencias de servicios
+    - Diagrama de feature flags y rollback
+    
+    Actualizado README.md con 4to documento.
+    Incorporados cambios del usuario en docs anteriores.
+    
+    Issue: #85
+    Fase: 0 - Documentación Técnica
+
+[33mcommit d9a17276b61364f2ed42b211de1390005e63a7de[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Wed Mar 25 16:04:04 2026 -0300
+
+    auto-update version to v0.1.99-6283153
+
+[33mcommit 6283153e9b62797e489e1f7aa95a7804064fd50d[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Wed Mar 25 15:56:15 2026 -0300
+
+    feat(fase-0): Documentación técnica completa arquitectura orquestada
+    
+    - Especificación técnica detallada (Planner/Executor/Critic/Memory/Explainer)
+    - Schemas JSON y Pydantic models de todas las interfaces
+    - Plan de migración DB con dual write/read y rollback
+    - README con índice navegable y overview
+    
+    Issue: #85
+    Fase: 0 - Documentación Técnica
+    Branch: feature/arquitectura-orquestada-fase0-documentacion
+
+[33mcommit 435c9ce46b654f436cd468ff1baf22993976fe4c[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Wed Mar 25 15:01:40 2026 -0300
+
+    chore: Update version and README
+
+[33mcommit fda75dc50811f9547a5239a12e016dd5d55a975d[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Wed Mar 25 15:01:02 2026 -0300
+
+    docs: Add orchestrated architecture plan (Planner/Executor/Critic/Memory)
+    
+    - Added ChessTrainer Architecture document
+    - Created documentation for all ai_chess_coach phases (0-12)
+    - Cleaned up obsolete branches and issues (>30 days inactive)
+    - Prepared Git structure for phased implementation
+    
+    Issues: #85 #86 #87 #88 #89 #90
+
+[33mcommit 3689e87d06a6467e91cb564bd3e9acea6a7111e8[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sun Mar 1 15:08:41 2026 -0300
+
+    auto-update version to v0.1.136-08ac739
+
+[33mcommit 08ac7399bfd602a78e3ec72b611e9854e9bbe601[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sun Mar 1 15:08:31 2026 -0300
+
+    feat(llm): Implement Fase 1 roadmap improvements (Sections 1-5)
+    
+    - Add _get_top_error_moves(): Evidence pack move-by-move with SHAP (Section 5.2)
+    - Add _calibrate_severity_by_elo(): Post-model calibration by ELO (Section 4.1)
+    - Add _get_elo_output_policy(): Format rules by ELO bucket (Section 4.2)
+    - Update _build_prompt(): Integrate evidence pack and competitive context
+    - Create docs/MCP_TOOLS_SPECIFICATION.md: Complete spec for Phase 3
+    - Update ROADMAP_INTEGRACION_LLM.md: Add Section 10 (Implementation Status)
+    
+    Architecture now has 5 layers:
+    1. Data Layer: Query AnalysisResult + MoveShapValue
+    2. Pattern Synthesis: 5 patterns with evidence
+    3. Evidence Pack: Top 8 error moves with detailed SHAP
+    4. Competitive Context: Win/loss differentiation
+    5. Prompt Assembly: ELO-calibrated output policy
+    
+    Metrics:
+    - Tokens: ~900 (optimized)
+    - Cost: ~.027 USD per report
+    - Latency: 2-3s
+    - Winner vs loser reports now differentiated
+    
+    Ready for Phase 3 (MCP tools) implementation.
+
+[33mcommit 202d0a18f7209bd676f7bb347f5d788fe0976a81[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sun Mar 1 00:40:28 2026 -0300
+
+    auto-update version to v0.1.134-ddeba71
+
+[33mcommit ddeba71168bd5553c67b04cfa5af31000d2c62f5[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sun Mar 1 00:40:20 2026 -0300
+
+    feat: Implement FUNCIONALIDAD 3.6.1 Fase 1 - LLM Pedagogico MVP
+    
+    Implementacion completa de integracion con GPT-4 para generar informes pedagogicos personalizados por nivel ELO.
+    
+    Backend:
+    - LLMAnalysisService: Servicio completo con AsyncOpenAI client
+      * Adaptacion por ELO (4 niveles: <1200, 1200-1700, 1700-2100, 2100+)
+      * Prompt generation estructurado con interpretacion SHAP
+      * Batch processing con tracking de costos
+      * Token usage monitoring (~2,500 tokens/analisis)
+    - API Endpoints (analysis.py):
+      * POST /api/analysis/generate-llm-report (individual)
+      * POST /api/analysis/generate-batch-llm-reports (batch)
+      * Pydantic schemas: LLMReportRequest, TokenUsage, LLMReportResponse
+    
+    Testing:
+    - Postman collection con 10 requests configurados
+    - Tests automaticos por endpoint
+    - Environment con variables pre-configuradas (game_ids, credentials)
+    - Guia completa de testing (POSTMAN_LLM_TESTING_GUIDE.md)
+    
+    Documentacion:
+    - FASE1_LLM_PEDAGOGICO_COMPLETADO.md: Resumen tecnico completo
+    - Costos estimados: ~\.10 por analisis con GPT-4
+    - Proximo paso: Configurar OPENAI_API_KEY en .env para testing
+    
+    Files:
+    - src/api/services/llm_analysis_service.py (NEW, 400+ lines)
+    - src/api/routers/analysis.py (MODIFIED, +145 lines)
+    - Chess_LLM_Pedagogical_Reports.postman_collection.json (NEW)
+    - Chess_LLM_Pedagogical_Local.postman_environment.json (NEW)
+    - POSTMAN_LLM_TESTING_GUIDE.md (NEW)
+    - FASE1_LLM_PEDAGOGICO_COMPLETADO.md (NEW)
+    
+    Refs: FUNCIONALIDAD 3.6.1, docs/ROADMAP_INTEGRACION_LLM.md
+
+[33mcommit ed3ba34d4123d85a5f9c92988471894093d9b672[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sun Mar 1 00:20:15 2026 -0300
+
+    auto-update version to v0.1.132-b64a082
+
+[33mcommit b64a082e19f4f4532c1fcde49f00c8cf6b9b8fdc[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sun Mar 1 00:20:02 2026 -0300
+
+    feat: Add FUNCIONALIDAD 3.6.1 - LLM Integration + Complete SHAP System
+    
+    ✨ New Features - SHAP Analysis System:
+    - Add analysis_service.py: Complete ML + SHAP workflow
+    - Add shap_service.py: SHAP calculation and explanation engine
+    - Add analysis.py router: 10+ endpoints for SHAP queries
+    - Add 3 SQLAlchemy models: AnalysisResult, MoveShapValue, PlayerFeatureImportance
+    - Add 4 Alembic migrations: move_san, move_uci, fen, player_color fields
+    
+    🧠 LLM Integration Architecture:
+    - Add comprehensive roadmap (ROADMAP_INTEGRACION_LLM.md) - 341 lines
+    - Document 4-phase evolution: MVP → Pattern Engine → MCP → Multi-Agent
+    - Add FUNCIONALIDAD 3.6.1 to ROADMAP_FUNCTIONAL_CHESS_TRAINER.md
+    - Phase 1: Prompt MVP (v1.1) - Hardcoded LLM prompts
+    - Phase 2: Pattern Engine (v1.2) - SHAP → Pedagogical concepts
+    - Phase 3: MCP Tools (v1.3) - Tool calling + chat contextual
+    - Phase 4: Multi-Agent (v2.0) - Specialized agents for CTCE
+    
+    📊 Comparative Analysis (ELO-Aware):
+    - ELO 1400 vs 2800+ SHAP comparison with real data
+    - Demonstrate model behavior differences by skill level
+    - 13,302 SHAP values analyzed across 6 games
+    - ELO-aware prompt templates for pedagogical feedback
+    - JSON data: shap_comparison_data.json with detailed metrics
+    
+    🔧 Postman Collections (Testing & Automation):
+    - Chess_SHAP_API.postman_collection.json: Complete API testing
+    - Chess_SHAP_Iterator.postman_collection.json: Batch processing
+    - Chess_SHAP_Regenerator.postman_collection.json: Auto-loop regeneration
+    - Chess_SHAP_Local.postman_environment.json: Local dev environment
+    - Guides: POSTMAN_QUICKSTART.md, POSTMAN_SHAP_GUIDE.md, POSTMAN_ITERATOR_GUIDE.md
+    
+    📚 Documentation (13 new files):
+    - SHAP_ANALYSIS_API_DOCUMENTATION.md: Complete API reference
+    - SHAP_MOVE_CONTEXT_GUIDE.md: Player color + move context
+    - SHAP_TESTING_REPORT.md: Verification of 100% field population
+    - REGENERATE_SHAP_GUIDE.md: Step-by-step regeneration process
+    - DATABASE_CONNECTION_GUIDE.md: PostgreSQL connection patterns
+    - COMPARATIVE_ANALYSIS_ELO_1400_vs_2800.md: Full comparative report
+    
+    🗄️ Database Schema (4 Alembic Migrations):
+    - 20260228_000001: Add move_san, move_uci, fen to move_shap_values
+    - 20260228_000002: Update shap_values_with_games view (moves)
+    - 20260228_000003: Add player_color to move_shap_values
+    - 20260228_000004: Update view with player_color (fixed columns)
+    
+    🧩 Pattern Engine Concept:
+    - SHAP → Pedagogical concepts translator
+    - Detectors: initiative_loss, material_loss, underdevelopment, time_loss
+    - LLM receives concepts, not raw SHAP (token optimization)
+    
+    📈 Pedagogical Rules by ELO:
+    - <1200: Material + Basic tactics
+    - 1200-1700: Development + Initiative + Coordination
+    - 1700-2100: Structure + Plans + Prophylaxis
+    - 2100+: Fine optimization + Dynamic precision
+    
+    💰 Cost Estimation (OpenAI GPT-4):
+    - Phase 1 MVP: \.10/analysis (2.5K tokens)
+    - Phase 2 Pattern: \.05/analysis (1.2K tokens)
+    - Phase 3 MCP: \.02/analysis (600 tokens)
+    - Phase 4 Agents: \.01/analysis (300 tokens)
+    
+    🔬 SHAP Model:
+    - models/shap_explainer.pkl: Trained TreeExplainer (CatBoost)
+    - Explains 9 ML features per move
+    - Compatible with analysis_service.py workflow
+    
+    🗺️ Updated Roadmaps:
+    - v1.1 (2026-03-15): LLM Pedagógico MVP
+    - v1.2 (2026-04-01): Pattern Engine + Prompt Dinámico
+    - v1.3 (2026-05-01): MCP + Tool Calling
+    - v2.0 (2026-07-01): Sistema Multi-Agente + CTCE
+    
+    📊 Production Data Verified (2026-03-01):
+    - 13,302 SHAP values across 6 games
+    - 100% field population: player_color, move_san, move_uci, fen
+    - Database: PostgreSQL 13.22 on localhost:5432
+    - API: FastAPI running on localhost:8000
+    
+    🔗 Related Issues:
+    - Closes design for #llm-pedagogical-analysis (Phase 1-4 documented)
+    - Foundation for post-MVP v1.1+ development
+    - Linked from ROADMAP_FUNCTIONAL_CHESS_TRAINER.md
+    
+    🎯 Key Achievement:
+    Sistema completo de análisis ML + SHAP con arquitectura evolutiva hacia feedback pedagógico personalizado por ELO usando LLMs/MCP/Agentes.
+
+[33mcommit 436aa86506abe2a59a7b64fb6d2d85e85a97af6a[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sat Feb 14 23:22:11 2026 -0300
+
+    auto-update version to v0.1.130-b0e02ce
+
+[33mcommit b0e02ce3043e72fa4a928d77fef5df536543567f[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sat Feb 14 23:19:25 2026 -0300
+
+    docs: Add sprint planning + Lichess board notes + F3.5 testing guide
+    
+    Sprint Planning:
+    - Add detailed sprint breakdown (Sprint 1-5)
+    - Sprint 1: Database + Auth ✅ COMPLETE
+    - Sprint 2: Chess Board (basic) + Stockfish + Games Explorer
+    - Sprint 3: Feature Extraction + Analysis
+    - Sprint 4: Exercises + Training + Lichess Board Integration
+    - Sprint 5: Advanced Analytics + Admin Tools
+    
+    Chess Board Strategy:
+    - 3.1: Basic chessboard (MVP) using Chess.js + ChessBoard.js
+    - 3.10: Professional Lichess Chessground integration (Sprint 4)
+    - Note: Better UX with animations, arrows, theming
+    
+    Testing Documentation:
+    - New: TESTING_FEATURE_EXTRACTION.md
+    - Complete testing guide for FUNC 3.5
+    - 10 comprehensive tests + edge cases
+    - Performance benchmarks (1, 10, 100+ games)
+    - Validation checklist for completion
+
+[33mcommit dd808c9ccbacbae80ce705811327b7ae515a4153[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sat Feb 14 23:09:09 2026 -0300
+
+    auto-update version to v0.1.128-e6238e7
+
+[33mcommit e6238e7e60e8e6e05b0f68fd36a762620ad8f8e3[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sat Feb 14 23:08:51 2026 -0300
+
+    docs: Reorganize roadmap - move FUNC 2.5 to 3.5 after navigation
+    
+    - Move Sistema de Notificaciones + Extracción de Features to 3.5
+    - Update status: ✅ → 🟡 (implemented but needs testing)
+    - Add testing checklist for feature extraction functionality
+    - Renumber all subsequent functionalities (3.5→3.6, 3.6→3.7, etc.)
+    - Final structure: 3.1-3.13 (was 3.1-3.11)
+    - Logical flow: Board → Stockfish → Games Explorer → Navigation → Features
+    - Remove duplicated sections
+
+[33mcommit 5ddb042a2b36dcc8aaafd26f531984e2c655a9f9[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sat Feb 14 23:03:56 2026 -0300
+
+    auto-update version to v0.1.126-05179e6
+
+[33mcommit 05179e61a7fa82c42bf9d33606b12fd96f6a2fc3[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sat Feb 14 23:01:43 2026 -0300
+
+    docs: Separate functional and technical roadmaps + update Sprint 1
+    
+    - Rename ROADMAP_FRONT_CHESS_TRAINER.md -> ROADMAP_FUNCTIONAL_CHESS_TRAINER.md
+    - Update ROADMAP_TECHNICAL.md with Sprint 1 completion details
+      * Add Web Infrastructure section (React + FastAPI + JWT)
+      * Document authentication system technical details
+      * Update architecture with Web Application Layer
+      * Add Sprint 2 and 3 technical planning
+    - Update all references in copilot-instructions.md
+    - Update cross-references in TESTING_AUTHENTICATION.md
+    - Separate documentation: functional (for POs) vs technical (for devs)
+
+[33mcommit bdf6732f377608fb1c99962c8fc90e692bf872a0[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sat Feb 14 22:53:12 2026 -0300
+
+    auto-update version to v0.1.124-9af84ed
+
+[33mcommit 9af84edb7f7b828a935a28b36c9e93871eec0cdb[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sat Feb 14 22:52:56 2026 -0300
+
+    docs: Update roadmap with Sprint 1 completion and testing guide
+    
+    - Update ROADMAP_FRONT_CHESS_TRAINER.md with Sprint 1 status (Feb 14, 2026)
+    - Add comprehensive Sprint 1 completion summary (authentication system)
+    - Create TESTING_AUTHENTICATION.md with reproducible test procedures
+    - Update copilot-instructions.md with roadmap adherence protocol
+    - Document next steps: FUNCIONALIDAD 3.1 (Chess Board Interactivo)
+
+[33mcommit e8a9fedf4b7ea43e0476284998b2be397b16795d[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sat Feb 14 22:41:00 2026 -0300
+
+    chore: auto-update version to v0.1.122-f8e6b29
+
+[33mcommit f8e6b296efc45d45bcd5c68ac9d2e295b992121f[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sat Feb 14 22:34:19 2026 -0300
+
+    docs: Reportes de ejemplo y actualización de .gitignore
+    
+    📊 Reportes de ejemplo (generados):
+    - reports/REPORTE_INTEGRADO_cmess1315_vs_Th3Hound.md: Análisis comparativo
+    - reports/cmess1315_reporte_personal.md/.pdf/.html: Reporte personal cmess1315
+    - reports/Th3Hound_reporte_personal.md/.pdf: Reporte personal Th3Hound
+    - reports/cmess1315_analysis_*.md: Análisis detallado de cmess1315
+    - reports/detailed_streaks_*.md: Análisis de rachas detalladas
+    - reports/pgns_rachas_*.md: PGNs de rachas identificadas
+    - reports/th3hound_analysis_*.md: Múltiples análisis de Th3Hound
+    
+    🎯 Propósito de reportes:
+    Ejemplos de reportes generados por el sistema para demostrar
+    capacidades de análisis personalizado por jugador, comparativas
+    y detección de patrones (rachas, errores críticos, etc.)
+    
+    📝 Actualización .gitignore:
+    - mlartifacts/: Excluir artifacts de MLflow (90 archivos)
+    - mlruns/: Excluir runs de MLflow (2018+ archivos)
+    - debug_*.py: Excluir scripts de debug temporales
+    
+    ✨ Beneficio:
+    Repositorio más limpio, sin archivos generados automáticamente
+    por MLflow ni scripts temporales de debugging.
+
+[33mcommit 72c618563bcfe37c341a54142acf6c0d4e20faf6[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sat Feb 14 22:33:01 2026 -0300
+
+    docs: Diagramas de arquitectura y configuración VSCode
+    
+    📐 Diagramas del proyecto:
+    - img/diagrams/: Diagramas de arquitectura visual
+    - docs/architecture_diagram.mmd: Diagrama Mermaid de arquitectura
+    - Visualización de flujos de datos y componentes
+    
+    ⚙️ Configuración de desarrollo:
+    - .vscode/: Configuración de VS Code
+    - Settings, extensions recomendadas
+    - Tasks de desarrollo optimizadas
+    
+    🎯 Propósito:
+    Material visual para documentación técnica y configuración
+    del entorno de desarrollo en VS Code.
+
+[33mcommit 32bc793e1c5fb46481c1f70e2df65a62e9dff9f9[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sat Feb 14 22:25:25 2026 -0300
+
+    docs: Documentación de notebooks y guías de desarrollo
+    
+    📓 Documentación de notebooks:
+    - notebooks/docs/MLFLOW_COMPLETE_GUIDE.md: Guía completa de MLflow
+    - notebooks/docs/DOCKER_NOTEBOOKS_CONFIG.md: Configuración Docker
+    - notebooks/docs/DOCKER_DEVELOPMENT_STRATEGY.md: Estrategia de desarrollo
+    - notebooks/docs/DATASETS_VOLUMES_CONFIG.md: Configuración de volúmenes
+    - notebooks/docs/ELO_STANDARDIZATION_GUIDE.md: Estandarización de ELO
+    
+    📝 Guías de integración:
+    - notebooks/docs/INTEGRATION_SUMMARY.md: Resumen de integraciones
+    - notebooks/docs/MLFLOW_STRUCTURE.md: Estructura de MLflow
+    - notebooks/docs/ML_ANALYSIS_ISSUE_67_COMPLETE_GUIDE.md: Análisis ML completo
+    - notebooks/docs/TACTICAL_FEATURES_INTEGRATION_SUMMARY.md: Features tácticas
+    
+    📊 Reportes de issues completados:
+    - notebooks/docs/ISSUE_21_COMPLETION_REPORT.md
+    - notebooks/docs/ISSUE_67_COMPLETION_REPORT.md
+    - notebooks/docs/ISSUE_74_COMPLETION_REPORT.md
+    
+    🛠️ Guías de desarrollo:
+    - notebooks/docs/PR_DESCRIPTION.md: Descripción de PRs
+    - notebooks/docs/PR_INSTRUCTIONS.md: Instrucciones para PRs
+    - notebooks/docs/QUICK_HELPERS_UBUNTU.md: Helpers para Ubuntu
+    - notebooks/docs/RUTAS_CORREGIDAS_RESUMEN.md: Corrección de rutas
+    - notebooks/docs/PAGES_ARCHITECTURE_ANALYSIS.md: Análisis de arquitectura
+    - notebooks/docs/GIT_LFS_SETUP_GUIDE_es.md: Git LFS en español
+    
+    🎯 Propósito:
+    Documentación específica del entorno de notebooks, guías de MLflow,
+    configuración Docker y reportes de issues completados.
+
+[33mcommit b800ac5aafc8a6626cae7aac767033660b48dd71[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sat Feb 14 22:24:23 2026 -0300
+
+    feat: Artifacts del proyecto, scripts auxiliares y sistema de reportes
+    
+    📦 Artifacts - Phase 1 Baseline MVP:
+    - artifacts/phase1_baseline_mvp/: Modelos baseline del proyecto
+    - Incluye checkpoints y resultados de entrenamiento inicial
+    - Documentación de experimentos fase 1
+    
+    📄 Sistema de reportes personalizados:
+    - src/reports/: Módulo de generación de reportes
+    - PERSONALIZED_REPORTS_README.md: Guía del sistema de reportes
+    - Generación automática de análisis por jugador
+    - Integración con ML pipeline
+    
+    🔧 Scripts auxiliares de administración:
+    - check_admin_permissions.py: Verificar permisos de admin
+    - sql_create_users.py: Creación de usuarios vía SQL directo
+    - quick_create_users.py: Creación rápida de usuarios de prueba
+    - alembic/versions/f0f85e5542e7_merge_heads.py: Merge de migraciones
+    
+    🎯 Propósito:
+    Artifacts del proyecto, sistema de reportes personalizados y herramientas
+    de administración para gestión de usuarios y permisos.
+
+[33mcommit 0898c58536b82d68489a5af9f8ef59db01122635[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sat Feb 14 22:24:01 2026 -0300
+
+    feat: Scripts de análisis ML avanzado y herramientas de jugadores
+    
+    🔬 Scripts de análisis de jugadores:
+    - src/scripts/analyze_player.py: Análisis personalizado de jugadores
+    - src/scripts/analyze_detailed_streaks.py: Análisis de rachas detalladas
+    - src/scripts/analyze_onthefly.py: Análisis en tiempo real
+    - src/scripts/analyze_survivorship.py: Análisis de sesgo de supervivencia
+    - src/ml/analyze_th3hound.py: Análisis específico Th3Hound
+    - src/ml/check_available_players.py: Verificación de jugadores
+    - src/ml/comparative_analysis_players.py: Análisis comparativo
+    - src/ml/critical_analysis.py: Análisis crítico de errores
+    - src/ml/real_data_analysis.py: Análisis de datos reales
+    
+    🤖 Modelos ML adicionales (Phase 2-5):
+    - src/ml/phase2_gradient_boosting.py: Gradient Boosting
+    - src/ml/phase2_mlp_quick.py: MLP rápido
+    - src/ml/phase2_overfitting_analysis.py: Análisis de overfitting
+    - src/ml/phase3_temporal_final.py: Análisis temporal
+    - src/ml/phase4_final.py: Modelo fase 4
+    - src/ml/phase5/: Implementación fase 5 completa
+    
+    🛠️ Herramientas de mantenimiento:
+    - src/scripts/batch_process_missing_features.py: Procesamiento batch
+    - src/scripts/check_db_structure.py: Verificación de BD
+    - src/scripts/check_novice_status.py: Estado de jugadores novatos
+    
+    🎯 Propósito:
+    Scripts para análisis avanzado de jugadores, entrenamiento de modelos
+    adicionales, y herramientas de mantenimiento del sistema ML.
+
+[33mcommit f3f269c1b1e588b000a64eef35100867b8584bc4[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sat Feb 14 22:23:02 2026 -0300
+
+    docs: Documentación técnica completa y material de presentación
+    
+    📚 Guías técnicas nuevas:
+    - ARCHITECTURE_IMPROVEMENT_UPDATE.md: Mejoras arquitectónicas
+    - ENVIRONMENT_VARIABLES.md: Variables de configuración
+    - GIT_LFS_SETUP_GUIDE.md: Configuración de Git LFS
+    - POSTMAN_RUNNER_GUIDE.md: Testing de API con Postman
+    - LLM_INTEGRATION_ARCHITECTURE.md: Arquitectura de integración LLM
+    - PERSONALIZED_REPORTS_SYSTEM.md: Sistema de reportes personalizados
+    - ORGANIZACION_ARCHIVOS.md: Estructura del proyecto
+    
+    📈 Documentación de fases ML:
+    - PHASE2_IMPLEMENTATION_PLAN.md + PHASE2_RESULTS.md
+    - PHASE3_IMPLEMENTATION_PLAN.md + PHASE3_RESULTS.md
+    - PHASE4_IMPLEMENTATION_PLAN.md + PHASE4_RESULTS.md
+    - PHASE5_IMPLEMENTATION_PLAN.md + PHASE5_RESULTS.md
+    - FASE_0_COMPLETADA.md: Fundación del proyecto
+    
+    🎨 Material visual y presentaciones:
+    - ML_THEORETICAL_FRAMEWORK.png + PDFs (v1, v2)
+    - Chess_Trainer_Machine_Learning_Architecture.pdf
+    - Guia_Algoritmos.png, Infografia_no_tecnica.png
+    - PowerPoint: Data Scientists, Technical Implementation, IA en Ajedrez
+    - Diagramas de arquitectura y roadmap
+    
+    📊 Documentación específica:
+    - DATASETS_REPORT.md: Análisis de datasets
+    - EJECUTAR_ENTORNO_DEV.md: Setup de entorno de desarrollo
+    - ESTUDIOS_PGN_SISTEMA_COMPLETO.md: Sistema de estudios PGN
+    - EJERCICIOS_PERSONALIZADOS.md: Ejercicios adaptativos
+    - GENERATE_FEATURES_ENHANCEMENT.md: Mejoras en feature engineering
+    - COMANDOS_EJECUTADOS_cmess1315_Th3Hound.md: Comandos de análisis
+    
+    ✨ Propósito:
+    Documentación completa del proyecto para developers, data scientists,
+    presentaciones técnicas y guías de uso.
+
+[33mcommit 95b3e0822b594fdd9cf92fa0ed9ed450c1b4b216[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sat Feb 14 22:22:35 2026 -0300
+
+    chore: Limpieza del proyecto - Eliminación de código legacy
+    
+    🧹 Archivos eliminados:
+    - Páginas viejas de Streamlit (src/pages/*): 17 archivos obsoletos
+    - Componentes de Streamlit no usados (src/components/)
+    - Documentación raíz movida a docs/
+    - high_priority_issues_summary.json (obsoleto)
+    - src/app.py (reemplazado por FastAPI)
+    
+    📝 Actualizaciones menores:
+    - .vscode/tasks.json: Tareas de ML workflow actualizadas
+    - VERSION: Bump con autenticación
+    - README.md: Referencias actualizadas
+    - Scripts varios: Paths y configuraciones ajustadas
+    
+    🎯 Razón:
+    Eliminación de código legacy de Streamlit tras migración completa a React + FastAPI.
+    Todas las funcionalidades fueron reimplementadas en el nuevo stack tecnológico.
+
+[33mcommit 28ee078db98c318380d54e475438978c631009c1[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sat Feb 14 22:18:35 2026 -0300
+
+    feat: Sistema de autenticación completo con roles y filtros por usuario
+    
+    ✨ Características principales:
+    - Sistema de autenticación JWT completo (backend FastAPI)
+    - Frontend React con login, registro y gestión de sesiones
+    - Roles: admin, analyst (stats_viewer, analysis_board), user (basic_gamer)
+    - Middleware JWT con extracción de roles desde token
+    
+    🔐 Autenticación y Usuarios:
+    - Endpoint /api/auth/login con bcrypt para passwords
+    - Endpoint /api/auth/verify para validación de tokens
+    - Tabla users con roles array (PostgreSQL)
+    - 3 usuarios de prueba: admin, analyst, user
+    - Migración Alembic: 20260211_000000_add_users_table.py
+    
+    📊 Filtrado por usuario (imported_by):
+    - Campo imported_by en tabla games (migración 20260213_231617)
+    - Usuarios básicos solo ven partidas que importaron
+    - Admin y analyst ven TODAS las partidas
+    - Endpoint /api/import/pgn/personal para importación con usuario
+    
+    🎯 Permisos por rol:
+    - admin: Acceso completo, importación masiva
+    - analyst: Ver todas partidas, análisis avanzado, estadísticas
+    - user: Ver solo sus partidas, importación personal, entrenamiento
+    
+    🛠️ Tecnologías:
+    - Backend: FastAPI, PyJWT, bcrypt, PostgreSQL
+    - Frontend: React, TypeScript, Material-UI, chess.js
+    - API centralizada con inyección automática de JWT
+    - Axios interceptors para manejo de tokens
+    
+    📝 Documentación actualizada:
+    - docs/ENVIRONMENT_VARIABLES.md (variables de configuración)
+    - docs/ML_PROJECT_STATE_ANALYSIS.md (estado del proyecto ML)
+    - .github/copilot-instructions.md (instrucciones para agentes)
+    
+    🧪 Testing:
+    - create_test_users.py (script para crear usuarios de prueba)
+    - Verificado import/view con los 3 roles
+    - 33 partidas importadas por usuario 'user'
+    - Filtros funcionando correctamente
+
+[33mcommit ccbef6b2b61146912427868a395448c6a0c7c407[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Thu Feb 5 14:11:29 2026 -0300
+
+    feat: Add database backup before Phase 2 training
+    
+    - Add backup_database.ps1 script for automated backups
+    - Add Phase 1 complete database backup (258.79 MB)
+    - Update .gitattributes to track .sql files with Git LFS
+    - Database: 328,283 labeled records ready for Phase 2
+    
+    Backup: chess_trainer_db_backup_20260205_125616.sql
+    Status: Phase 1 complete (F1=0.890), ready for Phase 2 MLP training
+
+[33mcommit 2c451902d4f3c9d6e921fcd63a5c4f4f8ae47ad0[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Wed Feb 4 20:49:22 2026 -0300
+
+    feat: Complete Phase 1 ML Baseline with F1=0.890, organize project structure
+    
+    🎯 PHASE 1 BASELINE - COMPLETADO
+    - Trained Logistic Regression L2 model
+    - F1 Macro Test: 0.890 (target: >0.70) ✅ +27%
+    - Accuracy: 0.967 ✅
+    - Confusión crítica: 0.0% (target: <5%) ✅ PERFECTO
+    - CV Stability: 0.885 ± 0.004 ✅ EXCELENTE
+    - Dataset: 328,283 labeled records (100% complete)
+    
+    📊 RESULTS & ARTIFACTS
+    - Classification reports (CSV, TXT)
+    - Confusion matrix visualization (PNG)
+    - Predictions dataset (17.6 MB Parquet)
+    - MLflow tracking configured (file-based)
+    - All Phase 1 criteria EXCEEDED
+    
+    📁 PROJECT ORGANIZATION
+    - Moved scripts to src/scripts/
+    - Moved ML results to src/ml/results/
+    - Moved tests to tests/integration/
+    - Created comprehensive documentation:
+      * PROJECT_ORGANIZATION.md (structure guide)
+      * PHASE1_BASELINE_EXECUTION.md (tracking)
+      * ML_THEORETICAL_FRAMEWORK.md (3,500 lines theory)
+      * ML_PROJECT_STATE_ANALYSIS.md (project analysis)
+      * PROPOSED_ML_ISSUES.md (GitHub issues spec)
+    
+    📝 DOCUMENTATION
+    - Updated README.md Section 5 with ML pipeline status
+    - Added real-time training metrics
+    - Updated development commands with correct paths
+    - Created Phase 1 execution tracking document
+    
+    🔧 TECHNICAL UPDATES
+    - Fixed MLflow configuration (file-based tracking)
+    - Updated imports in execute_phase1_baseline.py
+    - Fixed Unicode encoding for Windows compatibility
+    - Added alembic migrations for batch tracking
+    
+    ✅ VALIDATION
+    All Phase 1 advancement criteria validated and exceeded.
+    Model ready for Phase 2 development.
+    
+    Issue: #NEW-2 (proposed)
+
+[33mcommit a37ab31007ad64572aa7259890389a6f74f162e7[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Fri Jan 30 23:13:26 2026 -0300
+
+    auto-update version to v0.1.111-03b0772
+
+[33mcommit 03b07729493e56c9cab50c96daf8a911854afc8d[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Fri Jan 30 23:13:17 2026 -0300
+
+    docs: Update changelog with v0.1.109 documentation improvements
+
+[33mcommit 5ea1443fac4121527c7edea015d571a93bbaf35d[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Fri Jan 30 23:12:53 2026 -0300
+
+    auto-update version to v0.1.109-a8401c3
+
+[33mcommit a8401c3accb3f03c470734ea32a27d588c820a6b[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Fri Jan 30 23:12:41 2026 -0300
+
+    docs: Update README and documentation with modern React+FastAPI stack
+    
+    ✅ DOCUMENTATION UPDATES:
+    - Update main README.md with React 19 + TypeScript + Vite frontend architecture
+    - Replace outdated Streamlit references with modern React stack
+    - Add comprehensive tech stack documentation (Frontend/Backend/ML)
+    - Update quick start guide with React dev workflow and FastAPI backend
+    
+    ✅ README_es.md COMPLETE OVERHAUL:
+    - Synchronize Spanish documentation with English version (v0.1.107)
+    - Update from elite-only to all skill levels chess training
+    - Add modern development stack section with emojis and descriptions
+    - Fix all documentation references and add new sections
+    
+    ✅ CHANGELOG ENHANCEMENTS:
+    - Add detailed v0.1.107 release notes with ML prediction system
+    - Document frontend SPRINT 1 with database browser and ML integration
+    - Include comprehensive architecture changes and file statistics
+    - Update with commit references d679114 and e228da3
+    
+    🎯 IMPACT:
+    - Complete alignment between English and Spanish documentation
+    - Modern development experience documentation for React + FastAPI
+    - Ready for new developers with accurate setup instructions
+    - Professional project documentation with current tech stack
+
+[33mcommit f2505ff52b52fba6988ce62895e2cefb391f902c[m[33m ([m[1;31morigin/feature/mlflow-pipeline-integration[m[33m)[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Fri Jan 16 10:49:01 2026 -0300
+
+    auto-update version to v0.1.107-d679114
+
+[33mcommit d679114cdc6532bca290ac9f2d221ecd4e27e01a[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Fri Jan 16 10:48:53 2026 -0300
+
+    feat: Add ML prediction system, training management & reorganize project structure
+    
+    ✅ CORE ML & PREDICTION SYSTEM:
+    - Add comprehensive ML prediction guide (PREDICCIONES_FIABLES_MLFLOW.md)
+    - Complete technical roadmap with 6-phase ML development plan
+    - Extended EDA analysis notebooks with MLflow integration
+    - Real user analysis scripts with tactical pattern detection
+    
+    ✅ TRAINING & STUDY SYSTEM:
+    - Complete PGN study system documentation (ESTUDIOS_PGN_SISTEMA_COMPLETO.md)
+    - Training system with resource management (TRAINING_SYSTEM_COMPLETE.md)
+    - Advanced study generators with ML personalization
+    - Training manager with progress tracking
+    - Concrete exercise generation with real data analysis
+    
+    ✅ DATA ACQUISITION & VALIDATION:
+    - Enhanced Chess.com downloaders with retry logic
+    - User recommendation system based on ML analysis
+    - Database investigation and maintenance tools
+    - Quick training access system
+    
+    ✅ PROJECT REORGANIZATION:
+    - Move all scripts to src/scripts/ for better organization
+    - Clean up temporary and duplicate files
+    - Reorganize documentation structure
+    - Add training/ and reports/ directories for output management
+    
+    🎯 IMPACT:
+    - Complete ML prediction pipeline with MLflow tracking
+    - Personalized chess study generation based on real game analysis
+    - Professional project structure following best practices
+    - 4,242 games analyzed, 39,180 tactical positions processed
+
+[33mcommit bf530465a3f43292e4399ff09d9ee81986e536c6[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Fri Jan 16 10:42:23 2026 -0300
+
+    auto-update version to v0.1.105-e228da3
+
+[33mcommit e228da35bb737f3a66abf40fdf772edddf8a0e57[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Fri Jan 16 10:42:10 2026 -0300
+
+    feat: Implement frontend SPRINT 1 - Database Browser & Backend ML Integration
+    
+    ✅ FRONTEND DEVELOPMENT:
+    - Add Database Connector component for PostgreSQL integration
+    - Create Games Browser page with pagination and filtering
+    - Enhance PGN upload with error handling
+    - Update main navigation with new modules
+    - Fix dotenv imports across frontend components
+    
+    ✅ BACKEND DEVELOPMENT:
+    - Add FastAPI error classifier API
+    - Add Flask survivorship analysis API
+    - Implement ML pipeline phases 1-6
+    - Add external validation and calibration
+    - Create training recommender system
+    
+    ✅ DOCUMENTATION:
+    - Add Frontend Roadmap with 4-phase development plan
+    - Create personalized chess studies tutorial
+    - Add MLflow-PostgreSQL integration guide
+    - Document survivorship bias analysis module
+    
+    ✅ TOOLS & UTILITIES:
+    - Add Mermaid to PNG converter for diagrams
+    - Create Chess.com downloader with retry logic
+    - Implement Lichess study manager for manual workflow
+    - Add advanced PGN study generators with ML personalization
+    
+    🎯 READY FOR PRODUCTION:
+    - Database browser with filters, pagination, PGN export
+    - ML-powered personalized chess study generation
+    - Complete API backend for analysis and prediction
+    - Comprehensive documentation and tutorials
+
+[33mcommit 988a67253d025497ff08df3afba30b4df0d58d7d[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Thu Oct 2 12:43:06 2025 -0300
+
+    feat: add ML issues creation and update version
+
+[33mcommit 8c8f1c89255430bd3bebf7da353708450debae54[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Thu Oct 2 12:40:28 2025 -0300
+
+    feat(ml): agrega generador automático de issues ML, archivo ml_issues.json y notebook base para workflow ML. Actualiza README y archivos de versión.
+
+[33mcommit 67b6ca67b5617e4d80c20130ccd4cbf96dd81ad7[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Wed Sep 10 16:30:36 2025 -0300
+
+    ✅ Issue-67: Complete ML Analysis Implementation
+    
+    🎯 **Main Achievement:**
+    - Implemented complete multiclass error_level classification system
+    - 4 ML models with Pipeline: RandomForest, XGBoost, CatBoost, Ordinal LogReg
+    - Best model: XGBoost with 83.12% accuracy
+    
+    🔧 **Features Added:**
+    - Advanced feature engineering (20+ features from ELO, temporal, categorical)
+    - Comprehensive model comparison with visualizations
+    - Model persistence (.pkl) with metadata
+    - FastAPI service for production deployment
+    
+    📊 **Analysis Results:**
+    - Dataset: 11,676 chess games across 5 sources
+    - Target: 4-class error_level (0=None, 1=Light, 2=Moderate, 3=Severe)
+    - Feature importance analysis reveals ELO metrics most predictive
+    - Low overfitting (<2%) across all models
+    
+    🚀 **Production Ready:**
+    - Complete FastAPI service with endpoints: /predict, /predict/batch, /model/info
+    - Cross-platform deployment scripts (Windows/Linux)
+    - Comprehensive documentation guide
+    
+    📁 **Files:**
+    + notebooks/chess_trainer_analysis_extended_eda.ipynb - Main ML analysis
+    + docs/ML_ANALYSIS_ISSUE_67_COMPLETE_GUIDE.md - Complete reference guide
+    + .github/copilot-instructions.md - Project conventions
+    + explore_datasets.py - Dataset exploration utility
+    + create_parquet_datasets.py - Data preparation script
+    
+    🧹 **Cleanup:**
+    - Removed 200+ empty/duplicate files from .Trash-0 and obsolete locations
+    - Preserved essential Python package structure
+    - Clean project organization
+    
+    Issue-67-ml-preprocessing-tactical-features: ✅ COMPLETED
+
+[33mcommit afa962acbb09d0d7ff5544ffa8ecfc2c3ade12da[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sun Jul 13 12:34:12 2025 -0300
+
+    auto-update version to v0.1.100-6c331a0
+
+[33mcommit 6c331a09e0b715f680949660001d22c9a54773e0[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sun Jul 13 12:32:26 2025 -0300
+
+    add README.md and VERSION for v0.1.99-0cebd4a version
+
+[33mcommit 0cebd4a52044a02ef8aea72a44e487e18267a952[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sun Jul 13 12:31:29 2025 -0300
+
+    fix import_pgn_parallel.py
+
+[33mcommit 145faa0404aa8b86813cee3958978689f1c055f7[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sat Jul 12 16:12:50 2025 -0300
+
+    📝 Update README with Issue #21 completion status
+    
+    ✅ Updated ELO Standardization status to COMPLETED (100%)
+    🎯 Added detailed ELO system features and capabilities
+    📊 Updated version to v0.1.96-issue21-complete
+    📚 Added references to new documentation (ELO guide and completion report)
+    🗓️ Updated last modification date to 12-07-2025
+    
+    Key updates:
+    - Issue #21 status changed from 85% to 100% complete
+    - Added ELO standardization system description with anomaly correction
+    - Highlighted resolution of 655.0 rating warnings
+    - Added quality metrics (73.3% quality score, 50% anomaly correction rate)
+    - Included links to technical documentation
+
+[33mcommit d7bbfb76c86c0ddb48ee340baa614deec72b1d8d[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sat Jul 12 16:02:41 2025 -0300
+
+    🎯 Complete Issue #21: ELO Standardization System
+    
+    ✅ Status: COMPLETED (100%)
+    🔧 Fixed rating 655.0 warning with intelligent anomaly correction
+    📊 Achieved 50% anomaly correction success rate
+    🧪 All tests passing with comprehensive validation
+    📝 Complete documentation and deployment guides
+    
+    Features implemented:
+    - Cross-platform ELO standardization (Chess.com, Lichess, FIDE)
+    - Intelligent anomaly detection and correction
+    - Production-ready pipeline integration
+    - Comprehensive test suite and quality metrics
+    
+    Version bump: v0.1.96-issue21-complete
+
+[33mcommit 31092d34523b20e02a4e4bd06843a1f1e714c36e[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sat Jul 12 15:53:23 2025 -0300
+
+    🔄 Final updates before merge to main
+    
+    - Updated README.md with latest project status
+    - Version bump to reflect Issue #21 completion
+    - Added update_pipeline_elo_standardization.py for production integration
+    
+    Ready for merge to main branch.
+
+[33mcommit ce21811c8499ecd29e156a158d71476710bda6ed[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sat Jul 12 15:38:30 2025 -0300
+
+    🏁 COMPLETE Issue #21: ELO Standardization - 100%
+    
+    ✅ CORE IMPLEMENTATIONS:
+    - ELOStandardizer class with intelligent anomaly correction
+    - Support for Chess.com, Lichess, FIDE platform conversions
+    - Time control adjustments (bullet, blitz, rapid, classical)
+    - Comprehensive validation and quality reporting
+    
+    🔧 ANOMALY CORRECTION SYSTEM:
+    - Fixed rating 655.0 outside valid range warnings
+    - Intelligent correction for common data entry errors
+    - Scale error detection (0.65 → 650, 25000 → 2500)
+    - 50% correction success rate achieved
+    
+    �� PRODUCTION INTEGRATION:
+    - DataFrame batch processing with standardized_white_elo/black_elo fields
+    - Pipeline integration script (complete_elo_standardization.py)
+    - Comprehensive testing suite (test_elo_anomalies.py)
+    - Data quality monitoring and detailed statistics
+    
+    🎯 PERFORMANCE METRICS:
+    - Valid ELO range: [800, 3500] with anomaly handling
+    - Data quality improvement: 60-75% achieved
+    - Cross-platform rating standardization operational
+    - All major chess platforms supported
+    
+    📚 TECHNICAL SPECIFICATIONS:
+    - Platform detection from site/event metadata
+    - Conversion formulas based on empirical research
+    - Statistical validation against known benchmarks
+    - Integration with existing ML pipeline
+    
+    Issue #21: ELO Standardization - Status: 100% COMPLETE ✅
+    Related: Issues #66, #67, #74, #75, #76, #78 (ML Pipeline)
+
+[33mcommit 016258491816297c74fd5c76f7da1a22d827a9b7[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sat Jul 12 14:13:23 2025 -0300
+
+    🧹 Final cleanup - sync all changes
+
+[33mcommit 94507b787076639fcd8d5adfcd1403c4632ca83c[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sat Jul 12 14:12:17 2025 -0300
+
+    🔖 Update version to v0.1.92-5d917b6
+    
+    - Increment version after real datasets analysis completion
+    - Reflect latest commit hash in version tracking
+
+[33mcommit 5d917b6596332cbde2b29bc03314bf995f8fa20a[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sat Jul 12 14:10:03 2025 -0300
+
+    🧹 Clean duplicated src directories and update real datasets analysis
+    
+    - ❌ Remove duplicated src/src/ and notebooks/src/src/ directories
+    - ✅ Update README.md with comprehensive real datasets analysis documentation
+    - 📊 Add analysis tools for elite, fide, novice, personal, and stockfish datasets
+    - 🔬 Complete ML analysis showing dataset characteristics and performance
+    - 💡 Key findings: Personal dataset has most realistic error distribution
+    - 📈 All datasets show high ML accuracy (1.000) indicating clean data structure
+    - 🛠️ Updated PowerShell helpers for easy analysis execution
+    - 📚 Enhanced technical documentation with analysis results
+    
+    Issue #21: ELO Standardization & Dataset Analysis - 95% Complete
+    Related: Issues #66, #67, #74, #75, #76, #78 (ML Pipeline)
+
+[33mcommit 8bc8d4b3ad585d715efb8b05beedc554247ef12c[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sat Jul 12 14:04:56 2025 -0300
+
+    ✅ Add comprehensive real datasets ML analysis functionality
+    
+    🔬 Dataset Analysis Features:
+    - Analyze elite, fide, novice, personal, and stockfish datasets
+    - Compare model performance across player types
+    - Non-destructive analysis with 10K+ samples per dataset
+    - Rich error pattern analysis and ELO distribution insights
+    
+    📊 Key Findings:
+    - Personal dataset shows most realistic error distribution
+    - Elite dataset has concentrated error samples
+    - All datasets achieve 1.000 ML accuracy (clean data)
+    - 34 chess-specific features per dataset type
+    
+    🛠️ PowerShell Integration:
+    - Added Invoke-RealDatasetsAnalysis() function
+    - Added Analyze-RealDatasets quick command
+    - Updated documentation and helpers
+    
+    📝 Updated Documentation:
+    - Enhanced MLFLOW_POSTGRES_INTEGRATION.md
+    - Updated README.md with dataset analysis section
+    - Added comprehensive usage examples
+    
+    🎯 Issue References:
+    - Resolves #21 (ELO Standardization)
+    - Supports #78 (ML Pipeline Integration)
+    - Part of comprehensive ML workflow validation
+
+[33mcommit fc372b7973e3293a54ab223b8a1fb1e51aff3404[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Fri Jul 11 18:30:32 2025 -0300
+
+    auto-update version to v0.1.89-0339c2e
+
+[33mcommit 0339c2eee3587c740d86ee5879d3e25019e23d28[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Fri Jul 11 18:29:07 2025 -0300
+
+    Update README.md: Mark ML core issues #67 and #68 as completed
+    
+    - Issue #67 (Train ML model): ✅ Completed → superseded by #78
+    - Issue #68 (Model evaluation): ✅ Completed → superseded by #78
+    - Issue #66 (Data preprocessing): ✅ Completed
+    - Issue #74, #75, #76: ✅ All marked as completed
+    - Updated all status tables to reflect current implementation state
+    - ML Pipeline (#78) successfully implements training, evaluation, and optimization
+    - Clear mapping from legacy issues to current implementation
+
+[33mcommit cdfc5a5c4aa428bf026e894c8fce05318065f594[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Fri Jul 11 17:58:26 2025 -0300
+
+    auto-update version to v0.1.87-28c6e17
+
+[33mcommit 28c6e174b18eb8b3ffcb3875ae48506c1dda0060[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Fri Jul 11 17:58:16 2025 -0300
+
+    Clean up: Remove duplicate documentation files
+    
+    - Removed DATASETS_VOLUMES_CONFIG.md and DATASETS_VOLUMES_CONFIG_es.md (moved to docs/)
+    - Removed INTEGRATION_SUMMARY.md, ISSUE_67_COMPLETION_REPORT.md, ISSUE_74_COMPLETION_REPORT.md (moved to docs/)
+    - Removed QUICK_HELPERS_UBUNTU.md (moved to docs/)
+    - All documentation files now properly organized in docs/ directory structure
+
+[33mcommit 77ebb88126270458bff46c74e498f4f890094b67[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Fri Jul 11 17:46:46 2025 -0300
+
+    auto-update version to v0.1.85-bdda086
+
+[33mcommit bdda0863e3531be1537c14ce2095776a8a65935b[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Fri Jul 11 17:46:38 2025 -0300
+
+    Issue #21: ELO standardization implementation with MLflow PostgreSQL integration
+    
+    - Resolved merge conflicts in README.md, VERSION, and docker-compose.yml
+    - Corrected issue references: #23 for SHAP implementation, #21 for ELO standardization
+    - Integrated MLflow with PostgreSQL backend for experiment tracking
+    - Added comprehensive ML pipeline with tactical features preprocessing
+    - Implemented chess error prediction models with standardized ELO fields
+    - Added PowerShell helpers for ML workflow automation
+    - Updated documentation structure with MLflow guides and technical docs
+    - Created test suites for tactical preprocessing and MLflow validation
+    - Reorganized project documentation into docs/ folder structure
+
+[33mcommit eb7ab981e1d2c46f1d769ac9383590cb4aacb651[m
+Merge: 5b48826 f26b60a
+Author: CMES Software (by Sergio Salanitri) <101049943+cmessoftware@users.noreply.github.com>
+Date:   Sat Jul 5 16:50:59 2025 -0300
+
+    Merge pull request #79 from cmessoftware/bug/fix-pipeline-estimate-tactical-features
+    
+    Bug/fix pipeline estimate tactical features
+
+[33mcommit f26b60a6bc1333e9e8931e5287d1b2318a1582ed[m
+Merge: 925a69e 060574a
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sat Jul 5 19:48:33 2025 +0000
+
+    Merge branch 'bug/fix-pipeline-estimate-tactical-features' of https://github.com/cmessoftware/chess_trainer into bug/fix-pipeline-estimate-tactical-features
+
+[33mcommit 925a69e9694eb701b432dc017e9c131ee8ee2e4c[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sat Jul 5 19:48:02 2025 +0000
+
+    auto-update version to v0.1.77-3826c87
+
+[33mcommit 3826c87e464f7335f3cd4b2ee8dc0438dc1dbfe8[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sat Jul 5 19:47:54 2025 +0000
+
+    docs: Add comprehensive PR documentation
+    
+    - Add PR_DESCRIPTION.md with detailed PR description and technical details
+    - Add PR_INSTRUCTIONS.md with step-by-step PR creation instructions
+    - Include complete testing results and impact analysis
+    - Document all new features: ELO classification, tactical analysis, smart fetching
+    - Ready for PR creation to main branch
+
+[33mcommit 5b488266b5ae4f12574e5078a46407f643c5cde9[m
+Merge: fa0e808 060574a
+Author: CMES Software (by Sergio Salanitri) <101049943+cmessoftware@users.noreply.github.com>
+Date:   Sat Jul 5 16:09:08 2025 -0300
+
+    Merge pull request #78 from cmessoftware/bug/fix-pipeline-estimate-tactical-features
+    
+    Bug/fix pipeline estimate tactical features
+
+[33mcommit 060574aaddff409945700f7e2e9fa73ffdfa1ce0[m
+Merge: d45ff48 fa0e808
+Author: CMES Software (by Sergio Salanitri) <101049943+cmessoftware@users.noreply.github.com>
+Date:   Sat Jul 5 16:09:00 2025 -0300
+
+    Merge branch 'main' into bug/fix-pipeline-estimate-tactical-features
+
+[33mcommit d45ff48f96478b8d185e71b72828973b6da18ccb[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Thu Jul 3 14:57:53 2025 +0000
+
+    auto-update version to v0.1.75-a03562a
+
+[33mcommit a03562a72244f0319889496cca3541253156a028[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Thu Jul 3 14:57:36 2025 +0000
+
+    fix: Implement missing tactical analysis scripts and pipeline functions
+    
+    - Add generate_features_with_tactics() function to run_pipeline.sh
+    - Add estimate_tactical_features() function to run_pipeline.sh
+    - Add test_tactical_analysis() function to run_pipeline.sh
+    - Update pipeline command validation to include new tactical commands
+    - Implement generate_features_with_tactics.py script:
+      * Integrated feature generation + tactical analysis
+      * Parallel processing with configurable workers
+      * Source-based filtering and progress reporting
+    - Implement estimate_tactical_features.py script:
+      * Fast lightweight tactical feature estimation
+      * Heuristic-based pattern recognition without engine analysis
+      * Optimized for large-scale processing
+    - Implement test_tactical_analysis.py script:
+      * Tactical analysis coverage reporting
+      * Quality metrics and statistics
+      * Detailed tactical pattern breakdown and export capabilities
+    
+    All scripts now functional with proper argument handling and logging.
+
+[33mcommit 97056dc54a1c1579ef52ab6c0347f64107364d70[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Thu Jul 3 14:42:38 2025 +0000
+
+    fix: Add missing pipeline functions for tactical analysis commands
+    
+    - Add generate_features_with_tactics() function for integrated processing
+    - Add estimate_tactical_features() function for lightweight estimation
+    - Add test_tactical_analysis() function for coverage testing
+    - Include these commands in pipeline dispatcher case statement
+    - Fix pipeline command recognition for estimate_tactical_features
+    - Update smart_user_helper.py with known users loading system
+    
+    Resolves issue where estimate_tactical_features was shown in help but not recognized as valid command.
+
+[33mcommit 33adec8983494c8c4711ddcf4ce7e7f916bdcf12[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Thu Jul 3 14:40:00 2025 +0000
+
+    auto-update version to v0.1.72-6944507
+
+[33mcommit 6944507ff92e00f8260f464b73c504719e0766eb[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Thu Jul 3 14:39:51 2025 +0000
+
+    fix: Add missing tactical analysis commands to pipeline
+    
+    - Add generate_features_with_tactics, estimate_tactical_features, and test_tactical_analysis to valid commands list
+    - Implement corresponding functions for each command with proper logging and script execution
+    - Fix issue where estimate_tactical_features command was documented but not callable
+    - All tactical analysis commands now properly integrated into pipeline workflow
+    
+    Resolves issue: estimate_tactical_features --source personal --max-games 10000 was failing with 'command not found'
+
+[33mcommit a5b763277383a38a0315dd63de7e20f349d32f80[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Thu Jul 3 14:26:38 2025 +0000
+
+    auto-update version to v0.1.70-f728f43
+
+[33mcommit f728f43185aeffb6c3d2009eef4c93a2a9486443[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Thu Jul 3 14:24:16 2025 +0000
+
+    feat: Implement ELO-based game classification and remove /random directory
+    
+    - Modify smart_random_games_fetcher.py to classify games by ELO:
+      * 1200 ≤ ELO ≤ 2000 → /novice directory
+      * ELO > 2000 → /elite directory
+      * ELO < 1200 → ignored
+    - Remove reference to /random directory in default output path
+    - Add comprehensive classification logging and summary
+    - Update smart_user_helper.py with known users loading system
+    - Add CLASSIFICATION_UPDATE_SUMMARY.md documentation
+    - Create template for known_users.json with sample users
+
+[33mcommit fa0e8088ef33a8b2c1ba51c3bb2263ab28427828[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Wed Jul 2 17:41:23 2025 -0300
+
+    auto-update version to v0.1.68-955732b
+
+[33mcommit 955732b0c039cf1a15c9effd0516f9b6b74d6b73[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Wed Jul 2 17:41:13 2025 -0300
+
+    feat: major updates including documentation enhancement, Docker optimization, and project organization
+    
+    ## Documentation Updates
+    - Enhanced README.md and README_es.md with comprehensive project documentation
+    - Added README_NOTEBOOKS_BRANCH.md for notebook-specific branch documentation
+    - Updated GIT_LFS_SETUP_GUIDE.md and GIT_LFS_SETUP_GUIDE_es.md with improved LFS configuration
+    - Added RUTAS_CORREGIDAS_RESUMEN.md with corrected paths summary
+    
+    ## Docker and Infrastructure
+    - Optimized docker-compose.yml for better container orchestration
+    - Enhanced dockerfile.notebooks with improved notebook environment setup
+    - Updated .gitattributes and .gitignore for better file handling
+    - Improved Git LFS configuration for large file management
+    
+    ## Project Organization
+    - Added vscode-workspace.code-workspace for better VS Code integration
+    - Updated notebooks/eda_analysis.ipynb with latest analysis improvements
+    - Streamlined project structure and file organization
+    
+    ## Version Management
+    - Maintained consistent versioning across all components
+    - Ensured proper cross-references between documentation files
+    
+    This update consolidates recent improvements and prepares the project for enhanced development workflow.
+
+[33mcommit c9086efb6c1772418343de73b2dea18ff7c9e844[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Wed Jul 2 04:01:29 2025 +0000
+
+    auto-update version to v0.1.68-1ee094a
+
+[33mcommit 1ee094abc810a46d7a3f799072921d04886472e7[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Wed Jul 2 04:00:01 2025 +0000
+
+    feat: Smart game fetching system with heuristic user discovery
+    
+    - Add smart_user_helper.py: Intelligent user discovery across platforms
+      - Multi-platform support (Lichess, Chess.com)
+      - Skill-level filtering (beginner, intermediate, advanced, expert)
+      - Game type filtering (bullet, blitz, rapid, classical)
+      - Intelligent caching with TTL
+      - Robust error handling and rate limiting
+      - Export to multiple formats (JSON, CSV, TXT)
+    
+    - Add smart_random_games_fetcher.py: Parallel quality-filtered game fetching
+      - Uses smart user discovery for diverse game sources
+      - Parallel downloading with duplicate detection
+      - Quality filters (minimum moves, rating ranges)
+      - PGN and metadata export
+      - Configurable output directories
+    
+    - Enhanced run_pipeline.sh with smart fetching integration:
+      - get_games: Smart mode by default with legacy fallback
+      - get_random_games: Uses smart discovery algorithms
+      - Comprehensive parameter parsing and help system
+      - Platform selection (lichess, chess.com, both)
+      - Skill level targeting and game type filtering
+    
+    - Updated version to v0.1.61 and README documentation
+
+[33mcommit 14b2bc55d48d280f044e407a8f3d5a8d7d8a9b27[m
+Merge: 77e69bc 0261fb2
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Tue Jul 1 07:08:29 2025 +0000
+
+    Merge remote-tracking branch 'origin/main'
+
+[33mcommit 77e69bcd12b4b5bc35ab5e6941b5b80296569d61[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Tue Jul 1 06:56:35 2025 +0000
+
+    refactor: Optimize Git LFS configuration for efficiency
+    
+    🔧 Git LFS Optimization:
+    - Remove compressed files (*.zip, *.gz, *.tar) from LFS tracking
+    - Keep only essential files in LFS: models (*.pkl, *.h5, *.joblib), datasets (*.parquet, *.csv), and large notebooks (*.ipynb >1MB)
+    - Add .gitignore rules for large compressed files
+    
+    📚 Documentation Updates:
+    - Update Git LFS guides (English & Spanish) with optimized configuration
+    - Add best practices section for dataset management
+    - Clarify when to use LFS for notebooks (>1MB threshold)
+    - Add recommendations for external data sources (Lichess/Chess.com APIs)
+    
+    🗂️ Repository Cleanup:
+    - Remove 13 large .zip files from repository (~50MB saved)
+    - Optimized .gitattributes for essential files only
+    - Better separation between versioned code and external datasets
+    
+    ✅ Benefits:
+    - Faster repository cloning and pulling
+    - Reduced LFS storage costs
+    - Cleaner repository structure
+    - Better performance for collaborative development
+
+[33mcommit 0261fb2284bd9ec9676546f8b3bdab847f0acd35[m
+Merge: 6512668 828e1b2
+Author: CMES Software (by Sergio Salanitri) <101049943+cmessoftware@users.noreply.github.com>
+Date:   Tue Jul 1 06:43:04 2025 +0000
+
+    Merge pull request #65 from cmessoftware/62-compartir-datasets-ente-containers
+    
+    62 compartir datasets ente containers
+
+[33mcommit 828e1b245e7ba7aa5b8d047f7106fd57864e8309[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Tue Jul 1 03:41:19 2025 -0300
+
+    auto-update version to v0.1.59-6f5b61a
+
+[33mcommit 6f5b61a5c5e0837e883eb309c40f701ec22a74b3[m
+Merge: 3cbd05f 5a80b1b
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Tue Jul 1 03:41:08 2025 -0300
+
+    merge: resolve conflicts between documentation reorganization and remote updates
+    
+    - Resolved version conflicts: kept v0.1.55-73404eb (newer)
+    - Maintained documentation reorganization structure:
+      * README.md = comprehensive documentation
+      * VERSION_BASE.md = quick start guide
+      * README_es.md = comprehensive Spanish documentation
+      * VERSION_BASE_es.md = Spanish quick start guide
+    - Integrated remote PostgreSQL optimizations and Docker enhancements
+    - Preserved unified Docker management via build_up_clean_all.ps1
+    - Combined both development streams successfully
+
+[33mcommit 858dcffda2ac6620a4b196f2b5d9e4e9a6bd07a6[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Tue Jul 1 06:31:50 2025 +0000
+
+    feat: Add comprehensive Git LFS configuration and Docker optimization
+    
+    🔧 Configuration Updates:
+    - Add complete Git LFS setup guides (English & Spanish)
+    - Update README files with documentation links
+    - Optimize dockerfile.notebooks for full repository access
+    - Configure docker-compose.yml for Git LFS workflow
+    
+    📚 Documentation Added:
+    - GIT_LFS_SETUP_GUIDE.md - Complete LFS configuration guide
+    - GIT_LFS_SETUP_GUIDE_es.md - Spanish version
+    - DOCKER_NOTEBOOKS_CONFIG.md - Docker container configuration
+    - configure_git_lfs.sh - Automated LFS setup script
+    
+    🐳 Docker Improvements:
+    - WORKDIR updated to /chess_trainer for full repo access
+    - Git LFS pre-installed and configured
+    - Automatic LFS file pulling on container start
+    - Enhanced volume mapping for datasets and notebooks
+    
+    📁 Repository Structure:
+    - All large files (*.zip, *.pkl, *.ipynb) managed via Git LFS
+    - Proper .gitattributes configuration for file tracking
+    - Optimized for collaborative development workflow
+    
+    ✅ Ready for production deployment with efficient Git LFS workflow
+
+[33mcommit 3a9c1bc00a34ab54303db2d76932f2472c8aafb2[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Tue Jul 1 06:20:40 2025 +0000
+
+    feat: Complete comprehensive EDA analysis with statistical validation and ML recommendations
+    
+    - Added exhaustive exploratory data analysis of chess dataset (9,290 moves)
+    - Implemented statistical validation (Kruskal-Wallis, Chi-square tests)
+    - Documented patterns by game phase (Opening/Middlegame/Endgame)
+    - Created ML-ready features and preprocessing pipeline
+    - Added personalized training recommendations by player level
+    - Consolidated insights and next steps for ML implementation
+    - Ready for production ML models and personalized chess training systems
+
+[33mcommit 3cbd05fa82d365a14ee7e45e4fda867770520e59[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Tue Jul 1 00:42:25 2025 -0300
+
+    auto-update version to v0.1.55-73404eb
+
+[33mcommit 73404ebc20edf9de5e90c3803ae0e7bd074bd682[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Tue Jul 1 00:42:17 2025 -0300
+
+    docs: add task completion summary and remove temporary files
+    
+    - Added TASK_COMPLETION_SUMMARY.md documenting all changes made
+    - Removed temporary VERSION_BASE_es_new.md file (content already in VERSION_BASE_es.md)
+    - Cleaned up workspace from temporary working files
+    - Final state: clean project structure with unified documentation
+
+[33mcommit 806393873d277e198820273ad775b852e724d0ed[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Tue Jul 1 00:32:09 2025 -0300
+
+    auto-update version to v0.1.53-eee7cc4
+
+[33mcommit eee7cc4407943a52ef1ceca363b72ff9c8d84b26[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Tue Jul 1 00:32:00 2025 -0300
+
+    feat: complete documentation reorganization and Docker unification
+    
+    - Documentation restructure:
+      * README.md and README_es.md now contain comprehensive documentation
+      * VERSION_BASE.md and VERSION_BASE_es.md now contain quick start guides
+      * Updated all cross-references to reflect new structure
+      * Ensured consistent versioning across all documentation
+    
+    - Docker management unification:
+      * Consolidated all Docker scripts into build_up_clean_all.ps1 for Windows
+      * Removed redundant Linux/macOS scripts (build_app.sh, build_notebooks.sh, run_tests.sh)
+      * Enhanced PowerShell script with build, start, clean, backup, and status features
+      * Removed backup_docker_images.ps1 (functionality integrated into main script)
+    
+    - Version management:
+      * Improved commit_version.ps1 for automated version updates
+      * VERSION file auto-updated via post-commit hook
+      * Consistent version numbering: v0.1.51-7633ef4
+    
+    - Project cleanup:
+      * Removed redundant scripts and temporary files
+      * Streamlined Windows-only development environment
+      * Improved project structure and documentation consistency
+    
+    This completes the unification and reorganization of the chess_trainer project for Windows development.
+
+[33mcommit 6512668d52d0c12dc4f6a41dd1f59b55c8744d9c[m
+Merge: 9cb3c0a 5a80b1b
+Author: CMES Software (by Sergio Salanitri) <101049943+cmessoftware@users.noreply.github.com>
+Date:   Tue Jul 1 02:57:51 2025 +0000
+
+    Merge pull request #64 from cmessoftware/62-compartir-datasets-ente-containers
+    
+    62 compartir datasets ente containers
+
+[33mcommit 5a80b1bf27def5db63afb9170a06ad625b806482[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Tue Jul 1 02:57:03 2025 +0000
+
+    auto-update version to v0.1.53-3512f2d
+
+[33mcommit 3512f2d245933850e987a0caded485e70dd7cf0e[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Tue Jul 1 02:56:49 2025 +0000
+
+    Major system updates: PostgreSQL optimization, Docker enhancements, and comprehensive testing
+    
+    ### Database & Infrastructure
+    - Optimized PostgreSQL configuration and database utilities
+    - Enhanced Docker Git LFS support with proper gnupg installation
+    - Updated requirements across all environments (app, notebooks, tests)
+    - Improved pipeline scripts and database management tools
+    
+    ### Documentation & Localization
+    - Updated CHANGELOG.md with comprehensive version history through v0.1.43
+    - Enhanced Spanish documentation (architecture_es.md, VERSION_BASE_es.md)
+    - Added comprehensive dataset volume configuration guides
+    - Created Windows setup guide and Git LFS setup documentation
+    
+    ### Testing & Quality Assurance
+    - Enhanced test suite with PostgreSQL migration support
+    - Updated test configuration and reporting systems
+    - Improved test runners and documentation (README.md, README_es.md)
+    - Added comprehensive test reports and analysis tools
+    
+    ### Features & Scripts
+    - Enhanced feature generation with improved parallel processing
+    - Updated elite pipeline and exercise generation scripts
+    - Improved UI components (elite_explorer, elite_stats, export_exercises)
+    - Enhanced pipeline helper utilities and SQL management
+    
+    ### DevOps & Management
+    - Added Docker management scripts (manage-docker.ps1/.bat)
+    - Enhanced version management and commit automation
+    - Improved build and deployment scripts
+    - Updated test report generation and analysis tools
+    
+    Resolves multiple issues related to PostgreSQL migration, Docker optimization,
+    and comprehensive testing framework implementation.
+
+[33mcommit 740213974f16c4018d359a9028feb5528f2972d7[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Mon Jun 30 19:18:12 2025 -0300
+
+    auto-update version to v0.1.51-7633ef4
+    
+    - Update VERSION and README.md with latest version
+    - Add commit_version.ps1 script for manual version commits
+    - Simplify post-commit hook to avoid auto-commit issues
+
+[33mcommit 7633ef4d7adaf93f630636a038cb7e7d3e6fb9c0[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Mon Jun 30 19:16:17 2025 -0300
+
+    test: verify automatic version update functionality
+    
+    - Add test file to trigger post-commit hook
+    - Test automatic VERSION and README.md updates
+    - Verify auto-commit functionality works without infinite loops
+
+[33mcommit 8b81b8041102a09c11d7be285b6d7504b7a1d782[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Mon Jun 30 17:48:40 2025 -0300
+
+    fix: improve version management system
+    
+    - Fixed post-commit hook to avoid git cycles
+    - Hook now only updates VERSION file automatically
+    - Added manual version update scripts:
+      - update_version.sh (Linux/macOS)
+      - update_version.ps1 (Windows PowerShell)
+    - Prevents perpetual uncommitted files issue
+    
+    Usage for manual version updates:
+    Windows: .\update_version.ps1
+    Linux/macOS: ./update_version.sh
+
+[33mcommit e9532e565198efab0357a7cbdedbab352002f07e[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Mon Jun 30 17:40:35 2025 -0300
+
+    fix: resolve post-commit hook infinite loop
+    
+    - Fix stray 'B' character causing command not found error
+    - Add loop detection to prevent infinite version commits
+    - Auto-commit version changes with --no-verify flag
+    - Ensure clean working directory after version updates
+    
+    This fixes the issue where VERSION and README.md files were always
+    left uncommitted after each commit due to post-commit hook modifications.
+
+[33mcommit 8b32ca243886253efe8015a0400990e05a17a15c[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Mon Jun 30 17:36:36 2025 -0300
+
+    chore: update version to v0.1.47-aa53f1f
+
+[33mcommit aa53f1fd2b09c406c50465a67b2cec6e6e63e651[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Mon Jun 30 17:36:11 2025 -0300
+
+    chore: update version to v0.1.46-716f841
+    
+    - Automatic version update from post-commit hook
+    - Update README.md with new version number
+
+[33mcommit 716f8413794c0f56c322c274fbe3e22fecdba15f[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Mon Jun 30 17:29:10 2025 -0300
+
+    docs: enhance PowerShell script benefits across all documentation
+    
+    - Add comprehensive benefits sections for build_up_clean_all.ps1
+    - Update README.md and README_es.md with Docker setup and PowerShell automation benefits
+    - Enhance DATASETS_VOLUMES_CONFIG.md/.es.md with dataset-specific benefits
+    - Add Docker prerequisites to tests/README.md/.es.md
+    - Improve VERSION_BASE.md/.es.md with additional benefit: Time Saving
+    - Ensure consistent cross-platform documentation with Windows-native support
+    
+    Benefits highlighted:
+    • Single command setup for complete environment
+    • Windows native support without Unix permission requirements
+    • Automatic cleanup for disk optimization
+    • Service integration and background operation
+    • Error prevention through automation
+    • Data persistence and cross-container access
+    
+    Fixes #62
+
+[33mcommit 51c98116d7dd448667c92ede23472e1600b582d6[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Mon Jun 30 17:27:17 2025 -0300
+
+    docs: Add comprehensive PowerShell script benefits documentation
+    
+    - Enhanced README.md and README_es.md with Docker setup section and PowerShell automation benefits
+    - Added detailed benefits section to DATASETS_VOLUMES_CONFIG.md and DATASETS_VOLUMES_CONFIG_es.md for dataset management
+    - Included Docker prerequisites in tests/README.md and tests/README_es.md
+    - Improved cross-platform workflow documentation with emphasis on Windows PowerShell automation
+    - Added benefits covering environment setup, volume management, cleanup automation, and error reduction
+    
+    Provides clear documentation for Windows users on automated Docker workflow benefits.
+
+[33mcommit 9cb3c0a7908193196f6d67c58d4b73b238bcfabc[m
+Merge: fc883eb 0c42e8d
+Author: CMES Software (by Sergio Salanitri) <101049943+cmessoftware@users.noreply.github.com>
+Date:   Mon Jun 30 20:16:12 2025 +0000
+
+    Merge pull request #63 from cmessoftware/62-compartir-datasets-ente-containers
+    
+    62 compartir datasets ente containers
+
+[33mcommit 0c42e8ddc7cccb762840dc8a39f7261a8993af38[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Mon Jun 30 17:13:45 2025 -0300
+
+    Add comprehensive CHANGELOG.md with project history
+    
+    - Created detailed changelog following Keep a Changelog format
+    - Added complete version history from git log analysis (v0.1 to v0.1.43)
+    - Included major releases with commit references and dates
+    - Organized recent development by feature categories:
+      * Dataset and Source Management
+      * Infrastructure and DevOps
+      * Documentation and Localization
+    - Added technical details (commit hashes, issue references, authors)
+    - Provides clear project evolution timeline for stakeholders
+
+[33mcommit 6f8d69b6fa66173cf4e4e13d385fc061fef7ca02[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Mon Jun 30 15:06:47 2025 -0300
+
+    Enhance documentation structure and organization
+    
+    Fixes #62 - Comprehensive documentation improvements:
+    
+    - Restructured VERSION_BASE files with documentation index replacing requirements section
+    - Added automatic Docker installation references (Dockerfile, docker-compose.yml)
+    - Created missing Spanish language versions:
+      * src/architecture_es.md - System architecture in Spanish
+      * tests/README_es.md - Complete testing guide in Spanish
+      * DATASETS_VOLUMES_CONFIG_es.md - Docker volumes configuration in Spanish
+    - Organized documentation into logical sections (Core, Configuration, Architecture, Testing, Reports)
+    - Removed #MIGRATED-TODO keys from English version to prevent duplicate issues
+    - Maintained #MIGRATED-TODO keys only in Spanish version for create_issues script
+    - Enhanced cross-references between English and Spanish documentation versions
+
+[33mcommit e6619b76754d521faf6fcfb4421342b442539d79[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Mon Jun 30 14:32:49 2025 -0300
+
+    Fix Docker build: Remove pytest packages from apt-get install
+    
+    Fixes #62 - pytest and pytest-mock are Python packages that should be installed via pip, not apt-get. Removed them from the system package installation step as they're already included in requirements.txt.
+
+[33mcommit cf74382bd2631df44c7662c67d3e747b51c711f9[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Mon Jun 30 17:07:28 2025 +0000
+
+    Update version after successful push
+
+[33mcommit 34067a20378b34ba22272219593ceb2da224d385[m
+Merge: 39d83df ee2a7ba
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Mon Jun 30 17:06:58 2025 +0000
+
+    Merge Git LFS configuration and selective volume sharing
+    
+    - Merged Docker Git LFS support configuration
+    - Resolved conflicts keeping latest Git LFS setup
+    - Maintains selective dataset sharing between containers
+
+[33mcommit ee2a7ba0e82c6f53a3a4183dae51e97f1538234c[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Mon Jun 30 17:05:15 2025 +0000
+
+    Update version and README after Git LFS configuration
+
+[33mcommit 0b181737790d95446b867eae105d50b4335ff03c[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Mon Jun 30 17:04:52 2025 +0000
+
+    Add Docker Git LFS support and selective volume sharing configuration
+    
+    - Updated dockerfile and dockerfile.notebooks with proper Git LFS installation
+    - Added gnupg package for GPG verification during LFS setup
+    - Created comprehensive documentation for dataset volume sharing
+    - Added Windows setup guide and LFS usage documentation
+    - Updated docker-compose.yml for selective export/models sharing
+    - Enhanced .gitattributes for comprehensive LFS file tracking
+
+[33mcommit 39d83dfc6b4fdc0c51808b5ed564df44852ac09d[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Mon Jun 30 02:44:34 2025 +0000
+
+    #62 docker-compose.yml modification to allow shared volumes between containers
+
+[33mcommit fc883eb3157b317fe4c27d5532c69863ef19dc8e[m
+Merge: 1bb59c4 7de0523
+Author: CMES Software (by Sergio Salanitri) <101049943+cmessoftware@users.noreply.github.com>
+Date:   Mon Jun 30 01:42:48 2025 +0000
+
+    Merge pull request #61 from cmessoftware/59-add-source-parameter-support-in-analyze_tactics-process
+    
+    #59 add source parameter in generation features and associated tests
+
+[33mcommit 7de052385b3f5a6b67654387f73044c98227cc05[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Mon Jun 30 01:41:36 2025 +0000
+
+    #59 add source parameter in generation features and associated tests
+
+[33mcommit 1bb59c4272a8b8b329dda3f162cf8e2587132be4[m
+Merge: 3190cff 73f9737
+Author: CMES Software (by Sergio Salanitri) <101049943+cmessoftware@users.noreply.github.com>
+Date:   Sun Jun 29 09:23:28 2025 +0000
+
+    Merge pull request #58 from cmessoftware/56-adaptar-generate_features-para-que-se-pueda-generar-por-source
+    
+    #56 fix en fallo de control de max-games
+
+[33mcommit 73f9737fe42dd5372abc96348901d0b43d5a1816[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sun Jun 29 09:22:38 2025 +0000
+
+    #56 fix en fallo de control de max-games
+
+[33mcommit 3190cfff02e73fe1b9d90421f81d7dd14dff4639[m
+Merge: de43ae7 efde664
+Author: CMES Software (by Sergio Salanitri) <101049943+cmessoftware@users.noreply.github.com>
+Date:   Sun Jun 29 08:09:33 2025 +0000
+
+    Merge pull request #57 from cmessoftware/56-adaptar-generate_features-para-que-se-pueda-generar-por-source
+    
+    #56 add filter by source in generate_feature process
+
+[33mcommit efde66434af50fede5f37442718f3f9cbe684f35[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sun Jun 29 08:08:27 2025 +0000
+
+    #56 add filter by source in generate_feature process
+
+[33mcommit de43ae76204331e06f7cee5410cd0f29d1f64ea4[m
+Merge: 5007a89 41073a3
+Author: CMES Software (by Sergio Salanitri) <101049943+cmessoftware@users.noreply.github.com>
+Date:   Sun Jun 29 06:54:00 2025 +0000
+
+    Merge pull request #55 from cmessoftware/14-implementar-tests-unitarios-para-analyze_tactics
+    
+    14 implementar tests unitarios para analyze tactics
+
+[33mcommit 41073a3b2ee62689a1ff878a5968ad6b48fb9dbd[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sun Jun 29 06:53:25 2025 +0000
+
+    requirements.txt con todas las referencias (app y notebooks mas tests)
+
+[33mcommit 24ddd701217dac9087189f70e882d1ff0a374289[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sun Jun 29 06:44:58 2025 +0000
+
+    Agrego test para analyze_tacticals_parallel y se migra todo a Postgress
+
+[33mcommit df45d4ffb082eec870ceaf4b5f83f4e7740a1241[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sun Jun 29 06:44:37 2025 +0000
+
+    Agrego test para analyze_tacticals_parallel y se migra todo a Postgress
+
+[33mcommit 103549c8b4d6efa36ee58fa5a19a45832e8a6a79[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sun Jun 29 02:15:40 2025 +0000
+
+    mejoras y fixes del paso de pipeline analyze_tactics
+
+[33mcommit a64124c908b6c5e9afd050aef79e105d56263890[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Thu Jun 26 19:02:44 2025 -0300
+
+    Configuro Git LFS para partidas procesadas
+
+[33mcommit ad498eeca650da25edfb6b3d63734ca83e73e9e0[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Thu Jun 26 18:54:51 2025 -0300
+
+    Configuro Git LFS para archivos grandes
+
+[33mcommit 5007a89dd44dde3a3c3575f2812f5a2fdc815a14[m
+Merge: d642d3c d5aa4b2
+Author: CMES Software (by Sergio Salanitri) <101049943+cmessoftware@users.noreply.github.com>
+Date:   Tue Jun 24 16:23:08 2025 +0000
+
+    Merge pull request #53 from cmessoftware/14-implementar-tests-unitarios-para-analyze_tactics
+    
+    Improve  analyze_tactics process
+
+[33mcommit d5aa4b2cc8de19e865628f819959a9df36bb65bd[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Tue Jun 24 13:20:04 2025 -0300
+
+    Improve  analyze_tactics process
+
+[33mcommit d642d3c2346a3468eca73811c9135bfd9357c9d0[m
+Merge: d416a0e f9d0260
+Author: CMES Software (by Sergio Salanitri) <101049943+cmessoftware@users.noreply.github.com>
+Date:   Fri Jun 20 20:36:40 2025 +0000
+
+    Merge pull request #18 from cmessoftware/8-implementar-soporte-para-multiples-datasets
+    
+    issue #8 resuelto
+
+[33mcommit f9d0260bfa0006bd01431ea7a7f10ca84cb4c2a1[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Fri Jun 20 20:34:06 2025 +0000
+
+    issue #8 resuelto
+
+[33mcommit d416a0eeb62723dbc3b6e14d627d3054b3347abd[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Mon Jun 16 14:15:29 2025 +0000
+
+    draft gen de estudios, import estudio lichess, notebook para ml de datasets
+
+[33mcommit 0d648827a6baa89db3fdb64ed8a6cab90c1030b5[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sat Jun 14 06:16:11 2025 +0000
+
+    new_version
+
+[33mcommit c7d2bb704ad28a797cf4be2fbb697cb1bc1eea17[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sat Jun 14 06:14:52 2025 +0000
+
+    rebase chess_trainer.db
+
+[33mcommit b645f5dbdacee83e8be5776ba61007bd7b85a931[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sat Jun 14 06:14:33 2025 +0000
+
+    rebase chess_trainer.db
+
+[33mcommit ac9ee9d39768577abdc1c38778c98842f76900d6[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sat Jun 14 06:14:08 2025 +0000
+
+    rebase chess_trainer.db
+
+[33mcommit 7968966166ad2b7f14f00b1e8a04975b1913ad11[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sat Jun 14 05:41:34 2025 +0000
+
+    Scripts para generar issues,para exportar features a formato parquet y notebook basico de eda
+
+[33mcommit f24ed65733ec4b02c944d3f08c5385a608f745d4[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sat Jun 14 05:40:04 2025 +0000
+
+    Scripts para generar issues,para exportar features a formato parquet y notebook basico de eda
+
+[33mcommit 0ad84bb9ba585100854857fe883e463dab11e6a7[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Fri Jun 13 22:36:50 2025 +0000
+
+    Soporte para generate_features y analysis_tacticals resuelto
+
+[33mcommit af04eec74c86b56245f246b4cde6e9e3a3c6a502[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Tue Jun 10 04:01:37 2025 +0000
+
+    generate_feature implementation using sqlarchemy and postgres
+
+[33mcommit c655f0cbbde563fd729c2763a65fef026a88653b[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sat Jun 7 22:36:52 2025 +0000
+
+    uso de alembic para migrsations, se mejora performance de imprtación con  import_games_parallel
+
+[33mcommit c5ed1bfdb3161eb55d47276ed35f0915fc3c0f8a[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sat Jun 7 01:40:56 2025 +0000
+
+    migrado de import_games a modelo sqlalchemy
+
+[33mcommit 921e230a95e9ef2fb5d70123c6415b98fa719b91[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sat Jun 7 01:38:33 2025 +0000
+
+    migrado de import_games a modelo sqlalchemy
+
+[33mcommit dae0da859c8a03bec81734904ca4f5469fc0736c[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Fri Jun 6 18:11:35 2025 +0000
+
+    version que implementa auto tagging usando postgress
+
+[33mcommit 4d2be60faab4feed5e82f38232b61f67b4a6c7f2[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Fri Jun 6 18:11:02 2025 +0000
+
+    version que implementa auto tagging usando postgress
+
+[33mcommit e06f1b021c6faf913122f5006c480625270cb26d[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Fri Jun 6 18:07:12 2025 +0000
+
+    version que accede a games en postgress
+
+[33mcommit cb3eac2cba1e6121ac6fc8e881caaf4d16f33c7f[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Fri Jun 6 13:32:16 2025 +0000
+
+    Release v0.2 - Generación dataset, exercisio, analisis táctico
+
+[33mcommit c2ae005fa7b4bff5a1af12673a17a8670c5da6d8[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Fri Jun 6 08:12:11 2025 -0300
+
+    Version con primer versión de pipeline de creación de dataset y notebooks de analisis
+
+[33mcommit 7e956f146b49d34385c132925c29ea61982877cb[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sat May 31 06:15:34 2025 +0000
+
+    fixes y ajustes del run_pipeline.sh
+
+[33mcommit ed710b7fbc16f65ab0a531eaa6a9f7576c00e18f[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sat May 31 03:04:51 2025 +0000
+
+    Version con backend estable, ya generar el trainingdataset.csv
+
+[33mcommit 30f47e36cbc9d1dcc0156335199ef747c01b5624[m[33m ([m[1;33mtag: [m[1;33mv0.1[m[33m)[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sat May 31 02:59:32 2025 +0000
+
+    Version con backend estable, ya generar el trainingdataset.csv
+
+[33mcommit ea60ad5c5461fdc3953c4b9cdd4b42427f87590d[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Sat May 31 02:57:59 2025 +0000
+
+    Version con backend estable, ya generar el trainingdataset.csv
+
+[33mcommit 284cda769bdc4c27488ad3fdd6c634403ab5fba2[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Tue May 27 16:23:19 2025 +0000
+
+    🔥 Remove Stockfish binary from repo, add to .gitignore
+
+[33mcommit 6aa6c857c00b7f6f06f83ab00b2ef1c0f6be46e8[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Tue May 27 07:12:58 2025 +0000
+
+    version base para testear, ver READMEs
+
+[33mcommit aaa012476f6b17748b66a15e8218f04fb6a9146a[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Wed May 21 07:52:29 2025 +0000
+
+    version inicial
+
+[33mcommit 3dfa57faed122b57d53c497242f3ab040d0d993b[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Thu May 8 14:06:20 2025 +0000
+
+    add basic report to stockfish analysis
+
+[33mcommit 530d51f379eb764730d9c2a55cd742d866e0fdb6[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Thu May 8 14:05:45 2025 +0000
+
+    add basic report to stockfish analysis
+
+[33mcommit 972ad26cd20a1987b9ec4c95b1f2b8bc27fc7ca8[m
+Author: Sergio Salanitri <cmessoftware@gmail.com>
+Date:   Wed May 7 03:11:55 2025 +0000
+
+    inital version with basic stockfish analysis
+
+[33mcommit 8507378802077ec1c39baa21ef48033d8f18c6f1[m
+Author: CMES Software (by Sergio Salanitri) <101049943+cmessoftware@users.noreply.github.com>
+Date:   Sun May 4 17:54:05 2025 -0300
+
+    Initial commit
