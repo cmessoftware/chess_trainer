@@ -1,6 +1,0 @@
-artifact_location: mlflow-artifacts:/987244418550162584
-creation_time: 1770068784312
-experiment_id: '987244418550162584'
-last_update_time: 1770068784312
-lifecycle_stage: active
-name: chess_model_retraining_11658_games
