@@ -205,6 +205,149 @@ class MoveValidationResponse(BaseModel):
 
 
 # =======================================
+# MODELOS DE CONTRATOS PGN/API BASE
+# =======================================
+
+
+class PgnUploadResponse(BaseModel):
+    """Respuesta al subir archivo PGN/ZIP/GZ"""
+
+    jobId: str
+    filename: str
+    size: int
+    status: str
+    estimatedGames: int
+
+
+class PgnUploadJobStatus(BaseModel):
+    """Estado de un job de upload"""
+
+    id: str
+    filename: str
+    original_filename: Optional[str] = None
+    file_path: Optional[str] = None
+    size: int
+    source: str
+    imported_by: Optional[str] = None
+    status: str
+    uploaded_at: Optional[str] = None
+    estimated_games: int
+
+
+class PgnUploadsListResponse(BaseModel):
+    """Listado de uploads"""
+
+    uploads: List[PgnUploadJobStatus]
+    total: int
+
+
+class PgnBatchImportRequest(BaseModel):
+    """Request para importación batch de PGN"""
+
+    fileIds: List[str]
+    source: str = "personal"
+
+
+class PgnBatchImportResponse(BaseModel):
+    """Respuesta al encolar importación batch"""
+
+    jobId: str
+    status: str
+    totalFiles: int
+    estimatedGames: int
+
+
+class PgnPreviewGame(BaseModel):
+    """Preview de partida PGN"""
+
+    white: str
+    black: str
+    result: str
+    date: str
+
+
+class PgnPreviewResponse(BaseModel):
+    """Respuesta de preview de archivo"""
+
+    games: List[PgnPreviewGame]
+    total_shown: int
+    filename: str
+
+
+class PgnImportHistoryJob(BaseModel):
+    """Entrada de historial de upload/import"""
+
+    id: str
+    type: str
+    status: str
+    source: Optional[str] = None
+    filename: Optional[str] = None
+    file_ids: Optional[List[str]] = None
+    files: Optional[List[str]] = None
+    uploaded_at: Optional[str] = None
+    started_at: Optional[str] = None
+    completed_at: Optional[str] = None
+    total_files: Optional[int] = None
+    processed_files: Optional[int] = None
+    estimated_games: Optional[int] = None
+    imported_games: Optional[int] = None
+    error: Optional[str] = None
+
+
+class PgnImportHistoryResponse(BaseModel):
+    """Respuesta paginada de historial"""
+
+    jobs: List[PgnImportHistoryJob]
+    total: int
+    page: int
+    limit: int
+    totalPages: int
+
+
+class PgnUploadStats(BaseModel):
+    """Estadísticas de upload"""
+
+    total: int
+    completed: int
+    success_rate: float
+
+
+class PgnImportStats(BaseModel):
+    """Estadísticas de importación"""
+
+    total: int
+    completed: int
+    success_rate: float
+
+
+class PgnGamesStats(BaseModel):
+    """Estadísticas de partidas"""
+
+    estimated: int
+    imported: int
+
+
+class PgnImportStatsResponse(BaseModel):
+    """Respuesta de estadísticas consolidadas"""
+
+    uploads: PgnUploadStats
+    imports: PgnImportStats
+    games: PgnGamesStats
+
+
+class PersonalPgnImportResponse(BaseModel):
+    """Respuesta de importación personal directa"""
+
+    success: bool
+    filename: str
+    imported: int
+    skipped: int
+    batch_id: str
+    username: str
+    message: str
+
+
+# =======================================
 # MODELOS DE LOGGING
 # =======================================
 

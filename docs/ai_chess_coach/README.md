@@ -4,7 +4,11 @@
 
 This directory contains the active technical documentation for the **ChessInsightAI** AI Chess Coach project.
 
-The documentation has been reorganized into domain-based sections so implementation, roadmap, testing, operations, observability, and research stay clearly separated.
+The architecture baseline is **Core + Extensions**:
+
+- `ai_chess_coach` is the product and technical core.
+- UI, API/FastAPI, observability, deployment, and research are extension/satellite modules around the core.
+- The analysis engine (ML + AI + chess evidence orchestration) is a standalone module that can be consumed by any presentation channel.
 
 ## Documentation Structure
 
@@ -44,9 +48,9 @@ Definition of Done for requirement changes:
 ## Recommended Reading
 
 ### Getting Started
-1. [`architecture/03-consolidated-architecture.md`](architecture/03-consolidated-architecture.md) — consolidated system view and logical flow
-2. [`architecture/01-folder-structure.md`](architecture/01-folder-structure.md) — target documentation tree and domain taxonomy
-3. [`modules/01-module-taxonomy.md`](modules/01-module-taxonomy.md) — implementation domains and submodules
+1. [`../core-and-extensions-architecture.md`](../core-and-extensions-architecture.md) — project-level core-first architecture and extension boundaries
+2. [`architecture/03-consolidated-architecture.md`](architecture/03-consolidated-architecture.md) — consolidated system view and logical flow
+3. [`modules/01-module-taxonomy.md`](modules/01-module-taxonomy.md) — core and extension module taxonomy
 
 ### Planning and Delivery
 1. [`roadmap/01-phase-roadmap.md`](roadmap/01-phase-roadmap.md) — phased roadmap and exit criteria
@@ -71,22 +75,21 @@ Definition of Done for requirement changes:
 ## Logical Flow
 
 ```text
-PGN -> Core Engine -> ML Evaluation -> Orchestration Planner -> Executor -> Critic Validation -> RAG Retrieval -> LLM Explanation -> API/UI Report
+PGN -> Core Analysis Engine -> Evidence Fusion -> Analysis Contract -> Extension Adapter (API/UI/Batch)
 ```
 
 ## Implementation Domains
 
 ```text
-01-core-engine
-02-ml
-03-orchestration
-04-rag-llm
-05-api
-06-ui
-07-observability
-08-devops
-09-testing
-10-research
+core-analysis
+core-orchestration
+core-contracts
+ext-api-fastapi
+ext-ui
+ext-observability
+ext-devops
+ext-testing
+ext-research
 ```
 
 ## Governance Rules

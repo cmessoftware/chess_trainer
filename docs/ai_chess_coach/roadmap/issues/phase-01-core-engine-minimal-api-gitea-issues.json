@@ -1,0 +1,111 @@
+{
+    "phase": "01",
+    "openspec_change": "phase-01-core-engine-minimal-api-baseline",
+    "issues": [
+        {
+            "key": "P1-EPIC-CORE-API",
+            "type": "parent",
+            "title": "[PHASE-01][EPIC] Core-engine + minimal API baseline and closure",
+            "labels": [
+                "domain:core-engine",
+                "domain:api",
+                "type:feature",
+                "priority:p1",
+                "status:in-progress",
+                "cross-cutting"
+            ],
+            "metadata": {
+                "alias": "APIV",
+                "domain": "core-engine/api",
+                "phase": "01",
+                "owner": "TBD"
+            },
+            "children": [
+                "P1-CH-01",
+                "P1-CH-02",
+                "P1-CH-03",
+                "P1-CH-04"
+            ]
+        },
+        {
+            "key": "P1-CH-01",
+            "type": "child",
+            "parent": "P1-EPIC-CORE-API",
+            "feat": "01-FEAT-1",
+            "title": "[PHASE-01][FEAT-1] Formalizar contratos PGN y API base",
+            "labels": [
+                "domain:api",
+                "domain:core-engine",
+                "type:feature",
+                "priority:p1",
+                "status:in-progress"
+            ],
+            "metadata": {
+                "alias": "APIV",
+                "domain": "api",
+                "phase": "01",
+                "owner": "TBD"
+            }
+        },
+        {
+            "key": "P1-CH-02",
+            "type": "child",
+            "parent": "P1-EPIC-CORE-API",
+            "feat": "01-FEAT-2",
+            "title": "[PHASE-01][FEAT-2] Definir pipeline minimo estable de analisis",
+            "labels": [
+                "domain:core-engine",
+                "domain:orchestration",
+                "type:feature",
+                "priority:p1",
+                "status:blocked"
+            ],
+            "metadata": {
+                "alias": "ORPL",
+                "domain": "core-engine/orchestration",
+                "phase": "01",
+                "owner": "TBD"
+            }
+        },
+        {
+            "key": "P1-CH-03",
+            "type": "child",
+            "parent": "P1-EPIC-CORE-API",
+            "feat": "01-FEAT-3",
+            "title": "[PHASE-01][FEAT-3] Endurecer validacion de entradas PGN",
+            "labels": [
+                "domain:api",
+                "domain:data",
+                "type:feature",
+                "priority:p1",
+                "status:blocked"
+            ],
+            "metadata": {
+                "alias": "APIV",
+                "domain": "api/data",
+                "phase": "01",
+                "owner": "TBD"
+            }
+        },
+        {
+            "key": "P1-CH-04",
+            "type": "child",
+            "parent": "P1-EPIC-CORE-API",
+            "feat": "01-FEAT-4",
+            "title": "[PHASE-01][FEAT-4] Cubrir endpoints base con pruebas automatizadas",
+            "labels": [
+                "domain:testing",
+                "domain:api",
+                "type:test",
+                "priority:p1",
+                "status:blocked"
+            ],
+            "metadata": {
+                "alias": "APIV",
+                "domain": "testing/api",
+                "phase": "01",
+                "owner": "TBD"
+            }
+        }
+    ]
+}

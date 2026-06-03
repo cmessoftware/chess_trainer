@@ -1,6 +1,0 @@
-artifact_location: mlflow-artifacts:/640025302188686628
-creation_time: 1770132633904
-experiment_id: '640025302188686628'
-last_update_time: 1770132633904
-lifecycle_stage: active
-name: chess_model_SMOTE_PARTIAL_v1
