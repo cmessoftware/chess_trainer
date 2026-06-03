@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 # CHESS TRAINER - Versión: v0.1.248-dfae548
+=======
+# CHESS TRAINER - Versión: v0.1.252-5a2fc82
+>>>>>>> 42ff2e600bfe0a02f980ef597028c7e851b01cd6
 
 # chessinsightai
 

@@ -1,6 +1,0 @@
-artifact_location: mlflow-artifacts:/132739384440497285
-creation_time: 1767323848340
-experiment_id: '132739384440497285'
-last_update_time: 1767323848340
-lifecycle_stage: active
-name: chess_trainer_phase2
