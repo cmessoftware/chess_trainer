@@ -36,8 +36,8 @@ COURSE_METADATA = MetaData()
 GAMES_TABLE = Table(
     "games",
     COURSE_METADATA,
-    Column("game_id", String, primary_key=True),
-    Column("pgn", Text),
+    Column("game_id", String),
+    Column("pgn", String),
     Column("source", String),
     Column("white_player", String),
     Column("black_player", String),
@@ -52,28 +52,44 @@ GAMES_TABLE = Table(
     Column("import_batch_id", String),
     Column("source_filename", String),
     Column("imported_by", String),
+    PrimaryKeyConstraint("game_id", name="games_pkey"),
 )
 
 FEATURES_TABLE = Table(
     "features",
     COURSE_METADATA,
-    Column("game_id", String, nullable=False),
-    Column("move_number", Integer, nullable=False),
-    Column("fen", Text),
-    Column("elo", Integer),
-    Column("opening", String),
+    Column("game_id", String),
+    Column("move_number", Integer),
+    Column("player_color", Integer),
+    Column("fen", String),
+    Column("move_san", String),
+    Column("move_uci", String),
+    Column("error_label", String),
+    Column("material_balance", Float),
     Column("material_total", Float),
     Column("num_pieces", Integer),
-    Column("king_safety", Float),
-    Column("center_control", Float),
-    Column("has_castling_rights", Boolean),
-    Column("is_pawn_endgame", Boolean),
-    Column("score_cp", Integer),
-    Column("mate_in", Integer),
-    Column("depth_score_diff", Float),
-    Column("error_label", String),
+    Column("branching_factor", Integer),
+    Column("self_mobility", Integer),
+    Column("opponent_mobility", Integer),
+    Column("phase", String),
+    Column("has_castling_rights", Integer),
+    Column("move_number_global", Integer),
+    Column("is_repetition", Integer),
+    Column("is_low_mobility", Integer),
+    Column("is_center_controlled", Integer),
+    Column("is_pawn_endgame", Integer),
     Column("tags", JSON),
-    PrimaryKeyConstraint("game_id", "move_number", name="pk_features_game_move"),
+    Column("score_diff", Float),
+    Column("site", String),
+    Column("event", String),
+    Column("date", String),
+    Column("white_player", String),
+    Column("black_player", String),
+    Column("result", String),
+    Column("num_moves", Integer),
+    Column("is_stockfish_test", Boolean),
+    Column("created_at", String),
+    PrimaryKeyConstraint("game_id","move_number","player_color", name="features_pkey"),
 )
 
 GAME_COLUMNS = tuple(GAMES_TABLE.c.keys())
@@ -106,10 +122,54 @@ def create_course_engine(db_url: os.PathLike[str] | str | None = None) -> Engine
 def _normalise_rows(rows: pd.DataFrame | Iterable[dict] | None) -> list[dict]:
     if rows is None:
         return []
+
+    def _normalise_value(value):
+        if value is None:
+            return None
+
+        if isinstance(value, (dict, list, tuple, set)):
+            return value
+
+        try:
+            if pd.isna(value):
+                return None
+        except (TypeError, ValueError):
+            pass
+
+        if isinstance(value, pd.Timestamp):
+            return value.to_pydatetime()
+
+        if hasattr(value, "item") and callable(value.item):
+            try:
+                native_value = value.item()
+            except Exception:
+                native_value = value
+            else:
+                try:
+                    if pd.isna(native_value):
+                        return None
+                except (TypeError, ValueError):
+                    pass
+                return native_value
+
+        return value
+
     if isinstance(rows, pd.DataFrame):
-        frame = rows.where(pd.notnull(rows), None)
-        return frame.to_dict(orient="records")
-    return [dict(row) for row in rows]
+        records = rows.to_dict(orient="records")
+        normalised_rows = []
+        for row in records:
+            normalised_rows.append(
+                {key: _normalise_value(value) for key, value in row.items()}
+            )
+        return normalised_rows
+
+    normalised_rows = []
+    for row in rows:
+        row_dict = dict(row)
+        normalised_rows.append(
+            {key: _normalise_value(value) for key, value in row_dict.items()}
+        )
+    return normalised_rows
 
 
 def _selected_columns(table: Table, columns: Sequence[str] | None):
