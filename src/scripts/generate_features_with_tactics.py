@@ -42,10 +42,12 @@ import sys
 import time
 import traceback
 import logging
+import typer
 from datetime import datetime, timedelta
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+    
 
 # Add src to path for imports
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
@@ -53,6 +55,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from modules.features_generator import generate_features_from_game
 from modules.analyze_games_tactics import detect_tactics_from_game
 from modules.pgn_utils import get_game_id, pgn_str_to_game
+from config.tactical_analysis_config import TACTICAL_ANALYSIS_SETTINGS
 from db.repository.features_repository import FeaturesRepository
 from db.repository.games_repository import GamesRepository
 from db.repository.analyzed_tacticals_repository import Analyzed_tacticalsRepository
@@ -148,6 +151,24 @@ def process_chunk(games_chunk):
                     
                     if error:
                         logger.error(f"[ERROR] Game {game_id}: {error}")
+
+                        # For structurally invalid games (e.g., PGN without moves),
+                        # mark as processed so they do not get retried forever.
+                        lowered_error = str(error).lower()
+                        if (
+                            "failed to parse pgn" in lowered_error
+                            or "failed to generate features" in lowered_error
+                        ):
+                            try:
+                                processed_repo.mark_as_processed(game_id)
+                                logger.warning(
+                                    f"[SKIP] Marked invalid game as processed: {game_id}"
+                                )
+                            except Exception as mark_invalid_error:
+                                logger.warning(
+                                    f"[WARNING] Failed to mark invalid game as processed for {game_id}: {mark_invalid_error}"
+                                )
+
                         error_count += 1
                         continue
                     
@@ -227,7 +248,9 @@ def get_games_to_process(source=None, batch_id=None, since_minutes=None, max_gam
             SELECT g.game_id, g.pgn, g.source 
             FROM games g
             LEFT JOIN features f ON g.game_id = f.game_id
-            WHERE f.game_id IS NULL
+                        LEFT JOIN processed_features pf ON g.game_id = pf.game_id
+                        WHERE f.game_id IS NULL
+                            AND pf.game_id IS NULL
         """
         
         # Add filters
@@ -305,16 +328,32 @@ Examples:
     parser.add_argument('--offset', type=int, default=0, help='Offset for pagination')
     parser.add_argument('--workers', type=int, default=MAX_WORKERS, help='Number of parallel workers')
     parser.add_argument('--chunk-size', type=int, default=FEATURES_PER_CHUNK, help='Games per chunk')
+    parser.add_argument('--opening-threshold', type=int, default=TACTICAL_ANALYSIS_SETTINGS.get("opening_move_threshold", 6), help='Opening moves to skip (set 0 to analyze from move 1)')
+    parser.add_argument('--min-branching', type=int, default=TACTICAL_ANALYSIS_SETTINGS.get("min_branching_for_analysis", 5), help='Minimum branching factor required for analysis (set 0 to disable this skip)')
     parser.add_argument('--verbose', action='store_true', help='Enable verbose logging')
     
     args = parser.parse_args()
     
+    if args.player is None:
+        logger.info("No player filter specified, process all players (up to max-games limit)")
+        logger.info("If you want to process a specific player, use --player with the player name (e.g. --player magnus)")
+        logger.info("Do you want process all players (the process will be longer but will include all players) or specific player (e.g. --player magnus) for process specific player?")
+        logger.info("If you want to process all sources, do not specify --source or use --source all")
+        typer.confirm("Do you want to continue?", default=True, abort=True)
+        print("Continuing process...")
+
+        
+        
+        
     if args.verbose:
         logging.getLogger().setLevel(logging.DEBUG)
     
     # Update configuration
     MAX_WORKERS = args.workers
     FEATURES_PER_CHUNK = args.chunk_size
+    TACTICAL_ANALYSIS_SETTINGS["opening_move_threshold"] = args.opening_threshold
+    TACTICAL_ANALYSIS_SETTINGS["skip_opening_moves"] = args.opening_threshold > 0
+    TACTICAL_ANALYSIS_SETTINGS["min_branching_for_analysis"] = args.min_branching
     
     logger.info("Starting integrated feature generation + tactical analysis...")
     logger.info(f"Parameters:")
@@ -328,6 +367,8 @@ Examples:
     logger.info(f"   - Max games: {args.max_games}")
     logger.info(f"   - Workers: {MAX_WORKERS}")
     logger.info(f"   - Chunk size: {FEATURES_PER_CHUNK}")
+    logger.info(f"   - Opening threshold: {args.opening_threshold}")
+    logger.info(f"   - Min branching: {args.min_branching}")
     
     start_time = time.time()
     

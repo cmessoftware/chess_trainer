@@ -95,6 +95,16 @@ FEATURES_TABLE = Table(
 GAME_COLUMNS = tuple(GAMES_TABLE.c.keys())
 FEATURE_COLUMNS = tuple(FEATURES_TABLE.c.keys())
 
+#For use un EDA analysis.
+GAME_METADATA_COLUMNS = [
+    "white_elo",
+    "black_elo",
+    "time_control",
+    "opening",
+    "eco",
+    "source",
+]
+
 
 def _to_sqlite_url(path: os.PathLike[str] | str) -> str:
     return f"sqlite:///{Path(path).expanduser().resolve()}"
@@ -226,6 +236,38 @@ class CourseFeaturesRepository:
         with self.engine.connect() as connection:
             return int(connection.execute(select(func.count()).select_from(GAMES_TABLE)).scalar_one())
 
+    def load_features_enriched(
+        self,
+        *,
+        columns: Sequence[str] | None = None,
+        limit: int | None = None,
+    ) -> pd.DataFrame:
+        feature_cols = [
+            FEATURES_TABLE.c[c]
+            for c in FEATURES_TABLE.columns.keys()
+        ]
+        
+        game_cols = [
+            GAMES_TABLE.c[c]
+            for c in GAME_METADATA_COLUMNS
+        ]
+
+        stmt = (
+            select(*(feature_cols + game_cols))
+            .select_from(
+                FEATURES_TABLE.join(
+                    GAMES_TABLE,
+                    FEATURES_TABLE.c.game_id == GAMES_TABLE.c.game_id,
+                )
+            )
+        )
+
+        if limit is not None:
+            stmt = stmt.limit(limit)
+
+        with self.engine.connect() as connection:
+            return pd.read_sql(stmt, connection)
+    
     def load_games(
         self,
         *,
@@ -248,8 +290,8 @@ class CourseFeaturesRepository:
         with self.engine.connect() as connection:
             return pd.read_sql(stmt, connection)
 
-    def fetch_games_for_player(self, player: str) -> pd.DataFrame:
-        return self.load_games(player=player)
+    def fetch_games_for_player(self, player: str, limit: int | None = None) -> pd.DataFrame:
+        return self.load_games(player=player, limit=limit)
 
     def load_features(
         self,
@@ -307,10 +349,32 @@ def export_course_slice(
     *,
     source_db_url: os.PathLike[str] | str,
     output_db_url: os.PathLike[str] | str | None = None,
-    player: str = DEFAULT_PLAYER,
+    player: str | None = None,
+    players: Sequence[str] | None = None,
+    max_games: int | None = None,
 ) -> dict:
     source_repository = CourseFeaturesRepository(source_db_url)
-    games_df = source_repository.fetch_games_for_player(player)
+
+    if players and player:
+        raise ValueError("Use either 'player' or 'players', not both.")
+
+    if players:
+        game_frames = [
+            source_repository.fetch_games_for_player(player_name, limit=max_games)
+            for player_name in players
+        ]
+        non_empty_frames = [frame for frame in game_frames if not frame.empty]
+        if non_empty_frames:
+            games_df = pd.concat(non_empty_frames, ignore_index=True)
+            if "game_id" in games_df.columns:
+                games_df = games_df.drop_duplicates(subset=["game_id"]).reset_index(drop=True)
+        else:
+            games_df = pd.DataFrame(columns=GAME_COLUMNS)
+    else:
+        if not player:
+            raise ValueError("A player is required when 'players' is not provided.")
+        games_df = source_repository.fetch_games_for_player(player, limit=max_games)
+
     game_ids = games_df["game_id"].tolist() if "game_id" in games_df else []
     features_df = source_repository.fetch_features_for_game_ids(game_ids)
 

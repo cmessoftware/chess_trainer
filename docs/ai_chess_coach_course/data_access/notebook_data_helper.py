@@ -40,6 +40,14 @@ class CourseDataHelper:
     ) -> pd.DataFrame:
         return self.repository.load_features(columns=columns, error_labels=error_labels, limit=limit)
 
+    def load_features_enriched(
+        self,
+        *,
+        columns: Sequence[str] | None = None,
+        limit: int | None = None,
+    ) -> pd.DataFrame:
+        return self.repository.load_features_enriched(columns=columns,player=player,limit=limit) 
+
     def load_games(
         self,
         *,

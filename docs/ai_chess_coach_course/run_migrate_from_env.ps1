@@ -1,6 +1,8 @@
 param(
-    [string]$Player,
+    [Parameter(Mandatory = $true)]
+    [string[]]$Players,
     [string]$Output = "./course_data.sqlite",
+    [int]$MaxGames = 100,
     [string]$EnvFile = "../../.env"
 )
 
@@ -27,6 +29,16 @@ if ([string]::IsNullOrWhiteSpace($env:CHESS_TRAINER_DB_URL)) {
     exit 1
 }
 
+if ($MaxGames -le 0) {
+    Write-Error "MaxGames debe ser mayor que 0"
+    exit 1
+}
+
+if (-not $Players -or $Players.Count -eq 0) {
+    Write-Error "Debes indicar al menos un player en Players"
+    exit 1
+}
+
 $pythonExe = "C:/Users/sergiosal/miniforge3/envs/chess_trainer/python.exe"
 if (-not (Test-Path $pythonExe)) {
     Write-Error "No se encontro Python del entorno chess_trainer en: $pythonExe"
@@ -34,7 +46,16 @@ if (-not (Test-Path $pythonExe)) {
 }
 
 Write-Output "CHESS_TRAINER_DB_URL cargada correctamente."
-Write-Output "Ejecutando migracion para player '$Player'..."
+Write-Output "Ejecutando migracion para players '$($Players -join ', ')'..."
 
-& $pythonExe .\migrate_to_sqlite.py --player $Player --output $Output
+$pythonArgs = @(
+    ".\migrate_to_sqlite.py",
+    "--output", $Output,
+    "--max-games", $MaxGames
+)
+
+$pythonArgs += "--players"
+$pythonArgs += $Players
+
+& $pythonExe @pythonArgs
 exit $LASTEXITCODE

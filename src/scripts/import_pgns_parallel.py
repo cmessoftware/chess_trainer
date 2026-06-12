@@ -1,15 +1,49 @@
 import os
+import sys
 import traceback
 from pathlib import Path
 import chess
 from dotenv import load_dotenv
+
+# Add src to path for local imports when running from src/scripts
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
 from modules.pgn_batch_loader import extract_pgn_files, extract_features_from_game
 from db.repository.games_repository import GamesRepository
 from sqlalchemy.orm import sessionmaker
 
-load_dotenv()
+REPO_ROOT = Path(__file__).resolve().parents[2]
+load_dotenv(REPO_ROOT / ".env")
 DB_PATH_URL = os.environ.get("CHESS_TRAINER_DB_URL")
-BASE_DIR = Path(os.environ.get("PGN_PATH"))
+
+
+def resolve_pgn_base_dir() -> Path:
+    raw_pgn_path = os.environ.get("PGN_PATH")
+    candidates: list[Path] = []
+
+    if raw_pgn_path:
+        configured = Path(raw_pgn_path).expanduser()
+        if configured.is_absolute():
+            candidates.append(configured)
+        else:
+            candidates.append((REPO_ROOT / configured).resolve())
+            candidates.append((Path.cwd() / configured).resolve())
+
+            parts = configured.parts
+            if parts and parts[0].lower() == "src":
+                candidates.append((REPO_ROOT.joinpath(*parts[1:])).resolve())
+    else:
+        candidates.append((REPO_ROOT / "data" / "games").resolve())
+        candidates.append((REPO_ROOT / "src" / "data" / "games").resolve())
+
+    for candidate in candidates:
+        if candidate.exists():
+            return candidate
+
+    return candidates[0]
+
+
+BASE_DIR = resolve_pgn_base_dir()
 SOURCES = ["personal", "novice", "elite", "stockfish", "fide"]
 BLOCK_SIZE = 1000
 

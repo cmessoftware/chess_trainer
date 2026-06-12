@@ -2,15 +2,40 @@
 
 import os
 import traceback
+from pathlib import Path
 import chess
 import chess.engine
 import dotenv
-env = dotenv.load_dotenv()
 
-# Use the local stockfish binary with absolute path
-project_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-default_stockfish_path = os.path.join(project_root, "bin", "stockfish.exe")
-STOCKFISH_PATH = os.environ.get("STOCKFISH_PATH", default_stockfish_path)
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+dotenv.load_dotenv(PROJECT_ROOT / ".env")
+
+
+def _resolve_stockfish_path() -> str:
+    default_path = PROJECT_ROOT / "bin" / "stockfish.exe"
+    configured_path = os.environ.get("STOCKFISH_PATH")
+
+    if configured_path:
+        candidate = Path(configured_path).expanduser()
+        if candidate.is_absolute():
+            resolved = candidate
+        else:
+            # Resolve relative paths against project root so debug cwd does not matter.
+            resolved = (PROJECT_ROOT / candidate).resolve()
+
+        if resolved.exists():
+            return str(resolved)
+
+    return str(default_path.resolve())
+
+
+STOCKFISH_PATH = _resolve_stockfish_path()
+STOCKFISH_VERBOSE = os.environ.get("STOCKFISH_VERBOSE", "0") == "1"
+
+
+def _dbg(*args, **kwargs):
+    if STOCKFISH_VERBOSE:
+        print(*args, **kwargs)
 
 # MIGRATED-TODO: Analizar donde usar este analisis, si en el juego o en el ejercicio
 
@@ -53,18 +78,28 @@ def analyze_critical_moves(game, depth=15, threshold=0.5):
 
 
 def get_engine(depth=15):
+    if not Path(STOCKFISH_PATH).exists():
+        raise FileNotFoundError(
+            f"Stockfish binary not found at: {STOCKFISH_PATH}. "
+            "Set STOCKFISH_PATH in .env or place stockfish.exe in bin/."
+        )
     return chess.engine.SimpleEngine.popen_uci(STOCKFISH_PATH), depth
 
 
 def get_evaluation(fen, depth=10, multipv=1):
     try:
+        if not Path(STOCKFISH_PATH).exists():
+            raise FileNotFoundError(
+                f"Stockfish binary not found at: {STOCKFISH_PATH}. "
+                "Set STOCKFISH_PATH in .env or place stockfish.exe in bin/."
+            )
         with chess.engine.SimpleEngine.popen_uci(STOCKFISH_PATH) as engine:
             board = chess.Board(fen)
             info = engine.analyse(board, chess.engine.Limit(
                 depth=depth), multipv=multipv)
             turn = board.turn
             if multipv == 1:
-                print("Multipv is set to 1, returning single evaluation.")
+                _dbg("Multipv is set to 1, returning single evaluation.")
                 return parse_info(info, turn=board.turn)
             else:
                 return {
@@ -96,7 +131,7 @@ def parse_info(info, turn=chess.WHITE):
             return {"type": "none", "value": 0, "mate_in": None}
         info = info[0]
 
-    print(f"Parsing info: {info}")
+    _dbg(f"Parsing info: {info}")
 
     if info is None or "score" not in info:
         return {"type": "none", "value": 0, "mate_in": None}

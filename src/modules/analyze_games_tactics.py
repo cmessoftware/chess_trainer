@@ -20,6 +20,7 @@ db_utils = DBUtils()
 features_repo = FeaturesRepository()
 games_repo = GamesRepository()
 analyzed_tacticals_repo = Analyzed_tacticalsRepository()
+TACTICS_VERBOSE = os.environ.get("TACTICS_VERBOSE", "0") == "1"
 
 
 # Detecta patrones tácticos en una partida de ajedrez. Bajo depth=15 a 10 para acelerar el análisis
@@ -55,16 +56,23 @@ def detect_tactics_from_game(game, game_id=None, depth=10):
     """
     tags = []
 
+    def dbg(*args, **kwargs):
+        if TACTICS_VERBOSE:
+            print(*args, **kwargs)
+
     try:
-        print("Init detect_tactics_from_game")
+        dbg("Init detect_tactics_from_game")
         eval_cache = {}
 
         node = game
         board = chess.Board()
 
         for i, move in enumerate(game.mainline_moves()):
-            if i + 1 <= TACTICAL_ANALYSIS_SETTINGS.get("opening_move_threshold", 6):
-                print(f"[SKIP] Skipping opening move #{i+1}")
+            skip_opening_moves = TACTICAL_ANALYSIS_SETTINGS.get("skip_opening_moves", True)
+            opening_threshold = TACTICAL_ANALYSIS_SETTINGS.get("opening_move_threshold", 6)
+
+            if skip_opening_moves and i + 1 <= opening_threshold:
+                dbg(f"[SKIP] Skipping opening move #{i+1}")
                 board.push(move)
                 continue
 
@@ -83,36 +91,36 @@ def detect_tactics_from_game(game, game_id=None, depth=10):
                 depth = PHASE_DEPTHS.get(phase, 8)
 
             fen_before = board.fen()
-            print(f"[NUM] Move #{i+1}")
+            dbg(f"[NUM] Move #{i+1}")
 
             min_branching_for_analysis = TACTICAL_ANALYSIS_SETTINGS.get(
                 "min_branching_for_analysis", 4)
 
             if len(list(board.legal_moves)) <= min_branching_for_analysis:
-                print(
+                dbg(
                     f"[SKIP] Move #{i+1} skipped due to low complexity (branching < {min_branching_for_analysis})")
                 board.push(move)
                 continue
 
             if fen_before in eval_cache:
-                print(f"Evaluating FEN before move: {fen_before}")
+                dbg(f"Evaluating FEN before move: {fen_before}")
                 eval_before = eval_cache[fen_before]
             else:
-                print(f"Evaluating FEN before move: {fen_before}")
+                dbg(f"Evaluating FEN before move: {fen_before}")
                 eval_before = get_evaluation(
                     fen_before, depth, multipv=multipv)
                 eval_cache[fen_before] = eval_before
 
                 best_move = eval_before.get("best", None)
                 if not best_move:
-                    print("[WARNING] No 'best move' received, skipping comparison.")
+                    dbg("[WARNING] No 'best move' received, skipping comparison.")
             # >> Copia antes de aplicar la jugada
             board_before = board.copy()
             # >> Aplicar movimiento
             board.push(move)
 
-            print(f"Evaluation before move: {eval_before}")
-            print(f"Making move {move.uci()}")
+            dbg(f"Evaluation before move: {eval_before}")
+            dbg(f"Making move {move.uci()}")
 
             # >> Evaluación después del movimiento
             fen_after = board.fen()
@@ -143,11 +151,11 @@ def detect_tactics_from_game(game, game_id=None, depth=10):
             if isinstance(score_before, int) and isinstance(score_after, int):
                 score_diff = score_after - score_before
             else:
-                print(
+                dbg(
                     f"[WARNING] Non-numeric evaluation before/after: {score_before}, {score_after}")
                 score_diff = 0
 
-            print(f"Score difference {score_diff}")
+            dbg(f"Score difference {score_diff}")
 
            # >> Clasificar jugada táctica por patrón
             tactical_tag = classify_tactical_pattern(
@@ -158,10 +166,10 @@ def detect_tactics_from_game(game, game_id=None, depth=10):
                 tag_alt = compare_to_best(eval_before["best"], eval_before.get(
                     "alternatives", []), threshold_cp=100)
             else:
-                print("[WARNING] eval_before does not have key 'best':", eval_before)
+                dbg("[WARNING] eval_before does not have key 'best':", eval_before)
                 tag_alt = "unknown"
 
-            print(f"Tactical tag: {tactical_tag} (alternative: {tag_alt})")
+            dbg(f"Tactical tag: {tactical_tag} (alternative: {tag_alt})")
             
             # SIEMPRE generar feature con error_label, no solo para tácticas
             tags.append({
@@ -172,20 +180,19 @@ def detect_tactics_from_game(game, game_id=None, depth=10):
                 "error_label": error_label,
                 "score_diff": score_diff,
                 "player_color": 0 if board.turn == chess.WHITE else 1,
-                "move_number": i + 1
+                # Features table stores move_number as fullmove index (same number for white/black)
+                "move_number": board_before.fullmove_number
             })
 
-            fen_after = board.fen()
-            print(f"Evaluating FEN after move: {fen_after}")
-            eval_after = get_evaluation(fen_after, depth, multipv=multipv)
-            print(f"Evaluation after move: {eval_after}")
-            print(
+            dbg(f"Evaluating FEN after move: {fen_after}")
+            dbg(f"Evaluation after move: {eval_after}")
+            dbg(
                 f"Full evaluation for move {board.turn}:{i+1} : {move.uci()}")
-            print(
+            dbg(
                 f"Score before: {score_before}, Score after: {score_after}, Score diff: {score_diff}")
-            print(f"Tags found: {tags[-1] if tags else 'None'}")
+            dbg(f"Tags found: {tags[-1] if tags else 'None'}")
 
-        print(f"Tags returned by detect_tactics_from_game: {tags}")
+        dbg(f"Tags returned by detect_tactics_from_game: {tags}")
         return tags
     except Exception as e:
         print(f"[ERROR] Error analyzing game: {e} - {traceback.print_exc()}")

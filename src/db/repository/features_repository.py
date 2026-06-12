@@ -367,15 +367,20 @@ class FeaturesRepository:
                 for tactic in tactical_data:
                     game_id = tactic.get('game_id')
                     move_number = tactic.get('move_number')
+                    player_color = tactic.get('player_color')
                     
                     if not game_id or not move_number:
                         continue
                     
-                    # Find existing feature record
-                    feature_record = session.query(Features).filter_by(
-                        game_id=game_id, 
-                        move_number=move_number
-                    ).first()
+                    # Find the exact feature row using the composite key whenever possible.
+                    lookup = {
+                        "game_id": game_id,
+                        "move_number": move_number,
+                    }
+                    if player_color is not None:
+                        lookup["player_color"] = player_color
+
+                    feature_record = session.query(Features).filter_by(**lookup).first()
                     
                     if feature_record:
                         # Update with tactical information

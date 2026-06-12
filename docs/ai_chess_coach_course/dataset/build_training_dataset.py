@@ -17,20 +17,24 @@ TARGET_CLASSES = ("good", "inaccuracy", "mistake", "blunder")
 TRAINING_FEATURE_COLUMNS = [
     "game_id",
     "move_number",
-    "elo",
-    "opening",
+    "white_player",
+    "black_player",
+    "white_elo",
+    "black_elo",
+    "result",
     "material_total",
     "num_pieces",
-    "king_safety",
-    "center_control",
     "has_castling_rights",
     "is_pawn_endgame",
-    "score_cp",
-    "mate_in",
-    "depth_score_diff",
+    "score_diff",
+    "phase",
+    "branching_factor",
+    "self_mobility",
+    "opponent_mobility",
     "error_label",
 ]
-DEFAULT_TRAINING_DATASET_PATH = REPO_ROOT / "data" / "datasets" / "course_training_dataset.parquet"
+
+DEFAULT_TRAINING_DATASET_PATH = REPO_ROOT / "docs" / "ai_chess_coach_course" / "data" / "datasets" / "course_training_dataset.parquet"
 
 
 
@@ -41,7 +45,13 @@ def build_training_dataset(
     target_column: str = "error_label",
 ) -> pd.DataFrame:
     repository = CourseFeaturesRepository(db_url)
-    dataset = repository.load_features(columns=TRAINING_FEATURE_COLUMNS)
+    available_columns = set(repository.load_features(limit=1).columns)
+    selected_columns = [column for column in TRAINING_FEATURE_COLUMNS if column in available_columns]
+
+    if not selected_columns:
+        return pd.DataFrame(columns=TRAINING_FEATURE_COLUMNS)
+
+    dataset = repository.load_features(columns=selected_columns)
     if dataset.empty:
         return dataset
 
@@ -50,7 +60,29 @@ def build_training_dataset(
     if dataset.empty:
         return dataset
 
-    dataset["opening"] = dataset["opening"].fillna("unknown").astype(str)
+    if "phase" in dataset.columns:
+        dataset["opening"] = dataset["phase"].fillna("unknown").astype(str)
+    else:
+        dataset["opening"] = "unknown"
+
+    if "score_diff" in dataset.columns:
+        dataset["score_cp"] = dataset["score_diff"]
+    else:
+        dataset["score_cp"] = 0
+
+    if "branching_factor" in dataset.columns:
+        dataset["center_control"] = dataset["branching_factor"]
+    else:
+        dataset["center_control"] = 0
+
+    if "self_mobility" in dataset.columns and "opponent_mobility" in dataset.columns:
+        dataset["king_safety"] = dataset["self_mobility"] - dataset["opponent_mobility"]
+    else:
+        dataset["king_safety"] = 0
+
+    dataset["mate_in"] = 0
+    dataset["depth_score_diff"] = 0
+    dataset["elo"] = 0
 
     numeric_columns = [
         "move_number",
