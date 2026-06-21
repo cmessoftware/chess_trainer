@@ -18,6 +18,10 @@ stockfish*
 games/
 data/
 
+# course data files
+*.sqlite
+
+
 # Ignorar datasets, modelos y outputs (manejados por DVC)
 data/exports/
 data/processed/
@@ -233,3 +237,9 @@ mlruns/
 
 # Scripts de debug temporales
 debug_*.py
+
+# Large local data (never commit — GitHub 100 MB limit)
+docs/ai_chess_coach_course/course_data.sqlite
+backups/
+backups/*.sql
+backups/*.dump

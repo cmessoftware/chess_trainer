@@ -38,11 +38,12 @@ jupyter notebook
 
 Open notebooks in order:
 
-| # | File | Topic |
-|---|------|-------|
-| 1 | `01_architecture_overview.ipynb` | Architecture & environment check |
-| 2 | `02_run_feature_pipeline.ipynb`  | Migration + feature pipeline verification |
-| 3 | `03_dataset_builder.ipynb`       | Dataset building & ML preparation |
+| #   | File                             | Topic                                     |
+| --- | -------------------------------- | ----------------------------------------- |
+| 1   | `00_architecture_overview.ipynb` | Architecture & environment check          |
+| 2   | `01_run_feature_pipeline.ipynb`  | Migration + feature pipeline verification |
+| 3   | `02_dataset_builder.ipynb`       | Dataset building & ML preparation         |
+| 4   | `04_ml_training.ipynb`           | Train data using several models           |
 
 ---
 

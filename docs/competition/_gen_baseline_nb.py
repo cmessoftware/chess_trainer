@@ -1,0 +1,130 @@
+"""Generate baseline_notebook.ipynb for Kaggle / local use."""
+
+import json
+from pathlib import Path
+
+cells = [
+    {
+        "cell_type": "markdown",
+        "metadata": {},
+        "source": [
+            "# ChessTrainer Kaggle Baseline\n",
+            "\n",
+            "Human-pattern baseline: **Random Forest** + **StratifiedGroupKFold** by `game_id`.\n",
+            "\n",
+            "Excludes high-cardinality text columns (`fen`, `move_san`) from the default feature set.\n",
+            "Uses numeric/strategic proxies, tactical one-hots, and categorical context.\n",
+        ],
+    },
+    {
+        "cell_type": "code",
+        "metadata": {},
+        "outputs": [],
+        "execution_count": None,
+        "source": [
+            "from pathlib import Path\n",
+            "\n",
+            "import pandas as pd\n",
+            "from sklearn.compose import ColumnTransformer\n",
+            "from sklearn.ensemble import RandomForestClassifier\n",
+            "from sklearn.metrics import f1_score\n",
+            "from sklearn.model_selection import StratifiedGroupKFold\n",
+            "from sklearn.pipeline import Pipeline\n",
+            "from sklearn.preprocessing import OneHotEncoder\n",
+            "\n",
+            "TARGET = 'error_label'\n",
+            "LABELS = ['good', 'inaccuracy', 'mistake', 'blunder']\n",
+            "DROP_FEATURES = {'fen', 'move_san'}  # keep for EDA / custom models\n",
+            "\n",
+            "if Path('/kaggle/input').exists():\n",
+            "    DATA_DIR = next(p for p in Path('/kaggle/input').iterdir() if p.is_dir())\n",
+            "else:\n",
+            "    DATA_DIR = Path('output')\n",
+            "\n",
+            "print('DATA_DIR:', DATA_DIR)\n",
+        ],
+    },
+    {
+        "cell_type": "code",
+        "metadata": {},
+        "outputs": [],
+        "execution_count": None,
+        "source": [
+            "train = pd.read_csv(DATA_DIR / 'train.csv')\n",
+            "test = pd.read_csv(DATA_DIR / 'test.csv')\n",
+            "id_map = pd.read_csv(DATA_DIR / 'id_game_map.csv')\n",
+            "train = train.merge(id_map, on='id', how='left')\n",
+            "print('train', train.shape, '| test', test.shape)\n",
+            "print('label share:\\n', train[TARGET].value_counts(normalize=True).round(3))\n",
+        ],
+    },
+    {
+        "cell_type": "code",
+        "metadata": {},
+        "outputs": [],
+        "execution_count": None,
+        "source": [
+            "feature_cols = [\n",
+            "    c for c in train.columns\n",
+            "    if c not in {TARGET, 'id', 'game_id', *DROP_FEATURES}\n",
+            "]\n",
+            "cat_cols = [c for c in feature_cols if train[c].dtype == 'object']\n",
+            "num_cols = [c for c in feature_cols if c not in cat_cols]\n",
+            "print(f'{len(feature_cols)} features ({len(cat_cols)} cat, {len(num_cols)} num)')\n",
+            "print('categorical:', cat_cols)\n",
+            "\n",
+            "model = Pipeline([\n",
+            "    ('prep', ColumnTransformer([\n",
+            "        ('cat', OneHotEncoder(handle_unknown='ignore', max_categories=50), cat_cols),\n",
+            "        ('num', 'passthrough', num_cols),\n",
+            "    ])),\n",
+            "    ('clf', RandomForestClassifier(\n",
+            "        n_estimators=200,\n",
+            "        class_weight='balanced',\n",
+            "        n_jobs=-1,\n",
+            "        random_state=42,\n",
+            "    )),\n",
+            "])\n",
+            "\n",
+            "X, y, groups = train[feature_cols], train[TARGET], train['game_id']\n",
+            "cv = StratifiedGroupKFold(n_splits=3, shuffle=True, random_state=42)\n",
+            "scores = []\n",
+            "for tr, va in cv.split(X, y, groups=groups):\n",
+            "    model.fit(X.iloc[tr], y.iloc[tr])\n",
+            "    pred = model.predict(X.iloc[va])\n",
+            "    scores.append(f1_score(y.iloc[va], pred, average='macro', labels=LABELS, zero_division=0))\n",
+            "print('OOF macro-F1:', round(sum(scores) / len(scores), 4))\n",
+        ],
+    },
+    {
+        "cell_type": "code",
+        "metadata": {},
+        "outputs": [],
+        "execution_count": None,
+        "source": [
+            "model.fit(X, y)\n",
+            "submission = pd.DataFrame({\n",
+            "    'id': test['id'],\n",
+            "    TARGET: model.predict(test[feature_cols]),\n",
+            "})\n",
+            "out = Path('/kaggle/working/submission.csv') if Path('/kaggle/working').exists() else DATA_DIR / 'submission.csv'\n",
+            "submission.to_csv(out, index=False)\n",
+            "print('Wrote', out)\n",
+            "submission.head()\n",
+        ],
+    },
+]
+
+notebook = {
+    "cells": cells,
+    "metadata": {
+        "kernelspec": {"display_name": "Python 3", "language": "python", "name": "python3"},
+        "language_info": {"name": "python"},
+    },
+    "nbformat": 4,
+    "nbformat_minor": 5,
+}
+
+path = Path(__file__).resolve().parent / "baseline_notebook.ipynb"
+path.write_text(json.dumps(notebook, indent=1), encoding="utf-8")
+print(path)

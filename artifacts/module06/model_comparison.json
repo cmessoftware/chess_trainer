@@ -1,0 +1,17 @@
+[
+  {
+    "model_name": "lightgbm",
+    "balanced_accuracy": 0.46993263651537454,
+    "f1_macro": 0.41080113601079465
+  },
+  {
+    "model_name": "xgboost",
+    "balanced_accuracy": 0.465613191028188,
+    "f1_macro": 0.3997846856842772
+  },
+  {
+    "model_name": "catboost",
+    "balanced_accuracy": 0.4553025666459835,
+    "f1_macro": 0.39367279287229173
+  }
+]

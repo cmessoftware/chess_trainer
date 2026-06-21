@@ -1,0 +1,65 @@
+# ChessTrainer: Predict Chess Move Error Level
+
+## Overview
+
+Welcome to the **ChessTrainer** Kaggle competition. You will predict human move quality labels using
+**position, tactical, and strategic features** — **not** engine evaluation columns (`score_cp`, etc.).
+
+Each row is one human move. Features fall into three groups:
+
+1. **Context** — `player_elo`, `elo_band`, `time_control_bucket`, `phase`, `opening`, `move_number`
+2. **Board state** — `fen`, `move_san`, `material_total`, `material_balance`, `num_pieces`,
+   `has_castling_rights`, `is_pawn_endgame`
+3. **Human-pattern proxies** — mobility, king safety, center control, branching factor,
+   `is_low_mobility`, `is_center_controlled`
+4. **Tactical motifs** — `tactical_tag` plus one-hot flags (`tag_pin`, `tag_fork`, `tag_check`,
+   `tag_discovered_attack`, `tag_mate`) from board-pattern detection on each move (no engine eval)
+
+## Objective
+
+Predict `error_label` for each chess move:
+
+```text
+good | inaccuracy | mistake | blunder
+```
+
+## Evaluation
+
+**Macro F1 Score** (multiclass, all four labels weighted equally).
+
+## Dataset size (this release — Option A)
+
+| Split | Games | Rows |
+|-------|------:|-----:|
+| Train | 4,425 | 223,664 |
+| Test  | 1,107 | 55,436 |
+
+**Best-effort export:** 7,783 games selected from SQLite
+(80.2% of the 9,700-game Kaggle quota target). Bands with fewer available
+games are included in full; surplus bands are randomly down-sampled to quota.
+
+## Files
+
+| File | Description |
+|------|-------------|
+| `train.csv` | Public features + `error_label` |
+| `test.csv` | Public features only |
+| `sample_submission.csv` | `error_label` placeholder per `id` |
+| `solution.csv` | Private labels for test rows (host only) |
+
+## Rules
+
+1. **No engine-proxy features** — columns such as `score_cp` are intentionally withheld.
+2. Split-aware modeling is recommended: all moves from a game should stay in train or test (Kaggle test
+   games are disjoint from train).
+3. External datasets are allowed if documented; the baseline uses only competition files.
+4. Educational use: the goal is to explain **human mistake patterns**, not reproduce Stockfish.
+
+## Citation
+
+If you use this dataset, cite the **ChessTrainer / ChessInsight AI** project and link to the repository.
+
+## Educational purpose
+
+High macro-F1 without engine features is difficult (~0.4 is a strong human-pattern baseline). Treat
+leaderboard scores as pattern-discovery progress, not engine replay accuracy.

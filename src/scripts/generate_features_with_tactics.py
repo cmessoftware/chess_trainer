@@ -219,6 +219,11 @@ def get_games_to_process(source=None, batch_id=None, since_minutes=None, max_gam
     session = Session()
     
     try:
+        
+        if source is None:
+            logger.info("No source filter applied, if do you want to process ALL sources? Consider using --source ALL for clarity.")
+            return []
+                
         games_repo = GamesRepository(session_factory=lambda: session)
         
         # Use direct SQL to get ONLY games without features (more efficient)
