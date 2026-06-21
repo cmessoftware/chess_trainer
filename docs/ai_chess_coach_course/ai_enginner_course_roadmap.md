@@ -181,6 +181,9 @@ Notebook:
 
 Models:
 
+Multi Class LogistRegression
+KNN
+SVM
 RandomForest
 LightGBM
 XGBoost

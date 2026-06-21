@@ -1,0 +1,126 @@
+{
+  "gap_report": {
+    "total_available": 10000,
+    "total_quota": 9700,
+    "total_exportable": 7783,
+    "completion_ratio": 0.8023711340206185,
+    "import_complete": false,
+    "time_control_distribution": {
+      "blitz": 0.4621,
+      "rapid": 0.2731,
+      "classical": 0.2309,
+      "bullet": 0.0339
+    },
+    "warnings": [
+      "Export would reach 7,783 / 9,700 games (80.2%); target is 95%.",
+      "elo_band '1600-1799': 825 / 1,500 games (55.0% of quota; 825 available)",
+      "elo_band '1800-1999': 158 / 1,200 games (13.2% of quota; 158 available)",
+      "elo_band '2400+': 500 / 700 games (71.4% of quota; 500 available)"
+    ],
+    "feature_row_count": 464867,
+    "bands": [
+      {
+        "elo_band": "<1200",
+        "quota": 1500,
+        "available": 2301,
+        "exportable": 1500,
+        "fill_pct": 1.0,
+        "gap": 0,
+        "status": "cap (sample down)"
+      },
+      {
+        "elo_band": "1200-1399",
+        "quota": 1500,
+        "available": 1627,
+        "exportable": 1500,
+        "fill_pct": 1.0,
+        "gap": 0,
+        "status": "cap (sample down)"
+      },
+      {
+        "elo_band": "1400-1599",
+        "quota": 1500,
+        "available": 2189,
+        "exportable": 1500,
+        "fill_pct": 1.0,
+        "gap": 0,
+        "status": "cap (sample down)"
+      },
+      {
+        "elo_band": "1600-1799",
+        "quota": 1500,
+        "available": 825,
+        "exportable": 825,
+        "fill_pct": 0.55,
+        "gap": 675,
+        "status": "underfilled"
+      },
+      {
+        "elo_band": "1800-1999",
+        "quota": 1200,
+        "available": 158,
+        "exportable": 158,
+        "fill_pct": 0.1317,
+        "gap": 1042,
+        "status": "underfilled"
+      },
+      {
+        "elo_band": "2000-2199",
+        "quota": 1000,
+        "available": 1400,
+        "exportable": 1000,
+        "fill_pct": 1.0,
+        "gap": 0,
+        "status": "cap (sample down)"
+      },
+      {
+        "elo_band": "2200-2399",
+        "quota": 800,
+        "available": 1000,
+        "exportable": 800,
+        "fill_pct": 1.0,
+        "gap": 0,
+        "status": "cap (sample down)"
+      },
+      {
+        "elo_band": "2400+",
+        "quota": 700,
+        "available": 500,
+        "exportable": 500,
+        "fill_pct": 0.7143,
+        "gap": 200,
+        "status": "underfilled"
+      }
+    ]
+  },
+  "eda_summary": {
+    "error_label_distribution": {
+      "good": 0.454,
+      "blunder": 0.2215,
+      "mistake": 0.2043,
+      "inaccuracy": 0.1203
+    },
+    "elo_band_distribution": {
+      "1400-1599": 0.3098,
+      "1200-1399": 0.2619,
+      "<1200": 0.1886,
+      "1600-1799": 0.1525,
+      "2400+": 0.0534,
+      "2200-2399": 0.0148,
+      "1800-1999": 0.01,
+      "2000-2199": 0.0089
+    },
+    "time_control_distribution": {
+      "blitz": 0.6342,
+      "rapid": 0.3266,
+      "bullet": 0.0375,
+      "classical": 0.0017
+    },
+    "train_rows": 223664
+  },
+  "train_games": 4425,
+  "test_games": 1107,
+  "train_rows": 223664,
+  "test_rows": 55436,
+  "option": "A (best-effort export as-is)"
+}
