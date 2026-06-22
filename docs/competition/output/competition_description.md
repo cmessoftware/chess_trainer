@@ -29,10 +29,10 @@ good | inaccuracy | mistake | blunder
 
 ## Dataset size (this release — Option A)
 
-| Split | Games | Rows |
-|-------|------:|-----:|
+| Split | Games |    Rows |
+| ----- | ----: | ------: |
 | Train | 4,425 | 223,664 |
-| Test  | 1,107 | 55,436 |
+| Test  | 1,107 |  55,436 |
 
 **Best-effort export:** 7,783 games selected from SQLite
 (80.2% of the 9,700-game Kaggle quota target). Bands with fewer available
@@ -40,12 +40,12 @@ games are included in full; surplus bands are randomly down-sampled to quota.
 
 ## Files
 
-| File | Description |
-|------|-------------|
-| `train.csv` | Public features + `error_label` |
-| `test.csv` | Public features only |
-| `sample_submission.csv` | `error_label` placeholder per `id` |
-| `solution.csv` | Private labels for test rows (host only) |
+| File                    | Description                              |
+| ----------------------- | ---------------------------------------- |
+| `train.csv`             | Public features + `error_label`          |
+| `test.csv`              | Public features only                     |
+| `sample_submission.csv` | `error_label` placeholder per `id`       |
+| `solution.csv`          | Private labels for test rows (host only) |
 
 ## Rules
 
@@ -57,9 +57,17 @@ games are included in full; surplus bands are randomly down-sampled to quota.
 
 ## Citation
 
-If you use this dataset, cite the **ChessTrainer / ChessInsight AI** project and link to the repository.
+If you use this dataset, cite **ChessTrainer / ChessInsight AI**:
 
-## Educational purpose
+https://github.com/cmessoftware/chessinsightai/tree/main/docs/competition/publish
 
-High macro-F1 without engine features is difficult (~0.4 is a strong human-pattern baseline). Treat
-leaderboard scores as pattern-discovery progress, not engine replay accuracy.
+Documentation and competition overview live in that folder. **Do not** link to `docs/competition/output/` (maintainer artifacts).
+
+## Benchmark
+
+The starter **Random Forest baseline** (`baseline_notebook.ipynb`) scores about **0.67–0.71 macro-F1**
+on the held-out test set (Public ~0.67, Private ~0.71). Cross-validation on train alone (OOF) is
+typically lower (~0.61 with 3-fold GroupKFold) and is for local tuning only — not the leaderboard
+reference score.
+
+Leaderboard scores reflect pattern-based move quality, not engine replay accuracy.

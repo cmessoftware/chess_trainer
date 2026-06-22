@@ -298,14 +298,20 @@ id,error_label
 
 ## solution.csv
 
-Contains:
+Host-only answer key for Kaggle scoring. Must include a **Usage** column:
 
 ```csv
-id,error_label
+Usage,id,error_label
+Public,69,good
+Private,70,inaccuracy
 ...
 ```
 
-Used only for Kaggle scoring.
+- **Usage:** `Public` (live leaderboard) or `Private` (final ranking), assigned **by game** (50/50 split, seed 42)
+- **id:** row identifier matching `test.csv`
+- **error_label:** ground-truth label strings
+
+Participant submissions remain two columns only: `id`, `error_label`.
 
 ---
 

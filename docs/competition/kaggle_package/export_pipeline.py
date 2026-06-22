@@ -28,6 +28,7 @@ from kaggle_package.splits import split_train_test_by_game_id
 from kaggle_package.validation import (
     assert_no_leakage_columns,
     build_eda_summary,
+    build_kaggle_solution_file,
 )
 
 
@@ -77,7 +78,7 @@ def export_competition_dataset(
     train_export.to_csv(destination / "train.csv", index=False)
     test_export.to_csv(destination / "test.csv", index=False)
 
-    solution = test_frame[["id", TARGET_COLUMN]].copy()
+    solution = build_kaggle_solution_file(test_frame, random_state=random_state)
     solution.to_csv(destination / "solution.csv", index=False)
 
     sample = test_export[["id"]].copy()
