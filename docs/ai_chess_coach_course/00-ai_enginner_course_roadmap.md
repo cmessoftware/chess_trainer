@@ -1,4 +1,4 @@
-## AI Engineering Course Based on ChessTrainer
+## Phase 00 - AI Engineering Course Based on ChessTrainer
 
 --- v1 Status ---
 Notebooks available in docs/courses/ (alongside this file):
