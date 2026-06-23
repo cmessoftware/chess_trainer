@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
+import numpy as np
 import pandas as pd
 
-from kaggle_package.config import FORBIDDEN_EXPORT_COLUMNS, TARGET_COLUMN
+from kaggle_package.config import FORBIDDEN_EXPORT_COLUMNS, RANDOM_STATE, TARGET_COLUMN
 
 
 def assert_no_leakage_columns(frame: pd.DataFrame, *, label: str) -> list[str]:
@@ -38,3 +39,33 @@ def build_eda_summary(train: pd.DataFrame) -> dict[str, object]:
         )
     summary["train_rows"] = int(len(train))
     return summary
+
+
+def build_kaggle_solution_file(
+    test_frame: pd.DataFrame,
+    *,
+    target_column: str = TARGET_COLUMN,
+    id_column: str = "id",
+    game_id_column: str = "game_id",
+    public_fraction: float = 0.5,
+    random_state: int = RANDOM_STATE,
+) -> pd.DataFrame:
+    """Build Kaggle host solution CSV: Usage, row id, label column(s)."""
+    required = {id_column, target_column, game_id_column}
+    missing = required - set(test_frame.columns)
+    if missing:
+        raise ValueError(f"test_frame missing columns for solution export: {sorted(missing)}")
+
+    game_ids = test_frame[game_id_column].unique()
+    rng = np.random.default_rng(random_state)
+    n_public_games = max(1, int(round(len(game_ids) * public_fraction)))
+    public_games = set(rng.choice(game_ids, size=n_public_games, replace=False))
+
+    usage = np.where(test_frame[game_id_column].isin(public_games), "Public", "Private")
+    return pd.DataFrame(
+        {
+            "Usage": usage,
+            id_column: test_frame[id_column].values,
+            target_column: test_frame[target_column].values,
+        }
+    )

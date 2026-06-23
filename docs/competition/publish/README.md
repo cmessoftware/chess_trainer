@@ -52,7 +52,14 @@ good | inaccuracy | mistake | blunder
 | mistake    | 20.4% |
 | inaccuracy | 12.0% |
 
-A strong **human-pattern** baseline is ~**0.40 macro-F1** without engine features.
+### Starter baseline (Random Forest)
+
+| Metric | Score |
+|--------|------:|
+| Test macro-F1 (full train → test) | ~0.67–0.71 |
+| OOF macro-F1 (3-fold GroupKFold on train) | ~0.61 |
+
+See `baseline_notebook.ipynb`. OOF is for local validation; leaderboard submissions use the full training set.
 
 ---
 
@@ -148,8 +155,8 @@ If you use this dataset or competition, please cite:
   author       = {ChessInsight AI / ChessTrainer},
   year         = {2026},
   howpublished = {Kaggle Dataset},
-  url          = {https://github.com/cmessoftware/chesstrainer-kaggle}
+  url          = {https://github.com/cmessoftware/chessinsightai/tree/main/docs/competition/publish}
 }
 ```
 
-Replace the repository URL with this repo once published. Update the Kaggle dataset URL in the table above.
+Public documentation: [docs/competition/publish](https://github.com/cmessoftware/chessinsightai/tree/main/docs/competition/publish) — safe to link from Kaggle. Do **not** link to `docs/competition/output/` (maintainer-only artifacts).

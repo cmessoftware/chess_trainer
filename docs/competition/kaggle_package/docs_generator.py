@@ -80,12 +80,18 @@ games are included in full; surplus bands are randomly down-sampled to quota.
 
 ## Citation
 
-If you use this dataset, cite the **ChessTrainer / ChessInsight AI** project and link to the repository.
+If you use this dataset, cite the **ChessTrainer / ChessInsight AI** project:
 
-## Educational purpose
+https://github.com/cmessoftware/chessinsightai/tree/main/docs/competition/publish
 
-High macro-F1 without engine features is difficult (~0.4 is a strong human-pattern baseline). Treat
-leaderboard scores as pattern-discovery progress, not engine replay accuracy.
+## Benchmark
+
+The starter **Random Forest baseline** (`baseline_notebook.ipynb`) reaches about **0.67–0.71 macro-F1**
+on the held-out test set (Public ~0.67, Private ~0.71). Cross-validation on train alone (OOF) is
+typically lower (~0.61 with 3-fold GroupKFold) and is for local tuning only — not the leaderboard
+reference score.
+
+Leaderboard scores reflect pattern-based move quality, not engine replay accuracy.
 """
     path.write_text(content, encoding="utf-8")
 
