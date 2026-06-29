@@ -47,8 +47,12 @@ games are included in full; surplus bands are randomly down-sampled to quota.
 | `train.csv`             | Public features + `error_label`          |
 | `test.csv`              | Public features only                     |
 | `sample_submission.csv` | `error_label` placeholder per `id`       |
+<<<<<<< HEAD
 | `id_game_map.csv`       | Maps row `id` → `game_id` for GroupKFold |
 | `solution.csv`          | Host only — not in the public download   |
+=======
+| `solution.csv`          | Private labels for test rows (host only) |
+>>>>>>> 3db5739caea16165bf20933d520e21e371a952c2
 
 ## Rules
 
@@ -64,7 +68,11 @@ If you use this dataset, cite **ChessTrainer / ChessInsight AI**:
 
 https://github.com/cmessoftware/chessinsightai/tree/main/docs/competition/publish
 
+<<<<<<< HEAD
 Documentation and competition overview live in that folder.
+=======
+Documentation and competition overview live in that folder. **Do not** link to `docs/competition/output/` (maintainer artifacts).
+>>>>>>> 3db5739caea16165bf20933d520e21e371a952c2
 
 ## Benchmark
 
