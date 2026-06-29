@@ -45,6 +45,8 @@ Open notebooks in order:
 | 3   | `02_dataset_builder.ipynb`            | Dataset building & ML preparation         |
 | 4   | `04_ml_training.ipynb`                | Train data using several models           |
 | 5   | `05_mlflow_experiment_tracking.ipynb` | MlFlow ml experiments tracking            |
+| 6   | `06_shap_analysis.ipynb`              | SHAP Analysis                             |
+| 6.5 | `06_5_llm_coaching_recommendations.ipynb` | LLM coaching (Gemini 2.5 Flash)     |
 
 ---
 

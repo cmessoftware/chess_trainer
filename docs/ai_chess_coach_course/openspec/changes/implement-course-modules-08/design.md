@@ -17,4 +17,6 @@
 - Produce reproducible examples with quality notes.
 
 ## Dependencies
+- Module 6.5: `llm/` provider layer and structured coaching context JSON
+- Module 07: RAG retrieval (when available)
 - Outputs from completed previous modules.

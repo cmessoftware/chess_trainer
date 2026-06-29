@@ -22,10 +22,12 @@ openspec show <change-name> --type change --no-interactive
   - Focus: MLflow experiment tracking
 - Module 06 -> `implement-course-modules-06`
   - Focus: SHAP explainability
+- Module 6.5 -> `implement-course-modules-06_5`
+  - Focus: LLM coaching recommendations (Gemini 2.5 Flash MVP; first shippable course arc)
 - Module 07 -> `implement-course-modules-07`
   - Focus: RAG foundation
 - Module 08 -> `implement-course-modules-08`
-  - Focus: LLM explanations
+  - Focus: RAG-augmented LLM + optional local models (extends 6.5)
 - Module 09 -> `implement-course-modules-09`
   - Focus: consistency and hallucination tests
 
@@ -48,12 +50,13 @@ openspec show <change-name> --type change --no-interactive
 1. `implement-course-modules-04`
 2. `implement-course-modules-05`
 3. `implement-course-modules-06`
-4. `implement-course-modules-07`
-5. `implement-course-modules-08`
-6. `implement-course-modules-09`
-7. `implement-course-modules-10`
-8. `implement-course-modules-11`
-9. `implement-course-modules-12`
-10. `implement-course-modules-13`
+4. `implement-course-modules-06_5` *(first course version milestone)*
+5. `implement-course-modules-07`
+6. `implement-course-modules-08`
+7. `implement-course-modules-09`
+8. `implement-course-modules-10`
+9. `implement-course-modules-11`
+10. `implement-course-modules-12`
+11. `implement-course-modules-13`
 
 Module 03 is already implemented and validated as the starting point.

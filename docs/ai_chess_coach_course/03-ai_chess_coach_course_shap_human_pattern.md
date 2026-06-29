@@ -3,7 +3,7 @@
 > **Placement:** Module 06 (`06_shap_analysis.ipynb`)  
 > **Module 05:** MLflow experiment tracking (unchanged, separate)  
 > **Status:** v2 — aligned with Modules 02–04, `feature_engineering.py`, game-level splits  
-> **Scope:** Phases 1–4 only. Pattern Engine / player profiles / coaching JSON → Module 08+
+> **Scope:** Phases 1–4 only. Pattern Engine / coaching JSON → **Module 6.5** ([spec](./06_5-ai_chess_coach_course_llm_coaching_recommendations.md)); extended catalog → Modules 07–08
 
 ---
 
@@ -147,7 +147,8 @@ explain_prediction(row) -> {
 | 04     | Proxy vs Human comparison (LightGBM)                |
 | 05     | MLflow tracking                                     |
 | **06** | **This spec — model selection + SHAP (phases 1–4)** |
-| 08+    | Pattern engine, player memory, LLM coaching context |
+| 6.5    | Minimal pattern engine, coaching context JSON, Gemini coaching MVP |
+| 07–08  | RAG, extended pattern catalog, optional local LLM |
 
 ---
 

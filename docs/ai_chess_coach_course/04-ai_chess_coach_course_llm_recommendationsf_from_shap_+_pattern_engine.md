@@ -1,5 +1,8 @@
 # Phase 04 - Implement LLM Coaching Recommendations from SHAP + Pattern Engine
 
+> **Module 6.5 MVP spec (Gemini 2.5 Flash):** [06_5-ai_chess_coach_course_llm_coaching_recommendations.md](./06_5-ai_chess_coach_course_llm_coaching_recommendations.md) — implements a **minimal** pattern engine and coaching pipeline.  
+> **This document** retains the **full** pattern catalog and player-aggregator design for Modules 07–08.
+
 ## Context
 
 The Human Pattern Model has been successfully trained.
