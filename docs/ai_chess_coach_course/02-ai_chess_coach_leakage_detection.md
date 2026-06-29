@@ -1,4 +1,4 @@
-# ChessTrainer — Feature Importance & Leakage Detection (Course Spec)
+# Pahse 02 - ChessTrainer — Feature Importance & Leakage Detection (Course Spec)
 
 > **Scope:** documentation only (Module 03 / 04 design).  
 > **Status:** v2 — aligned with notebooks `01`–`03`, `prepare_feature_frame`, and game-level splits.  
@@ -23,10 +23,10 @@ This spec defines **what** each module must cover. Implementation lives in noteb
 
 Stockfish (or the configured engine) is the **ground-truth labeler**. Labels are not the training goal by themselves.
 
-| Model family | Goal | Role in course |
-|--------------|------|----------------|
-| **Stockfish Proxy** | Predict `error_label` using engine-derived features | Baseline — “how well can we replay the labeling rule?” |
-| **Human Pattern** | Explain *why* humans err using position/context features | Preferred for coaching — explainable, pedagogical |
+| Model family        | Goal                                                     | Role in course                                         |
+| ------------------- | -------------------------------------------------------- | ------------------------------------------------------ |
+| **Stockfish Proxy** | Predict `error_label` using engine-derived features      | Baseline — “how well can we replay the labeling rule?” |
+| **Human Pattern**   | Explain *why* humans err using position/context features | Preferred for coaching — explainable, pedagogical      |
 
 **Human Pattern models should not rely on features that encode the same engine evaluation used to assign the label.**
 
@@ -81,20 +81,20 @@ Derived from `dataset/feature_engineering.py`, `dataset/build_training_dataset.p
 
 ### 4.1 Target
 
-| Column | Type | Notes |
-|--------|------|--------|
+| Column        | Type        | Notes                                      |
+| ------------- | ----------- | ------------------------------------------ |
 | `error_label` | categorical | `good`, `inaccuracy`, `mistake`, `blunder` |
 
 ### 4.2 Stockfish Proxy features (engine / label pipeline)
 
 Use for **baseline models only**. High predictive power here often means “replaying Stockfish’s rule,” not human explanation.
 
-| Column | In DB today | Notes |
-|--------|-------------|--------|
-| `score_cp` | yes | Centipawn eval from player perspective; primary leakage suspect. In PG export, often aliased from `score_diff` (`features_repository`) |
-| `score_diff` | yes | Raw engine score on the features row; same leakage class as `score_cp` |
-| `depth_score_diff` | yes (often 0 in course export) | Engine depth delta when populated |
-| `mate_in` | yes (placeholder 0 in course export) | Mate distance when populated |
+| Column             | In DB today                          | Notes                                                                                                                                  |
+| ------------------ | ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `score_cp`         | yes                                  | Centipawn eval from player perspective; primary leakage suspect. In PG export, often aliased from `score_diff` (`features_repository`) |
+| `score_diff`       | yes                                  | Raw engine score on the features row; same leakage class as `score_cp`                                                                 |
+| `depth_score_diff` | yes (often 0 in course export)       | Engine depth delta when populated                                                                                                      |
+| `mate_in`          | yes (placeholder 0 in course export) | Mate distance when populated                                                                                                           |
 
 **Not in schema (do not reference in course code):**  
 `cp_loss`, `best_move_score`, `best_score_cp`, `played_score_cp`, `score_delta` — use `score_cp` / `score_diff` as proxies in EDA.
@@ -103,33 +103,33 @@ Use for **baseline models only**. High predictive power here often means “repl
 
 Preferred for Module 04 **Human Pattern** runs:
 
-| Column | Notes |
-|--------|--------|
-| `player_elo` | Strength context; use instead of bare `elo` |
-| `move_number` | Game phase proxy |
-| `material_total`, `num_pieces` | Material / complexity |
-| `king_safety` | Derived: mobility differential |
-| `center_control` | Derived: branching factor proxy |
-| `self_mobility`, `opponent_mobility`, `branching_factor` | Activity / tactics context |
-| `has_castling_rights`, `is_pawn_endgame` | Structure flags |
+| Column                                                   | Notes                                       |
+| -------------------------------------------------------- | ------------------------------------------- |
+| `player_elo`                                             | Strength context; use instead of bare `elo` |
+| `move_number`                                            | Game phase proxy                            |
+| `material_total`, `num_pieces`                           | Material / complexity                       |
+| `king_safety`                                            | Derived: mobility differential              |
+| `center_control`                                         | Derived: branching factor proxy             |
+| `self_mobility`, `opponent_mobility`, `branching_factor` | Activity / tactics context                  |
+| `has_castling_rights`, `is_pawn_endgame`                 | Structure flags                             |
 
 ### 4.4 Context features (encode for ML; also use in EDA)
 
-| Column | Encoding in Module 02 |
-|--------|------------------------|
-| `opening` | one-hot (`opening_*`) |
-| `time_control_bucket` | one-hot (`time_control_bucket_*`) |
-| `phase` | categorical (opening / middlegame / endgame) — one-hot if used in ML |
+| Column                | Encoding in Module 02                                                |
+| --------------------- | -------------------------------------------------------------------- |
+| `opening`             | one-hot (`opening_*`)                                                |
+| `time_control_bucket` | one-hot (`time_control_bucket_*`)                                    |
+| `phase`               | categorical (opening / middlegame / endgame) — one-hot if used in ML |
 
 ### 4.5 Metadata only — never ML features
 
-| Column | Purpose |
-|--------|---------|
-| `source` | Audit trail; exclude `stockfish` in `prepare_feature_frame` |
-| `elo_band` | EDA and reporting bands (8 bins) |
-| `skill_group`, `export_skill_group`, `skill_group_description` | Balanced import quotas / quality checks |
-| `game_id`, `player_color` | Splitting and traceability (`move_number` is an ML feature, not metadata) |
-| `white_elo`, `black_elo`, `time_control`, `white_player`, `black_player`, `result` | Reporting |
+| Column                                                                             | Purpose                                                                   |
+| ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| `source`                                                                           | Audit trail; exclude `stockfish` in `prepare_feature_frame`               |
+| `elo_band`                                                                         | EDA and reporting bands (8 bins)                                          |
+| `skill_group`, `export_skill_group`, `skill_group_description`                     | Balanced import quotas / quality checks                                   |
+| `game_id`, `player_color`                                                          | Splitting and traceability (`move_number` is an ML feature, not metadata) |
+| `white_elo`, `black_elo`, `time_control`, `white_player`, `black_player`, `result` | Reporting                                                                 |
 
 **Note:** Balancing is by **ELO / skill_group**, not by `source` (see `course_dataset_generation_guidelines.md`).
 
@@ -194,12 +194,12 @@ If training on games ordered by `date_played`, document risk of future informati
 
 ### 6.5 Leakage risk table (markdown + code)
 
-| Feature group | Example columns | Use in Proxy model | Use in Human model | EDA role |
-|---------------|-----------------|--------------------|--------------------|----------|
-| Engine | `score_cp`, … | yes | **no** | label-quality check |
-| Human | `king_safety`, … | optional | **yes** | coaching signal |
-| Context | `opening`, … | yes | yes | context |
-| Metadata | `source`, `export_skill_group` | no | no | audit / balance |
+| Feature group | Example columns                | Use in Proxy model | Use in Human model | EDA role            |
+| ------------- | ------------------------------ | ------------------ | ------------------ | ------------------- |
+| Engine        | `score_cp`, …                  | yes                | **no**             | label-quality check |
+| Human         | `king_safety`, …               | optional           | **yes**            | coaching signal     |
+| Context       | `opening`, …                   | yes                | yes                | context             |
+| Metadata      | `source`, `export_skill_group` | no                 | no                 | audit / balance     |
 
 Student takeaway:
 
@@ -212,13 +212,13 @@ Print top MI features, list engine suspects present, recommend Module 04 feature
 
 ### 6.7 Coexistence with existing Module 03 sections
 
-| Existing section | Action |
-|------------------|--------|
-| §4 Error distribution | keep |
-| §5 Error by ELO | keep; prefer `player_elo` / `elo_band` |
-| §6 Error by opening | keep |
-| §7 Centipawn loss | keep; aligns with engine leakage discussion |
-| §8 Next steps | point to Module 04 Proxy vs Human comparison |
+| Existing section      | Action                                       |
+| --------------------- | -------------------------------------------- |
+| §4 Error distribution | keep                                         |
+| §5 Error by ELO       | keep; prefer `player_elo` / `elo_band`       |
+| §6 Error by opening   | keep                                         |
+| §7 Centipawn loss     | keep; aligns with engine leakage discussion  |
+| §8 Next steps         | point to Module 04 Proxy vs Human comparison |
 
 ---
 
@@ -244,11 +244,11 @@ Use the **same** train/validation/test `game_id` sets from Module 02.
 
 ### 7.3 Interpretation guide for students
 
-| Observation | Meaning |
-|-------------|---------|
-| Proxy ≫ Human accuracy | Most signal is engine-evaluation replay |
-| Human still reasonable (e.g. macro-F1 clearly above chance) | Position/context explains errors |
-| Human ≈ Proxy after removing engine cols | Engine cols were doing all the work |
+| Observation                                                 | Meaning                                 |
+| ----------------------------------------------------------- | --------------------------------------- |
+| Proxy ≫ Human accuracy                                      | Most signal is engine-evaluation replay |
+| Human still reasonable (e.g. macro-F1 clearly above chance) | Position/context explains errors        |
+| Human ≈ Proxy after removing engine cols                    | Engine cols were doing all the work     |
 
 Optional later: permutation importance with **grouped CV by `game_id`** (Module 05/06).
 
@@ -256,11 +256,11 @@ Optional later: permutation importance with **grouped CV by `game_id`** (Module 
 
 ## 8. Integration with Modules 01–02
 
-| Module | Relationship to this spec |
-|--------|---------------------------|
-| **01** | Produces PostgreSQL `features`; no schema changes required |
-| **02** | Single source of truth: `prepare_feature_frame`, `encode_training_features`, `validate_dataset_quality`, `split_by_game_id` |
-| **02** | Quality checks use `export_skill_group` for import balance (not `source` share) |
+| Module | Relationship to this spec                                                                                                         |
+| ------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| **01** | Produces PostgreSQL `features`; no schema changes required                                                                        |
+| **02** | Single source of truth: `prepare_feature_frame`, `encode_training_features`, `validate_dataset_quality`, `split_by_game_id`       |
+| **02** | Quality checks use `export_skill_group` for import balance (not `source` share)                                                   |
 | **02** | Future optional enhancement (out of scope for spec v2): export `course_training_proxy.parquet` vs `course_training_human.parquet` |
 
 Module 03 must **not** reimplement cleaning logic inline; always call `prepare_feature_frame`.
@@ -295,7 +295,7 @@ Module 04 openspec should reference dual feature sets and game-level evaluation.
 
 ## 11. Document history
 
-| Version | Change |
-|---------|--------|
-| v1 | Original prompt-style notebook steps (`ai_chess_coach_leakege_detention.md`) |
-| v2 | Split Module 03 vs 04; real column names; game-level split rule; dual feature sets; metadata/balance alignment |
+| Version | Change                                                                                                         |
+| ------- | -------------------------------------------------------------------------------------------------------------- |
+| v1      | Original prompt-style notebook steps (`ai_chess_coach_leakege_detention.md`)                                   |
+| v2      | Split Module 03 vs 04; real column names; game-level split rule; dual feature sets; metadata/balance alignment |

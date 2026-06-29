@@ -38,12 +38,15 @@ jupyter notebook
 
 Open notebooks in order:
 
-| #   | File                             | Topic                                     |
-| --- | -------------------------------- | ----------------------------------------- |
-| 1   | `00_architecture_overview.ipynb` | Architecture & environment check          |
-| 2   | `01_run_feature_pipeline.ipynb`  | Migration + feature pipeline verification |
-| 3   | `02_dataset_builder.ipynb`       | Dataset building & ML preparation         |
-| 4   | `04_ml_training.ipynb`           | Train data using several models           |
+| #   | File                                  | Topic                                     |
+| --- | ------------------------------------- | ----------------------------------------- |
+| 1   | `00_architecture_overview.ipynb`      | Architecture & environment check          |
+| 2   | `01_run_feature_pipeline.ipynb`       | Migration + feature pipeline verification |
+| 3   | `02_dataset_builder.ipynb`            | Dataset building & ML preparation         |
+| 4   | `04_ml_training.ipynb`                | Train data using several models           |
+| 5   | `05_mlflow_experiment_tracking.ipynb` | MlFlow ml experiments tracking            |
+| 6   | `06_shap_analysis.ipynb`              | SHAP Analysis                             |
+| 6.5 | `06_5_llm_coaching_recommendations.ipynb` | LLM coaching (Gemini 2.5 Flash)     |
 
 ---
 

@@ -68,7 +68,8 @@ games are included in full; surplus bands are randomly down-sampled to quota.
 | `train.csv` | Public features + `{TARGET_COLUMN}` |
 | `test.csv` | Public features only |
 | `sample_submission.csv` | `{TARGET_COLUMN}` placeholder per `id` |
-| `solution.csv` | Private labels for test rows (host only) |
+| `id_game_map.csv` | Maps row `id` → `game_id` for game-level cross-validation |
+| `solution.csv` | Private labels for test rows (host only — not in public download) |
 
 ## Rules
 
@@ -80,13 +81,15 @@ games are included in full; surplus bands are randomly down-sampled to quota.
 
 ## Citation
 
-If you use this dataset, cite the **ChessTrainer / ChessInsight AI** project:
+If you use this dataset, cite **ChessTrainer / ChessInsight AI**:
 
 https://github.com/cmessoftware/chessinsightai/tree/main/docs/competition/publish
 
+Documentation and competition overview live in that folder. **Do not** link to maintainer export paths.
+
 ## Benchmark
 
-The starter **Random Forest baseline** (`baseline_notebook.ipynb`) reaches about **0.67–0.71 macro-F1**
+The starter **Random Forest baseline** (`baseline_notebook.ipynb`) scores about **0.67–0.71 macro-F1**
 on the held-out test set (Public ~0.67, Private ~0.71). Cross-validation on train alone (OOF) is
 typically lower (~0.61 with 3-fold GroupKFold) and is for local tuning only — not the leaderboard
 reference score.

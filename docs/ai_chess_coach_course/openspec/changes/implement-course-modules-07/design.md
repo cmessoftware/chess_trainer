@@ -17,4 +17,5 @@
 - Validate retrieval quality with representative prompts.
 
 ## Dependencies
+- Module 6.5 coaching context contract (optional enrichment of prompts after RAG is built)
 - Outputs from completed previous modules.

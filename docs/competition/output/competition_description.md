@@ -5,7 +5,7 @@
 Welcome to the **ChessTrainer** Kaggle competition. You will predict human move quality labels using
 **position, tactical, and strategic features** — **not** engine evaluation columns (`score_cp`, etc.).
 
-Each row is one human move. Features fall into three groups:
+Each row is one human move. Features fall into four groups:
 
 1. **Context** — `player_elo`, `elo_band`, `time_control_bucket`, `phase`, `opening`, `move_number`
 2. **Board state** — `fen`, `move_san`, `material_total`, `material_balance`, `num_pieces`,
@@ -22,6 +22,8 @@ Predict `error_label` for each chess move:
 ```text
 good | inaccuracy | mistake | blunder
 ```
+
+Submit **lowercase string labels** (not numeric codes).
 
 ## Evaluation
 
@@ -45,7 +47,12 @@ games are included in full; surplus bands are randomly down-sampled to quota.
 | `train.csv`             | Public features + `error_label`          |
 | `test.csv`              | Public features only                     |
 | `sample_submission.csv` | `error_label` placeholder per `id`       |
+<<<<<<< HEAD
+| `id_game_map.csv`       | Maps row `id` → `game_id` for GroupKFold |
+| `solution.csv`          | Host only — not in the public download   |
+=======
 | `solution.csv`          | Private labels for test rows (host only) |
+>>>>>>> 3db5739caea16165bf20933d520e21e371a952c2
 
 ## Rules
 
@@ -61,7 +68,11 @@ If you use this dataset, cite **ChessTrainer / ChessInsight AI**:
 
 https://github.com/cmessoftware/chessinsightai/tree/main/docs/competition/publish
 
+<<<<<<< HEAD
+Documentation and competition overview live in that folder.
+=======
 Documentation and competition overview live in that folder. **Do not** link to `docs/competition/output/` (maintainer artifacts).
+>>>>>>> 3db5739caea16165bf20933d520e21e371a952c2
 
 ## Benchmark
 

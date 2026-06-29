@@ -93,6 +93,8 @@ def test_build_training_dataset_filters_and_encodes(tmp_path):
     dataset = build_training_dataset(db_url=db_path, validate_quality=False)
 
     assert list(dataset["error_label"]) == ["good", "blunder"]
+    assert "game_id" in dataset.columns
+    assert dataset["game_id"].nunique() >= 1
     assert dataset["has_castling_rights"].tolist() == [1, 0]
     assert dataset["is_pawn_endgame"].tolist() == [0, 1]
     assert "player_elo" in dataset.columns

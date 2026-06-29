@@ -1,4 +1,4 @@
-## AI Engineering Course Based on ChessTrainer
+## Phase 00 - AI Engineering Course Based on ChessTrainer
 
 --- v1 Status ---
 Notebooks available in docs/courses/ (alongside this file):
@@ -219,6 +219,38 @@ Methods:
 SHAP
 feature importance
 
+### Module 6.5 — LLM Coaching Recommendations (first course version milestone)
+
+Notebook:
+06_5_llm_coaching_recommendations.ipynb
+
+Spec:
+06_5-ai_chess_coach_course_llm_coaching_recommendations.md
+
+Architecture:
+6.5_llm_integration_architecture.md
+
+Pipeline:
+
+Human Pattern model + SHAP evidence
+↓
+Minimal Pattern Engine (chess concepts, not raw SHAP)
+↓
+Recommendation Context Builder (JSON)
+↓
+Prompt Builder
+↓
+LLMProvider → Gemini 2.5 Flash (`google-genai`, `GEMINI_API_KEY`)
+
+Packages:
+
+llm/ (provider abstraction + Gemini)
+coaching/ (pattern engine, context, prompt)
+
+Out of scope for 6.5: RAG (Module 07), Ollama/local LLM (Module 08).
+
+Students completing Modules 01–6.5 have a **first end-to-end coaching arc** without vector stores.
+
 ### Module 7 — RAG
 Notebook:
 07_rag_analysis.ipynb
@@ -239,20 +271,22 @@ Tools:
 ChromaDB
 LangChain
 
-### Module 8 — LLM Explanation
+### Module 8 — LLM Explanation (extends Module 6.5)
 
 Notebook:
 08_llm_explanation.ipynb
+
+Builds on Module 6.5 provider abstraction and context contract; adds RAG retrieval (Module 07) and optional local runtime.
 
 Pipeline:
 
 ML prediction
 ↓
-pattern detection
+pattern detection (extended catalog)
 ↓
 RAG retrieval
 ↓
-LLM explanation
+LLM explanation (Gemini and/or local)
 Stack:
 
 LangChain

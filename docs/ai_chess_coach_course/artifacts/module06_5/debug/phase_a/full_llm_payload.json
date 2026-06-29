@@ -1,0 +1,148 @@
+{
+  "focus": "single_game_review",
+  "language": "es",
+  "player": "cmess1315",
+  "game": {
+    "opponent": "paul606",
+    "result_description": "perdiste",
+    "opening": "",
+    "overall_impression": "Partida en general estable con juego mayormente sólido y pocos deslizes aislados."
+  },
+  "phase_summary": {
+    "middlegame": "La partida tuvo fases equilibradas con momentos decisivos en el medio juego."
+  },
+  "lesson_clusters": [
+    {
+      "title": "Errores tácticos evitables",
+      "idea": "Con N1c3 el rival activó un ataque descubierto con Nd4.",
+      "evidence_moves": [
+        "6. N1c3"
+      ],
+      "move_numbers": [
+        6
+      ],
+      "diagnosis_types": [
+        "tactical"
+      ],
+      "why": "Con N1c3 el rival activó un ataque descubierto con Nd4.",
+      "how_to_avoid": "Cuando una pieza se mueve, calcula qué línea queda descubierta detrás."
+    },
+    {
+      "title": "Comprensión posicional",
+      "idea": "Con 34. b4 la estructura posicional favoreció más al rival que a ti; además, las piezas del rival ganaron actividad.",
+      "evidence_moves": [
+        "34. b4"
+      ],
+      "move_numbers": [
+        34
+      ],
+      "diagnosis_types": [
+        "positional"
+      ],
+      "why": "Con 34. b4 la estructura posicional favoreció más al rival que a ti; además, las piezas del rival ganaron actividad.",
+      "how_to_avoid": "Antes de empujar un peón, pregúntate qué pieza enemiga gana fuerza con tu jugada."
+    },
+    {
+      "title": "Actividad del rey y técnica en el final",
+      "idea": "Con 57. Kb8 tu rey perdió casillas útiles en el final.",
+      "evidence_moves": [
+        "57. Kb8"
+      ],
+      "move_numbers": [
+        57
+      ],
+      "diagnosis_types": [
+        "endgame"
+      ],
+      "why": "Con 57. Kb8 tu rey perdió casillas útiles en el final.",
+      "how_to_avoid": "En finales, la actividad del rey suele pesar más que ganar un peón aislado."
+    }
+  ],
+  "critical_moves": [
+    {
+      "move_number": 6,
+      "player_move": "6. N1c3",
+      "phase": "apertura",
+      "severity": "error grave",
+      "issue": "Con N1c3 el rival activó un ataque descubierto con Nd4.",
+      "lesson_hint": "Cuando una pieza se mueve, calcula qué línea queda descubierta detrás.",
+      "context_pgn": "4. Nxd4 4...e5 5. Nb5 5...Nf6 6. N1c3 6...Nd4 7. Nxd4 7...exd4 8. Qxd4",
+      "opponent_reply": "6...Nd4",
+      "pattern": "discovered_attack",
+      "consequence": "El rival respondió Nd4 y la posición sufrió pérdida de peón; además, las piezas del rival ganaron actividad y el rey quedó relativamente expuesto.",
+      "root_cause": true,
+      "material_change": "lost pawn",
+      "tactical_motif": "Ataque descubierto",
+      "theme": "Ataque descubierto",
+      "supporting_features": [
+        "las piezas del rival ganaron actividad",
+        "el rey quedó relativamente expuesto",
+        "cediste influencia central",
+        "los derechos de enroque influyeron en la evaluación"
+      ],
+      "diagnosis_type": "tactical",
+      "sections": {
+        "decision": "6. N1c3",
+        "tactical_punishment": "Nd4",
+        "consequence": "El rival respondió Nd4 y la posición sufrió pérdida de peón; además, las piezas del rival ganaron actividad y el rey quedó relativamente expuesto.",
+        "lesson": "Cuando una pieza se mueve, calcula qué línea queda descubierta detrás."
+      }
+    },
+    {
+      "move_number": 34,
+      "player_move": "34. b4",
+      "phase": "medio juego",
+      "severity": "error grave",
+      "issue": "Con 34. b4 la estructura posicional favoreció más al rival que a ti; además, las piezas del rival ganaron actividad.",
+      "lesson_hint": "Antes de empujar un peón, pregúntate qué pieza enemiga gana fuerza con tu jugada.",
+      "context_pgn": "32. c5 32...Rd3 33. Rxd3 33...Bxd3 34. b4 34...Bb5 35. Re1 35...Bc6 36. Rg1",
+      "pattern": "tactical_oversight",
+      "consequence": "La iniciativa y la actividad de las piezas cambiaron de bando; además, la seguridad del rey empeoró y cediste influencia central.",
+      "root_cause": true,
+      "material_change": "none",
+      "tactical_motif": "Tactical Oversight",
+      "theme": "Tactical Oversight",
+      "supporting_features": [
+        "las piezas del rival ganaron actividad",
+        "la seguridad del rey empeoró",
+        "cediste influencia central",
+        "los derechos de enroque influyeron en la evaluación"
+      ],
+      "diagnosis_type": "positional",
+      "sections": {
+        "decision": "34. b4",
+        "positional_change": "Con 34. b4 la estructura posicional favoreció más al rival que a ti; además, las piezas del rival ganaron actividad.",
+        "consequence": "La iniciativa y la actividad de las piezas cambiaron de bando; además, la seguridad del rey empeoró y cediste influencia central.",
+        "lesson": "Antes de empujar un peón, pregúntate qué pieza enemiga gana fuerza con tu jugada."
+      }
+    },
+    {
+      "move_number": 57,
+      "player_move": "57. Kb8",
+      "phase": "final",
+      "severity": "error claro",
+      "issue": "Con 57. Kb8 tu rey perdió casillas útiles en el final.",
+      "lesson_hint": "En finales, la actividad del rey suele pesar más que ganar un peón aislado.",
+      "context_pgn": "55. Kb7 55...Be4+ 56. Kc7 56...Rc6+ 57. Kb8 57...Kd7 58. Ka7 58...Kc7 59. Ka8",
+      "pattern": "tactical_oversight",
+      "consequence": "El rival coordinó rey y piezas mayores con más facilidad; además, tus piezas tuvieron pocas casillas activas y las piezas del rival ganaron actividad.",
+      "root_cause": true,
+      "material_change": "none",
+      "tactical_motif": "Tactical Oversight",
+      "theme": "Tactical Oversight",
+      "supporting_features": [
+        "tus piezas tuvieron pocas casillas activas",
+        "las piezas del rival ganaron actividad",
+        "la seguridad del rey empeoró",
+        "la simplificación de piezas marcó la tendencia"
+      ],
+      "diagnosis_type": "endgame",
+      "sections": {
+        "decision": "57. Kb8",
+        "positional_change": "Con 57. Kb8 tu rey perdió casillas útiles en el final.",
+        "consequence": "El rival coordinó rey y piezas mayores con más facilidad; además, tus piezas tuvieron pocas casillas activas y las piezas del rival ganaron actividad.",
+        "lesson": "En finales, la actividad del rey suele pesar más que ganar un peón aislado."
+      }
+    }
+  ]
+}

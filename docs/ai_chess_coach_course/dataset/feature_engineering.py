@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
+from typing import Sequence
 
 import numpy as np
 import pandas as pd
@@ -47,6 +48,44 @@ TIME_CONTROL_WARNING_TOLERANCE = 0.20
 
 MAX_GOOD_SHARE = 0.55
 MIN_BLUNDER_SHARE = 0.08
+
+ENGINE_PROXY_FEATURES = (
+    "score_cp",
+    "score_diff",
+    "depth_score_diff",
+    "mate_in",
+)
+HUMAN_PATTERN_FEATURES = (
+    "player_elo",
+    "move_number",
+    "material_total",
+    "num_pieces",
+    "king_safety",
+    "center_control",
+    "self_mobility",
+    "opponent_mobility",
+    "branching_factor",
+    "has_castling_rights",
+    "is_pawn_endgame",
+)
+CONTEXT_FEATURE_COLUMNS = ("opening", "time_control_bucket", "phase")
+METADATA_COLUMNS = (
+    "source",
+    "elo_band",
+    "skill_group",
+    "skill_group_description",
+    "export_skill_group",
+    "game_id",
+    "player_color",
+    "white_elo",
+    "black_elo",
+    "time_control",
+    "time_control_seconds",
+    "result",
+)
+MODEL_FEATURE_SETS = frozenset({"proxy", "human", "engine"})
+ENCODING_DROP_COLUMNS = frozenset(METADATA_COLUMNS) - {"game_id"}
+TARGET_COLUMN = "error_label"
 
 
 class DatasetQualityError(Exception):
@@ -279,30 +318,76 @@ def prepare_feature_frame(
 def encode_training_features(dataset: pd.DataFrame) -> pd.DataFrame:
     frame = dataset.copy()
     categorical_columns = [
-        column
-        for column in ("opening", "time_control_bucket")
-        if column in frame.columns
+        column for column in CONTEXT_FEATURE_COLUMNS if column in frame.columns
     ]
     encoded = pd.get_dummies(frame, columns=categorical_columns, prefix=categorical_columns)
 
     drop_columns = [
-        column
-        for column in (
-            "source",
-            "elo_band",
-            "skill_group",
-            "skill_group_description",
-            "export_skill_group",
-            "time_control",
-            "time_control_seconds",
-            "white_elo",
-            "black_elo",
-            "player_color",
-            "elo",
-        )
-        if column in encoded.columns
+        column for column in ENCODING_DROP_COLUMNS if column in encoded.columns
     ]
     return encoded.drop(columns=drop_columns).reset_index(drop=True)
+
+
+def _context_encoded_columns(columns: pd.Index | list[str]) -> list[str]:
+    prefixes = tuple(f"{column}_" for column in CONTEXT_FEATURE_COLUMNS)
+    return [column for column in columns if column.startswith(prefixes)]
+
+
+def resolve_model_feature_columns(
+    encoded: pd.DataFrame,
+    *,
+    feature_set: str,
+) -> list[str]:
+    if feature_set not in MODEL_FEATURE_SETS:
+        raise ValueError(
+            f"Unknown feature_set {feature_set!r}; expected one of {sorted(MODEL_FEATURE_SETS)}"
+        )
+
+    available = set(encoded.columns)
+    context_columns = [column for column in _context_encoded_columns(encoded.columns) if column in available]
+    human_columns = [column for column in HUMAN_PATTERN_FEATURES if column in available]
+    engine_columns = [column for column in ENGINE_PROXY_FEATURES if column in available]
+
+    if feature_set in {"proxy", "engine"}:
+        selected = human_columns + engine_columns + context_columns
+    else:
+        selected = human_columns + context_columns
+
+    return selected
+
+
+def sanitize_ml_feature_names(frame: pd.DataFrame) -> pd.DataFrame:
+    renamed = frame.copy()
+    renamed.columns = [
+        re.sub(r"[^\w]+", "_", str(column)).strip("_") for column in renamed.columns
+    ]
+    return renamed
+
+
+def split_features_and_target(
+    dataset: pd.DataFrame,
+    *,
+    feature_columns: Sequence[str] | None = None,
+    target_column: str = TARGET_COLUMN,
+    sanitize_feature_names: bool = False,
+) -> tuple[pd.DataFrame, pd.Series]:
+    if target_column not in dataset.columns:
+        raise ValueError(f"Missing target column: {target_column}")
+
+    if feature_columns is None:
+        excluded = {target_column, *METADATA_COLUMNS}
+        feature_columns = [column for column in dataset.columns if column not in excluded]
+
+    missing = [column for column in feature_columns if column not in dataset.columns]
+    if missing:
+        raise ValueError(f"Feature columns not in dataset: {missing}")
+
+    features = dataset.loc[:, feature_columns].copy()
+    if sanitize_feature_names:
+        features = sanitize_ml_feature_names(features)
+
+    target = dataset[target_column].copy()
+    return features.reset_index(drop=True), target.reset_index(drop=True)
 
 
 def build_quality_report(
