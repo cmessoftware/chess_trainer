@@ -1,15 +1,67 @@
+# AI Engineering Course — ChessTrainer Roadmap
+
+> **Ubicación del curso:** `docs/ai_chess_coach_course/`  
+> **Hito actual del curso:** Módulos **0–6.6** (pipeline de datos → ML → SHAP → coaching LLM → validación humana y redefinición del producto)  
+> **Módulos 7+:** planificados y condicionados por evidencia (RAG, LLM local, agentes, MVP UI)
+
+---
+
+## Resumen de módulos (0 → 6.6)
+
+| Módulo                                   | Notebook                                    | Qué hace el alumno                                                                                                                                                                            | Artefactos / código clave                                              | Estado   |
+| ---------------------------------------- | ------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- | -------- |
+| **0** Foundations                        | `00_architecture_overview.ipynb`            | Recorre el pipeline completo del proyecto real (PGN → features → ML → explicación)                                                                                                            | Visión de arquitectura                                                 | ✅        |
+| **1** Data pipeline                      | `01_run_feature_pipeline.ipynb`             | Ejecuta el **script existente** de extracción de features; no reimplementa el parser PGN                                                                                                      | `CourseFeaturesRepository`, SQLite/Postgres `features`                 | ✅        |
+| **2** Dataset                            | `02_dataset_builder.ipynb`                  | Limpia, codifica y exporta parquet de entrenamiento desde `features`                                                                                                                          | `dataset/build_training_dataset.py`, `course_training_dataset.parquet` | ✅        |
+| **3** Feature analysis                   | `03_feature_analysis.ipynb`                 | Explora distribución de errores, ELO, aperturas, pérdida de centipeones                                                                                                                       | Análisis exploratorio sobre parquet/DB                                 | ✅        |
+| **4** Machine learning                   | `04_ml_training.ipynb`                      | Entrena clasificador **Human Pattern** (multiclass `error_label`); compara familias de modelos                                                                                                | `artifacts/module04/`, modelo base para SHAP                           | ✅        |
+| **5** MLflow                             | `05_mlflow_experiment_tracking.ipynb`       | Registra params, métricas y artefactos; compara runs y elige mejor modelo                                                                                                                     | `experiment_tracking/`, `artifacts/module05/`                          | ✅        |
+| **6** SHAP                               | `06_shap_analysis.ipynb`                    | Explica predicciones por jugada con SHAP; define columnas “human” vs motor                                                                                                                    | `artifacts/module06/human_model.joblib`, explainability                | ✅        |
+| **6.5** LLM coaching                     | `06_5_llm_coaching_recommendations.ipynb`   | Convierte SHAP + patrones + **diagnóstico estructurado** en informe de coaching V7 (español); LLM opcional                                                                                    | `coaching/`, `llm/`, `artifacts/module06_5/`                           | ✅        |
+| **6.6** Product reset + human validation | `06_6_product_reset_human_validation.ipynb` | Audita la utilidad real del coaching V7, separa evidencia de narrativa, define protocolo de validación con entrenador y replantea el MVP hacia diagnóstico longitudinal y análisis de rivales | `evaluation/`, `validation/`, `artifacts/module06_6/`                  | 🟡 Diseño |
+
+**Arco pedagógico 0–6.6:** de “datos reales del ChessTrainer” a recomendaciones de coaching fundamentadas y, luego, a una **evaluación explícita de su utilidad ajedrecística**. El LLM **narra**; Python **diagnostica**; un protocolo humano determina si la recomendación es pedagógicamente válida.
+
+```text
+[0] Arquitectura
+      ↓
+[1] features (script existente → DB)
+      ↓
+[2] parquet + encoding + splits por game_id
+      ↓
+[3] EDA errores / ELO / aperturas
+      ↓
+[4] Human Pattern model (multiclass)
+      ↓
+[5] MLflow — mejor run reproducible
+      ↓
+[6] SHAP por jugada
+      ↓
+[6.5] RCA + DiagnosisBuilder + V7 → informe coaching (DeepSeek/Gemini opcional)
+      ↓
+[6.6] Auditoría de fiabilidad + validación humana + redefinición del MVP
+```
+
+**Referencias 6.5:** [Spec](./06_5-ai_chess_coach_course_llm_coaching_recommendations.md) · [Arquitectura](./6.5_llm_integration_architecture.md) · [Formato V7](./accc_llm_coaching_recommendations_v7.md) · [`.env.example`](./.env.example)
+
+---
+
 ## Phase 00 - AI Engineering Course Based on ChessTrainer
 
---- v1 Status ---
-Notebooks available in docs/courses/ (alongside this file):
-  00_architecture_overview.ipynb   — Module 0: Foundations  ✅
-  01_run_feature_pipeline.ipynb    — Module 1: Data Pipeline  ✅
-  02_dataset_builder.ipynb         — Module 2: Dataset Generation  ✅
-Modules 4-12: pending future implementation.
------------------
+**Notebooks disponibles** (todos en `docs/ai_chess_coach_course/`):
 
+| Notebook                                  | Módulo                   |
+| ----------------------------------------- | ------------------------ |
+| `00_architecture_overview.ipynb`          | 0 — Foundations ✅        |
+| `01_run_feature_pipeline.ipynb`           | 1 — Data Pipeline ✅      |
+| `02_dataset_builder.ipynb`                | 2 — Dataset Generation ✅ |
+| `03_feature_analysis.ipynb`               | 3 — Feature Analysis ✅   |
+| `04_ml_training.ipynb`                    | 4 — Machine Learning ✅   |
+| `05_mlflow_experiment_tracking.ipynb`     | 5 — MLflow ✅             |
+| `06_shap_analysis.ipynb`                  | 6 — SHAP ✅               |
+| `06_5_llm_coaching_recommendations.ipynb` | 6.5 — LLM Coaching ✅     |
 
-The course must reuse the project's existing infrastructure.
+Módulos **7–13:** pendientes (ver más abajo).
 It must not reimplement the feature extraction pipeline.
 
 ## System Architecture
@@ -128,6 +180,8 @@ Scope constraints for Phase 1:
 - 04_machine_learning
 - 05_mlflow_experiment_tracking
 - 06_shap_model_evaluation
+- **06_5_llm_coaching** ✅ (hito técnico: generación de recomendaciones V7)
+- **06_6_product_reset_human_validation** 🟡 (punto de quiebre: medir utilidad, fiabilidad y valor pedagógico antes de agregar complejidad)
 - 07_rag_system
 - 08_llm_explanations
 - 09_llm_consistency_and_hallucination_tests
@@ -135,121 +189,441 @@ Scope constraints for Phase 1:
 ### Phase 2: Agentic architecture (planner -> executor -> critic -> memory)
 
 - 10_phase2_agentic_architecture
-- 11_capstone
+- 11_capstone — [proyecto integrador](#capstone); ver Módulo 11
 
 ### Phase 3: MVP delivery (basic UI + FastAPI) and production bridge
 
 - 12_mvp_ui_fastapi
 - 13_react_vite_production_bridge
 
-## Phase 1
-### Module 0 — Foundations
-Objective:
-understand complete pipeline.
-Notebook:
+## Glosario
 
-00_architecture_overview.ipynb  [v1 — available in docs/ai_chess_coach_course/]
+### Capstone
+
+**Capstone** (inglés *capstone*: “piedra de remate” / culminación) es el **proyecto integrador final** de un programa formativo. No introduce un tema nuevo desde cero: **reúne** lo ya aprendido en una entrega única, evaluable y cercana a un caso real.
+
+| Aspecto                             | Qué significa                                                                                                 |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| **Propósito**                       | Demostrar competencia **sistémica** (varias piezas funcionando juntas), no solo dominio de un módulo aislado. |
+| **Entrada**                         | Componentes, notebooks y servicios construidos en módulos previos.                                            |
+| **Salida**                          | Demo **end-to-end** + evidencia (métricas, informe, referencias MLflow, tests).                               |
+| **Diferencia vs. un módulo normal** | Menos teoría nueva; más **ensamblaje, prueba y documentación** del flujo completo.                            |
+| **Diferencia vs. MVP (módulo 12)**  | El capstone puede ser **solo backend** (script/notebook/API interna); el MVP añade interfaz para usuarios.    |
+
+**En este curso:** el capstone es el **Módulo 11** (Phase 2 — *Agentic Backend Integration*). Integra Phase 1 (datos → ML → SHAP → coaching 6.5 → validación 6.6) con RAG, LLM, tests de alucinación y arquitectura agentic (módulos 7–10). Detalle en [Module 11 — Capstone](#module-11--capstone-agentic-backend-integration).
+
+---
+
+## Phase 1
+
+### Module 0 — Foundations
+
+**Objetivo:** Entender el pipeline end-to-end del ChessTrainer real antes de tocar ML o LLM.
+
+|            |                                                                                    |
+| ---------- | ---------------------------------------------------------------------------------- |
+| Notebook   | `00_architecture_overview.ipynb`                                                   |
+| Entregable | Mapa mental: PGN → features → dataset → modelo → explicabilidad → (futuro) RAG/LLM |
+
+---
 
 ### Module 1 — Data Pipeline
-Do not implement parsing.
-Notebook:
 
-01_run_feature_pipeline.ipynb  [v1 — available in docs/ai_chess_coach_course/]
-Executes existing script.
+**Objetivo:** Poblar la tabla `features` reutilizando el pipeline existente (**no** escribir un parser PGN nuevo).
+
+|          |                                                                      |
+| -------- | -------------------------------------------------------------------- |
+| Notebook | `01_run_feature_pipeline.ipynb`                                      |
+| Código   | `data_access/features_repository.py`                                 |
+| Datos    | `course_data.sqlite` (curso) o DB del proyecto; PGN en `data/games/` |
+
+---
 
 ### Module 2 — Dataset Generation
-Notebook:
 
-02_dataset_builder.ipynb  [v1 — available in docs/ai_chess_coach_course/]
-Reads features table.
+**Objetivo:** Pasar de filas por jugada en SQL a un parquet listo para entrenamiento.
+
+|          |                                                            |
+| -------- | ---------------------------------------------------------- |
+| Notebook | `02_dataset_builder.ipynb`                                 |
+| Spec     | `02-ai_chess_coach_leakage_detection.md` (fugas train/val) |
+| Script   | `dataset/build_training_dataset.py`                        |
+| Target   | `error_label` → `good`, `inaccuracy`, `mistake`, `blunder` |
+| Salida   | `data/datasets/course_training_dataset.parquet`            |
+
+---
 
 ### Module 3 — Feature Analysis
-Notebook:
 
-03_feature_analysis.ipynb
-Analysis:
+**Objetivo:** Conocer el dataset antes de modelar (sesgos, aperturas, ELO, distribución de errores).
 
-error distribution
-error by elo
-error by opening
-centipawn loss
+|          |                                                                          |
+| -------- | ------------------------------------------------------------------------ |
+| Notebook | `03_feature_analysis.ipynb`                                              |
+| Spec     | `03-ai_chess_coach_course_shap_human_pattern.md` (puente hacia módulo 6) |
+| Análisis | Distribución de clases, errores por ELO/apertura, pérdida de centipeones |
+
+---
 
 ### Module 4 — Machine Learning
-Notebook:
 
-04_ml_training.ipynb
+**Objetivo:** Entrenar el modelo **Human Pattern** que usarán SHAP y coaching (clasificación multiclass por jugada).
 
-Models:
+|          |                                                                                                           |
+| -------- | --------------------------------------------------------------------------------------------------------- |
+| Notebook | `04_ml_training.ipynb`                                                                                    |
+| Spec     | `04-ai_chess_coach_course_llm_recommendationsf_from_shap_+_pattern_engine.md` (catálogo ampliado, futuro) |
+| Modelos  | LogisticRegression, KNN, SVM, RandomForest, LightGBM, XGBoost, CatBoost                                   |
+| Split    | Por `game_id` (evitar leakage jugada a jugada de la misma partida)                                        |
 
-Multi Class LogistRegression
-KNN
-SVM
-RandomForest
-LightGBM
-XGBoost
-CatBoost
-
-Scripts:
-
-ml/train_random_forest.py
-ml/train_lightgbm.py
-ml/train_xgboost.py
-ml/train_catboost.py
+---
 
 ### Module 5 — MLflow Experiment Tracking
 
-Notebook:
-05_mlflow_experiment_tracking.ipynb
+**Objetivo:** Comparar experimentos de forma reproducible y fijar el mejor run para módulos 6 y 6.5.
 
-Notebook must contain:
+|               |                                                                         |
+| ------------- | ----------------------------------------------------------------------- |
+| Notebook      | `05_mlflow_experiment_tracking.ipynb`                                   |
+| Spec          | `05-ai_chess_coach_course_mlflow_experiment_tracking.md`                |
+| Paquete       | `experiment_tracking/course_mlflow.py`, `training_runner.py`            |
+| Backend local | SQLite MLflow; logs de params, métricas, matrices de confusión, modelos |
 
-- Setup MLflow using sqlite backend for local tracking.
-- Data loading and exploration with MLflow logging.
-- Feature engineering steps with MLflow tracking.
-- Model training with params/metrics/artifacts logged.
-- Run comparison and best-model selection criteria.
+---
 
-### Module 6 — Model Explainability
+### Module 6 — Model Explainability (SHAP)
 
-Notebook:
-06_shap_analysis.ipynb
+**Objetivo:** Obtener evidencia **por jugada** (qué features empujan la predicción) sin enviar SHAP crudo al LLM.
 
-Methods:
+|            |                                                                       |
+| ---------- | --------------------------------------------------------------------- |
+| Notebook   | `06_shap_analysis.ipynb`                                              |
+| Método     | SHAP sobre el Human Pattern model                                     |
+| Artefactos | `artifacts/module06/human_model.joblib`, columnas de features humanas |
+| Uso en 6.5 | `explain_player_games()` alimenta Pattern Engine + filas para RCA     |
 
-SHAP
-feature importance
+---
 
-### Module 6.5 — LLM Coaching Recommendations (first course version milestone)
+### Module 6.5 — LLM Coaching Recommendations (hito del curso v1)
 
-Notebook:
-06_5_llm_coaching_recommendations.ipynb
+**Objetivo:** Primera versión **end-to-end de coaching**: una partida (Phase A) o muestra de perfil (Phase B) → informe en español estilo entrenador humano (V7), con LLM opcional.
 
-Spec:
-06_5-ai_chess_coach_course_llm_coaching_recommendations.md
+|                 |                                                                                             |
+| --------------- | ------------------------------------------------------------------------------------------- |
+| Notebook        | `06_5_llm_coaching_recommendations.ipynb`                                                   |
+| Spec            | `06_5-ai_chess_coach_course_llm_coaching_recommendations.md`                                |
+| Arquitectura    | `6.5_llm_integration_architecture.md`                                                       |
+| Formato informe | `accc_llm_coaching_recommendations_v7.md` (4 secciones: resumen, lecciones, momentos, plan) |
 
-Architecture:
-6.5_llm_integration_architecture.md
+**Phase A — una partida**
 
-Pipeline:
+1. Elige `game_id` (`prepare_player_game_analysis`, split validación, jugador `cmess1315` por defecto).
+2. SHAP + Pattern Engine v1 en todas las jugadas del alumno.
+3. **RCA:** agrupa síntomas bajo jugadas raíz (`root_cause.py`).
+4. **DiagnosisBuilder (V4–V6):** tags SQLite + detectores de tablero + `diagnosis_type` + estilos de texto.
+5. **V7:** `lesson_synthesizer` → 2–3 lecciones; prompt con reglas estrictas.
+6. **LLM opcional:** DeepSeek (`deepseek-chat`, default) o Gemini; CI usa dry-run.
+7. Validación post-LLM; fallback determinista si falla.
 
-Human Pattern model + SHAP evidence
-↓
-Minimal Pattern Engine (chess concepts, not raw SHAP)
-↓
-Recommendation Context Builder (JSON)
-↓
-Prompt Builder
-↓
-LLMProvider → Gemini 2.5 Flash (`google-genai`, `GEMINI_API_KEY`)
+**Phase B — perfil (varias partidas):** `context_builder` + prompt de perfil (formato pre-V7; mejora futura).
 
-Packages:
+**Paquetes**
 
-llm/ (provider abstraction + Gemini)
-coaching/ (pattern engine, context, prompt)
+- `llm/` — `LLMProvider`, DeepSeek (OpenAI-compatible), Gemini, cuota/fallback  
+- `coaching/` — pipeline, RCA, diagnosis, prompt, `coaching_generate`, validación V7  
 
-Out of scope for 6.5: RAG (Module 07), Ollama/local LLM (Module 08).
+**Política de invocación:** pytest **nunca** llama API de pago; notebook genera prompts por defecto; celda opcional `invoke_llm=True`.
 
-Students completing Modules 01–6.5 have a **first end-to-end coaching arc** without vector stores.
+**Fuera de alcance 6.5:** ChromaDB/RAG (7), Ollama en paquete curso (8), corrección masiva de tags tácticos en DB (mejora upstream documentada).
+
+Al completar **0–6.5**, el alumno tiene un arco técnico de coaching completo sin vector stores ni UI. El módulo **6.6** determina si ese arco produce recomendaciones confiables y si existe evidencia suficiente para continuar.
+
+
+### Module 6.6 — Product Reset, Reliability Audit and Human Validation
+
+**Objetivo:** detener la expansión técnica del sistema y comprobar si las recomendaciones generadas hasta 6.5 son correctas, relevantes, priorizadas y útiles para mejorar el juego.
+
+Este módulo no descarta lo construido. Reutiliza:
+
+- features por jugada;
+- modelo Human Pattern;
+- MLflow;
+- SHAP;
+- Pattern Engine;
+- RCA;
+- DiagnosisBuilder;
+- formato V7;
+- proveedores LLM y fallback determinista.
+
+El cambio consiste en pasar de:
+
+```text
+generar una explicación convincente
+```
+
+a:
+
+```text
+demostrar que la recomendación es útil y defendible
+```
+
+|             |                                                                                               |
+| ----------- | --------------------------------------------------------------------------------------------- |
+| Notebook    | `06_6_product_reset_human_validation.ipynb`                                                   |
+| Estado      | 🟡 Diseño / siguiente módulo                                                                   |
+| Entrada     | Diagnóstico estructurado + informe V7 + posiciones críticas                                   |
+| Validadores | Reglas automáticas + entrenador humano                                                        |
+| Salida      | Dataset de evaluación, métricas de fiabilidad, decisiones de producto y nuevo alcance del MVP |
+
+#### 6.6.1 — Hipótesis a validar
+
+1. El sistema identifica correctamente la causa raíz del error.
+2. La recomendación se apoya en evidencia observable.
+3. El tema elegido es más importante que explicaciones alternativas.
+4. La recomendación es adecuada para el nivel del jugador.
+5. El plan de entrenamiento propuesto es accionable.
+6. La redacción del LLM no introduce afirmaciones nuevas no sustentadas.
+7. El informe aporta más valor que una simple variante de Stockfish.
+
+#### 6.6.2 — Separación estricta de responsabilidades
+
+```text
+Stockfish / features / SHAP / reglas
+            ↓
+evidencia estructurada verificable
+            ↓
+motor de diagnóstico
+            ↓
+recomendación candidata
+            ↓
+LLM
+            ↓
+redacción, síntesis y adaptación del lenguaje
+```
+
+El LLM no debe decidir libremente:
+
+- cuál fue la causa raíz;
+- qué patrón ocurrió;
+- cuál es la prioridad pedagógica;
+- qué tema estudiar;
+- qué plan recomendar.
+
+Esas decisiones deben provenir de datos, reglas, modelos o validación humana. El LLM puede resumir, explicar y adaptar el nivel de lenguaje.
+
+#### 6.6.3 — Dataset de validación humana
+
+Construir un conjunto inicial de 50–100 casos representativos.
+
+Cada caso debe incluir:
+
+```json
+{
+  "case_id": "game_123_move_27",
+  "player_elo": 1600,
+  "fen_before": "...",
+  "played_move": "Nxe5",
+  "engine_best_move": "Bxh7+",
+  "engine_evaluation_before": 0.4,
+  "engine_evaluation_after": -1.8,
+  "diagnosis_type": "tactical_oversight",
+  "root_cause": "defender_removed",
+  "recommended_topic": "loose_pieces_and_defenders",
+  "system_explanation": "...",
+  "system_training_action": "...",
+  "coach_review": {}
+}
+```
+
+El entrenador completa:
+
+```json
+{
+  "correctness": 1,
+  "relevance": 2,
+  "priority": 1,
+  "level_fit": 2,
+  "actionability": 2,
+  "preferred_diagnosis": "calculation_failure",
+  "preferred_training_action": "resolver ejercicios de eliminación del defensor",
+  "comments": "La explicación es correcta, pero el problema principal fue cortar el cálculo una jugada antes."
+}
+```
+
+Escala sugerida:
+
+- `0`: incorrecto o perjudicial;
+- `1`: parcialmente correcto;
+- `2`: correcto y útil.
+
+#### 6.6.4 — Métricas del módulo
+
+No usar únicamente métricas de lenguaje.
+
+Medir:
+
+| Dimensión                | Métrica                                              |
+| ------------------------ | ---------------------------------------------------- |
+| Corrección ajedrecística | acuerdo con entrenador                               |
+| Causa raíz               | accuracy / macro-F1 sobre categorías validadas       |
+| Relevancia               | promedio de evaluación humana                        |
+| Priorización             | top-1 y top-3 agreement                              |
+| Adecuación al nivel      | promedio de evaluación humana                        |
+| Accionabilidad           | porcentaje de recomendaciones aplicables             |
+| Grounding                | porcentaje de afirmaciones respaldadas por evidencia |
+| Consistencia             | variación entre múltiples generaciones               |
+| Valor incremental        | comparación contra informe sin LLM                   |
+
+#### 6.6.5 — Experimentos mínimos
+
+Comparar cuatro variantes:
+
+```text
+A. Stockfish + variante
+B. Diagnóstico determinista sin LLM
+C. Diagnóstico + LLM
+D. Diagnóstico + LLM + revisión humana
+```
+
+Preguntas de evaluación:
+
+- ¿El LLM mejora comprensión o solo agrega texto?
+- ¿El diagnóstico determinista ya es suficiente?
+- ¿Qué tipos de recomendación requieren entrenador?
+- ¿En qué categorías el sistema es confiable?
+- ¿Cuándo debe abstenerse de recomendar?
+
+#### 6.6.6 — Política de abstención
+
+El sistema debe poder responder:
+
+```text
+No hay evidencia suficiente para emitir una recomendación confiable.
+```
+
+Casos de abstención:
+
+- motores en fuerte desacuerdo;
+- diagnóstico ambiguo;
+- baja confianza del modelo;
+- ausencia de patrón repetido;
+- recomendación no validada para ese nivel;
+- evidencia insuficiente en la muestra del jugador.
+
+#### 6.6.7 — Nuevo enfoque del MVP
+
+El MVP deja de intentar ser un analizador general de partidas.
+
+Se orienta a dos casos de uso verificables:
+
+##### A. Diagnóstico longitudinal del jugador
+
+Entrada:
+
+```text
+100–1000 partidas propias
+```
+
+Salida:
+
+- errores recurrentes;
+- distribución por fase;
+- evolución temporal;
+- aperturas problemáticas;
+- patrones tácticos y estratégicos;
+- temas prioritarios;
+- plan de estudio basado en evidencia.
+
+##### B. Preparación de rivales
+
+Entrada:
+
+```text
+colección PGN de un rival
+```
+
+Salida:
+
+- repertorio con blancas y negras;
+- variantes frecuentes;
+- resultados por apertura;
+- errores recurrentes;
+- comportamiento por fase;
+- tendencias tácticas y estratégicas;
+- posiciones donde pierde precisión;
+- informe de preparación con nivel de confianza.
+
+Las recomendaciones específicas de match-up deben distinguir claramente:
+
+```text
+hecho observado
+inferencia estadística
+recomendación estratégica
+opinión del entrenador
+```
+
+#### 6.6.8 — Arquitectura revisada
+
+```text
+PGN
+  ↓
+SQLite
+  ↓
+feature extraction existente
+  ↓
+ML + SHAP + Pattern Engine
+  ↓
+agregación longitudinal por jugador
+  ↓
+diagnóstico estructurado
+  ↓
+reglas de confianza y abstención
+  ↓
+validación humana
+  ↓
+LLM como capa de explicación
+  ↓
+informe de jugador o rival
+```
+
+#### 6.6.9 — Entregables
+
+- `06_6_product_reset_human_validation.ipynb`
+- `evaluation/coach_review_schema.py`
+- `evaluation/reliability_metrics.py`
+- `validation/human_review_template.csv`
+- `validation/validated_cases.sqlite`
+- `validation/annotation_guidelines.md`
+- `artifacts/module06_6/reliability_report.md`
+- `artifacts/module06_6/product_reset_decision.md`
+- conjunto inicial de casos revisados por entrenador;
+- decisión explícita de continuar, limitar o descartar cada tipo de recomendación.
+
+#### 6.6.10 — Criterio de salida
+
+No avanzar a RAG, agentes o UI hasta cumplir:
+
+- corrección promedio aceptable según entrenador;
+- tasa baja de recomendaciones perjudiciales;
+- política de abstención implementada;
+- separación verificable entre evidencia y narrativa;
+- al menos un caso de uso que aporte valor sin depender de texto persuasivo;
+- alcance del MVP aprobado sobre evidencia.
+
+#### 6.6.11 — Decisión pedagógica
+
+Este módulo convierte el cuello de botella en contenido central del curso:
+
+- evaluación de sistemas generativos;
+- human-in-the-loop;
+- diseño de ground truth;
+- incertidumbre;
+- abstención;
+- trazabilidad;
+- diferencia entre exactitud técnica y utilidad de producto;
+- redefinición de un MVP a partir de evidencia.
+
+---
 
 ### Module 7 — RAG
 Notebook:
@@ -400,7 +774,17 @@ memory update
 final report
 
 ### Module 11 — Capstone (Agentic Backend Integration)
-Objective:
+
+> **Definición general:** [Glosario — Capstone](#capstone).
+
+**Aplicación en ChessTrainer:** proyecto integrador de cierre de **Phase 2**. Un solo flujo reproducible (notebook o script) demuestra que el “AI Chess Coach” funciona de punta a punta con: datos reales (1–2), modelo y MLflow (4–5), SHAP y coaching 6.5, RAG (7), LLM (8), pruebas de alucinación (9) y orquestación planner → executor → critic → memory (10). Prioridad **backend**; la UI pública llega en el módulo 12.
+|         |                                                  |
+| ------- | ------------------------------------------------ |
+| Estado  | 📋 Planificado (Phase 2)                          |
+| Formato | Demo E2E + informe de evaluación                 |
+| UI      | No obligatoria; prioridad backend y orquestación |
+
+**Objective:**
 integrate all Phase 1 + Phase 2 backend components in one coherent AI Chess Coach workflow.
 
 Scope:
