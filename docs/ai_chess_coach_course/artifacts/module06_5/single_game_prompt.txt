@@ -129,31 +129,18 @@ No generic advice ("calcula más", "mejora tácticas", "JCA").
       "title": "Errores tácticos evitables",
       "idea": "Con N1c3 el rival activó un ataque descubierto con Nd4.",
       "evidence_moves": [
-        "6. N1c3"
+        "6. N1c3",
+        "34. b4"
       ],
       "move_numbers": [
-        6
+        6,
+        34
       ],
       "diagnosis_types": [
         "tactical"
       ],
       "why": "Con N1c3 el rival activó un ataque descubierto con Nd4.",
       "how_to_avoid": "Cuando una pieza se mueve, calcula qué línea queda descubierta detrás."
-    },
-    {
-      "title": "Comprensión posicional",
-      "idea": "Con 34. b4 la estructura posicional favoreció más al rival que a ti; además, las piezas del rival ganaron actividad.",
-      "evidence_moves": [
-        "34. b4"
-      ],
-      "move_numbers": [
-        34
-      ],
-      "diagnosis_types": [
-        "positional"
-      ],
-      "why": "Con 34. b4 la estructura posicional favoreció más al rival que a ti; además, las piezas del rival ganaron actividad.",
-      "how_to_avoid": "Antes de empujar un peón, pregúntate qué pieza enemiga gana fuerza con tu jugada."
     },
     {
       "title": "Actividad del rey y técnica en el final",
@@ -206,27 +193,28 @@ No generic advice ("calcula más", "mejora tácticas", "JCA").
       "player_move": "34. b4",
       "phase": "medio juego",
       "severity": "error grave",
-      "issue": "Con 34. b4 la estructura posicional favoreció más al rival que a ti; además, las piezas del rival ganaron actividad.",
-      "lesson_hint": "Antes de empujar un peón, pregúntate qué pieza enemiga gana fuerza con tu jugada.",
+      "issue": "Con b4 se materializó un motivo táctico (unknown) con Bb5.",
+      "lesson_hint": "Antes de jugar, calcula la respuesta más forzada del rival en la variante concreta.",
       "context_pgn": "32. c5 32...Rd3 33. Rxd3 33...Bxd3 34. b4 34...Bb5 35. Re1 35...Bc6 36. Rg1",
-      "pattern": "tactical_oversight",
-      "consequence": "La iniciativa y la actividad de las piezas cambiaron de bando; además, la seguridad del rey empeoró y cediste influencia central.",
+      "opponent_reply": "34...Bb5",
+      "pattern": "unknown",
+      "consequence": "El rival respondió Bb5 y la iniciativa cambió; además, las piezas del rival ganaron actividad y la seguridad del rey empeoró.",
       "root_cause": true,
       "material_change": "none",
-      "tactical_motif": "Tactical Oversight",
-      "theme": "Tactical Oversight",
+      "tactical_motif": "Unknown",
+      "theme": "Unknown",
       "supporting_features": [
         "las piezas del rival ganaron actividad",
         "la seguridad del rey empeoró",
         "cediste influencia central",
         "los derechos de enroque influyeron en la evaluación"
       ],
-      "diagnosis_type": "positional",
+      "diagnosis_type": "tactical",
       "sections": {
         "decision": "34. b4",
-        "positional_change": "Con 34. b4 la estructura posicional favoreció más al rival que a ti; además, las piezas del rival ganaron actividad.",
-        "consequence": "La iniciativa y la actividad de las piezas cambiaron de bando; además, la seguridad del rey empeoró y cediste influencia central.",
-        "lesson": "Antes de empujar un peón, pregúntate qué pieza enemiga gana fuerza con tu jugada."
+        "tactical_punishment": "Bb5",
+        "consequence": "El rival respondió Bb5 y la iniciativa cambió; además, las piezas del rival ganaron actividad y la seguridad del rey empeoró.",
+        "lesson": "Antes de jugar, calcula la respuesta más forzada del rival en la variante concreta."
       }
     },
     {
@@ -263,4 +251,4 @@ No generic advice ("calcula más", "mejora tácticas", "JCA").
 
 ## Tarea
 
-Redacta feedback de coaching para **cmess1315** en su partida contra paul606. Empieza saludando a cmess1315 por su nombre de usuario (no uses [alumno]). Responde en español con las cuatro secciones obligatorias. ### Lecciones principales debe tener aproximadamente 3 lecciones (fusiona momentos relacionados según lesson_clusters). ### Momentos clave debe tener exactamente 3 entradas breves, una por cada critical_moves.
+Redacta feedback de coaching para **cmess1315** en su partida contra paul606. Empieza saludando a cmess1315 por su nombre de usuario (no uses [alumno]). Responde en español con las cuatro secciones obligatorias. ### Lecciones principales debe tener aproximadamente 2 lecciones (fusiona momentos relacionados según lesson_clusters). ### Momentos clave debe tener exactamente 3 entradas breves, una por cada critical_moves.

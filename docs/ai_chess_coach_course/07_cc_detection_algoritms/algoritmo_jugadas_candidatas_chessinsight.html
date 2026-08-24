@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Jugadas Candidatas - ChessInsight Draft</title>
+<style>
+:root{--bg:#f6f7f9;--panel:#fff;--text:#1f2937;--muted:#64748b;--border:#cbd5e1;--sel:#fde68a;--selb:#b45309;--cand:#eef2ff;--eval:#f0fdf4}
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;background:var(--bg);color:var(--text)}
+header{background:#fff;border-bottom:1px solid #e5e7eb;padding:14px 18px;position:sticky;top:0;z-index:5}
+h1{font-size:20px;margin:0 0 5px} header p{margin:0;color:var(--muted);font-size:13px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.toolbar a,button,.file-label{border:1px solid var(--border);background:#fff;border-radius:8px;padding:7px 10px;font-size:13px;color:inherit;text-decoration:none;cursor:pointer}
+main{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:12px;padding:12px;align-items:start}
+#wrap{background:#fff;border:1px solid #e5e7eb;border-radius:12px;overflow:auto}svg{display:block;min-width:1200px;background:#fff}
+.node rect{fill:var(--cand);stroke:var(--border);stroke-width:1.4;rx:10;ry:10;cursor:pointer}.node.eval rect{fill:var(--eval)}.node.selected rect{fill:var(--sel)!important;stroke:var(--selb);stroke-width:3}
+.node text{pointer-events:none;text-anchor:middle;font-size:13px;font-weight:600;fill:#111827}.edge{stroke:#64748b;stroke-width:1.7;fill:none;marker-end:url(#arrow)}
+aside{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:14px;position:sticky;top:112px}aside h2{font-size:16px;margin:0 0 8px}textarea{width:100%;min-height:220px;border:1px solid var(--border);border-radius:8px;padding:10px;resize:vertical}
+.small{font-size:12px;color:var(--muted);margin-top:8px}code{font-size:12px}input[type=file]{display:none}
+@media(max-width:900px){main{grid-template-columns:1fr}aside{position:static}}
+</style>
+</head>
+<body>
+<header>
+<h1>Jugadas Candidatas — algoritmo humano</h1>
+<p>Draft conceptual para ChessInsight: generación, filtrado, cálculo y comparación de candidatas.</p>
+<div class="toolbar">
+<a href="./algoritmo_posiciones_criticas_ajedrez.html">← Posiciones críticas</a>
+<button id="reset">Desmarcar</button><button id="export">Exportar estado</button>
+<label class="file-label">Importar estado<input id="import" type="file" accept="application/json"></label>
+</div>
+</header>
+<main>
+<section id="wrap"><svg id="flow" viewBox="0 0 1200 1720" width="1200" height="1720">
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#64748b"/></marker></defs>
+</svg></section>
+<aside><h2>Anotación</h2><div id="title"><b>Seleccioná un nodo</b></div><textarea id="note" disabled placeholder="Hipótesis, feature para ChessInsight, ejemplo, regla..."></textarea><div class="small">Doble click abre la nota. Estado persistente mediante <code>localStorage</code>.</div></aside>
+</main>
+<script>
+const KEY="chess-candidates-flow-v1";
+const N=[
+{id:"A",x:450,y:30,w:300,h:60,t:["POSICIÓN CRÍTICA DETECTADA"]},
+{id:"B",x:450,y:125,w:300,h:65,t:["Actualizar modelo mental","de la posición"]},
+{id:"C",x:450,y:225,w:300,h:65,t:["¿Qué quiere hacer el rival?"]},
+{id:"D",x:450,y:325,w:300,h:65,t:["GENERAR CANDIDATAS"]},
+{id:"D1",x:70,y:445,w:200,h:70,t:["Forzantes","jaques / capturas"]},
+{id:"D2",x:285,y:445,w:200,h:70,t:["Amenazas","tácticas"]},
+{id:"D3",x:500,y:445,w:200,h:70,t:["Activas","iniciativa / ruptura"]},
+{id:"D4",x:715,y:445,w:200,h:70,t:["Profilácticas","frenar plan rival"]},
+{id:"D5",x:930,y:445,w:200,h:70,t:["Posicionales","mejorar piezas"]},
+{id:"E",x:450,y:570,w:300,h:70,t:["Reducir a 2–3","candidatas reales"]},
+{id:"F",x:450,y:675,w:300,h:70,t:["Ordenar por prioridad","forzante → activa → sólida"]},
+{id:"G",x:450,y:780,w:300,h:70,t:["CALCULAR CADA CANDIDATA"]},
+{id:"G1",x:120,y:900,w:250,h:70,t:["Mi candidata","C1 / C2 / C3"]},
+{id:"G2",x:475,y:900,w:250,h:70,t:["Mejor respuesta","del rival"]},
+{id:"G3",x:830,y:900,w:250,h:70,t:["Mi mejor","continuación"]},
+{id:"H",x:450,y:1020,w:300,h:70,t:["¿Línea forzada?"],cls:"eval"},
+{id:"H1",x:160,y:1130,w:280,h:70,t:["Sí: profundizar","hasta posición estable"],cls:"eval"},
+{id:"H2",x:760,y:1130,w:280,h:70,t:["No: detener cálculo","y evaluar"],cls:"eval"},
+{id:"I",x:450,y:1250,w:300,h:70,t:["EVALUAR POSICIÓN RESULTANTE"],cls:"eval"},
+{id:"I1",x:70,y:1370,w:190,h:65,t:["Seguridad","del rey"],cls:"eval"},
+{id:"I2",x:285,y:1370,w:190,h:65,t:["Material"],cls:"eval"},
+{id:"I3",x:500,y:1370,w:190,h:65,t:["Actividad /","coordinación"],cls:"eval"},
+{id:"I4",x:715,y:1370,w:190,h:65,t:["Estructura /","casillas"],cls:"eval"},
+{id:"I5",x:930,y:1370,w:190,h:65,t:["Iniciativa /","facilidad práctica"],cls:"eval"},
+{id:"J",x:450,y:1490,w:300,h:70,t:["COMPARAR C1 / C2 / C3"],cls:"eval"},
+{id:"K",x:450,y:1595,w:300,h:70,t:["Elegir candidata +","anti-blunder check"],cls:"eval"}
+];
+const E=[["A","B"],["B","C"],["C","D"],["D","D1"],["D","D2"],["D","D3"],["D","D4"],["D","D5"],["D1","E"],["D2","E"],["D3","E"],["D4","E"],["D5","E"],["E","F"],["F","G"],["G","G1"],["G1","G2"],["G2","G3"],["G3","H"],["H","H1"],["H","H2"],["H1","I"],["H2","I"],["I","I1"],["I","I2"],["I","I3"],["I","I4"],["I","I5"],["I1","J"],["I2","J"],["I3","J"],["I4","J"],["I5","J"],["J","K"]];
+const svg=document.getElementById("flow"), map=Object.fromEntries(N.map(n=>[n.id,n]));
+function s(tag,a={}){let e=document.createElementNS("http://www.w3.org/2000/svg",tag);Object.entries(a).forEach(([k,v])=>e.setAttribute(k,v));return e}
+function path(a,b){a=map[a];b=map[b];let ax=a.x+a.w/2,ay=a.y+a.h,bx=b.x+b.w/2,by=b.y,m=(ay+by)/2;return `M${ax} ${ay} L${ax} ${m} L${bx} ${m} L${bx} ${by}`}
+E.forEach(([a,b])=>svg.appendChild(s("path",{d:path(a,b),class:"edge"})));
+let state={marks:{},notes:{}},active=null;
+try{state=Object.assign(state,JSON.parse(localStorage.getItem(KEY)||"{}"))}catch{}
+function save(){localStorage.setItem(KEY,JSON.stringify(state))}
+function refresh(){document.querySelectorAll(".node").forEach(g=>g.classList.toggle("selected",!!state.marks[g.dataset.id]))}
+function note(id){active=id;let n=map[id];document.getElementById("title").innerHTML="<b>"+id+": "+n.t.join(" ")+"</b>";let ta=document.getElementById("note");ta.disabled=false;ta.value=state.notes[id]||"";ta.focus()}
+N.forEach(n=>{let g=s("g",{class:"node "+(n.cls||""),"data-id":n.id});g.appendChild(s("rect",{x:n.x,y:n.y,width:n.w,height:n.h}));let lh=17,tot=(n.t.length-1)*lh;n.t.forEach((l,i)=>{let t=s("text",{x:n.x+n.w/2,y:n.y+n.h/2-tot/2+i*lh+5});t.textContent=l;g.appendChild(t)});g.onclick=()=>{state.marks[n.id]=!state.marks[n.id];if(!state.marks[n.id])delete state.marks[n.id];save();refresh()};g.ondblclick=()=>note(n.id);svg.appendChild(g)});
+document.getElementById("note").oninput=e=>{if(active){state.notes[active]=e.target.value;if(!e.target.value)delete state.notes[active];save()}};
+document.getElementById("reset").onclick=()=>{state.marks={};save();refresh()};
+document.getElementById("export").onclick=()=>{let b=new Blob([JSON.stringify(state,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="chess-candidates-state.json";a.click();URL.revokeObjectURL(a.href)};
+document.getElementById("import").onchange=async e=>{let f=e.target.files[0];if(!f)return;try{let o=JSON.parse(await f.text());state={marks:o.marks||{},notes:o.notes||{}};save();refresh()}catch{alert("JSON inválido")}e.target.value=""};
+refresh();
+</script>
+</body>
+</html>

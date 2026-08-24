@@ -232,6 +232,27 @@ docs/ai_chess_coach_course/
 └── 07_0_critical_position_lab.ipynb
 ```
 
+### Fase 7.0-human — Modelo mental 1600 rapid (PRIORITARIO)
+
+> **Spec:** [07_cc_human_mental_model_analysis.md](./07_cc_human_mental_model_analysis.md)  
+> **Diagramas:** [07_cc_detection_algoritms/](./07_cc_detection_algoritms/)  
+> **Código:** `analysis/mental_model/`
+
+| ID | Estado | Tarea | Entregable |
+|----|--------|-------|------------|
+| 7.0-H01 | ✅ | Enums E1–E11, D1–D5, S1–S4 + `DecisionAssessment` | `models.py` |
+| 7.0-H02 | ✅ | Detectores disparadores (tablero + Δeval) | `critical_triggers.py` |
+| 7.0-H03 | ✅ | Anti-blunder S1–S4 | `anti_blunder.py` |
+| 7.0-H04 | ✅ | Taxonomía candidatas D1–D5 + orden F | `candidate_taxonomy.py` |
+| 7.0-H05 | ✅ | `assess_decision_point()` — flujo completo | `flow.py` |
+| 7.0-H06 | ✅ | Mapeo E* → CriticalityReason 07-base | `mapping_07.py` |
+| 7.0-H07 | ✅ | Tests | `test_mental_model_1600.py` |
+| 7.0-H08 | ✅ | Notebook `07_0_mental_model_lab.ipynb` | Notebook + `sample_game.pgn` + `_gen_mental_model_lab_nb.py` |
+| 7.0-H09 | ⬜ | Integrar MultiPV → clasificar D1–D5 | Tras 7.0-T01 |
+| 7.0-H10 | ⬜ | Validación HITL: 10 posiciones reales 1600 | JSON export HTML |
+
+**Prioridad:** implementar **7.0-human antes** de 7.0-T08; el `criticalityScore` 07-base **pondera** triggers humanos, no los reemplaza.
+
 ### Fase 7.0a — Position extraction + Stockfish MultiPV
 
 | ID | Estado | Tarea | Entregable |
