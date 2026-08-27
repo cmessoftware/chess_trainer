@@ -1,21 +1,29 @@
 {
-  "game_id": "6662a1ad4ce31474139a8332ef2c5e37ac544fa57ee89264dd9b9f2969e89514",
+  "game_id": "1a376125b095e17e4e79bf2394ca240d9c88d9a289def3b5a249f51f9cd43d25",
   "source": "pgn",
-  "fen": "8/8/5K2/3k2Pp/5p1P/5P2/8/8 b - - 2 62",
+  "fen": "rq2r1k1/2p2pbn/3p2p1/1b1Pp1Pp/1p2P2P/1P2BP2/2PQN3/1NKR1R2 w - - 1 23",
   "mode": "critical",
   "pause_seconds": 10,
   "triggers": [
     {
-      "code": "E7",
-      "label": "Ataque al rey o reyes expuestos",
+      "code": "E1",
+      "label": "Material aparentemente gratis o pieza en prise",
       "evidence": [
-        "Rey aún en zona central — considerar seguridad"
+        "pawn rival en b4 sin defensa adecuada"
+      ]
+    },
+    {
+      "code": "E2",
+      "label": "Jaque, captura o amenaza directa",
+      "evidence": [
+        "1 capturas legales disponibles"
       ]
     }
   ],
   "mapped_07_reasons": [
-    "KingSafetyChange",
-    "TacticalThreat"
+    "TacticalThreat",
+    "MaterialTransformation",
+    "ForcedSequence"
   ],
   "thinking_plan": [
     {

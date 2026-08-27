@@ -22,6 +22,32 @@ def course_root() -> Path:
     )
 
 
+def repo_root(start: Path | None = None) -> Path:
+    """Repository root (directory that contains ``src/`` and usually ``.env``)."""
+    start = (start or course_root()).resolve()
+    for folder in [start, *start.parents]:
+        if (folder / "src" / "db" / "database.py").is_file():
+            return folder
+    return start
+
+
+def find_repo_env(start: Path | None = None) -> Path | None:
+    root = repo_root(start)
+    env_path = root / ".env"
+    return env_path if env_path.is_file() else None
+
+
+def load_repo_dotenv(start: Path | None = None, *, override: bool = True) -> Path | None:
+    """Load repo ``.env`` so Jupyter sees ``CHESS_TRAINER_DB_URL``."""
+    env_path = find_repo_env(start)
+    if env_path is None:
+        return None
+    from dotenv import load_dotenv
+
+    load_dotenv(env_path, override=override)
+    return env_path
+
+
 def prepare_sys_path(root: Path | None = None) -> Path:
     root = root or course_root()
     src_dir = root.parents[1] / "src"

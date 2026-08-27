@@ -461,6 +461,27 @@ class CourseFeaturesRepository:
         with self.engine.connect() as connection:
             return pd.read_sql(stmt, connection)
 
+    def get_game(
+        self,
+        game_id: str,
+        *,
+        columns: Sequence[str] | None = None,
+    ) -> pd.Series | None:
+        """Fetch one games row by id (exact match after strip/quotes)."""
+        gid = str(game_id).strip().strip("\"'")
+        if not gid or not self.has_table(GAMES_TABLE.name):
+            return None
+
+        requested = list(columns or GAME_COLUMNS)
+        stmt = select(*_selected_columns(GAMES_TABLE, requested)).where(
+            GAMES_TABLE.c.game_id == gid
+        )
+        with self.engine.connect() as connection:
+            frame = pd.read_sql(stmt, connection)
+        if frame.empty:
+            return None
+        return frame.iloc[0]
+
     def list_sources(self) -> list[str]:
         if not self.has_table(GAMES_TABLE.name):
             return []

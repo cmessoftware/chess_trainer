@@ -17,6 +17,18 @@ PGN
 
 The current code in `analysis/mental_model/` is considered a disposable prototype. It may be modified or replaced entirely.
 
+**Last status update:** 2026-08-27.
+
+### Current progress
+
+| Area | Status | Notes |
+|---|---|---|
+| 07.0 Game import (F07-001) | ✅ Done | PGN text, PGN file, and course DB → `NormalizedGame` / `PlyRecord`. Tests: `tests/docs_courses/test_f07_001_game_import.py`. Lab Paso 1. |
+| Product ingest (feeds 07.0 DB path) | ✅ Done | `src/modules/player_ingest.py` + `src/scripts/player_ingest.py` (Chess.com / Lichess → PostgreSQL `games` + features, with ingest report). Not a Module 07 analysis feature. |
+| 07.0 Player selection (F07-002) | ✅ Done | `select_analyzed_player` / `NormalizedGame.select_player`; tests White and Black. |
+| 07.0 Stockfish (F07-003–005) | ⬜ Todo | Next P0 after F07-002. |
+| 07.1–07.8 | ⬜ Todo | Branch `feature/07_1_critical_positions` opened; no 07.1 features implemented yet. |
+
 ## Principles
 
 - Implement one verifiable capability at a time.
@@ -57,8 +69,8 @@ The current code in `analysis/mental_model/` is considered a disposable prototyp
 
 | ID | Feature | Input | Verifiable output | Real-PGN test | Priority | Status | Comments |
 |---|---|---|---|---|---|---|---|
-| F07-001 | Game import | PGN file or text | Normalized game with moves, FEN, and metadata | Reconstruct all positions from an own game | P0 | ✅ Done | `position_extractor.py` + lab notebook Paso 1 |
-| F07-002 | Player selection | PGN and username or color | Moves attributable to the analyzed player | Test one game as White and one as Black | P0 | ⬜ Todo | |
+| F07-001 | Game import | PGN file or text | Normalized game with moves, FEN, and metadata | Reconstruct all positions from an own game | P0 | ✅ Done | `analysis/game_models.py`, `analysis/position_extractor.py` (`import_game_from_pgn`, `import_game_from_file`, `load_game_from_db`); lab Paso 1; `tests/docs_courses/test_f07_001_game_import.py`. Product data: `src/scripts/player_ingest.py`. |
+| F07-002 | Player selection | PGN and username or color | Moves attributable to the analyzed player | Test one game as White and one as Black | P0 | ✅ Done | `select_analyzed_player` in `analysis/game_models.py`; `tests/docs_courses/test_f07_002_player_selection.py`; lab Paso 1b |
 | F07-003 | Stockfish analysis per position | FEN | Evaluation before and after the move | Compare with a Lichess-analyzed game | P0 | ⬜ Todo | |
 | F07-004 | Evaluation normalization | Engine score | Evaluation from the player's perspective | Test turn changes and mate scores | P0 | ⬜ Todo | |
 | F07-005 | Evaluation loss | Previous and current evaluation | `eval_loss` or `cp_loss` | Detect a known error move | P0 | ⬜ Todo | |
@@ -241,7 +253,7 @@ PGN
 ### Included features
 
 - [x] F07-001 — Game import
-- [ ] F07-002 — Player selection
+- [x] F07-002 — Player selection
 - [ ] F07-003 — Stockfish analysis
 - [ ] F07-004 — Evaluation normalization
 - [ ] F07-005 — Evaluation loss
@@ -273,20 +285,20 @@ PGN
 
 ### Phase 1 — Contracts and test cases
 
-- [ ] Define canonical DTOs.
+- [x] Define canonical DTOs (import only: `NormalizedGame`, `PlyRecord`).
 - [ ] Create JSON Schemas.
 - [ ] Select 10–20 real positions.
 - [ ] Store original PGNs.
 - [ ] Document the expected result for each case.
 - [ ] Mark each case as fact, inference, or human confirmation.
 
-**Completion criterion:** cases can be described without depending on the current `analysis/mental_model/` code.
+**Completion criterion:** cases can be described without depending on the current `analysis/mental_model/` code. *(Not met: schemas and golden cases still open.)*
 
 ### Phase 2 — PGN and Stockfish
 
-- [ ] Import PGN.
-- [ ] Identify the analyzed player.
-- [ ] Reconstruct FENs.
+- [x] Import PGN.
+- [x] Identify the analyzed player (F07-002).
+- [x] Reconstruct FENs.
 - [ ] Analyze each position with Stockfish.
 - [ ] Normalize evaluations.
 - [ ] Compute evaluation loss.
@@ -328,8 +340,8 @@ PGN
 ## 7. First-increment acceptance criteria
 
 - [ ] Processes at least five complete real games.
-- [ ] Correctly analyzes games for the player with both colors.
-- [ ] Legally reconstructs all moves and FENs.
+- [x] Correctly attributes moves for the player as White and as Black (F07-002; full coaching analysis still open).
+- [x] Legally reconstructs all moves and FENs (F07-001 tests on sample PGN; full five-game set still open).
 - [ ] Correctly normalizes centipawns and mate scores.
 - [ ] Detects known objective errors.
 - [ ] Returns a reproducible critical-position ranking.

@@ -18,6 +18,11 @@ stockfish*
 games/
 data/
 
+# Module 07 lab fixtures (tracked despite *.pgn / data / games)
+!docs/ai_chess_coach_course/data/
+!docs/ai_chess_coach_course/data/games/
+!docs/ai_chess_coach_course/data/games/*.pgn
+
 # course data files
 *.sqlite
 
