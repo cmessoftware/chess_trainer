@@ -1,0 +1,77 @@
+{
+  "game_id": "6662a1ad4ce31474139a8332ef2c5e37ac544fa57ee89264dd9b9f2969e89514",
+  "source": "pgn",
+  "fen": "8/8/5K2/3k2Pp/5p1P/5P2/8/8 b - - 2 62",
+  "mode": "critical",
+  "pause_seconds": 10,
+  "triggers": [
+    {
+      "code": "E7",
+      "label": "Ataque al rey o reyes expuestos",
+      "evidence": [
+        "Rey aún en zona central — considerar seguridad"
+      ]
+    }
+  ],
+  "mapped_07_reasons": [
+    "KingSafetyChange",
+    "TacticalThreat"
+  ],
+  "thinking_plan": [
+    {
+      "node": "F",
+      "phase": "critical",
+      "prompt": "Detener automatismo — usar pausa sugerida"
+    },
+    {
+      "node": "G1",
+      "phase": "update",
+      "prompt": "¿Qué amenaza realmente la última jugada?"
+    },
+    {
+      "node": "G2",
+      "phase": "update",
+      "prompt": "¿Qué cambió respecto al movimiento anterior?"
+    },
+    {
+      "node": "G3",
+      "phase": "update",
+      "prompt": "¿Qué quedó atacado o indefenso?"
+    },
+    {
+      "node": "G4",
+      "phase": "update",
+      "prompt": "¿Qué líneas se abrieron o cerraron?"
+    },
+    {
+      "node": "D",
+      "phase": "candidates",
+      "prompt": "Generar candidatas: forzantes → amenazas → activas → profilácticas → posicionales"
+    },
+    {
+      "node": "E",
+      "phase": "candidates",
+      "prompt": "Reducir a 2–3 candidatas reales"
+    },
+    {
+      "node": "G",
+      "phase": "calculate",
+      "prompt": "Calcular: mi jugada → respuesta rival → mi continuación"
+    },
+    {
+      "node": "I",
+      "phase": "evaluate",
+      "prompt": "Evaluar: rey, material, actividad, estructura, iniciativa práctica"
+    },
+    {
+      "node": "J",
+      "phase": "evaluate",
+      "prompt": "Comparar candidatas"
+    },
+    {
+      "node": "S",
+      "phase": "check",
+      "prompt": "Chequeo final anti-blunder (S1–S4)"
+    }
+  ]
+}
