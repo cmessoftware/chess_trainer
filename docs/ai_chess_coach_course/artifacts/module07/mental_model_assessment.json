@@ -1,7 +1,7 @@
 {
-  "game_id": "1a376125b095e17e4e79bf2394ca240d9c88d9a289def3b5a249f51f9cd43d25",
-  "source": "pgn",
-  "fen": "rq2r1k1/2p2pbn/3p2p1/1b1Pp1Pp/1p2P2P/1P2BP2/2PQN3/1NKR1R2 w - - 1 23",
+  "game_id": "a2b12664625ab03c68ce15ba341ac5e0454a024b48323980549cc49dd991eb9f",
+  "source": "database",
+  "fen": "1r1b4/1p1R1pkp/p1B2p2/4p3/PP4P1/2P4P/5P2/3R2K1 b - - 0 30",
   "mode": "critical",
   "pause_seconds": 10,
   "triggers": [
@@ -9,7 +9,7 @@
       "code": "E1",
       "label": "Material aparentemente gratis o pieza en prise",
       "evidence": [
-        "pawn rival en b4 sin defensa adecuada"
+        "bishop rival en c6 sin defensa adecuada"
       ]
     },
     {

@@ -1,6 +1,8 @@
 """Module 7.0 analysis — game import and mental model."""
 
 from analysis.board_display import show_board
+from analysis.engine_eval import PlyEngineAnalysis, analyze_ply
+from analysis.interactive_board import show_interactive_board
 from analysis.game_models import (
     NormalizedGame,
     PlayerSelection,
@@ -15,6 +17,9 @@ from analysis.position_extractor import (
 
 __all__ = [
     "show_board",
+    "show_interactive_board",
+    "analyze_ply",
+    "PlyEngineAnalysis",
     "NormalizedGame",
     "PlayerSelection",
     "PlyRecord",

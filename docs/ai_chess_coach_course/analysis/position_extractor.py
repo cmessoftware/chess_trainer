@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import hashlib
 import io
-import os
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
@@ -32,24 +31,6 @@ def _normalize_game_id(game_id: str) -> str:
     return str(game_id).strip().strip("\"'")
 
 
-def _load_repo_dotenv() -> None:
-    start = Path(__file__).resolve()
-    try:
-        from mm_lab_imports import load_repo_dotenv
-
-        load_repo_dotenv(start, override=False)
-        return
-    except ImportError:
-        pass
-    for folder in [start.parent, *start.parents]:
-        env_path = folder / ".env"
-        if env_path.is_file() and (folder / "src" / "db" / "database.py").is_file():
-            from dotenv import load_dotenv
-
-            load_dotenv(env_path, override=False)
-            return
-
-
 def _redact_db_url(db_url: str) -> str:
     try:
         from sqlalchemy.engine import make_url
@@ -66,28 +47,21 @@ def _iter_game_lookup_repos(
     repo: CourseFeaturesRepository | None,
     db_url: str | None,
 ):
-    from data_access.features_repository import CourseFeaturesRepository, resolve_course_db_url
+    from data_access.features_repository import (
+        DEFAULT_COURSE_DB_URL,
+        CourseFeaturesRepository,
+    )
 
     if repo is not None:
         yield repo
         return
 
-    _load_repo_dotenv()
-    seen: set[str] = set()
-    urls: list[str] = []
     if db_url:
-        urls.append(str(db_url))
-    else:
-        urls.append(resolve_course_db_url())
-        trainer = os.environ.get("CHESS_TRAINER_DB_URL")
-        if trainer:
-            urls.append(trainer)
+        yield CourseFeaturesRepository(db_url)
+        return
 
-    for url in urls:
-        if url in seen:
-            continue
-        seen.add(url)
-        yield CourseFeaturesRepository(url)
+    # Course notebooks always use course_data.sqlite, never product PostgreSQL.
+    yield CourseFeaturesRepository(DEFAULT_COURSE_DB_URL)
 
 
 def _compute_game_id(game: chess.pgn.Game) -> str:
@@ -199,11 +173,10 @@ def load_game_from_db(
     *,
     db_url: str | None = None,
 ) -> NormalizedGame:
-    """Build a normalized game from ``games`` + ``features``.
+    """Load a game from the course SQLite database (``course_data.sqlite``).
 
-    Looks up by primary key (not a full table scan). If ``repo`` is omitted,
-    tries the course DB (SQLite / ``CHESS_COURSE_DB_URL``) and then
-    ``CHESS_TRAINER_DB_URL`` (PostgreSQL ingest).
+    Product PostgreSQL (``CHESS_TRAINER_DB_URL``) is not used. Pass ``repo`` or
+    ``db_url`` only in tests or explicit tooling.
     """
     gid = _normalize_game_id(game_id)
     if not gid:
@@ -222,9 +195,9 @@ def load_game_from_db(
     if game_row is None or last_repo is None:
         raise LookupError(
             f"Game not found: {gid}. Looked in: {tried or ['(no database)']}. "
-            "IDs copied from PostgreSQL are not in course_data.sqlite unless you "
-            "export them. load_game_from_db now also checks CHESS_TRAINER_DB_URL "
-            "from the repo .env — restart the kernel and retry."
+            "The course lab reads only course_data.sqlite (not PostgreSQL). "
+            "Copy a game_id from that SQLite file, or leave GAME_ID empty and use a PGN. "
+            "To bring Postgres games into the course DB, run migrate_to_sqlite.py."
         )
 
     pgn_text = str(game_row.get("pgn") or "").strip()

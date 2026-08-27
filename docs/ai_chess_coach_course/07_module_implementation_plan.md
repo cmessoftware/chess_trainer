@@ -26,7 +26,8 @@ The current code in `analysis/mental_model/` is considered a disposable prototyp
 | 07.0 Game import (F07-001) | ✅ Done | PGN text, PGN file, and course DB → `NormalizedGame` / `PlyRecord`. Tests: `tests/docs_courses/test_f07_001_game_import.py`. Lab Paso 1. |
 | Product ingest (feeds 07.0 DB path) | ✅ Done | `src/modules/player_ingest.py` + `src/scripts/player_ingest.py` (Chess.com / Lichess → PostgreSQL `games` + features, with ingest report). Not a Module 07 analysis feature. |
 | 07.0 Player selection (F07-002) | ✅ Done | `select_analyzed_player` / `NormalizedGame.select_player`; tests White and Black. |
-| 07.0 Stockfish (F07-003–005) | ⬜ Todo | Next P0 after F07-002. |
+| 07.0 Stockfish (F07-003) | 🧪 In Testing | `analysis/engine_eval.py` (`analyze_ply`); lab Paso 3. Interactive board: Chessground in Jupyter + `ChessinsightBoard.jsx` (Vite). |
+| 07.0 Eval normalization (F07-004–005) | ⬜ Todo | Next after F07-003. |
 | 07.1–07.8 | ⬜ Todo | Branch `feature/07_1_critical_positions` opened; no 07.1 features implemented yet. |
 
 ## Principles
@@ -71,7 +72,7 @@ The current code in `analysis/mental_model/` is considered a disposable prototyp
 |---|---|---|---|---|---|---|---|
 | F07-001 | Game import | PGN file or text | Normalized game with moves, FEN, and metadata | Reconstruct all positions from an own game | P0 | ✅ Done | `analysis/game_models.py`, `analysis/position_extractor.py` (`import_game_from_pgn`, `import_game_from_file`, `load_game_from_db`); lab Paso 1; `tests/docs_courses/test_f07_001_game_import.py`. Product data: `src/scripts/player_ingest.py`. |
 | F07-002 | Player selection | PGN and username or color | Moves attributable to the analyzed player | Test one game as White and one as Black | P0 | ✅ Done | `select_analyzed_player` in `analysis/game_models.py`; `tests/docs_courses/test_f07_002_player_selection.py`; lab Paso 1b |
-| F07-003 | Stockfish analysis per position | FEN | Evaluation before and after the move | Compare with a Lichess-analyzed game | P0 | ⬜ Todo | |
+| F07-003 | Stockfish analysis per position | FEN | Evaluation before and after the move | Compare with a Lichess-analyzed game | P0 | 🧪 In Testing | `analyze_ply` in `analysis/engine_eval.py`; `tests/docs_courses/test_f07_003_engine_eval.py`; lab Paso 3. Board: `show_interactive_board` + `src/frontend/src/components/chess/ChessinsightBoard.jsx` |
 | F07-004 | Evaluation normalization | Engine score | Evaluation from the player's perspective | Test turn changes and mate scores | P0 | ⬜ Todo | |
 | F07-005 | Evaluation loss | Previous and current evaluation | `eval_loss` or `cp_loss` | Detect a known error move | P0 | ⬜ Todo | |
 
@@ -254,7 +255,7 @@ PGN
 
 - [x] F07-001 — Game import
 - [x] F07-002 — Player selection
-- [ ] F07-003 — Stockfish analysis
+- [x] F07-003 — Stockfish analysis
 - [ ] F07-004 — Evaluation normalization
 - [ ] F07-005 — Evaluation loss
 - [ ] F07-006 — Significant-loss trigger
@@ -299,7 +300,7 @@ PGN
 - [x] Import PGN.
 - [x] Identify the analyzed player (F07-002).
 - [x] Reconstruct FENs.
-- [ ] Analyze each position with Stockfish.
+- [x] Analyze a ply with Stockfish (F07-003; full-game loop still open).
 - [ ] Normalize evaluations.
 - [ ] Compute evaluation loss.
 - [ ] Handle mate evaluations.
