@@ -36,9 +36,20 @@ def test_create_provider_without_api_key_uses_dry_run():
 
 
 def test_create_provider_unsupported_raises():
-    settings = LLMSettings(provider="openai", model="gpt-4", api_key="x")
+    settings = LLMSettings(provider="anthropic", model="claude-3", api_key="x")
     with pytest.raises(ValueError, match="Unsupported"):
         create_provider(settings)
+
+
+def test_create_deepseek_provider_with_key():
+    settings = LLMSettings(
+        provider="deepseek",
+        model="deepseek-chat",
+        api_key="sk-test",
+        base_url="https://api.deepseek.com",
+    )
+    provider = create_provider(settings)
+    assert provider.__class__.__name__ in {"OpenAICompatibleProvider", "ResilientProvider"}
 
 
 def test_context_schema_has_no_forbidden_fields():
@@ -113,7 +124,10 @@ def test_load_course_env_reads_repo_dotenv(tmp_path, monkeypatch):
 
     settings_module._ENV_LOADED = False
     env_file = tmp_path / ".env"
-    env_file.write_text("GEMINI_API_KEY=test-key-from-dotenv\n", encoding="utf-8")
+    env_file.write_text(
+        "LLM_PROVIDER=gemini\nGEMINI_API_KEY=test-key-from-dotenv\n",
+        encoding="utf-8",
+    )
     monkeypatch.delenv("GEMINI_API_KEY", raising=False)
 
     loaded = settings_module.load_course_env(env_file=env_file)

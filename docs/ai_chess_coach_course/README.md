@@ -46,7 +46,7 @@ Open notebooks in order:
 | 4   | `04_ml_training.ipynb`                | Train data using several models           |
 | 5   | `05_mlflow_experiment_tracking.ipynb` | MlFlow ml experiments tracking            |
 | 6   | `06_shap_analysis.ipynb`              | SHAP Analysis                             |
-| 6.5 | `06_5_llm_coaching_recommendations.ipynb` | LLM coaching (Gemini 2.5 Flash)     |
+| 6.5 | `06_5_llm_coaching_recommendations.ipynb` | LLM coaching (DeepSeek / Gemini, V7 insight reports) |
 
 ---
 

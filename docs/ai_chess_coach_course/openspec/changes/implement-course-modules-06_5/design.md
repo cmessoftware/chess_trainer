@@ -3,64 +3,71 @@
 ## Design Goals
 
 - Deliver the **minimum viable coaching pipeline** for the first course version (Modules 01–06.5).
-- Keep LLM **provider-agnostic**; Gemini 2.5 Flash is the only v1 implementation.
+- Keep LLM **provider-agnostic**; **DeepSeek API** and **Gemini** implemented; dry-run for CI.
 - Never expose raw SHAP arrays or engine features to the LLM.
 - Reuse Module 05/06 artifacts without retraining.
+- **V7:** lesson-first player report; Python clusters moments before LLM narration.
 
 ## Canonical Artifacts
 
 | Artifact | Path |
 |----------|------|
 | Spec | `06_5-ai_chess_coach_course_llm_coaching_recommendations.md` |
+| V7 output format | `accc_llm_coaching_recommendations_v7.md` |
 | Notebook | `06_5_llm_coaching_recommendations.ipynb` |
-| Architecture reference | `6.5_llm_integration_architecture.md` |
+| Architecture (as-built) | `6.5_llm_integration_architecture.md` |
+| Env template | `.env.example` |
 
 ## Module Objective
 
-Turn explainability evidence into **human-readable coaching recommendations** via structured context + Gemini 2.5 Flash.
+Turn explainability evidence into **human-readable coaching recommendations** via structured diagnosis + optional LLM (DeepSeek default).
 
-## Pipeline
+## Pipeline (Phase A)
 
 ```text
-artifacts/module05/best_human_run.json
-artifacts/module06/* (SHAP)
+SHAP + Pattern Engine
         ↓
-coaching/pattern_engine.py
+root_cause.py + DiagnosisBuilder (V4–V6)
         ↓
-coaching/context_builder.py  → sample_context.json
+lesson_synthesizer.py (V7)
         ↓
-coaching/prompt_builder.py
+prompt_builder.py
         ↓
-llm/provider_factory.py → GeminiProvider
+coaching_generate.py → LLMProvider | deterministic fallback
         ↓
-sample_recommendation.txt
+coaching_validation.py (V7)
 ```
+
+Phase B profile flow still uses `context_builder.py` (pre-V7 prompt shape).
 
 ## LLM Configuration
 
 ```python
 @dataclass
 class LLMSettings:
-    provider: str   # "gemini"
-    model: str      # "gemini-2.5-flash"
-    api_key: str    # os.getenv("GEMINI_API_KEY")
+    provider: str   # "deepseek" | "gemini" | "openai_compatible"
+    model: str      # e.g. "deepseek-chat"
+    api_key: str    # DEEPSEEK_API_KEY / GEMINI_API_KEY / LLM_API_KEY
+    base_url: str   # https://api.deepseek.com for DeepSeek
+    temperature: float
 ```
 
 ## Dependencies
 
-- Module 05: `best_human_run.json`
-- Module 06: SHAP outputs + Human Pattern model artifacts
-- Module 02: encoded dataset for sample rows
-- Python package: `google-genai`
+- Module 05/06: Human Pattern model + SHAP
+- Module 02: encoded dataset + splits
+- Optional: `google-genai` (Gemini only)
+- `python-chess` (PGN + board diagnosis)
 
 ## Non-Goals (deferred)
 
-- ChromaDB / LangChain RAG → Module 07
-- Multi-game player profile aggregator (50+ games) → simplified sample window in 6.5
-- DeepSeek / OpenAI / LocalProvider → future; factory stub only
+- ChromaDB / RAG → Module 07
+- V7 four-section format for **profile** Phase B
+- Ollama provider in course package (architecture allows via OpenAI-compatible URL)
+- Fixing upstream SQLite tactical tag quality (documented caveat)
 
 ## Testing Strategy
 
-- Unit: `create_provider`, context JSON schema, prompt includes context block
-- Mock: `LLMProvider.generate` in tests (no live API in CI)
-- Optional manual: notebook with real `GEMINI_API_KEY`
+- Unit: providers, V7 payload, validation, diagnosis, RCA
+- No live API in CI (`DryRunProvider`, HTTP mocks for DeepSeek)
+- Manual: notebook + `.env` with real API key

@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Detector de Posiciones Críticas - Ajedrez</title>
+<style>
+  :root{
+    --bg:#f6f7f9;
+    --panel:#ffffff;
+    --text:#1f2937;
+    --muted:#6b7280;
+    --border:#cbd5e1;
+    --node:#ffffff;
+    --node-critical:#fff7ed;
+    --node-candidate:#eef2ff;
+    --node-check:#f0fdf4;
+    --selected:#fde68a;
+    --selected-stroke:#b45309;
+    --edge:#64748b;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+  }
+  header{
+    padding:14px 18px;
+    background:var(--panel);
+    border-bottom:1px solid #e5e7eb;
+    position:sticky;
+    top:0;
+    z-index:5;
+  }
+  header h1{margin:0 0 6px;font-size:20px}
+  header p{margin:0;color:var(--muted);font-size:13px}
+  .toolbar{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-top:10px;
+  }
+  button,.file-label{
+    border:1px solid #cbd5e1;
+    background:white;
+    border-radius:8px;
+    padding:7px 10px;
+    font-size:13px;
+    cursor:pointer;
+  }
+  button:hover,.file-label:hover{background:#f8fafc}
+  input[type=file]{display:none}
+
+  main{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) 330px;
+    gap:12px;
+    padding:12px;
+    align-items:start;
+  }
+  #canvasWrap{
+    background:var(--panel);
+    border:1px solid #e5e7eb;
+    border-radius:12px;
+    overflow:auto;
+    min-height:78vh;
+  }
+  svg{display:block;min-width:1200px;background:#fff}
+  .node rect{
+    fill:var(--node);
+    stroke:var(--border);
+    stroke-width:1.4;
+    rx:10; ry:10;
+    cursor:pointer;
+    transition:.15s;
+  }
+  .node.critical rect{fill:var(--node-critical)}
+  .node.candidate rect{fill:var(--node-candidate)}
+  .node.check rect{fill:var(--node-check)}
+  .node.selected rect{
+    fill:var(--selected)!important;
+    stroke:var(--selected-stroke);
+    stroke-width:3;
+  }
+  .node text{
+    pointer-events:none;
+    font-size:13px;
+    font-weight:600;
+    text-anchor:middle;
+    fill:#111827;
+  }
+  .edge{
+    stroke:var(--edge);
+    stroke-width:1.7;
+    fill:none;
+    marker-end:url(#arrow);
+  }
+  .edge-label{
+    font-size:11px;
+    fill:#475569;
+    text-anchor:middle;
+    background:white;
+  }
+
+  aside{
+    background:var(--panel);
+    border:1px solid #e5e7eb;
+    border-radius:12px;
+    padding:14px;
+    position:sticky;
+    top:112px;
+  }
+  aside h2{font-size:16px;margin:0 0 8px}
+  #nodeTitle{
+    font-weight:700;
+    margin-bottom:8px;
+  }
+  textarea{
+    width:100%;
+    min-height:220px;
+    resize:vertical;
+    border:1px solid #cbd5e1;
+    border-radius:8px;
+    padding:10px;
+    font:14px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  }
+  .note-meta{
+    color:var(--muted);
+    font-size:12px;
+    margin:8px 0 0;
+  }
+  .legend{
+    margin-top:16px;
+    padding-top:12px;
+    border-top:1px solid #e5e7eb;
+    font-size:12px;
+    color:#475569;
+  }
+  .legend div{margin:5px 0}
+  .dot{
+    width:12px;height:12px;border-radius:3px;display:inline-block;
+    vertical-align:-1px;margin-right:6px;border:1px solid #cbd5e1;
+  }
+  .dot.crit{background:var(--node-critical)}
+  .dot.cand{background:var(--node-candidate)}
+  .dot.chk{background:var(--node-check)}
+  .dot.sel{background:var(--selected);border-color:var(--selected-stroke)}
+
+  @media(max-width:900px){
+    main{grid-template-columns:1fr}
+    aside{position:static}
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Algoritmo humano para detectar posiciones críticas y elegir candidatas</h1>
+  <p>Click en un nodo: marcar/desmarcar. Doble click: abrir anotación. Las marcas y notas se guardan en el navegador con localStorage.</p>
+  <div class="toolbar">
+    <a href="./algoritmo_jugadas_candidatas_chessinsight.html" style="border:1px solid #cbd5e1;background:white;border-radius:8px;padding:7px 10px;font-size:13px;color:inherit;text-decoration:none;">Jugadas candidatas →</a><button id="resetMarks">Desmarcar todos</button>
+    <button id="clearNotes">Borrar anotaciones</button>
+    <button id="exportBtn">Exportar estado</button>
+    <label class="file-label">Importar estado<input id="importFile" type="file" accept="application/json"></label>
+  </div>
+</header>
+
+<main>
+  <section id="canvasWrap">
+    <svg id="flow" viewBox="0 0 1200 2050" width="1200" height="2050" aria-label="Diagrama de posiciones críticas">
+      <defs>
+        <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+          <path d="M0,0 L8,4 L0,8 Z" fill="#64748b"></path>
+        </marker>
+      </defs>
+    </svg>
+  </section>
+
+  <aside>
+    <h2>Anotación del nodo</h2>
+    <div id="nodeTitle">Seleccioná un nodo</div>
+    <textarea id="note" placeholder="Escribí acá una nota personal para este nodo..." disabled></textarea>
+    <div class="note-meta">Guardado automático local. No requiere base de datos.</div>
+    <div class="legend">
+      <div><span class="dot crit"></span>Detección / posición crítica</div>
+      <div><span class="dot cand"></span>Generación y cálculo de candidatas</div>
+      <div><span class="dot chk"></span>Chequeo final</div>
+      <div><span class="dot sel"></span>Nodo marcado por el usuario</div>
+    </div>
+  </aside>
+</main>
+
+<script>
+const STORAGE_KEY = "chess-critical-flow-v1";
+
+const nodes = [
+  {id:"A", x:460,y:35,w:280,h:58, text:["El rival realiza una jugada"], cls:"critical"},
+  {id:"B", x:430,y:125,w:340,h:72, text:["¿Cambió algo importante","en la posición?"], cls:"critical"},
+
+  {id:"C", x:120,y:250,w:280,h:70, text:["Modo rápido","buscar jugada natural"], cls:"check"},
+  {id:"D", x:800,y:250,w:280,h:70, text:["Activar modo crítico"], cls:"critical"},
+
+  {id:"C1", x:100,y:360,w:320,h:76, text:["¿Mi jugada natural","es segura y coherente?"], cls:"check"},
+  {id:"E", x:755,y:360,w:370,h:76, text:["Disparadores de posición crítica"], cls:"critical"},
+
+  {id:"E1", x:635,y:485,w:250,h:76, text:["Material aparentemente gratis","o pieza/peón en prise"], cls:"critical"},
+  {id:"E2", x:915,y:485,w:250,h:76, text:["Jaque, captura o","amenaza directa"], cls:"critical"},
+  {id:"E3", x:635,y:585,w:250,h:76, text:["Jugada inesperada","del rival"], cls:"critical"},
+  {id:"E4", x:915,y:585,w:250,h:76, text:["Avance de peón con tempo","sobre una pieza"], cls:"critical"},
+  {id:"E5", x:635,y:685,w:250,h:76, text:["Se abre/cierra columna,","diagonal o fila"], cls:"critical"},
+  {id:"E6", x:915,y:685,w:250,h:76, text:["Cambio importante de","estructura de peones"], cls:"critical"},
+  {id:"E7", x:635,y:785,w:250,h:76, text:["Ataque al rey /","enroques opuestos"], cls:"critical"},
+  {id:"E8", x:915,y:785,w:250,h:76, text:["Pieza atrapada, sobrecargada","o sin defensor"], cls:"critical"},
+  {id:"E9", x:635,y:885,w:250,h:76, text:["Jugada irreversible","avance, sacrificio, cambio"], cls:"critical"},
+  {id:"E10",x:915,y:885,w:250,h:76, text:["Varias candidatas","razonables"], cls:"critical"},
+  {id:"E11",x:775,y:985,w:250,h:76, text:["La evaluación intuitiva cambia:","tranquilo ↔ táctico"], cls:"critical"},
+
+  {id:"F", x:460,y:1110,w:280,h:72, text:["Detener automatismo","5–10–30 s según ritmo"], cls:"critical"},
+  {id:"G", x:460,y:1210,w:280,h:60, text:["Actualizar la posición"], cls:"candidate"},
+  {id:"G1",x:80,y:1320,w:240,h:70,text:["¿Qué amenaza realmente","la última jugada?"],cls:"candidate"},
+  {id:"G2",x:340,y:1320,w:240,h:70,text:["¿Qué cambió respecto","al movimiento anterior?"],cls:"candidate"},
+  {id:"G3",x:600,y:1320,w:240,h:70,text:["¿Qué quedó atacado","o indefenso?"],cls:"candidate"},
+  {id:"G4",x:860,y:1320,w:240,h:70,text:["¿Qué líneas se abrieron","o cerraron?"],cls:"candidate"},
+
+  {id:"H", x:460,y:1435,w:280,h:60, text:["Generar candidatas"], cls:"candidate"},
+  {id:"H1",x:60,y:1545,w:170,h:62,text:["1. Jaques","forzados"],cls:"candidate"},
+  {id:"H2",x:245,y:1545,w:170,h:62,text:["2. Capturas"],cls:"candidate"},
+  {id:"H3",x:430,y:1545,w:170,h:62,text:["3. Amenazas","directas"],cls:"candidate"},
+  {id:"H4",x:615,y:1545,w:170,h:62,text:["4. Defensa","necesaria"],cls:"candidate"},
+  {id:"H5",x:800,y:1545,w:170,h:62,text:["5. Actividad /","iniciativa"],cls:"candidate"},
+  {id:"H6",x:985,y:1545,w:170,h:62,text:["6. Jugada","posicional"],cls:"candidate"},
+
+  {id:"I",x:460,y:1655,w:280,h:60,text:["Elegir 2–3 candidatas reales"],cls:"candidate"},
+  {id:"J",x:430,y:1745,w:340,h:72,text:["¿Hay material gratis","o sacrificio aparente?"],cls:"candidate"},
+
+  {id:"K",x:70,y:1850,w:300,h:70,text:["No aceptar ni rechazar","por intuición"],cls:"candidate"},
+  {id:"L",x:830,y:1850,w:300,h:70,text:["Calcular candidatas"],cls:"candidate"},
+
+  {id:"M",x:420,y:1960,w:360,h:70,text:["Para cada candidata:","buscar la mejor respuesta rival"],cls:"candidate"},
+  {id:"N",x:420,y:2060,w:360,h:60,text:["Encontrar mi mejor respuesta"],cls:"candidate"},
+  {id:"O",x:420,y:2150,w:360,h:72,text:["¿Queda alguna táctica","inmediata sin revisar?"],cls:"candidate"},
+  {id:"Q",x:420,y:2255,w:360,h:60,text:["Comparar posiciones resultantes"],cls:"candidate"},
+  {id:"R",x:420,y:2350,w:360,h:72,text:["¿Una candidata es","claramente superior?"],cls:"candidate"},
+  {id:"T",x:85,y:2450,w:320,h:70,text:["Elegir la más sólida","o fácil de jugar"],cls:"candidate"},
+  {id:"S",x:795,y:2450,w:320,h:70,text:["Chequeo final anti-blunder"],cls:"check"},
+
+  {id:"S1",x:100,y:2560,w:230,h:68,text:["¿Dejo dama/torre/","pieza en prise?"],cls:"check"},
+  {id:"S2",x:365,y:2560,w:230,h:68,text:["¿Hay jaque inmediato","contra mí?"],cls:"check"},
+  {id:"S3",x:630,y:2560,w:230,h:68,text:["¿Hay captura obvia","del rival?"],cls:"check"},
+  {id:"S4",x:895,y:2560,w:230,h:68,text:["¿Abandono un defensor","importante?"],cls:"check"},
+  {id:"Z",x:460,y:2670,w:280,h:60,text:["JUGAR"],cls:"check"}
+];
+
+const edges = [
+ ["A","B"],["B","C","No"],["B","D","Sí"],["C","C1"],["C1","Z","Sí"],["C1","D","No / duda"],
+ ["D","E"],
+ ["E","E1"],["E","E2"],["E","E3"],["E","E4"],["E","E5"],["E","E6"],["E","E7"],["E","E8"],["E","E9"],["E","E10"],["E","E11"],
+ ["E1","F"],["E2","F"],["E3","F"],["E4","F"],["E5","F"],["E6","F"],["E7","F"],["E8","F"],["E9","F"],["E10","F"],["E11","F"],
+ ["F","G"],["G","G1"],["G","G2"],["G","G3"],["G","G4"],
+ ["G1","H"],["G2","H"],["G3","H"],["G4","H"],
+ ["H","H1"],["H","H2"],["H","H3"],["H","H4"],["H","H5"],["H","H6"],
+ ["H1","I"],["H2","I"],["H3","I"],["H4","I"],["H5","I"],["H6","I"],
+ ["I","J"],["J","K","Sí"],["J","L","No"],["K","M"],["L","M"],["M","N"],["N","O"],
+ ["O","M","Sí"],["O","Q","No"],["Q","R"],["R","S","Sí"],["R","T","No"],["T","S"],
+ ["S","S1"],["S1","S2"],["S2","S3"],["S3","S4"],["S4","Z"]
+];
+
+const svg = document.getElementById("flow");
+svg.setAttribute("viewBox","0 0 1200 2770");
+svg.setAttribute("height","2770");
+
+const byId = Object.fromEntries(nodes.map(n=>[n.id,n]));
+
+function edgePath(a,b){
+  const A=byId[a], B=byId[b];
+  const ax=A.x+A.w/2, ay=A.y+A.h;
+  const bx=B.x+B.w/2, by=B.y;
+  if (Math.abs(ax-bx)<8) return `M ${ax} ${ay} L ${bx} ${by}`;
+  const midY=(ay+by)/2;
+  return `M ${ax} ${ay} L ${ax} ${midY} L ${bx} ${midY} L ${bx} ${by}`;
+}
+
+function makeSvg(tag,attrs={}){
+  const el=document.createElementNS("http://www.w3.org/2000/svg",tag);
+  Object.entries(attrs).forEach(([k,v])=>el.setAttribute(k,v));
+  return el;
+}
+
+edges.forEach(([a,b,label])=>{
+  const p=makeSvg("path",{d:edgePath(a,b),class:"edge"});
+  svg.appendChild(p);
+  if(label){
+    const A=byId[a], B=byId[b];
+    const tx=(A.x+A.w/2 + B.x+B.w/2)/2;
+    const ty=(A.y+A.h + B.y)/2 - 4;
+    const t=makeSvg("text",{x:tx,y:ty,class:"edge-label"});
+    t.textContent=label;
+    svg.appendChild(t);
+  }
+});
+
+nodes.forEach(n=>{
+  const g=makeSvg("g",{class:`node ${n.cls||""}`,"data-id":n.id, tabindex:"0"});
+  const r=makeSvg("rect",{x:n.x,y:n.y,width:n.w,height:n.h});
+  g.appendChild(r);
+
+  const lineH=17;
+  const total=(n.text.length-1)*lineH;
+  n.text.forEach((line,i)=>{
+    const t=makeSvg("text",{x:n.x+n.w/2,y:n.y+n.h/2-total/2+i*lineH+5});
+    t.textContent=line;
+    g.appendChild(t);
+  });
+
+  g.addEventListener("click",()=>toggleNode(n.id));
+  g.addEventListener("dblclick",(e)=>{
+    e.preventDefault();
+    if(["H","H1","H2","H3","H4","H5","H6","I","J","L","M","N","O","Q","R","T"].includes(n.id)){
+      window.location.href="./algoritmo_jugadas_candidatas_chessinsight.html";
+    } else selectForNote(n.id);
+  });
+  g.addEventListener("keydown",(e)=>{
+    if(e.key==="Enter"){ toggleNode(n.id); }
+    if(e.key===" "){ e.preventDefault(); selectForNote(n.id); }
+  });
+  svg.appendChild(g);
+});
+
+let state = {selected:{}, notes:{}};
+let activeNode = null;
+
+function load(){
+  try{
+    const raw=localStorage.getItem(STORAGE_KEY);
+    if(raw) state=Object.assign(state,JSON.parse(raw));
+  }catch(e){}
+  applyState();
+}
+function save(){
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
+}
+function applyState(){
+  document.querySelectorAll(".node").forEach(el=>{
+    const id=el.dataset.id;
+    el.classList.toggle("selected",!!state.selected[id]);
+  });
+}
+function toggleNode(id){
+  state.selected[id]=!state.selected[id];
+  if(!state.selected[id]) delete state.selected[id];
+  save();
+  applyState();
+}
+function selectForNote(id){
+  activeNode=id;
+  const n=byId[id];
+  document.getElementById("nodeTitle").textContent=`${id}: ${n.text.join(" ")}`;
+  const ta=document.getElementById("note");
+  ta.disabled=false;
+  ta.value=state.notes[id]||"";
+  ta.focus();
+}
+document.getElementById("note").addEventListener("input",e=>{
+  if(!activeNode) return;
+  state.notes[activeNode]=e.target.value;
+  if(!state.notes[activeNode]) delete state.notes[activeNode];
+  save();
+});
+document.getElementById("resetMarks").onclick=()=>{
+  state.selected={};
+  save(); applyState();
+};
+document.getElementById("clearNotes").onclick=()=>{
+  if(confirm("¿Borrar todas las anotaciones guardadas?")){
+    state.notes={};
+    if(activeNode) document.getElementById("note").value="";
+    save();
+  }
+};
+document.getElementById("exportBtn").onclick=()=>{
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download="chess-critical-flow-state.json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+};
+document.getElementById("importFile").addEventListener("change",async e=>{
+  const file=e.target.files[0];
+  if(!file) return;
+  try{
+    const obj=JSON.parse(await file.text());
+    state={selected:obj.selected||{},notes:obj.notes||{}};
+    save(); applyState();
+    if(activeNode) document.getElementById("note").value=state.notes[activeNode]||"";
+  }catch(err){
+    alert("El archivo no contiene un estado válido.");
+  }
+  e.target.value="";
+});
+
+load();
+</script>
+</body>
+</html>

@@ -1,12 +1,25 @@
 # Cursor Prompt V7 — Insight-based Coaching
 
+> **Status: implemented (Module 6.5, V7-lite)**  
+> **Architecture:** [6.5_llm_integration_architecture.md](./6.5_llm_integration_architecture.md) §6  
+> **Canonical spec:** [06_5-ai_chess_coach_course_llm_coaching_recommendations.md](./06_5-ai_chess_coach_course_llm_coaching_recommendations.md) §8  
+>
+> | V7 requirement | Implementation |
+> |----------------|----------------|
+> | Four report sections | `prompt_builder.py`, `deterministic_coaching.py` |
+> | 2–3 main lessons | `lesson_synthesizer.py` → `lesson_clusters` |
+> | Concise critical moments | Prompt + `coaching_validation.py` (entry count) |
+> | Training plan (3 items) | Prompt rules + deterministic fallback |
+> | Merge related moves into one lesson | `synthesize_lessons()` clustering by theme / `diagnosis_type` |
+> | LLM synthesizes, does not invent diagnosis | Payload from `DiagnosisBuilder` + RCA |
+
 ## Context
 
 The current pipeline already produces high-quality structured data.
 
 Gemini is no longer responsible for discovering mistakes.
 
-Instead, Gemini should transform structured chess diagnosis into coaching that resembles a human chess coach.
+Instead, the configured **LLM provider** (DeepSeek or Gemini) should transform structured chess diagnosis into coaching that resembles a human chess coach.
 
 The current move-by-move coaching is technically correct but too mechanical.
 

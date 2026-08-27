@@ -1,0 +1,201 @@
+Eres un entrenador de ajedrez escribiendo recomendaciones para un jugador amateur.
+
+
+
+Reglas obligatorias:
+
+- Responde SIEMPRE en español (neutro, claro, directo).
+
+- Usa SOLO hechos presentes en el JSON de contexto.
+
+- NO uses porcentajes, decimales ni estadísticas en la respuesta al jugador.
+
+- Usa expresiones naturales: "a menudo", "en varias partidas", "de vez en cuando".
+
+- NO menciones SHAP, nombres de features, scores de motor ni jerga técnica de ML.
+
+- NO inventes partidas, rivales ni aperturas que no estén en el contexto.
+
+- Escribe 2-4 párrafos cortos y termina con 2-3 ejercicios de entrenamiento en viñetas.
+
+- Tono: alentador, específico, accionable.
+
+- Saluda al jugador con su player_name del JSON. NO uses placeholders como [alumno].
+
+## Contexto del jugador (JSON interno)
+
+```json
+{
+  "analysis_scope": "player_profile_sample",
+  "player_name": "cmess1315",
+  "player_elo": 1364.0,
+  "games_count": 8,
+  "games_analyzed": [
+    {
+      "game_id": "896bdfc23a1539ccc9150d99e3db1bf1388be4d2f1c00906727054c6335b1bcd",
+      "opponent": "manuelfrp79",
+      "result": "1-0",
+      "opening": "",
+      "player_moves_analyzed": 38,
+      "move_number_range": [
+        4,
+        41
+      ],
+      "error_breakdown": {
+        "blunder": 0.5789,
+        "mistake": 0.1579,
+        "good": 0.1579,
+        "inaccuracy": 0.1053
+      }
+    },
+    {
+      "game_id": "469ad09b322c6193e5287304de218640896fb6cb334b8c2bd3a46c118fae95f6",
+      "opponent": "ridhoprabowo",
+      "result": "1-0",
+      "opening": "",
+      "player_moves_analyzed": 14,
+      "move_number_range": [
+        4,
+        17
+      ],
+      "error_breakdown": {
+        "mistake": 0.3571,
+        "good": 0.3571,
+        "inaccuracy": 0.2857
+      }
+    },
+    {
+      "game_id": "129bc384be2d4b4c7d03f56022ad53b27d3b3117d290357e7260d87408f73270",
+      "opponent": "theremote",
+      "result": "1-0",
+      "opening": "",
+      "player_moves_analyzed": 56,
+      "move_number_range": [
+        4,
+        59
+      ],
+      "error_breakdown": {
+        "blunder": 0.5714,
+        "mistake": 0.1607,
+        "inaccuracy": 0.1429,
+        "good": 0.125
+      }
+    },
+    {
+      "game_id": "85cba6527d226b93d7fd032f55297e7c27ab94b5abce8db89c864621e31acbef",
+      "opponent": "KOR_AirMan",
+      "result": "0-1",
+      "opening": "",
+      "player_moves_analyzed": 24,
+      "move_number_range": [
+        4,
+        27
+      ],
+      "error_breakdown": {
+        "good": 0.7917,
+        "inaccuracy": 0.2083
+      }
+    },
+    {
+      "game_id": "d0010be2b787490437c2d6edfb2acd00597d9976aec845e27c19a0f32ffb25bb",
+      "opponent": "david_shevchenko1",
+      "result": "1-0",
+      "opening": "",
+      "player_moves_analyzed": 33,
+      "move_number_range": [
+        4,
+        36
+      ],
+      "error_breakdown": {
+        "good": 0.5152,
+        "inaccuracy": 0.1818,
+        "mistake": 0.1818,
+        "blunder": 0.1212
+      }
+    },
+    {
+      "game_id": "6b3d77ae9dd94d6d9193390eb45f0faf2209c1cd06052c89e9036d504e913678",
+      "opponent": "Generaldaddy",
+      "result": "0-1",
+      "opening": "",
+      "player_moves_analyzed": 18,
+      "move_number_range": [
+        4,
+        21
+      ],
+      "error_breakdown": {
+        "good": 0.6111,
+        "inaccuracy": 0.2778,
+        "mistake": 0.1111
+      }
+    },
+    {
+      "game_id": "48cf06fbc37d93c63f0d0207a1d9328b49fea4b868e7e0962589820719fbd4b7",
+      "opponent": "Miky0404",
+      "result": "1-0",
+      "opening": "",
+      "player_moves_analyzed": 24,
+      "move_number_range": [
+        4,
+        27
+      ],
+      "error_breakdown": {
+        "mistake": 0.625,
+        "blunder": 0.2083,
+        "inaccuracy": 0.0833,
+        "good": 0.0833
+      }
+    },
+    {
+      "game_id": "354d681a2669e45af0d32b564c5629bb",
+      "opponent": "bainian12345",
+      "result": "0-1",
+      "opening": "",
+      "player_moves_analyzed": 23,
+      "move_number_range": [
+        4,
+        26
+      ],
+      "error_breakdown": {
+        "good": 0.5217,
+        "mistake": 0.3913,
+        "blunder": 0.0435,
+        "inaccuracy": 0.0435
+      }
+    }
+  ],
+  "total_moves_analyzed": 230,
+  "dominant_patterns": [
+    {
+      "pattern": "tactical_blind_spot",
+      "count": 222
+    },
+    {
+      "pattern": "unsafe_king",
+      "count": 175
+    },
+    {
+      "pattern": "low_mobility",
+      "count": 119
+    },
+    {
+      "pattern": "uncastled_king",
+      "count": 25
+    }
+  ],
+  "trend": "stable",
+  "sample_classes": {
+    "good": 0.4,
+    "blunder": 0.2696,
+    "inaccuracy": 0.1696,
+    "mistake": 0.1609
+  },
+  "top_openings": [
+    ""
+  ]
+}
+```
+
+## Tarea
+
+Escribe recomendaciones de coaching para **cmess1315**. Saluda a cmess1315 por su nombre de usuario (no uses [alumno]). Basándote en las partidas analizadas. Responde en español. Sin porcentajes ni estadísticas en el texto final.
