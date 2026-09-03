@@ -34,25 +34,27 @@ def _opponent_hanging(board: chess.Board, player: chess.Color) -> list[str]:
     return evidence
 
 
-def _forcing_moves_available(board: chess.Board) -> list[str]:
+def _last_move_was_capture_or_check(board: chess.Board) -> list[str]:
+    """E2: the opponent's last ply, not 'any legal capture exists' (that is almost always true)."""
+    if not board.move_stack:
+        return []
+    move = board.peek()
+    prior = board.copy()
+    prior.pop()
     evidence: list[str] = []
-    if board.is_check():
-        evidence.append("Estás en jaque")
-    captures = 0
-    for move in board.legal_moves:
-        if board.is_capture(move):
-            captures += 1
-    if captures:
-        evidence.append(f"{captures} capturas legales disponibles")
+    if prior.is_capture(move):
+        evidence.append(f"La última jugada fue captura ({move.uci()})")
+    if prior.gives_check(move):
+        evidence.append("La última jugada dio jaque")
     return evidence
 
 
-def _last_move_was_pawn_push(board: chess.Board) -> bool:
-    if not board.move_stack:
-        return False
-    move = board.peek()
-    piece = board.piece_at(move.to_square)
-    return piece is not None and piece.piece_type == chess.PAWN
+def _forcing_situation(board: chess.Board) -> list[str]:
+    evidence: list[str] = []
+    if board.is_check():
+        evidence.append("Estás en jaque")
+    evidence.extend(_last_move_was_capture_or_check(board))
+    return evidence
 
 
 def _pawn_attacks_piece(board: chess.Board) -> list[str]:
@@ -128,7 +130,7 @@ def detect_human_triggers(
             )
         )
 
-    forcing = _forcing_moves_available(board)
+    forcing = _forcing_situation(board)
     threats = _opponent_threats(board, player)
     if forcing or threats:
         triggers.append(
@@ -154,31 +156,30 @@ def detect_human_triggers(
     if board.move_stack:
         move = board.peek()
         piece = board.piece_at(move.to_square)
-        if piece and piece.piece_type == chess.PAWN:
+        prior = board.copy()
+        prior.pop()
+        last_was_capture = prior.is_capture(move)
+        if last_was_capture and piece is not None and piece.piece_type == chess.PAWN:
             triggers.append(
                 HumanTrigger(
                     HumanTriggerCode.PAWN_STRUCTURE,
                     LABELS[HumanTriggerCode.PAWN_STRUCTURE],
                     0.7,
-                    [f"Peón a {chess.square_name(move.to_square)}"],
+                    [f"Cambio de estructura: captura de peón en {chess.square_name(move.to_square)}"],
                 )
             )
-        if board.is_capture(move) and PIECE_VALUES.get(piece.piece_type if piece else 0, 0) >= 3:
+        captured_type = None
+        if last_was_capture:
+            captured = prior.piece_at(move.to_square)
+            if captured is not None:
+                captured_type = captured.piece_type
+        if captured_type is not None and PIECE_VALUES.get(captured_type, 0) >= 3:
             triggers.append(
                 HumanTrigger(
                     HumanTriggerCode.IRREVERSIBLE,
                     LABELS[HumanTriggerCode.IRREVERSIBLE],
                     0.75,
                     ["Captura de pieza mayor o cambio material"],
-                )
-            )
-        elif _last_move_was_pawn_push(board):
-            triggers.append(
-                HumanTrigger(
-                    HumanTriggerCode.IRREVERSIBLE,
-                    LABELS[HumanTriggerCode.IRREVERSIBLE],
-                    0.65,
-                    ["Avance de peón — difícil de revertir"],
                 )
             )
 

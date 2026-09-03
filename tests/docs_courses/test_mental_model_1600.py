@@ -37,14 +37,38 @@ def test_eval_shift_triggers_critical():
     assert "EvaluationInstability" in result.mapped_07_reasons
 
 
-def test_scholar_mate_threat_detects_critical():
+def test_quiet_opening_is_not_critical():
+    """Legal captures exist after 1.e4 c5 2.d4 d6; that must not by itself mean E2."""
+    board = chess.Board()
+    for san in ("e4", "c5", "d4", "d6"):
+        board.push_san(san)
+    result = assess_decision_point(board=board)
+    assert result.mode == DecisionMode.FAST
+    assert not any(t.code == HumanTriggerCode.CHECK_CAPTURE_THREAT for t in result.triggers)
+
+
+def test_scholar_mate_threat_flags_e2_but_is_not_notable():
+    """Qh5 is a threat (E2), not a recapture/structure/exchange moment."""
     board = chess.Board()
     board.push_san("e4")
     board.push_san("e5")
     board.push_san("Qh5")
     result = assess_decision_point(board=board)
-    assert result.mode == DecisionMode.CRITICAL
+    assert result.mode == DecisionMode.FAST
     assert any(t.code == HumanTriggerCode.CHECK_CAPTURE_THREAT for t in result.triggers)
+    assert result.notable_reasons == []
+
+
+def test_center_recapture_is_notable():
+    """1.e4 e5 2.d4 exd4 — retomar con dama, caballo o gambito."""
+    board = chess.Board()
+    for san in ("e4", "e5", "d4", "exd4"):
+        board.push_san(san)
+    result = assess_decision_point(board=board)
+    kinds = {r.kind.value for r in result.notable_reasons}
+    assert result.mode == DecisionMode.CRITICAL
+    assert "recapture_choice" in kinds or "center_decision" in kinds
+    assert "pawn_structure" in kinds
 
 
 def test_map_triggers_to_07_deduplicates():

@@ -1,0 +1,12 @@
+---
+description: Each Module 07/08 roadmap item (F07-xxx / F08-xxx) lives on its own git branch
+alwaysApply: true
+---
+
+# One git branch per roadmap item
+
+- Each catalog item (`F07-001`, `F07-008`, `F08-014`, …) is implemented, committed, and pushed on **its own branch**.
+- Branch name: `feature/07_<id>_<short_slug>` (example: `feature/07_008_position_transformation`). Keep the numeric id from the plan.
+- Do not mix another item’s code into that branch. Shared files may change only as needed for the current id.
+- Start the branch from the last pushed item (or `main` if the plan says so). After the item is done, push that branch; do not fold the next item into it.
+- P0 vs P1 only chooses **order**. It does not allow bundling several ids on one branch.
