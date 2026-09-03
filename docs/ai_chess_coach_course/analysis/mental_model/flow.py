@@ -10,6 +10,7 @@ from analysis.mental_model.anti_blunder import run_anti_blunder_checks
 from analysis.mental_model.candidate_taxonomy import sort_candidates_by_priority
 from analysis.mental_model.critical_triggers import detect_human_triggers
 from analysis.mental_model.mapping_07 import map_triggers_to_07
+from analysis.mental_model.notable_critical import detect_notable_critical
 from analysis.mental_model.models import (
     AntiBlunderCheck,
     CandidateCategory,
@@ -74,7 +75,7 @@ def assess_decision_point(
     Priority: human mental model first; attach engine candidate_count / top_moves when available.
     """
     position = board.copy() if board is not None else chess.Board(fen or chess.STARTING_FEN)
-    if last_move_uci and not board:
+    if last_move_uci:
         move = chess.Move.from_uci(last_move_uci)
         if move in position.legal_moves:
             position.push(move)
@@ -85,12 +86,14 @@ def assess_decision_point(
         score_diff_after=score_diff_after,
         candidate_count=candidate_count,
     )
+    notable = detect_notable_critical(position)
 
     eval_delta = None
     if score_diff_before is not None and score_diff_after is not None:
         eval_delta = abs(float(score_diff_after) - float(score_diff_before))
 
-    if triggers or (eval_delta is not None and eval_delta >= FAST_PATH_EVAL_DELTA):
+    eval_drop = eval_delta is not None and eval_delta >= FAST_PATH_EVAL_DELTA
+    if notable or eval_drop:
         mode = DecisionMode.CRITICAL
         plan = list(THINKING_PLAN_CRITICAL)
     else:
@@ -104,6 +107,7 @@ def assess_decision_point(
         "fen": position.fen(),
         "side_to_move": "white" if position.turn == chess.WHITE else "black",
         "legal_moves": position.legal_moves.count(),
+        "notable": [r.kind.value for r in notable],
     }
 
     if top_moves_uci:
@@ -121,6 +125,7 @@ def assess_decision_point(
         candidate_categories=categories,
         anti_blunder_checks=anti_checks,
         mapped_07_reasons=map_triggers_to_07([t.code for t in triggers]),
+        notable_reasons=notable,
         meta=meta,
     )
 

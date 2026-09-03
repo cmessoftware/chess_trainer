@@ -69,4 +69,5 @@ class DecisionAssessment:
     candidate_categories: list[CandidateCategory]
     anti_blunder_checks: list[AntiBlunderCheck]
     mapped_07_reasons: list[str]
+    notable_reasons: list[Any] = field(default_factory=list)
     meta: dict[str, Any] = field(default_factory=dict)

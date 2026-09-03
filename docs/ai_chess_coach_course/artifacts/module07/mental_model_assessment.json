@@ -1,21 +1,29 @@
 {
-  "game_id": "6662a1ad4ce31474139a8332ef2c5e37ac544fa57ee89264dd9b9f2969e89514",
-  "source": "pgn",
-  "fen": "8/8/5K2/3k2Pp/5p1P/5P2/8/8 b - - 2 62",
+  "game_id": "a2b12664625ab03c68ce15ba341ac5e0454a024b48323980549cc49dd991eb9f",
+  "source": "database",
+  "fen": "1r1b4/1p1R1pkp/p1B2p2/4p3/PP4P1/2P4P/5P2/3R2K1 b - - 0 30",
   "mode": "critical",
   "pause_seconds": 10,
   "triggers": [
     {
-      "code": "E7",
-      "label": "Ataque al rey o reyes expuestos",
+      "code": "E1",
+      "label": "Material aparentemente gratis o pieza en prise",
       "evidence": [
-        "Rey aún en zona central — considerar seguridad"
+        "bishop rival en c6 sin defensa adecuada"
+      ]
+    },
+    {
+      "code": "E2",
+      "label": "Jaque, captura o amenaza directa",
+      "evidence": [
+        "1 capturas legales disponibles"
       ]
     }
   ],
   "mapped_07_reasons": [
-    "KingSafetyChange",
-    "TacticalThreat"
+    "TacticalThreat",
+    "MaterialTransformation",
+    "ForcedSequence"
   ],
   "thinking_plan": [
     {

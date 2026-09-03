@@ -17,6 +17,51 @@ if TYPE_CHECKING:
 
 PLAYER_COLOR_WHITE = 1
 PLAYER_COLOR_BLACK = 0
+_GAME_LOOKUP_COLUMNS = [
+    "game_id",
+    "pgn",
+    "white_player",
+    "black_player",
+    "result",
+    "source",
+]
+
+
+def _normalize_game_id(game_id: str) -> str:
+    return str(game_id).strip().strip("\"'")
+
+
+def _redact_db_url(db_url: str) -> str:
+    try:
+        from sqlalchemy.engine import make_url
+
+        parsed = make_url(db_url)
+        host = parsed.host or ""
+        db = parsed.database or ""
+        return f"{parsed.get_backend_name()}://{host}/{db}"
+    except Exception:
+        return db_url.split("@")[-1] if "@" in db_url else db_url
+
+
+def _iter_game_lookup_repos(
+    repo: CourseFeaturesRepository | None,
+    db_url: str | None,
+):
+    from data_access.features_repository import (
+        DEFAULT_COURSE_DB_URL,
+        CourseFeaturesRepository,
+    )
+
+    if repo is not None:
+        yield repo
+        return
+
+    if db_url:
+        yield CourseFeaturesRepository(db_url)
+        return
+
+    # Course notebooks always use course_data.sqlite, never product PostgreSQL.
+    yield CourseFeaturesRepository(DEFAULT_COURSE_DB_URL)
 
 
 def _compute_game_id(game: chess.pgn.Game) -> str:
@@ -125,28 +170,42 @@ def _parse_score_diff(value: Any) -> float | None:
 def load_game_from_db(
     game_id: str,
     repo: CourseFeaturesRepository | None = None,
+    *,
+    db_url: str | None = None,
 ) -> NormalizedGame:
-    """Build a normalized game from ``games`` + ``features`` (F07-001 DB path)."""
-    if not game_id or not str(game_id).strip():
+    """Load a game from the course SQLite database (``course_data.sqlite``).
+
+    Product PostgreSQL (``CHESS_TRAINER_DB_URL``) is not used. Pass ``repo`` or
+    ``db_url`` only in tests or explicit tooling.
+    """
+    gid = _normalize_game_id(game_id)
+    if not gid:
         raise ValueError("game_id is required")
 
-    if repo is None:
-        from data_access.features_repository import CourseFeaturesRepository
+    tried: list[str] = []
+    last_repo = None
+    game_row = None
+    for candidate in _iter_game_lookup_repos(repo, db_url):
+        last_repo = candidate
+        tried.append(_redact_db_url(candidate.db_url))
+        game_row = candidate.get_game(gid, columns=_GAME_LOOKUP_COLUMNS)
+        if game_row is not None:
+            break
 
-        repo = CourseFeaturesRepository()
+    if game_row is None or last_repo is None:
+        raise LookupError(
+            f"Game not found: {gid}. Looked in: {tried or ['(no database)']}. "
+            "The course lab reads only course_data.sqlite (not PostgreSQL). "
+            "Copy a game_id from that SQLite file, or leave GAME_ID empty and use a PGN. "
+            "To bring Postgres games into the course DB, run migrate_to_sqlite.py."
+        )
 
-    games = repo.load_games(columns=["game_id", "pgn", "white_player", "black_player", "result", "source"])
-    game_rows = games[games["game_id"] == game_id]
-    if game_rows.empty:
-        raise LookupError(f"Game not found: {game_id}")
-
-    game_row = game_rows.iloc[0]
     pgn_text = str(game_row.get("pgn") or "").strip()
     if not pgn_text:
-        raise ValueError(f"Game {game_id} has no PGN stored")
+        raise ValueError(f"Game {gid} has no PGN stored")
 
-    features = repo.load_features(
-        game_ids=[game_id],
+    features = last_repo.load_features(
+        game_ids=[gid],
         columns=[
             "game_id",
             "move_number",
@@ -166,9 +225,10 @@ def load_game_from_db(
     ].copy()
 
     if move_rows.empty:
-        normalized = import_game_from_pgn(pgn_text, game_id=game_id)
+        normalized = import_game_from_pgn(pgn_text, game_id=gid)
         normalized.source = "database"
         normalized.metadata["db_fallback"] = True
+        normalized.metadata["db_url"] = _redact_db_url(last_repo.db_url)
         return normalized
 
     move_rows = move_rows.sort_values(
@@ -187,7 +247,7 @@ def load_game_from_db(
         move = chess.Move.from_uci(str(row["move_uci"]))
         if not board.is_legal(move):
             raise ValueError(
-                f"Illegal stored move {row['move_uci']} at ply {ply_index} for game {game_id}"
+                f"Illegal stored move {row['move_uci']} at ply {ply_index} for game {gid}"
             )
 
         board.push(move)
@@ -214,7 +274,7 @@ def load_game_from_db(
         headers["Result"] = str(game_row["result"])
 
     return NormalizedGame(
-        game_id=game_id,
+        game_id=gid,
         headers=headers,
         plies=plies,
         result=str(headers.get("Result") or game_row.get("result") or "*"),
@@ -223,5 +283,6 @@ def load_game_from_db(
         metadata={
             "db_source": game_row.get("source"),
             "feature_rows": len(plies),
+            "db_url": _redact_db_url(last_repo.db_url),
         },
     )

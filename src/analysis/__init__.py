@@ -26,10 +26,13 @@ from .position_extractor import (  # noqa: E402
     import_game_from_pgn,
     load_game_from_db,
 )
+from .game_models import PlayerSelection, select_analyzed_player  # noqa: E402
 
 __all__ = [
     "SurvivorshipBiasAnalyzer",
+    "PlayerSelection",
     "import_game_from_file",
     "import_game_from_pgn",
     "load_game_from_db",
+    "select_analyzed_player",
 ]

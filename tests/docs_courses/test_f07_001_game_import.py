@@ -6,6 +6,7 @@ import sys
 from pathlib import Path
 
 import chess
+import pandas as pd
 import pytest
 
 COURSE_ROOT = Path(__file__).resolve().parents[2] / "docs" / "ai_chess_coach_course"
@@ -97,3 +98,35 @@ def test_load_game_from_db_has_metadata_and_fens():
     assert normalized.pgn
     assert normalized.plies
     assert all(p.fen_before and p.uci for p in normalized.plies)
+
+
+def test_load_game_from_db_does_not_use_trainer_url(tmp_path, monkeypatch):
+    empty = tmp_path / "empty.sqlite"
+    found = tmp_path / "found.sqlite"
+    CourseFeaturesRepository(empty, ensure_schema=True)
+    found_repo = CourseFeaturesRepository(found, ensure_schema=True)
+    gid = "02bcf32e864bdc5e93550a516350cb69193d4fbce2f035dccc2c518da7b541e7"
+    found_repo.replace_course_slice(
+        games=pd.DataFrame(
+            [
+                {
+                    "game_id": gid,
+                    "pgn": SAMPLE_PGN,
+                    "source": "chess.com",
+                    "white_player": "cmess1315",
+                    "black_player": "opponent",
+                    "result": "1-0",
+                }
+            ]
+        ),
+        features=pd.DataFrame(),
+    )
+
+    monkeypatch.setenv("CHESS_TRAINER_DB_URL", f"sqlite:///{found.resolve()}")
+    with pytest.raises(LookupError, match="course_data.sqlite"):
+        load_game_from_db(gid, db_url=f"sqlite:///{empty.resolve()}")
+
+    loaded = load_game_from_db(gid, db_url=f"sqlite:///{found.resolve()}")
+    assert loaded.source == "database"
+    assert loaded.white_player == "cmess1315"
+    assert len(loaded.plies) == 7

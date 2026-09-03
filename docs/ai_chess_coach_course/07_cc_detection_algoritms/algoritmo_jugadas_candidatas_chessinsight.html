@@ -13,8 +13,14 @@ h1{font-size:20px;margin:0 0 5px} header p{margin:0;color:var(--muted);font-size
 main{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:12px;padding:12px;align-items:start}
 #wrap{background:#fff;border:1px solid #e5e7eb;border-radius:12px;overflow:auto}svg{display:block;min-width:1200px;background:#fff}
 .node rect{fill:var(--cand);stroke:var(--border);stroke-width:1.4;rx:10;ry:10;cursor:pointer}.node.eval rect{fill:var(--eval)}.node.selected rect{fill:var(--sel)!important;stroke:var(--selb);stroke-width:3}
-.node text{pointer-events:none;text-anchor:middle;font-size:13px;font-weight:600;fill:#111827}.edge{stroke:#64748b;stroke-width:1.7;fill:none;marker-end:url(#arrow)}
-aside{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:14px;position:sticky;top:112px}aside h2{font-size:16px;margin:0 0 8px}textarea{width:100%;min-height:220px;border:1px solid var(--border);border-radius:8px;padding:10px;resize:vertical}
+.node text{pointer-events:none;text-anchor:middle;font-size:13px;font-weight:600;fill:#111827}
+.edge{stroke:#64748b;stroke-width:1.7;fill:none;marker-end:url(#arrow)}
+.node-id{pointer-events:none;font-size:10px;font-weight:700;text-anchor:start;fill:#3730a3}
+aside{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:14px;position:sticky;top:112px}aside h2{font-size:16px;margin:0 0 8px}textarea{width:100%;min-height:180px;border:1px solid var(--border);border-radius:8px;padding:10px;resize:vertical}
+.glossary{margin-top:12px;padding-top:10px;border-top:1px solid #e5e7eb;max-height:40vh;overflow:auto;font-size:11px;line-height:1.4;color:#334155}
+.glossary h3{margin:0 0 6px;font-size:12px;color:#111827}
+.glossary dt{font-weight:700;font-family:ui-monospace,Consolas,monospace;float:left;clear:left;width:2.6em;color:#3730a3}
+.glossary dd{margin:0 0 5px 2.8em}
 .small{font-size:12px;color:var(--muted);margin-top:8px}code{font-size:12px}input[type=file]{display:none}
 @media(max-width:900px){main{grid-template-columns:1fr}aside{position:static}}
 </style>
@@ -33,7 +39,22 @@ aside{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:14px;p
 <section id="wrap"><svg id="flow" viewBox="0 0 1200 1720" width="1200" height="1720">
 <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#64748b"/></marker></defs>
 </svg></section>
-<aside><h2>Anotación</h2><div id="title"><b>Seleccioná un nodo</b></div><textarea id="note" disabled placeholder="Hipótesis, feature para ChessInsight, ejemplo, regla..."></textarea><div class="small">Doble click abre la nota. Estado persistente mediante <code>localStorage</code>.</div></aside>
+<aside><h2>Anotación</h2><div id="title"><b>Seleccioná un nodo</b></div><textarea id="note" disabled placeholder="Hipótesis, feature para ChessInsight, ejemplo, regla..."></textarea><div class="small">Doble click abre la nota. Estado persistente mediante <code>localStorage</code>.</div>
+<div class="glossary">
+<h3>Códigos (D1–D5)</h3>
+<dl>
+<dt>D1</dt><dd>Forzantes: jaques / capturas</dd>
+<dt>D2</dt><dd>Amenazas tácticas</dd>
+<dt>D3</dt><dd>Activas: iniciativa / ruptura</dd>
+<dt>D4</dt><dd>Profilácticas: frenar el plan rival</dd>
+<dt>D5</dt><dd>Posicionales: mejorar piezas</dd>
+<dt>G1</dt><dd>Mi candidata C1 / C2 / C3</dd>
+<dt>G2</dt><dd>Mejor respuesta del rival</dd>
+<dt>G3</dt><dd>Mi mejor continuación</dd>
+<dt>I1–I5</dt><dd>Rey, material, actividad, estructura, iniciativa</dd>
+</dl>
+</div>
+</aside>
 </main>
 <script>
 const KEY="chess-candidates-flow-v1";
@@ -75,7 +96,7 @@ try{state=Object.assign(state,JSON.parse(localStorage.getItem(KEY)||"{}"))}catch
 function save(){localStorage.setItem(KEY,JSON.stringify(state))}
 function refresh(){document.querySelectorAll(".node").forEach(g=>g.classList.toggle("selected",!!state.marks[g.dataset.id]))}
 function note(id){active=id;let n=map[id];document.getElementById("title").innerHTML="<b>"+id+": "+n.t.join(" ")+"</b>";let ta=document.getElementById("note");ta.disabled=false;ta.value=state.notes[id]||"";ta.focus()}
-N.forEach(n=>{let g=s("g",{class:"node "+(n.cls||""),"data-id":n.id});g.appendChild(s("rect",{x:n.x,y:n.y,width:n.w,height:n.h}));let lh=17,tot=(n.t.length-1)*lh;n.t.forEach((l,i)=>{let t=s("text",{x:n.x+n.w/2,y:n.y+n.h/2-tot/2+i*lh+5});t.textContent=l;g.appendChild(t)});g.onclick=()=>{state.marks[n.id]=!state.marks[n.id];if(!state.marks[n.id])delete state.marks[n.id];save();refresh()};g.ondblclick=()=>note(n.id);svg.appendChild(g)});
+N.forEach(n=>{let g=s("g",{class:"node "+(n.cls||""),"data-id":n.id});g.appendChild(s("rect",{x:n.x,y:n.y,width:n.w,height:n.h}));let idt=s("text",{x:n.x+8,y:n.y+14,class:"node-id"});idt.textContent=n.id;g.appendChild(idt);let lh=17,tot=(n.t.length-1)*lh;n.t.forEach((l,i)=>{let t=s("text",{x:n.x+n.w/2,y:n.y+n.h/2-tot/2+i*lh+5});t.textContent=l;g.appendChild(t)});g.onclick=()=>{state.marks[n.id]=!state.marks[n.id];if(!state.marks[n.id])delete state.marks[n.id];save();refresh()};g.ondblclick=()=>note(n.id);svg.appendChild(g)});
 document.getElementById("note").oninput=e=>{if(active){state.notes[active]=e.target.value;if(!e.target.value)delete state.notes[active];save()}};
 document.getElementById("reset").onclick=()=>{state.marks={};save();refresh()};
 document.getElementById("export").onclick=()=>{let b=new Blob([JSON.stringify(state,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="chess-candidates-state.json";a.click();URL.revokeObjectURL(a.href)};

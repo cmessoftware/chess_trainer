@@ -1,0 +1,106 @@
+{
+  "generated_at": "2026-06-18T17:04:51.9864972-03:00",
+  "output": "C:\\Users\\sergiosal\\course_data.sqlite",
+  "target_games": 10000,
+  "elo_assignment": "exclusive_average",
+  "skill_groups": [
+    {
+      "name": "Beginner",
+      "description": "Beginner (<1200)",
+      "elo_min": 600,
+      "elo_max": 1199,
+      "max_games": 2300
+    },
+    {
+      "name": "Intermediate",
+      "description": "Intermediate (1200-1599)",
+      "elo_min": 1200,
+      "elo_max": 1599,
+      "max_games": 3810
+    },
+    {
+      "name": "Advanced Amateur",
+      "description": "Advanced Amateur (1600-1999)",
+      "elo_min": 1600,
+      "elo_max": 1999,
+      "max_games": 986
+    },
+    {
+      "name": "Expert",
+      "description": "Expert (2000-2199)",
+      "elo_min": 2000,
+      "elo_max": 2199,
+      "max_games": 1404
+    },
+    {
+      "name": "Master Candidate",
+      "description": "Master Candidate (2200-2399)",
+      "elo_min": 2200,
+      "elo_max": 2399,
+      "max_games": 1000
+    },
+    {
+      "name": "Master+",
+      "description": "Master+ (2400+)",
+      "elo_min": 2400,
+      "elo_max": 3000,
+      "max_games": 500
+    }
+  ],
+  "batches": [
+    {
+      "skill_group": "Beginner",
+      "skill_group_description": "Beginner (<1200)",
+      "elo_min": 600,
+      "elo_max": 1199,
+      "max_games": 2300,
+      "exclusive_elo_band": true,
+      "exported_at": "2026-06-18T17:03:07.0641961-03:00"
+    },
+    {
+      "skill_group": "Intermediate",
+      "skill_group_description": "Intermediate (1200-1599)",
+      "elo_min": 1200,
+      "elo_max": 1599,
+      "max_games": 3810,
+      "exclusive_elo_band": true,
+      "exported_at": "2026-06-18T17:03:47.9044307-03:00"
+    },
+    {
+      "skill_group": "Advanced Amateur",
+      "skill_group_description": "Advanced Amateur (1600-1999)",
+      "elo_min": 1600,
+      "elo_max": 1999,
+      "max_games": 986,
+      "exclusive_elo_band": true,
+      "exported_at": "2026-06-18T17:04:06.1275621-03:00"
+    },
+    {
+      "skill_group": "Expert",
+      "skill_group_description": "Expert (2000-2199)",
+      "elo_min": 2000,
+      "elo_max": 2199,
+      "max_games": 1404,
+      "exclusive_elo_band": true,
+      "exported_at": "2026-06-18T17:04:14.5160033-03:00"
+    },
+    {
+      "skill_group": "Master Candidate",
+      "skill_group_description": "Master Candidate (2200-2399)",
+      "elo_min": 2200,
+      "elo_max": 2399,
+      "max_games": 1000,
+      "exclusive_elo_band": true,
+      "exported_at": "2026-06-18T17:04:23.4098290-03:00"
+    },
+    {
+      "skill_group": "Master+",
+      "skill_group_description": "Master+ (2400+)",
+      "elo_min": 2400,
+      "elo_max": 3000,
+      "max_games": 500,
+      "exclusive_elo_band": true,
+      "exported_at": "2026-06-18T17:04:51.9859082-03:00"
+    }
+  ]
+}

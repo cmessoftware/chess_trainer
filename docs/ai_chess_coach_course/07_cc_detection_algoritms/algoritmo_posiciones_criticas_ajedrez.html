@@ -91,6 +91,13 @@
     text-anchor:middle;
     fill:#111827;
   }
+  .node-id{
+    pointer-events:none;
+    font-size:10px;
+    font-weight:700;
+    text-anchor:start;
+    fill:#9a3412;
+  }
   .edge{
     stroke:var(--edge);
     stroke-width:1.7;
@@ -147,6 +154,33 @@
   .dot.cand{background:var(--node-candidate)}
   .dot.chk{background:var(--node-check)}
   .dot.sel{background:var(--selected);border-color:var(--selected-stroke)}
+  .glossary{
+    margin-top:14px;
+    padding-top:12px;
+    border-top:1px solid #e5e7eb;
+    max-height:46vh;
+    overflow:auto;
+    font-size:11px;
+    line-height:1.4;
+    color:#334155;
+  }
+  .glossary h3{
+    margin:10px 0 6px;
+    font-size:12px;
+    color:#111827;
+  }
+  .glossary h3:first-child{margin-top:0}
+  .glossary dl{margin:0}
+  .glossary dt{
+    font-weight:700;
+    font-family:ui-monospace,Consolas,monospace;
+    float:left;
+    clear:left;
+    width:4.6em;
+    color:#9a3412;
+  }
+  .glossary dd{margin:0 0 5px 4.8em}
+  .glossary p{margin:0 0 8px;color:#64748b}
 
   @media(max-width:900px){
     main{grid-template-columns:1fr}
@@ -187,6 +221,44 @@
       <div><span class="dot cand"></span>Generación y cálculo de candidatas</div>
       <div><span class="dot chk"></span>Chequeo final</div>
       <div><span class="dot sel"></span>Nodo marcado por el usuario</div>
+    </div>
+    <div class="glossary">
+      <h3>Códigos del diagrama (lab: attention_E)</h3>
+      <p>El lab muestra estos códigos en <code>attention_E</code>. No definen solos el modo crítico.</p>
+      <dl>
+        <dt>C</dt><dd>Modo rápido: jugada natural</dd>
+        <dt>C1</dt><dd>¿La natural es segura y coherente?</dd>
+        <dt>D</dt><dd>Activar modo crítico</dd>
+        <dt>E</dt><dd>Disparadores de atención</dd>
+        <dt>E1</dt><dd>Material aparentemente gratis / en prise</dd>
+        <dt>E2</dt><dd>Jaque, captura o amenaza directa</dd>
+        <dt>E3</dt><dd>Jugada inesperada del rival</dd>
+        <dt>E4</dt><dd>Peón con tempo sobre una pieza</dd>
+        <dt>E5</dt><dd>Se abre o cierra columna, diagonal o fila</dd>
+        <dt>E6</dt><dd>Cambio de estructura de peones</dd>
+        <dt>E7</dt><dd>Ataque al rey / enroques opuestos</dd>
+        <dt>E8</dt><dd>Pieza atrapada, sobrecargada o sin defensor</dd>
+        <dt>E9</dt><dd>Jugada irreversible (avance, sacrificio, cambio)</dd>
+        <dt>E10</dt><dd>Varias candidatas razonables</dd>
+        <dt>E11</dt><dd>La evaluación intuitiva cambia (tranquilo ↔ táctico)</dd>
+        <dt>F</dt><dd>Pausa 5–10–30 s según el ritmo</dd>
+        <dt>G–G4</dt><dd>Actualizar: amenaza, cambio, indefensos, líneas</dd>
+        <dt>H–H6</dt><dd>Generar candidatas (jaques → posicional)</dd>
+        <dt>S</dt><dd>Chequeo anti-blunder</dd>
+        <dt>S1</dt><dd>¿Dejo dama/torre/pieza en prise?</dd>
+        <dt>S2</dt><dd>¿Hay jaque inmediato contra mí?</dd>
+        <dt>S3</dt><dd>¿Hay captura obvia del rival?</dd>
+        <dt>S4</dt><dd>¿Abandono un defensor importante?</dd>
+        <dt>Z</dt><dd>Jugar</dd>
+      </dl>
+      <h3>Lab: notable (sí define critical)</h3>
+      <dl>
+        <dt>piece_exchange</dt><dd>Cambio de piezas (caballo/alfil/torre/dama)</dd>
+        <dt>pawn_structure</dt><dd>Cambio de estructura (captura de peón)</dd>
+        <dt>recapture_choice</dt><dd>Cómo retomar: peón / dama / no tomar / gambito</dd>
+        <dt>center_decision</dt><dd>Contacto o decisión en el centro</dd>
+        <dt>tactical_mess</dt><dd>Jaque, torre/dama colgando, dama a b2/b7</dd>
+      </dl>
     </div>
   </aside>
 </main>
@@ -304,6 +376,9 @@ nodes.forEach(n=>{
   const g=makeSvg("g",{class:`node ${n.cls||""}`,"data-id":n.id, tabindex:"0"});
   const r=makeSvg("rect",{x:n.x,y:n.y,width:n.w,height:n.h});
   g.appendChild(r);
+  const idT=makeSvg("text",{x:n.x+8,y:n.y+14,class:"node-id"});
+  idT.textContent=n.id;
+  g.appendChild(idT);
 
   const lineH=17;
   const total=(n.text.length-1)*lineH;
