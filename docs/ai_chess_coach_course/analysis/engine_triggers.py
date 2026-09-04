@@ -10,10 +10,11 @@ import chess
 from analysis.engine_eval import EvaluationLoss, NormalizedPlyEval, ply_evaluation_loss
 from analysis.multipv import MultiPVResult, analyze_multipv
 
-EngineTriggerCode = Literal["EVALUATION_DROP", "ONLY_MOVE"]
+EngineTriggerCode = Literal["EVALUATION_DROP", "ONLY_MOVE", "POSITION_TRANSFORMATION"]
 
 EVALUATION_DROP: EngineTriggerCode = "EVALUATION_DROP"
 ONLY_MOVE: EngineTriggerCode = "ONLY_MOVE"
+POSITION_TRANSFORMATION: EngineTriggerCode = "POSITION_TRANSFORMATION"
 DEFAULT_EVALUATION_DROP_CP = 150
 DEFAULT_ONLY_MOVE_GAP_CP = 150
 ONLY_MOVE_SOLE_LEGAL_GAP = 100_000
@@ -123,3 +124,102 @@ def ply_only_move(
         player_color=player_color,
     )
     return only_move_trigger(result, gap_cp=gap_cp, fen=fen)
+
+
+def _pawn_attacks_enemy_pawns(board: chess.Board, square: int, color: chess.Color) -> set[int]:
+    hits: set[int] = set()
+    for target in board.attacks(square):
+        piece = board.piece_at(target)
+        if piece and piece.piece_type == chess.PAWN and piece.color != color:
+            hits.add(target)
+    return hits
+
+
+def _is_pawn_break(before: chess.Board, move: chess.Move) -> bool:
+    piece = before.piece_at(move.from_square)
+    if piece is None or piece.piece_type != chess.PAWN:
+        return False
+    if before.is_capture(move) or before.is_en_passant(move):
+        return True
+    prior = _pawn_attacks_enemy_pawns(before, move.from_square, piece.color)
+    after = before.copy()
+    after.push(move)
+    later = _pawn_attacks_enemy_pawns(after, move.to_square, piece.color)
+    return bool(later - prior)
+
+
+def _king_shield_pawns(board: chess.Board, color: chess.Color) -> int:
+    king = board.king(color)
+    if king is None:
+        return 0
+    file = chess.square_file(king)
+    rank = chess.square_rank(king)
+    direction = 1 if color == chess.WHITE else -1
+    count = 0
+    for delta_file in (-1, 0, 1):
+        col = file + delta_file
+        if not 0 <= col <= 7:
+            continue
+        for dist in (1, 2):
+            row = rank + direction * dist
+            if not 0 <= row <= 7:
+                continue
+            occupant = board.piece_at(chess.square(col, row))
+            if occupant and occupant.piece_type == chess.PAWN and occupant.color == color:
+                count += 1
+    return count
+
+
+def _opposite_wings(board: chess.Board) -> bool:
+    white_king = board.king(chess.WHITE)
+    black_king = board.king(chess.BLACK)
+    if white_king is None or black_king is None:
+        return False
+    return abs(chess.square_file(white_king) - chess.square_file(black_king)) >= 4
+
+
+def _king_exposure_tags(before: chess.Board, move: chess.Move, after: chess.Board) -> list[str]:
+    tags: list[str] = []
+    for color in (chess.WHITE, chess.BLACK):
+        home = chess.E1 if color == chess.WHITE else chess.E8
+        if before.king(color) == home:
+            continue
+        if _king_shield_pawns(after, color) < _king_shield_pawns(before, color):
+            tags.append("SHIELD_DROP")
+            break
+    if before.is_castling(move) and _opposite_wings(after):
+        tags.append("OPPOSITE_CASTLING")
+    piece = before.piece_at(move.from_square)
+    if piece and piece.piece_type == chess.KING and not before.is_castling(move):
+        tags.append("KING_WALK")
+    return tags
+
+
+def position_transformation_tags(fen_before: str, move_uci: str) -> tuple[str, ...]:
+    """Observable character-change tags for one ply (F07-008)."""
+    board = chess.Board(fen_before)
+    move = chess.Move.from_uci(move_uci)
+    if move not in board.legal_moves:
+        raise ValueError(f"Illegal move {move_uci} in {fen_before}")
+    after = board.copy()
+    after.push(move)
+    tags: list[str] = []
+    if _is_pawn_break(board, move):
+        tags.append("PAWN_BREAK")
+    tags.extend(_king_exposure_tags(board, move, after))
+    return tuple(tags)
+
+
+def position_transformation_trigger(
+    fen_before: str,
+    move_uci: str,
+) -> EngineTrigger:
+    """Fire ``POSITION_TRANSFORMATION`` on a pawn break or king exposure."""
+    tags = position_transformation_tags(fen_before, move_uci)
+    return EngineTrigger(
+        code=POSITION_TRANSFORMATION,
+        fired=bool(tags),
+        eval_loss=1 if tags else 0,
+        threshold_cp=1,
+        detail=",".join(tags),
+    )

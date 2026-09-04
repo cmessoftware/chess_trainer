@@ -9,6 +9,7 @@ from analysis.engine_eval import NormalizedPlyEval, analyze_ply_for_player, open
 from analysis.engine_triggers import (
     DEFAULT_EVALUATION_DROP_CP,
     EVALUATION_DROP,
+    POSITION_TRANSFORMATION,
     ONLY_MOVE,
     EngineTrigger,
     ply_evaluation_drop,
@@ -71,6 +72,8 @@ def _trigger_weight(trigger: EngineTrigger) -> float:
         return _evaluation_drop_weight(trigger)
     if trigger.code == ONLY_MOVE:
         return RELEVANT_MIN
+    if trigger.code == POSITION_TRANSFORMATION:
+        return RELEVANT_MIN
     return 0.0
 
 
@@ -88,6 +91,12 @@ def _reason_for(trigger: EngineTrigger, weight: float) -> CriticalityReason | No
             type=ONLY_MOVE,
             weight=weight,
             description=f"only-move gap {trigger.eval_loss} cp ≥ {trigger.threshold_cp} cp",
+        )
+    if trigger.code == POSITION_TRANSFORMATION:
+        return CriticalityReason(
+            type=POSITION_TRANSFORMATION,
+            weight=weight,
+            description=trigger.detail or POSITION_TRANSFORMATION,
         )
     return CriticalityReason(type=trigger.code, weight=weight, description=trigger.code)
 
