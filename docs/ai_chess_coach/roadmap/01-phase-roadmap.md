@@ -14,6 +14,7 @@
 | 8 | advanced ml | explainability and clustering extensions | [09-phase-08-advanced-ml.md](09-phase-08-advanced-ml.md) |
 | 9 | critical-blunder-sequence | sequence detector in production | [10-phase-09-critical-blunder-sequence.md](10-phase-09-critical-blunder-sequence.md) |
 | 10 | playstyles | playstyle profiling and recommendations | [11-phase-10-playstyles.md](11-phase-10-playstyles.md) |
+| ext-ui | ACC UI renewal (chessops + Chessground) | Analysis workstation; one ID per `features/acc_ui_*` branch | [12-acc-ui-renewal-implementation-plan.md](12-acc-ui-renewal-implementation-plan.md) |
 
 ## Exit Criteria Per Phase
 

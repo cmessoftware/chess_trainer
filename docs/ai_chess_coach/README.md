@@ -54,8 +54,9 @@ Definition of Done for requirement changes:
 
 ### Planning and Delivery
 1. [`roadmap/01-phase-roadmap.md`](roadmap/01-phase-roadmap.md) — phased roadmap and exit criteria
-2. [`testing/01-testing-strategy.md`](testing/01-testing-strategy.md) — test pyramid, mandatory gates, and release gates
-3. [`devops/01-delivery-rules.md`](devops/01-delivery-rules.md) — deployment, rollback, and CI/CD requirements
+2. [`roadmap/12-acc-ui-renewal-implementation-plan.md`](roadmap/12-acc-ui-renewal-implementation-plan.md) — Vite/React chess UI renewal (Chessground / chessops)
+3. [`testing/01-testing-strategy.md`](testing/01-testing-strategy.md) — test pyramid, mandatory gates, and release gates
+4. [`devops/01-delivery-rules.md`](devops/01-delivery-rules.md) — deployment, rollback, and CI/CD requirements
 
 ### Architecture and Governance
 1. [`architecture/04-module-dependencies.md`](architecture/04-module-dependencies.md) — dependency relationships between domains
