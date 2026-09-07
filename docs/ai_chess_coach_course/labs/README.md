@@ -1,0 +1,20 @@
+# Labs F07 (parciales)
+
+Generados por `_gen_f07_item_labs.py`. Abrilos desde `docs/ai_chess_coach_course/`.
+
+- [F07-001 Game import](07_f07_001_game_import.ipynb)
+- [F07-002 Player selection](07_f07_002_player_selection.ipynb)
+- [F07-003 Stockfish analyze_ply](07_f07_003_stockfish_analyze_ply.ipynb)
+- [F07-004 Eval normalization](07_f07_004_eval_normalization.ipynb)
+- [F07-005 Evaluation loss](07_f07_005_evaluation_loss.ipynb)
+- [F07-006 EVALUATION_DROP](07_f07_006_evaluation_drop.ipynb)
+- [F07-007 ONLY_MOVE](07_f07_007_only_move.ipynb)
+- [F07-008 POSITION_TRANSFORMATION](07_f07_008_position_transformation.ipynb)
+- [F07-012 Criticality score](07_f07_012_criticality_score.ipynb)
+- [F07-013 Ranking](07_f07_013_ranking.ipynb)
+- [F07-014 MultiPV](07_f07_014_multipv.ipynb)
+- [F07-015 Played-move eval](07_f07_015_played_move_eval.ipynb)
+- [F07-016 UCI/SAN](07_f07_016_uci_san.ipynb)
+- [F07-019 Played vs candidates](07_f07_019_played_vs_candidates.ipynb)
+- [F07-028 Abstention](07_f07_028_abstention.ipynb)
+- [F07-035 Review pack](07_f07_035_review_pack.ipynb)

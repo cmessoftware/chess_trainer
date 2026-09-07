@@ -1,0 +1,156 @@
+{
+  "schema_version": "chessinsight.review_pack.v1",
+  "feature_id": "F07-035",
+  "case_id": "267aeec71d25d77ba505d738f0e0469c4f0ec790bee0435e91b58a06d5b0f771-ply80-R1b6#",
+  "game_id": "267aeec71d25d77ba505d738f0e0469c4f0ec790bee0435e91b58a06d5b0f771",
+  "pgn_source": "C:\\Users\\sergiosal\\source\\repos\\chessinsightai\\docs\\ai_chess_coach_course\\data\\games\\sample_game4.pgn",
+  "pgn": "[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2026.08.28\"]\n[Round \"-\"]\n[White \"cmess1315\"]\n[Black \"imoveatlanta\"]\n[Result \"1-0\"]\n[WhiteElo \"1613\"]\n[BlackElo \"1586\"]\n[TimeControl \"600\"]\n[Termination \"cmess1315 won by checkmate\"]\n[Annotator \"https://lichess.org/@/cmess4401\"]\n[Variant \"Standard\"]\n[ECO \"C00\"]\n[Opening \"French Defense: Normal Variation\"]\n[StudyName \"Clases Thiago - Tactica y Estrategia 2\"]\n[ChapterName \"Estrategia - Control del centro - Ventaja de espacio\"]\n[ChapterURL \"https://lichess.org/study/rD825Ai9/kJxPCZC0\"]\n\n1. e4 e6 2. d4 c6 3. c4 { [%csl Gc6][%cal Gd7d5] } 3... h6 4. Nc3 Nf6 5. f4 d5 6. e5 Nfd7 7. cxd5 cxd5 8. Bd3 { [%cal Gd3h7] } 8... Be7 9. Nf3 a6 10. O-O Nc6 { [%csl Ga6,Gc6] } 11. f5 Nf8 12. fxe6 Bxe6 13. Qc2 { [%csl Gd5] } 13... Qb6 14. Be3 O-O-O { [%cal Gf8d7] } 15. Rac1 { [%cal Gc1c8] } 15... Kb8 16. Na4 { [%csl Gc5] } 16... Qa7 17. a3 Nd7 { [%cal Ga4c5,Gc1c7] } 18. b4 Rc8 19. Nc5 Nxc5 { [%cal Gb1b8] } 20. bxc5 (20. dxc5 { [%cal Gc6e5,Gf3e5,Gd5d4,Gc8d8] }) 20... g5 { [%cal Gg5g4] } 21. Rb1 Rcg8 22. Qa4 Rc8 23. Bxa6 Nd8 { [%csl Gb7][%cal Gb1b7] } 24. Rb2 { [%cal Gf1b1] } (24. Qb5 Ka8 25. Rb2 Rb8) (24. Rb6) 24... Ka8 { [%cal Ga6b7] } 25. Bb5 Qxa4 26. Bxa4 g4 27. Nd2 h5 28. Rfb1 { [%csl Gb7] } 28... Rc7 29. Nb3 Bd7 30. Bxd7 Rxd7 31. Na5 { [%csl Gd8,Gd7,Ga8,Ga5,Gb7] } 31... Ka7 32. c6 Nxc6 33. Nxc6+ bxc6 34. a4 { [%cal Gb1b8] } 34... h4 35. a5 Ka6 36. Bd2 { [%csl Gb6] } 36... g3 37. h3 (37. Rb6+ Ka7 38. h3 { [%cal Ga5a6] }) 37... c5 38. Rb6+ Ka7 39. a6 { [%cal Gb6b7] } 39... Rhd8 40. Rb7+ Kxa6 (40... Ka8 41. Ba5 Rxb7 { [%cal Ga6b7] } 42. Rxb7 (42. axb7+ Kb8 43. Bxd8 Bxd8 44. dxc5)) 41. R1b6# { 1-0 White wins. } 1-0",
+  "player": "cmess1315",
+  "player_color": "WHITE",
+  "move_number": 41,
+  "ply": 80,
+  "fen_before": "3r4/1R1rbp2/k7/2ppP3/3P3p/6pP/3B2P1/1R4K1 w - - 0 41",
+  "fen_after": "3r4/1R1rbp2/kR6/2ppP3/3P3p/6pP/3B2P1/6K1 b - - 1 41",
+  "played_move": {
+    "san": "R1b6#",
+    "uci": "b1b6",
+    "in_multipv": true,
+    "multipv_rank": 1,
+    "source": "multipv",
+    "score": {
+      "kind": "mate",
+      "white_cp": null,
+      "white_mate": 1
+    },
+    "player_score": {
+      "player_color": "white",
+      "kind": "mate",
+      "cp": null,
+      "mate": 1,
+      "as_cp_units": 99999
+    },
+    "pv_san": [
+      "R1b6#"
+    ],
+    "purpose": "D1",
+    "consequence": {
+      "tags": [
+        "CHECK",
+        "MATE"
+      ],
+      "gives_check": true,
+      "is_capture": false,
+      "is_mate": true,
+      "material_delta_cp": 0,
+      "opponent_pv_san": null
+    }
+  },
+  "candidates": [
+    {
+      "rank": 1,
+      "san": "R1b6#",
+      "uci": "b1b6",
+      "pv_san": [
+        "R1b6#"
+      ],
+      "player_score": {
+        "player_color": "white",
+        "kind": "mate",
+        "cp": null,
+        "mate": 1,
+        "as_cp_units": 99999
+      },
+      "eval_gap_cp": 0,
+      "same_move": true,
+      "purpose": "D1",
+      "purpose_differs": false,
+      "consequence_tags": [
+        "CHECK",
+        "MATE"
+      ]
+    },
+    {
+      "rank": 2,
+      "san": "R7b5",
+      "uci": "b7b5",
+      "pv_san": [
+        "R7b5",
+        "Rb7",
+        "Ra5#"
+      ],
+      "player_score": {
+        "player_color": "white",
+        "kind": "mate",
+        "cp": null,
+        "mate": 2,
+        "as_cp_units": 99998
+      },
+      "eval_gap_cp": -1,
+      "same_move": false,
+      "purpose": "D2",
+      "purpose_differs": true,
+      "consequence_tags": []
+    },
+    {
+      "rank": 3,
+      "san": "R7b2",
+      "uci": "b7b2",
+      "pv_san": [
+        "R7b2",
+        "c4",
+        "Ra2+",
+        "Ba3",
+        "Rxa3#"
+      ],
+      "player_score": {
+        "player_color": "white",
+        "kind": "mate",
+        "cp": null,
+        "mate": 3,
+        "as_cp_units": 99997
+      },
+      "eval_gap_cp": -2,
+      "same_move": false,
+      "purpose": "D2",
+      "purpose_differs": true,
+      "consequence_tags": []
+    }
+  ],
+  "actual_result": {
+    "eval_gap_vs_best_cp": 0,
+    "played_is_best": true,
+    "best_san": "R1b6#",
+    "abstention": {
+      "status": "UNKNOWN",
+      "reasons": [
+        "NO_OBJECTIVE_ERROR"
+      ],
+      "may_diagnose": false,
+      "message": "Cannot be determined with sufficient confidence."
+    },
+    "primary_error": null
+  },
+  "expected_result": {},
+  "human_label": {
+    "confirmed": null,
+    "comment": ""
+  },
+  "evidence": {
+    "engine": "Stockfish",
+    "multipv": 3,
+    "layer": "evidence",
+    "inference_as_fact": false
+  },
+  "status": "UNKNOWN",
+  "notes": "",
+  "criticality": {
+    "score": 10.0,
+    "level": "HighlyCritical",
+    "critical": true
+  },
+  "eval_loss": {
+    "eval_delta": -199999,
+    "eval_loss": 199999,
+    "cp_loss": 199999
+  }
+}

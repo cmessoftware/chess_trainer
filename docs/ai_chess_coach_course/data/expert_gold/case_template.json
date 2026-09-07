@@ -1,0 +1,18 @@
+{
+  "fen": "",
+  "game_id": "book-chernev-logical-chess-NNNN",
+  "ply": null,
+  "critical_before_move": true,
+  "stop_reason": ["immediate_threat"],
+  "expert_candidates": [],
+  "expert_preferred": "",
+  "rejected_candidates": [],
+  "expert_explanation_summary": "",
+  "source": {
+    "author": "Irving Chernev",
+    "title": "Logical Chess: Move by Move",
+    "page": null
+  },
+  "rights": "private_research",
+  "review_status": "pending"
+}
